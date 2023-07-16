@@ -1,6 +1,7 @@
 {
   "author": "Daniel Zdancewicz <zdancewicz.daniel@gmail.com>",
   "dependencies": {
+    "@zd/engine": "link:..\\library",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -27,9 +28,6 @@
   ],
   "license": "MIT",
   "name": "@zd/demo",
-  "peerDependencies": {
-    "@zd/engine": "file:../library/src"
-  },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "vite dev"

@@ -12,8 +12,8 @@
   },
   "exports": {
     ".": {
-      "import": "./build/main.js",
-      "require": "./build/main.mjs"
+      "import": "./build/index.mjs",
+      "require": "./build/index.js"
     }
   },
   "homepage": "https://www.github.com/Mimikkk/webgpu/library",
@@ -21,8 +21,8 @@
     "WebGPU"
   ],
   "license": "MIT",
-  "main": "build/main.js",
-  "module": "build/main.mjs",
+  "main": "build/index.js",
+  "module": "build/index.mjs",
   "name": "@zd/engine",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
@@ -31,5 +31,6 @@
     "build:types": "tsc --project tsconfig.library.json",
     "build:lib": "vite build"
   },
+  "type": "module",
   "version": "0.0.0"
 }
