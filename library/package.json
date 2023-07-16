@@ -1,28 +1,6 @@
 {
   "author": "Daniel Zdancewicz <zdancewicz.daniel@gmail.com>",
-  "homepage": "https://www.github.com/Mimikkk/webgpu/library",
-  "version": "0.0.0",
-  "license": "MIT",
-  "name": "@zd/engine",
   "description": "Library package containing the WebGPU API",
-  "keywords": [
-    "WebGPU"
-  ],
-  "main": "build/main.js",
-  "module": "build/main.mjs",
-  "exports": {
-    ".": {
-      "import": "./build/main.js",
-      "require": "./build/main.mjs"
-    }
-  },
-  "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "build": "concurrently 'pnpm:build:clear' -c red.bold && concurrently 'pnpm:build:types' 'pnpm:build:lib'  -c blue.bold,green.bold",
-    "build:clear": "rimraf ./build",
-    "build:types": "tsc --project tsconfig.library.json",
-    "build:lib": "vite build"
-  },
   "devDependencies": {
     "concurrently": "^8.2.0",
     "copyfiles": "^2.4.1",
@@ -31,5 +9,27 @@
     "typescript": "5.1.6",
     "@webgpu/types": "^0.1.34",
     "vite": "^4.4.4"
-  }
+  },
+  "exports": {
+    ".": {
+      "import": "./build/main.js",
+      "require": "./build/main.mjs"
+    }
+  },
+  "homepage": "https://www.github.com/Mimikkk/webgpu/library",
+  "keywords": [
+    "WebGPU"
+  ],
+  "license": "MIT",
+  "main": "build/main.js",
+  "module": "build/main.mjs",
+  "name": "@zd/engine",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "concurrently 'pnpm:build:clear' -c red.bold && concurrently 'pnpm:build:types' 'pnpm:build:lib'  -c blue.bold,green.bold",
+    "build:clear": "rimraf ./build",
+    "build:types": "tsc --project tsconfig.library.json",
+    "build:lib": "vite build"
+  },
+  "version": "0.0.0"
 }
