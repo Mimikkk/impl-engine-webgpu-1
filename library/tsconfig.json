@@ -7,11 +7,11 @@
     "target": "ES6",
     "allowJs": true,
     "noImplicitAny": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "importHelpers": true,
     "isolatedModules": true,
     "strictNullChecks": true,
-    "jsx": "react-jsx",
+    "moduleDetection": "auto",
     "lib": [
       "DOM",
       "ESNext"
