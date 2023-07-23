@@ -2,7 +2,7 @@ import s from './SideBar.module.scss';
 import { Button } from '@components/buttons/Button/Button.js';
 import { Icon } from '@components/buttons/Icon/Icon.js';
 import cx from 'classnames';
-import { useLocalStorage } from 'usehooks-ts';
+import { useLocalStorage } from 'react-use';
 
 export const SideBar = () => {
   const [expanded, toggleExpanded] = useLocalStorage('sidebar-expanded', true);

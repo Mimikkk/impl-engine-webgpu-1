@@ -10,7 +10,7 @@
     "@heroicons/react": "^2.0.18",
     "react-spinners": "^0.13.8",
     "lodash-es": "^4.17.21",
-    "usehooks-ts": "^2.9.1"
+    "react-use": "^17.4.0"
   },
   "description": "Prototype application with the usage of @zd/engine",
   "devDependencies": {

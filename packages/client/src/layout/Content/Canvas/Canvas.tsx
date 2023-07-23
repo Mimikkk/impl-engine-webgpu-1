@@ -1,6 +1,6 @@
 import { useStateRef } from '@hooks/useStateRef.js';
 import { useCallback, useEffect } from 'react';
-import { useEventListener } from 'usehooks-ts';
+import { useEvent } from 'react-use';
 import { useGpu } from '@context/useGpu.js';
 
 export const Canvas = () => {
@@ -18,7 +18,7 @@ export const Canvas = () => {
 
   useEffect(resize, [parent]);
 
-  useEventListener('resize', resize);
+  useEvent('resize', resize);
 
   const initialize = useGpu(state => state.actions.initialize);
 
