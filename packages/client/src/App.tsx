@@ -1,8 +1,7 @@
-import { method } from '@zd/engine';
+import { create } from '@zd/engine';
 
 export const App = () => {
-
-  method();
+  console.log(create)
 
   return <div className="w-8 h-8 bg-blue-500"/>;
 }

@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@zd/engine':
-    specifier: link:..\library
-    version: link:../library
+    specifier: link:../engine
+    version: link:../engine
   react:
     specifier: ^18.2.0
     version: 18.2.0

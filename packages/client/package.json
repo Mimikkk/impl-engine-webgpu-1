@@ -1,7 +1,7 @@
 {
   "author": "Daniel Zdancewicz <zdancewicz.daniel@gmail.com>",
   "dependencies": {
-    "@zd/engine": "link:..\\library",
+    "@zd/engine": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -27,7 +27,7 @@
     "WebGPU"
   ],
   "license": "MIT",
-  "name": "@zd/demo",
+  "name": "@zd/client",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "vite dev",

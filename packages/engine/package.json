@@ -13,8 +13,8 @@
   "exports": {
     ".": {
       "types": "./build/index.d.ts",
-      "import": "./build/index.mjs",
-      "require": "./build/index.js"
+      "import": "./build/index.js",
+      "require": "./build/index.cjs"
     }
   },
   "homepage": "https://www.github.com/Mimikkk/webgpu/library",
@@ -22,12 +22,13 @@
     "WebGPU"
   ],
   "license": "MIT",
-  "main": "build/index.js",
-  "module": "build/index.mjs",
+  "main": "./build/index.cjs",
+  "module": "./build/index.js",
+  "types": "./build/index.d.ts",
   "name": "@zd/engine",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "build": "concurrently 'pnpm:build:clear' -c red.bold && concurrently 'pnpm:build:types' 'pnpm:build:lib'  -c blue.bold,green.bold",
+    "build": "concurrently 'pnpm:build:clear' -c red.bold && concurrently 'pnpm:build:types' 'pnpm:build:lib'",
     "build:clear": "rimraf ./build",
     "build:types": "tsc --project tsconfig.library.json",
     "build:lib": "vite build"

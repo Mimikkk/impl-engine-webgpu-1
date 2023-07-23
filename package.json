@@ -1,6 +1,6 @@
 {
   "author": "Daniel Zdancewicz <zdancewicz.daniel@gmail.com>",
-  "description": "This is a project where I implement 3D render pipeline using WebGPU",
+  "description": "Implementation and usage of a 3D render pipeline using WebGPU",
   "devDependencies": {
     "@types/node": "^20.4.1",
     "builtin-modules": "3.3.0",
@@ -15,16 +15,13 @@
     "WebGPU"
   ],
   "license": "MIT",
-  "name": "@zd/project",
+  "name": "zd",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "postinstall": "concurrently 'pnpm:install:client' 'pnpm:install:library' -c red,blue",
-    "install:client": "cd client && pnpm install",
-    "install:library": "cd library && pnpm install",
     "build": "pnpm run build:library -c blue.bold",
-    "build:library": "cd client && pnpm run build",
+    "build:library": "cd packages/engine && pnpm run build",
     "dev": "concurrently 'pnpm:dev:client' -c blue.bold",
-    "dev:client": "cd ./client && pnpm run dev"
+    "dev:client": "cd ./packages/client && pnpm run dev"
   },
   "version": "0.0.0"
 }
