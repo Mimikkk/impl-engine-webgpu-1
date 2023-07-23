@@ -1,5 +1,4 @@
 .app {
-  @apply grid bg-blue-50 overflow-hidden;
-  grid-template-rows: 1fr 46fr 1fr;
-  height: 100vh;
+  @apply bg-blue-50 overflow-hidden;
+  @apply flex flex-col h-screen w-screen;
 }
