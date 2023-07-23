@@ -1,3 +1,7 @@
 .content {
-  @apply h-full py-8 px-16;
+  @apply py-8 px-16 overflow-hidden;
+
+  .playground {
+    @apply h-full grid grid-cols-6 border border-indigo-500 rounded overflow-hidden;
+  }
 }

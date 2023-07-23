@@ -1,11 +1,16 @@
 import s from './Content.module.scss';
-import { useGpu } from '@context/context.js';
+import { Controls } from './Canvas/Controls.js';
+import { Canvas } from './Canvas/Canvas.js';
 
-export const Content = () => (
-  <main className={s.content}>
-    <article className="flex border border-indigo-500 rounded w-full h-full overflow-hidden">
-      <div className="px-2 py-1 w-80 border-r bg-indigo-100 border-r-indigo-700">Canvas Controls</div>
-      <canvas ref={canvas => canvas && useGpu.getState().actions.initialize(canvas)} />
-    </article>
-  </main>
-);
+export const Content = () => {
+  return (
+    <main className={s.content}>
+      <article className={s.playground}>
+        <Controls />
+        <div className="max-h-fit overflow-hidden col-span-5">
+          <Canvas />
+        </div>
+      </article>
+    </main>
+  );
+};
