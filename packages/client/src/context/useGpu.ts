@@ -4,6 +4,7 @@ import { create as createEngine } from '@zd/engine';
 
 export interface ContextStore {
   canvas: HTMLCanvasElement;
+  context: GPUCanvasContext;
   engine: unknown;
   state: {};
   actions: {
@@ -16,11 +17,12 @@ export const useGpu = createStore<ContextStore>()(
     (set, get) => ({
       canvas: null as never,
       engine: null as never,
+      context: null as never,
       state: {},
       actions: {
         initialize: async canvas => {
           const engine = await createEngine(canvas);
-
+          engine.context;
           set({ engine, canvas });
         },
       },
