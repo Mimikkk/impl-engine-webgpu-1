@@ -1,0 +1,31 @@
+@use 'src/styles/constants' as s;
+
+.icon {
+  &.size {
+    &-xs {
+      @apply w-3 h-2;
+    }
+
+    &-sm {
+      @apply w-4 h-4;
+    }
+
+    &-md {
+      @apply w-6 h-6;
+    }
+
+    &-lg {
+      @apply w-8 h-8;
+    }
+
+    &-xl {
+      @apply w-12 h-12;
+    }
+  }
+
+  @each $color in s.$colors {
+    &.color-#{$color} {
+      @apply text-#{$color}-900;
+    }
+  }
+}

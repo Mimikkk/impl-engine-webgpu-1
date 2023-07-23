@@ -1,0 +1,30 @@
+.sidebar {
+  @apply fixed;
+  @apply flex w-0 flex-col h-full border-r bg-indigo-100 border-r-indigo-300;
+
+  .expander {
+    @apply top-5 -right-3;
+    @apply absolute;
+    @apply flex justify-center items-center;
+    @apply w-6 h-6;
+    @apply rounded-full;
+
+    &:not(.expanded):hover {
+      @apply -right-6;
+    }
+
+    @apply bg-indigo-300 #{!important};
+    &:hover {
+      @apply transition-all;
+      @apply bg-indigo-400 #{!important};
+    }
+
+    &.expanded {
+      @apply transform rotate-180;
+    }
+  }
+
+  &.expanded {
+    @apply w-64;
+  }
+}

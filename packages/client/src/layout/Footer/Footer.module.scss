@@ -1,0 +1,7 @@
+.footer {
+  @apply flex px-2 py-1 border-t bg-indigo-300 border-t-indigo-500;
+
+  .links {
+    @apply flex items-center gap-1 mt-auto;
+  }
+}

@@ -16,12 +16,42 @@
       "DOM",
       "ESNext"
     ],
+    "types": [
+      "vite/client"
+    ],
     "typeRoots": [
       "./node_modules/@webgpu/types",
       "./node_modules/@types"
-    ]
+    ],
+    "paths": {
+      "@/": [
+        "src/*"
+      ],
+      "@assets/*": [
+        "assets/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@layout/*": [
+        "src/layout/*"
+      ],
+      "@typings/*": [
+        "src/types/*"
+      ],
+      "@context/*": [
+        "src/context/*"
+      ]
+    }
   },
   "include": [
+    "declarations",
+    "assets",
     "src"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.vite.json"
+    }
   ]
 }

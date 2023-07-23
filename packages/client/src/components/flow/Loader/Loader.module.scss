@@ -1,0 +1,67 @@
+@use 'src/styles/constants' as s;
+
+.loader {
+  display: inline-block;
+  animation: rotation 1s linear infinite;
+  position: relative;
+
+  @apply rounded-full border-4;
+
+  @apply border-l-transparent;
+  @each $color in s.$colors {
+    &.outer-#{$color} {
+      @apply border-b-#{$color}-500;
+      @apply border-t-#{$color}-500;
+      @apply border-r-#{$color}-500;
+    }
+  }
+  @apply aspect-square;
+
+  &::after {
+    position: absolute;
+    content: '';
+    @apply rounded-full border-4 m-auto w-[50%] h-[50%] top-0 left-0 right-0 bottom-0;
+
+    animation: rotation reverse 0.5s linear infinite;
+    @apply border-l-transparent;
+
+    @each $color in s.$colors {
+      &.inner-#{$color} {
+        @apply border-b-#{$color}-500;
+        @apply border-t-#{$color}-500;
+        @apply border-r-#{$color}-500;
+      }
+    }
+  }
+
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  &.size {
+    &-xs {
+      @apply w-4 h-4;
+    }
+
+    &-sm {
+      @apply w-6 h-6;
+    }
+
+    &-md {
+      @apply w-8 h-8;
+    }
+
+    &-lg {
+      @apply w-10 h-10;
+    }
+
+    &-xl {
+      @apply w-12 h-12;
+    }
+  }
+}

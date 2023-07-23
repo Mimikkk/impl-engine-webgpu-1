@@ -1,0 +1,25 @@
+.button {
+  &:not(.nopad) {
+    @apply px-2;
+  }
+
+  @apply transition-all duration-100;
+
+  &:not(.transparent) {
+    @apply rounded-sm;
+    @apply text-white;
+    @apply bg-violet-300;
+    @apply border border-violet-500;
+  }
+
+  &:hover {
+    &:not(.transparent) {
+      @apply bg-violet-400;
+      @apply border-violet-700;
+    }
+
+    &.transparent {
+      @apply bg-violet-200;
+    }
+  }
+}

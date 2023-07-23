@@ -1,7 +1,16 @@
 import { create } from '@zd/engine';
+import { Footer, Header, Content, SideBar } from '@layout/layout.js';
+import s from './App.module.scss';
 
 export const App = () => {
-  console.log(create)
+  console.log(create);
 
-  return <div className="w-8 h-8 bg-blue-500"/>;
-}
+  return (
+    <div className={s.app}>
+      <SideBar />
+      <Header />
+      <Content />
+      <Footer />
+    </div>
+  );
+};
