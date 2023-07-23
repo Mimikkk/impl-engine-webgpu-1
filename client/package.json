@@ -30,7 +30,8 @@
   "name": "@zd/demo",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "dev": "vite dev"
+    "dev": "vite dev",
+    "build": "vite build"
   },
   "type": "module",
   "version": "0.0.0"
