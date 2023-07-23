@@ -6,7 +6,7 @@ export interface CreateOptions {
   device?: DeviceOptions;
 }
 
-export const create = async (canvas: HTMLCanvasElement, options: CreateOptions) => {
+export const create = async (canvas: HTMLCanvasElement, options?: CreateOptions) => {
   if (!navigator.gpu) throw new Error('WebGPU is not supported');
 
   const adapter = await createAdapter(options?.adapter);

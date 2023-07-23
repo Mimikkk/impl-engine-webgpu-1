@@ -1,1 +1,1 @@
-export { useContext, type ContextStore } from './useContext.js';
+export { useGpu, type ContextStore } from './useGpu.js';
