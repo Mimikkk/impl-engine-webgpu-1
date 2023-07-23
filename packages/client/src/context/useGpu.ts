@@ -22,8 +22,8 @@ export const useGpu = createStore<ContextStore>()(
       actions: {
         initialize: async canvas => {
           const engine = await createEngine(canvas);
-          engine.context;
-          set({ engine, canvas });
+
+          set({ engine, canvas, context: engine.context });
         },
       },
     }),
