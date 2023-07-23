@@ -5,13 +5,11 @@
     "inlineSources": true,
     "module": "ESNext",
     "target": "ES6",
-    "allowJs": true,
     "noImplicitAny": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "NodeNext",
     "importHelpers": true,
     "isolatedModules": true,
     "strictNullChecks": true,
-    "moduleDetection": "auto",
     "lib": [
       "DOM",
       "ESNext"

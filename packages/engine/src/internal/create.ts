@@ -1,12 +1,17 @@
-import { type AdapterOptions, createAdapter } from './createAdapter';
-import { type DeviceOptions, createDevice } from './createDevice';
+import { type AdapterOptions, createAdapter } from './createAdapter.js';
+import { type DeviceOptions, createDevice } from './createDevice.js';
 
 export interface CreateOptions {
   adapter?: AdapterOptions;
   device?: DeviceOptions;
 }
 
-export const create = async (canvas: HTMLCanvasElement, options?: CreateOptions) => {
+export interface CreateReturn {
+  api: GPUDevice;
+  context: GPUCanvasContext;
+}
+
+export const create = async (canvas: HTMLCanvasElement, options?: CreateOptions): Promise<CreateReturn> => {
   if (!navigator.gpu) throw new Error('WebGPU is not supported');
 
   const adapter = await createAdapter(options?.adapter);
