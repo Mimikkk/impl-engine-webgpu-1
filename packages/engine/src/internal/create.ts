@@ -1,17 +1,15 @@
 import { type AdapterOptions, createAdapter } from './createAdapter.js';
 import { type DeviceOptions, createDevice } from './createDevice.js';
+import type { Engine, Store } from './types.js';
+import { createStore } from './createStore.js';
+import { createBuffersState } from './buffers/createBuffersState.js';
 
 export interface CreateOptions {
   adapter?: AdapterOptions;
   device?: DeviceOptions;
 }
 
-export interface CreateReturn {
-  api: GPUDevice;
-  context: GPUCanvasContext;
-}
-
-export const create = async (canvas: HTMLCanvasElement, options?: CreateOptions): Promise<CreateReturn> => {
+export const create = async (canvas: HTMLCanvasElement, options?: CreateOptions): Promise<Store<Engine>> => {
   if (!navigator.gpu) throw new Error('WebGPU is not supported');
 
   const adapter = await createAdapter(options?.adapter);
@@ -20,5 +18,9 @@ export const create = async (canvas: HTMLCanvasElement, options?: CreateOptions)
 
   if (!context) throw new Error('WebGPU is not supported');
 
-  return { api: device, context } as const;
+  return createStore((set, get) => ({
+    api: device,
+    context: context,
+    buffers: createBuffersState(set, get),
+  }));
 };
