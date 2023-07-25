@@ -1,30 +1,32 @@
 import { devtools } from 'zustand/middleware';
 import { create as createStore } from 'zustand';
-import { create as createEngine } from '@zd/engine';
+import { create as createEngine, type CreateReturn } from '@zd/engine';
 import exampleShader from '@assets/resources/shaders/example.wgsl?raw';
+import { Status } from '@typings/status.js';
+
+export const createShader = (engine: GPUDevice) => {};
 
 export interface ContextStore {
-  canvas: HTMLCanvasElement;
-  context: GPUCanvasContext;
-  engine: unknown;
+  engine: CreateReturn;
   state: {};
+  render: {
+    triangle(): void;
+  };
   actions: {
     initialize: (canvas: HTMLCanvasElement) => Promise<void>;
   };
+  status: Status;
 }
-
-export const createShader = (engine: GPUDevice) => {};
 
 export const useGpu = createStore<ContextStore>()(
   devtools(
     (set, get) => ({
-      canvas: null as never,
       engine: null as never,
-      context: null as never,
+      status: Status.Idle,
       state: {},
-      actions: {
-        initialize: async canvas => {
-          const engine = await createEngine(canvas);
+      render: {
+        triangle: () => {
+          const { engine } = get();
 
           const shaderModule = (engine.api as GPUDevice).createShaderModule({
             label: 'shader-label',
@@ -110,8 +112,20 @@ export const useGpu = createStore<ContextStore>()(
           passEncoder.end();
 
           engine.api.queue.submit([commandEncoder.finish()]);
+        },
+      },
+      actions: {
+        initialize: async canvas => {
+          set({ status: Status.Pending });
 
-          set({ engine, canvas, context: engine.context });
+          try {
+            const engine = await createEngine(canvas);
+
+            set({ status: Status.Success, engine });
+          } catch (e) {
+            set({ status: Status.Error });
+            throw e;
+          }
         },
       },
     }),
