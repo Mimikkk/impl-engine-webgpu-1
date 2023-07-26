@@ -3,8 +3,6 @@ import type { Store } from './types.js';
 export const createStore = <T>(initialize: Store.Create<T, T>): Store<T> => {
   const listeners = new Set<Store.Update<T>>();
 
-  let state: T;
-
   const api: Store<T> = {
     set: updater => {
       const update = updater instanceof Function ? updater(state) : updater;
@@ -23,7 +21,7 @@ export const createStore = <T>(initialize: Store.Create<T, T>): Store<T> => {
       return () => listeners.delete(listener);
     },
   };
-  state = initialize(api.set, api.get);
+  let state = initialize(api.set, api.get);
 
   return api;
 };

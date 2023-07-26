@@ -1,20 +1,9 @@
-export interface CreateBufferOptions {
-  name: string;
-  capacity?: number;
-}
+import type { Buffers } from './buffers/types.js';
 
 export interface Engine {
   api: GPUDevice;
   context: GPUCanvasContext;
   buffers: Buffers;
-}
-
-export interface Buffers {
-  vertex: {
-    create: (options: CreateBufferOptions) => GPUBuffer;
-  };
-  write: (name: string, content: ArrayBufferView) => void;
-  map: Map<string, GPUBuffer>;
 }
 
 export interface Store<T = Engine> {

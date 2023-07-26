@@ -52,7 +52,7 @@ export const useGpu = createStore<ContextStore>()(
       render: {
         triangle: () => {
           const { engine } = get();
-          const { api, context } = engine.get();
+          const { api, context, buffers } = engine.get();
 
           const module = api.createShaderModule({
             label: 'shader-label',
@@ -68,17 +68,11 @@ export const useGpu = createStore<ContextStore>()(
             format: navigator.gpu.getPreferredCanvasFormat(),
             alphaMode: 'premultiplied',
           });
-
           const vertices = new Float32Array([
             0.0, 0.6, 0, 1, 1, 0, 0, 1, -0.5, -0.6, 0, 1, 0, 1, 0, 1, 0.5, -0.6, 0, 1, 0, 0, 1, 1,
           ]);
 
-          const vertexBuffer = api.createBuffer({
-            size: vertices.byteLength,
-            usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
-          });
-
-          api.queue.writeBuffer(vertexBuffer, 0, vertices, 0, vertices.length);
+          const vbo = buffers.vertex.create({ name: 'triangle', content: vertices });
 
           const renderPipeline = api.createRenderPipeline({
             vertex: {
@@ -119,7 +113,6 @@ export const useGpu = createStore<ContextStore>()(
           });
 
           const commandEncoder = api.createCommandEncoder();
-
           const passEncoder = commandEncoder.beginRenderPass({
             colorAttachments: [
               {
@@ -132,9 +125,8 @@ export const useGpu = createStore<ContextStore>()(
           });
 
           passEncoder.setPipeline(renderPipeline);
-          passEncoder.setVertexBuffer(0, vertexBuffer);
+          passEncoder.setVertexBuffer(0, vbo);
           passEncoder.draw(3);
-
           passEncoder.end();
 
           api.queue.submit([commandEncoder.finish()]);
