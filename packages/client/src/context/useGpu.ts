@@ -1,10 +1,9 @@
 import { devtools } from 'zustand/middleware';
 import { create as createStore } from 'zustand';
-import { createEngine, type Engine } from '@zd/engine';
+import { createEngine } from '@zd/engine';
 import exampleShader from '@assets/resources/shaders/example.wgsl?raw';
 import { Status } from '@typings/status.js';
-
-export const createShader = (engine: GPUDevice) => {};
+import { createRenderLoop } from '@zd/engine/src/index.js';
 
 export interface ContextStore {
   engine: Awaited<ReturnType<typeof createEngine>>;
@@ -17,30 +16,6 @@ export interface ContextStore {
   };
   status: Status;
 }
-
-interface CreateVertexBufferOptions {
-  name?: string;
-  capacity?: number;
-}
-
-export const createVertexBuffer = (
-  engine: Engine,
-  { name = 'vertex-buffer', capacity = 0 }: CreateVertexBufferOptions,
-) => {
-  const vertices = new Float32Array([
-    0.0, 0.6, 0, 1, 1, 0, 0, 1, -0.5, -0.6, 0, 1, 0, 1, 0, 1, 0.5, -0.6, 0, 1, 0, 0, 1, 1,
-  ]);
-
-  const vertexBuffer = engine.api.createBuffer({
-    label: 'vertex-buffer',
-    size: vertices.byteLength,
-    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
-  });
-
-  engine.api.queue.writeBuffer(vertexBuffer, 0, vertices, 0, vertices.length);
-
-  return vertexBuffer;
-};
 
 const vertices = new Float32Array([
   0.0, 0.6, 0, 1, 1, 0, 0, 1, -0.5, -0.6, 0, 1, 0, 1, 0, 1, 0.5, -0.6, 0, 1, 0, 0, 1, 1,
@@ -58,10 +33,9 @@ export const useGpu = createStore<ContextStore>()(
           const { api, context, buffers, shaders } = engine.get();
 
           const module = shaders.create({ name: 'example', content: exampleShader });
-
           const vbo = buffers.vertex.create({ name: 'triangle', content: vertices });
 
-          const renderPipeline = api.createRenderPipeline({
+          const renderer = api.createRenderPipeline({
             vertex: {
               module,
               entryPoint: 'vertex_main',
@@ -102,6 +76,12 @@ export const useGpu = createStore<ContextStore>()(
           });
 
           const commandEncoder = api.createCommandEncoder();
+
+          const loop = createRenderLoop({
+            framesPerSecond: 25,
+            render: () => {},
+          });
+
           const passEncoder = commandEncoder.beginRenderPass({
             colorAttachments: [
               {
@@ -112,14 +92,14 @@ export const useGpu = createStore<ContextStore>()(
               },
             ],
           });
-
-          passEncoder.setPipeline(renderPipeline);
+          passEncoder.setPipeline(renderer);
           passEncoder.setVertexBuffer(0, vbo);
           passEncoder.draw(3);
-
           passEncoder.end();
 
-          api.queue.submit([commandEncoder.finish()]);
+          const commandBuffer = commandEncoder.finish();
+
+          api.queue.submit([commandBuffer]);
         },
       },
       actions: {
