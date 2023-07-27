@@ -1,6 +1,7 @@
-import type { Engine, Store } from '../../types.js';
+import type { Store } from '../createStore.js';
+import type { Buffers } from './types.js';
 
-export const createBuffersUniformState: Store.Create<Engine['buffers']['uniform']> = (set, get) => ({
+export const createStateBuffersUniform: Store.Create<Buffers['uniform']> = (set, get) => ({
   create: ({ name, content, capacity = content?.byteLength ?? 0 }) => {
     const { api, buffers } = get();
     const mapped = !!content;
@@ -20,5 +21,9 @@ export const createBuffersUniformState: Store.Create<Engine['buffers']['uniform'
 
     return buffer;
   },
-  write: get().buffers.write,
+  write(item, content) {
+    const buffer = get().buffers.read(item);
+
+    get().api.queue.writeBuffer(buffer, 0, content, 0, content.length);
+  },
 });

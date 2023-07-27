@@ -1,9 +1,8 @@
 import { devtools } from 'zustand/middleware';
 import { create as createStore } from 'zustand';
-import { create as createEngine, type Engine } from '@zd/engine';
+import { createEngine, type Engine } from '@zd/engine';
 import exampleShader from '@assets/resources/shaders/example.wgsl?raw';
 import { Status } from '@typings/status.js';
-import { en } from '@faker-js/faker';
 
 export const createShader = (engine: GPUDevice) => {};
 
@@ -43,6 +42,10 @@ export const createVertexBuffer = (
   return vertexBuffer;
 };
 
+const vertices = new Float32Array([
+  0.0, 0.6, 0, 1, 1, 0, 0, 1, -0.5, -0.6, 0, 1, 0, 1, 0, 1, 0.5, -0.6, 0, 1, 0, 0, 1, 1,
+]);
+
 export const useGpu = createStore<ContextStore>()(
   devtools(
     (set, get) => ({
@@ -52,25 +55,9 @@ export const useGpu = createStore<ContextStore>()(
       render: {
         triangle: () => {
           const { engine } = get();
-          const { api, context, buffers } = engine.get();
+          const { api, context, buffers, shaders } = engine.get();
 
-          const module = api.createShaderModule({
-            label: 'shader-label',
-            code: exampleShader,
-            // /* Figure out whether to bother */
-            hints: undefined,
-            // /* Figure out whether to bother */
-            sourceMap: undefined,
-          });
-
-          context.configure({
-            device: api,
-            format: navigator.gpu.getPreferredCanvasFormat(),
-            alphaMode: 'premultiplied',
-          });
-          const vertices = new Float32Array([
-            0.0, 0.6, 0, 1, 1, 0, 0, 1, -0.5, -0.6, 0, 1, 0, 1, 0, 1, 0.5, -0.6, 0, 1, 0, 0, 1, 1,
-          ]);
+          const module = shaders.create({ name: 'example', content: exampleShader });
 
           const vbo = buffers.vertex.create({ name: 'triangle', content: vertices });
 
@@ -82,12 +69,14 @@ export const useGpu = createStore<ContextStore>()(
                 {
                   attributes: [
                     {
-                      shaderLocation: 0, // position
+                      // position
+                      shaderLocation: 0,
                       offset: 0,
                       format: 'float32x4',
                     },
                     {
-                      shaderLocation: 1, // color
+                      // color
+                      shaderLocation: 1,
                       offset: 16,
                       format: 'float32x4',
                     },
@@ -127,6 +116,7 @@ export const useGpu = createStore<ContextStore>()(
           passEncoder.setPipeline(renderPipeline);
           passEncoder.setVertexBuffer(0, vbo);
           passEncoder.draw(3);
+
           passEncoder.end();
 
           api.queue.submit([commandEncoder.finish()]);
@@ -141,7 +131,7 @@ export const useGpu = createStore<ContextStore>()(
             set({ status: Status.Success, engine });
           } catch (e) {
             set({ status: Status.Error });
-            throw e;
+            console.error(e);
           }
         },
       },

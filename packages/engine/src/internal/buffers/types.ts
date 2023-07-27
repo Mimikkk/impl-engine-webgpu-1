@@ -29,12 +29,6 @@ export interface Buffers {
   vertex: {
     create(options: CreateVertexBufferOptions): GPUBuffer;
     write(item: string | GPUBuffer, content: VertexBufferArray): void;
-    slots: {
-      toggle(item: string | GPUBuffer, at?: number): void;
-      get next(): number;
-      get max(): number;
-      map: Map<number, GPUBuffer>;
-    };
   };
   index: {
     create(options: CreateIndexBufferOptions): GPUBuffer;

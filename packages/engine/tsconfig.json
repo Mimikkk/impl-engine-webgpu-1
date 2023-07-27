@@ -5,6 +5,7 @@
     "inlineSources": true,
     "module": "ESNext",
     "target": "ES6",
+    "allowJs": true,
     "noImplicitAny": true,
     "moduleResolution": "NodeNext",
     "importHelpers": true,
@@ -29,6 +30,5 @@
     "**/*.bench.ts",
     "**/*.test.tsx",
     "**/*.bench.tsx"
-
   ]
 }
