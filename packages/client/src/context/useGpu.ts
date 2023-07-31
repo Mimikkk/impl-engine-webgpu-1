@@ -3,7 +3,7 @@ import { create as createStore } from 'zustand';
 import { createEngine } from '@zd/engine';
 import exampleShader from '@assets/resources/shaders/example.wgsl?raw';
 import { Status } from '@typings/status.js';
-import { createRenderLoop } from '@zd/engine/src/index.js';
+import { createUpdateLoop } from '@zd/engine';
 
 export interface ContextStore {
   engine: Awaited<ReturnType<typeof createEngine>>;
@@ -77,29 +77,49 @@ export const useGpu = createStore<ContextStore>()(
 
           const commandEncoder = api.createCommandEncoder();
 
-          const loop = createRenderLoop({
-            framesPerSecond: 25,
-            render: () => {},
+          let updateCount = 0;
+          let blendCount = 0;
+          let renderCount = 0;
+
+          const loop = createUpdateLoop({
+            framesPerSecond: 10,
+            updatesPerSecond: 20,
+            update: () => {
+              updateCount += 1;
+            },
+            blend: () => {
+              blendCount += 1;
+            },
+            render: () => {
+              renderCount += 1;
+            },
           });
 
-          const passEncoder = commandEncoder.beginRenderPass({
-            colorAttachments: [
-              {
-                clearValue: { r: 0.0, g: 0.5, b: 1.0, a: 1.0 },
-                loadOp: 'clear',
-                storeOp: 'store',
-                view: context.getCurrentTexture().createView(),
-              },
-            ],
-          });
-          passEncoder.setPipeline(renderer);
-          passEncoder.setVertexBuffer(0, vbo);
-          passEncoder.draw(3);
-          passEncoder.end();
+          setInterval(() => {
+            console.log({ updateCount, blendCount, renderCount });
+            updateCount = 0;
+            blendCount = 0;
+            renderCount = 0;
+          }, 1000);
 
-          const commandBuffer = commandEncoder.finish();
+          // const passEncoder = commandEncoder.beginRenderPass({
+          //   colorAttachments: [
+          //     {
+          //       clearValue: { r: 0.0, g: 0.5, b: 1.0, a: 1.0 },
+          //       loadOp: 'clear',
+          //       storeOp: 'store',
+          //       view: context.getCurrentTexture().createView(),
+          //     },
+          //   ],
+          // });
+          // passEncoder.setPipeline(renderer);
+          // passEncoder.setVertexBuffer(0, vbo);
+          // passEncoder.draw(3);
+          // passEncoder.end();
+          //
+          // const commandBuffer = commandEncoder.finish();
 
-          api.queue.submit([commandBuffer]);
+          // api.queue.submit([commandBuffer]);
         },
       },
       actions: {
