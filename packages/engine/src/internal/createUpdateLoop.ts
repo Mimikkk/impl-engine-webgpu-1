@@ -64,7 +64,7 @@ export const createUpdateLoop = ({
   const loop = (currentTimeMs: number) => {
     state.frameId = window.requestAnimationFrame(loop);
 
-    state.deltaUpdateTimeMs = currentTimeMs - state.previousUpdateTimeMs;
+    state.deltaUpdateTimeMs = Math.min(250, currentTimeMs - state.previousUpdateTimeMs);
     state.previousUpdateTimeMs = currentTimeMs;
 
     state.accumulatedUpdateTimeMs += state.deltaUpdateTimeMs;
@@ -74,7 +74,7 @@ export const createUpdateLoop = ({
       state.passedTimeMs += state.updateIntervalMs;
     }
 
-    state.deltaRenderTimeMs = currentTimeMs - state.previousRenderTimeMs;
+    state.deltaRenderTimeMs = Math.min(250, currentTimeMs - state.previousRenderTimeMs);
     if (state.deltaRenderTimeMs >= state.renderIntervalMs) {
       state.deltaTimeMultiplier = state.accumulatedUpdateTimeMs / state.deltaUpdateTimeMs;
       state.previousRenderTimeMs = currentTimeMs - (state.deltaRenderTimeMs % state.renderIntervalMs);
