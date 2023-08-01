@@ -1,4 +1,4 @@
-export interface CreateUpdateLoopOptions {
+export interface UpdateLoopOptions {
   update(deltatime: number): void;
   blend(previousBlendingFactor: number, currentBlendingFactor: number): void;
   render(deltatime: number): void;
@@ -6,7 +6,32 @@ export interface CreateUpdateLoopOptions {
   updatesPerSecond: number;
   immediate?: boolean;
 }
-export interface CreateUpdateLoop {}
+export interface UpdateLoop {
+  state: {
+    get deltaUpdateTimeMs(): number;
+    get updateIntervalMs(): number;
+    get frameId(): number;
+    get accumulatedUpdateTimeMs(): number;
+    get updatesPerSecond(): number;
+    get passedTimeMs(): number;
+    get previousRenderTimeMs(): number;
+    get ongoing(): boolean;
+    get deltaRenderTimeMs(): number;
+    get rendersPerSecond(): number;
+    get deltaTimeMultiplier(): number;
+    get renderIntervalMs(): number;
+    get previousUpdateTimeMs(): number;
+    blend: (previousBlendingFactor: number, currentBlendingFactor: number) => void;
+    update: (deltatime: number) => void;
+    render: (deltatime: number) => void;
+  };
+  actions: {
+    changeUpdatesPerSecond: (updatesPerSecond: number) => void;
+    stop: () => void;
+    start: () => void;
+    changeRendersPerSecond: (rendersPerSecond: number) => void;
+  };
+}
 
 export const createUpdateLoop = ({
   rendersPerSecond = 60,
@@ -15,7 +40,7 @@ export const createUpdateLoop = ({
   update,
   blend,
   render,
-}: CreateUpdateLoopOptions): CreateUpdateLoop => {
+}: UpdateLoopOptions): UpdateLoop => {
   const state = {
     accumulatedUpdateTimeMs: 0,
     passedTimeMs: 0,
@@ -34,9 +59,50 @@ export const createUpdateLoop = ({
     render,
     blend,
   };
-  const internal = {
+  const internal: UpdateLoop = {
     state: {
+      get accumulatedUpdateTimeMs() {
+        return state.accumulatedUpdateTimeMs;
+      },
+      get passedTimeMs() {
+        return state.passedTimeMs;
+      },
+      get updatesPerSecond() {
+        return state.updatesPerSecond;
+      },
+      get updateIntervalMs() {
+        return state.updateIntervalMs;
+      },
+      get rendersPerSecond() {
+        return state.rendersPerSecond;
+      },
+      get renderIntervalMs() {
+        return state.renderIntervalMs;
+      },
+      get previousUpdateTimeMs() {
+        return state.previousUpdateTimeMs;
+      },
+      get previousRenderTimeMs() {
+        return state.previousRenderTimeMs;
+      },
+      get deltaTimeMultiplier() {
+        return state.deltaTimeMultiplier;
+      },
+      get deltaUpdateTimeMs() {
+        return state.deltaUpdateTimeMs;
+      },
+      get deltaRenderTimeMs() {
+        return state.deltaRenderTimeMs;
+      },
+      get frameId() {
+        return state.frameId;
+      },
+      get ongoing() {
+        return state.ongoing;
+      },
+      update: state.update,
       render: state.render,
+      blend: state.blend,
     },
     actions: {
       changeRendersPerSecond: (rendersPerSecond: number) => {
@@ -48,6 +114,7 @@ export const createUpdateLoop = ({
         state.updateIntervalMs = 1000 / updatesPerSecond;
       },
       stop: () => {
+        if (!state.ongoing) return;
         state.ongoing = false;
         window.cancelAnimationFrame(state.frameId);
       },
