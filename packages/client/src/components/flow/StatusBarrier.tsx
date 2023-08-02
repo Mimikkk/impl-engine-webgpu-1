@@ -18,13 +18,11 @@ export const StatusBarrier: FC<StatusBarrierProps> = ({ statuses, status, childr
     return sum;
   }, [status, statuses]);
 
-  console.log(status, statuses);
-
   switch (status) {
     case Status.Idle:
       return null;
     case Status.Pending:
-      return <Loader class="place-self-center" />;
+      return <Loader class="flex items-center justify-center w-full h-full" size="xl" />;
     case Status.Error:
       return (
         <Alert icon="Fire" title="Coś poszło nie tak!">

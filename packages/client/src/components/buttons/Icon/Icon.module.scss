@@ -26,6 +26,7 @@
   @each $color in s.$colors {
     &.color-#{$color} {
       @apply text-#{$color}-900;
+      @apply fill-#{$color}-100;
     }
   }
 }

@@ -11,5 +11,7 @@ interface Props {
 }
 
 export const Loader: FC<Props> = ({ inner = 'red', outer = 'indigo', size = 'md', ...props }) => (
-  <div className={cx(s.loader, s[`outer-${outer}`], s[`inner-${inner}`], s[`size-${size}`], props.class)} />
+  <div className={props.class}>
+    <div className={cx(s.loader, s[`outer-${outer}`], s[`inner-${inner}`], s[`size-${size}`])} />
+  </div>
 );
