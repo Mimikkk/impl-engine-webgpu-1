@@ -117,26 +117,23 @@ export const useGpu = createStore<ContextStore>()(
 
           try {
             const engine = await createEngine(canvas);
-
-            set({
-              status: Status.Success,
-              engine,
-              loop: createUpdateLoop({
-                rendersPerSecond: 10,
-                updatesPerSecond: 20,
-                update: () => {},
-                blend: () => {},
-                render: () => {
-                  get().render.triangle();
-                  engine.get().api.queue.submit(get().state.commands);
-                  get().state.commands.length = 0;
-                },
-                immediate: false,
-              }),
+            const loop = createUpdateLoop({
+              rendersPerSecond: 10,
+              updatesPerSecond: 20,
+              update: () => {},
+              blend: () => {},
+              render: () => {
+                get().render.triangle();
+                engine.get().api.queue.submit(get().state.commands);
+                get().state.commands.length = 0;
+              },
+              immediate: false,
             });
+
+            set({ status: Status.Success, engine, loop });
           } catch (e) {
             set({ status: Status.Error });
-            console.error(e);
+            throw e;
           }
         },
       },

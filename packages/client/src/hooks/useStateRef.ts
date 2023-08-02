@@ -6,7 +6,7 @@ export const useStateRef = <Element extends HTMLElement, Return, Initial>(
 ) => {
   const [node, setNode] = useState<Return | Initial>(initial);
 
-  const setRef = useCallback((node: Element) => setNode(process(node)), [process]);
+  const setRef = useCallback((node: Element | null) => (node ? setNode(process(node)) : initial), [process]);
 
   return [node, setRef] as const;
 };

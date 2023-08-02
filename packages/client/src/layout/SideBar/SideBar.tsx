@@ -3,6 +3,7 @@ import { Button } from '@components/buttons/Button/Button.js';
 import { Icon } from '@components/buttons/Icon/Icon.js';
 import cx from 'classnames';
 import { useLocalStorage } from 'react-use';
+import { Show } from '@components/flow/Show.js';
 
 export const SideBar = () => {
   const [expanded, toggleExpanded] = useLocalStorage('sidebar-expanded', true);
@@ -17,7 +18,9 @@ export const SideBar = () => {
       >
         <Icon type="ChevronDoubleRight" variant="outline" size="sm" />
       </Button>
-      {expanded ? <Button class="flex items-center gap-2 py-1" transparent></Button> : null}
+      <Show when={expanded}>
+        <Button class="flex items-center gap-2 py-1" transparent></Button>
+      </Show>
     </aside>
   );
 };
