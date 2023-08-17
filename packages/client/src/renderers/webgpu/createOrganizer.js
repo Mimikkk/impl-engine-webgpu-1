@@ -29,7 +29,7 @@ import { createTexturesState } from './utils/createTexturesState.js';
 let vector2 = new Vector2();
 let vector4 = new Vector4();
 
-class CreateOrganizer {
+export class Organizer {
   constructor(options = {}) {
     const { antialias = true, requiredLimits = {}, sampleCount = antialias ? 4 : 1, ...parameters } = options;
     this.parameters = { antialias, sampleCount, requiredLimits, ...parameters };
@@ -520,7 +520,7 @@ class CreateOrganizer {
   createIndexAttribute = attribute =>
     this.attributes.create(attribute, GPUBufferUsage.INDEX | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST);
 
-  createAttribute = attribute =>
+  createVertexAttribute = attribute =>
     this.attributes.create(attribute, GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST);
 
   createStorageAttribute = attribute =>
@@ -650,4 +650,4 @@ class CreateOrganizer {
   }
 }
 
-export const createOrganizer = parameters => new CreateOrganizer(parameters);
+export const createOrganizer = parameters => new Organizer(parameters);

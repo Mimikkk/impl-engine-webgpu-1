@@ -1,4 +1,4 @@
-import DataMap from './DataMap.js';
+import DataMap from './DataMap.ts';
 import { Color, Mesh, SphereGeometry, BackSide } from 'three';
 import {
   vec4,

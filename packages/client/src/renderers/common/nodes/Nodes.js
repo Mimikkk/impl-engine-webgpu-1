@@ -1,4 +1,4 @@
-import DataMap from '../DataMap.js';
+import DataMap from '../DataMap.ts';
 import { NoToneMapping, EquirectangularReflectionMapping, EquirectangularRefractionMapping } from 'three';
 import {
   NodeFrame,

@@ -1,7 +1,7 @@
 import { createOrganizer } from './createOrganizer.js';
-import { createAnimation } from '../common/Animation.ts';
+import { createUpdateLoop } from '../common/createUpdateLoop.ts';
 import RenderObjects from '../common/RenderObjects.js';
-import Attributes from '../common/Attributes.js';
+import AttributeState from '../common/AttributeState.ts';
 import Geometries from '../common/Geometries.js';
 import { createStatistics } from '../common/Statistics.ts';
 import Pipelines from '../common/Pipelines.js';
@@ -33,7 +33,7 @@ const _frustum = new Frustum();
 const _projScreenMatrix = new Matrix4();
 const _vector3 = new Vector3();
 
-class CreateRenderer {
+export class CreateRenderer {
   constructor(parameters = {}) {
     const backend = createOrganizer(parameters);
     this.domElement = backend.getDomElement();
@@ -76,7 +76,11 @@ class CreateRenderer {
     this._textures = null;
     this._background = null;
 
-    this._animation = createAnimation({ immediate: false });
+    this._animation = createUpdateLoop({
+      immediate: false,
+      updatesPerSecond: 10,
+      rendersPerSecond: 10,
+    });
 
     this._currentRenderContext = null;
     this._lastRenderContext = null;
@@ -116,7 +120,7 @@ class CreateRenderer {
 
       this.statistics = createStatistics();
       this._nodes = new Nodes(this, backend);
-      this._attributes = new Attributes(backend);
+      this._attributes = new AttributeState(backend);
       this._background = new Background(this, this._nodes);
       this._geometries = new Geometries(this._attributes, this.statistics);
       this._textures = new Textures(backend, this.statistics);
@@ -143,7 +147,7 @@ class CreateRenderer {
       //
 
       this._animation.nodes = this._nodes;
-      this._animation.start();
+      this._animation.actions.start();
 
       this._initialized = true;
 
@@ -301,8 +305,8 @@ class CreateRenderer {
   setAnimationLoop(animate) {
     if (!this._initialized) this.initialize();
 
-    this._animation.animate = animate;
-    !animate ? this._animation.stop() : this._animation.start();
+    this._animation.state.render = animate;
+    animate ? this._animation.actions.start() : this._animation.actions.stop();
   }
 
   getArrayBuffer(attribute) {
