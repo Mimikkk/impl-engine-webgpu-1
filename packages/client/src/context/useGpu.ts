@@ -1,11 +1,12 @@
 import { devtools } from 'zustand/middleware';
 import { create as createStore } from 'zustand';
-import { createEngine } from '@zd/engine';
+import { createEngine, createUpdateLoop, type UpdateLoop } from '@zd/engine';
 import exampleShader from '@assets/resources/shaders/example.wgsl?raw';
 import { Status } from '@typings/status.js';
-import { createUpdateLoop, type UpdateLoop } from '@zd/engine';
+import { ExampleName } from '../../renderers/htmls/examples.js';
 
 export interface ContextStore {
+  example: ExampleName;
   engine: Awaited<ReturnType<typeof createEngine>>;
   loop: UpdateLoop;
   state: {
@@ -15,6 +16,7 @@ export interface ContextStore {
     triangle(): void;
   };
   actions: {
+    changeExample: (example: ExampleName) => void;
     initialize: (canvas: HTMLCanvasElement) => Promise<void>;
   };
   status: Status;
@@ -27,6 +29,7 @@ let memo: any = undefined;
 export const useGpu = createStore<ContextStore>()(
   devtools(
     (set, get) => ({
+      example: (window.localStorage.getItem('selected-example') ?? 'Backdrop') as ExampleName,
       engine: null as never,
       loop: null as never,
       status: Status.Idle,
@@ -96,7 +99,7 @@ export const useGpu = createStore<ContextStore>()(
               },
             ],
           });
-          // create nice rgb gradient
+
           memo.color.r = (Math.sin(Date.now() / 1000) + 1) / 2;
           memo.color.g = (Math.cos(Date.now() / 1000) + 1) / 2;
           memo.color.b = (Math.sin(Date.now() / 1000) + 1) / 2;
@@ -112,13 +115,17 @@ export const useGpu = createStore<ContextStore>()(
         },
       },
       actions: {
+        changeExample: example => {
+          window.localStorage.setItem('selected-example', example);
+          set({ example });
+        },
         initialize: async canvas => {
           set({ status: Status.Pending });
 
           try {
             const engine = await createEngine(canvas);
             const loop = createUpdateLoop({
-              rendersPerSecond: 10,
+              rendersPerSecond: 60,
               updatesPerSecond: 20,
               update: () => {},
               blend: () => {},

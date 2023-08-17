@@ -1,39 +1,26 @@
 import { useStateRef } from '@hooks/useStateRef.js';
 import { useCallback, useEffect } from 'react';
-import { useAsync, useEvent } from 'react-use';
+import { useEvent } from 'react-use';
+import { Example } from '../../../../renderers/htmls/examples.js';
 import { useGpu } from '@context/useGpu.js';
-import { useStatusEffect } from '@hooks/useStatusEffect.js';
 
 export const Canvas = () => {
-  const [[canvas, parent], setRef] = useStateRef(
-    useCallback((node: HTMLCanvasElement) => [node, node?.parentElement ?? null] as const, []),
+  const example = useGpu(s => s.example);
+  const [[object, parent], setRef] = useStateRef(
+    useCallback((node: HTMLObjectElement) => [node, node?.parentElement ?? null] as const, []),
     [],
   );
 
   const resize = useCallback(() => {
-    if (!canvas || !parent) return;
-
+    if (!object || !parent) return;
     const { width, height } = parent.getBoundingClientRect();
-    canvas.height = Math.ceil(height);
-    canvas.width = Math.ceil(width);
-  }, [canvas, parent]);
+    object.style.height = `${Math.ceil(height)}px`;
+    object.style.width = `${Math.ceil(width)}px`;
+  }, [object, parent]);
 
   useEffect(resize, [parent]);
 
   useEvent('resize', resize);
 
-  const { actions, render, status } = useGpu();
-
-  useAsync(async () => {
-    if (!canvas) return;
-
-    await actions.initialize(canvas);
-  }, [canvas]);
-
-  useStatusEffect({
-    fn: render.triangle,
-    statuses: [status],
-  });
-
-  return <canvas ref={setRef} />;
+  return <object ref={setRef} type="text/html" data={`renderers/htmls/webgpu_${Example[example]}.html`} />;
 };
