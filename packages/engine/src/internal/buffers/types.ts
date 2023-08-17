@@ -1,6 +1,7 @@
 import type { TypeArray } from '../../types/typeArray.js';
 
 export type VertexBufferArray = Uint32Array | Int32Array | Float32Array;
+export type StorageBufferArray = Uint32Array | Int32Array | Float32Array;
 export interface CreateVertexBufferOptions {
   name: string;
   content?: VertexBufferArray;
@@ -33,6 +34,10 @@ export interface Buffers {
   index: {
     create(options: CreateIndexBufferOptions): GPUBuffer;
     write(item: string | GPUBuffer, content: IndexBufferArray): void;
+  };
+  storage: {
+    create(options: CreateIndexBufferOptions): GPUBuffer;
+    write(item: string | GPUBuffer, content: StorageBufferArray): void;
   };
   remove(item: string | GPUBuffer): void;
   write(item: string | GPUBuffer, content: TypeArray): void;

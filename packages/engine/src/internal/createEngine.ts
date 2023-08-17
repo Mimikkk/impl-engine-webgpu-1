@@ -27,6 +27,7 @@ export const createEngine = async (canvas: HTMLCanvasElement, options?: CreateOp
       format: navigator.gpu.getPreferredCanvasFormat(),
       alphaMode: mode,
       colorSpace: 'display-p3',
+      usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
     });
   };
   reset();
