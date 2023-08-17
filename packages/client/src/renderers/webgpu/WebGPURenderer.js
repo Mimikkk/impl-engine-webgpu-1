@@ -3,7 +3,7 @@ import { createAnimation } from '../common/Animation.ts';
 import RenderObjects from '../common/RenderObjects.js';
 import Attributes from '../common/Attributes.js';
 import Geometries from '../common/Geometries.js';
-import { createAnimationStatisticsState } from '../common/AnimationStatisticsState.js';
+import { createStatistics } from '../common/Statistics.ts';
 import Pipelines from '../common/Pipelines.js';
 import Bindings from '../common/Bindings.js';
 import RenderLists from '../common/RenderLists.js';
@@ -63,7 +63,7 @@ class WebGPURenderer {
     this._scissor = new Vector4(0, 0, this._width, this._height);
     this._scissorTest = false;
 
-    this.animationStatistics = null;
+    this.statistics = null;
     this._properties = null;
     this._attributes = null;
     this._geometries = null;
@@ -76,7 +76,7 @@ class WebGPURenderer {
     this._textures = null;
     this._background = null;
 
-    this._animation = createAnimation();
+    this._animation = createAnimation({ immediate: false });
 
     this._currentRenderContext = null;
     this._lastRenderContext = null;
@@ -126,12 +126,12 @@ class WebGPURenderer {
         return;
       }
 
-      this.animationStatistics = createAnimationStatisticsState();
+      this.statistics = createStatistics();
       this._nodes = new Nodes(this, backend);
       this._attributes = new Attributes(backend);
       this._background = new Background(this, this._nodes);
-      this._geometries = new Geometries(this._attributes, this.animationStatistics);
-      this._textures = new Textures(backend, this.animationStatistics);
+      this._geometries = new Geometries(this._attributes, this.statistics);
+      this._textures = new Textures(backend, this.statistics);
       this._pipelines = new Pipelines(backend, this._nodes);
       this._bindings = new Bindings(
         backend,
@@ -139,7 +139,7 @@ class WebGPURenderer {
         this._textures,
         this._attributes,
         this._pipelines,
-        this.animationStatistics,
+        this.statistics,
       );
       this._objects = new RenderObjects(
         this,
@@ -147,7 +147,7 @@ class WebGPURenderer {
         this._geometries,
         this._pipelines,
         this._bindings,
-        this.animationStatistics,
+        this.statistics,
       );
       this._renderLists = new RenderLists();
       this._renderContexts = new RenderContexts();
@@ -209,13 +209,13 @@ class WebGPURenderer {
 
     if (!this._animation.ongoing) nodeFrame.update();
 
-    if (scene.matrixWorldAutoUpdate === true) scene.updateMatrixWorld();
+    if (scene.matrixWorldAutoUpdate) scene.updateMatrixWorld();
 
     if (camera.parent === null && camera.matrixWorldAutoUpdate === true) camera.updateMatrixWorld();
 
-    if (this.animationStatistics.autoReset === true) this.animationStatistics.reset();
-
-    this.animationStatistics.render.frame++;
+    if (this.statistics.autoReset) this.statistics.reset();
+    console.log(this.statistics);
+    this.statistics.render.frame++;
 
     //
 
@@ -484,7 +484,7 @@ class WebGPURenderer {
     this._pipelines.dispose();
     this._nodes.dispose();
     this._bindings.dispose();
-    this.animationStatistics.dispose();
+    this.statistics.dispose();
     this._renderLists.dispose();
     this._renderContexts.dispose();
     this._textures.dispose();
@@ -711,7 +711,7 @@ class WebGPURenderer {
     this._geometries.updateForRender(renderObject);
     this._bindings.updateForRender(renderObject);
     this._pipelines.updateForRender(renderObject);
-    this.backend.draw(renderObject, this.animationStatistics);
+    this.backend.draw(renderObject, this.statistics);
   }
 }
 
