@@ -1,7 +1,7 @@
 import { useStateRef } from '@hooks/useStateRef.js';
 import { useCallback, useEffect } from 'react';
 import { useEvent } from 'react-use';
-import { Example } from '../../../../renderers/htmls/examples.js';
+import { Example } from '../../../renderers/htmls/examples.js';
 import { useGpu } from '@context/useGpu.js';
 
 export const Canvas = () => {
@@ -22,5 +22,5 @@ export const Canvas = () => {
 
   useEvent('resize', resize);
 
-  return <object ref={setRef} type="text/html" data={`renderers/htmls/webgpu_${Example[example]}.html`} />;
+  return <object ref={setRef} type="text/html" data={`src/renderers/htmls/webgpu_${Example[example]}.html`} />;
 };
