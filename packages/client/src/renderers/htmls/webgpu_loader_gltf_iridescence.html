@@ -24,11 +24,11 @@
 
   import * as THREE from 'three';
 
-  import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
 
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
   import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
   import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+  import { createRenderer } from '@/renderers/webgpu/createRenderer.js';
 
   let renderer, scene, camera, controls;
 
@@ -41,7 +41,7 @@
   async function init() {
 
 
-    renderer = new WebGPURenderer({ antialias: true });
+    renderer = createRenderer();
     renderer.setAnimationLoop(render);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);

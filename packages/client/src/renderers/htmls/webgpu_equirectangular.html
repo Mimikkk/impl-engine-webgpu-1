@@ -22,9 +22,9 @@
   import * as THREE from 'three';
   import { texture, equirectUV } from 'three/nodes';
 
-  import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
 
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+  import { createRenderer } from '@/renderers/webgpu/createRenderer.js';
 
   let camera, scene, renderer;
   let controls;
@@ -46,7 +46,7 @@
     scene = new THREE.Scene();
     scene.backgroundNode = texture(equirectTexture, equirectUV(), 0);
 
-    renderer = new WebGPURenderer();
+    renderer = createRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setAnimationLoop(render);

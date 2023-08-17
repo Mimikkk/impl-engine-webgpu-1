@@ -19,13 +19,13 @@
 
   import * as THREE from 'three';
 
-  import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
 
   import IESSpotLight from 'three/examples/jsm/lights/IESSpotLight.js';
 
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
   import { IESLoader } from 'three/examples/jsm/loaders/IESLoader.js';
+  import { createRenderer } from '@/renderers/webgpu/createRenderer.js';
 
   let renderer, scene, camera;
   let lights;
@@ -105,7 +105,7 @@
 
     //
 
-    renderer = new WebGPURenderer();
+    renderer = createRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setAnimationLoop(render);

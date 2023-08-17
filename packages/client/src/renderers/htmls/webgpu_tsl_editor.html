@@ -45,10 +45,10 @@
   import * as Nodes from 'three/nodes';
 
   import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js';
-  import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
   import WebGPUNodeBuilder from 'three/examples/jsm/renderers/webgpu/nodes/WGSLNodeBuilder.js';
 
   import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
+  import { createRenderer } from '@/renderers/webgpu/createRenderer.js';
 
   init();
 
@@ -76,7 +76,7 @@
 
     const rendererDOM = document.getElementById('renderer');
 
-    const renderer = new WebGPURenderer();
+    const renderer = createRenderer();
     renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(200, 200);

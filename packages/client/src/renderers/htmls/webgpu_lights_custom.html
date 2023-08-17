@@ -19,9 +19,9 @@
   import * as THREE from 'three';
   import { color, lights, toneMapping, MeshStandardNodeMaterial, PointsNodeMaterial, LightingModel } from 'three/nodes';
 
-  import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
 
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+  import { createRenderer } from '@/renderers/webgpu/createRenderer.js';
 
   class CustomLightingModel extends LightingModel {
 
@@ -105,7 +105,7 @@
 
     //
 
-    renderer = new WebGPURenderer();
+    renderer = createRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setAnimationLoop(animate);

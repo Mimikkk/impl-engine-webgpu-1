@@ -36,7 +36,7 @@
 
   import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 
-  import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
+  import { createRenderer } from '@/renderers/webgpu/createRenderer.js';
 
   let camera, scene, renderer;
 
@@ -55,7 +55,7 @@
 
     //
 
-    renderer = new WebGPURenderer();
+    renderer = createRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setAnimationLoop(animate);

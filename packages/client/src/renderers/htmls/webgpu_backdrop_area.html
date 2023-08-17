@@ -25,15 +25,15 @@
     uv,
     modelScale,
     MeshBasicNodeMaterial,
-  } from 'three/nodes';
+  } from 'three/examples/jsm/nodes/Nodes.js';
 
   import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 
   import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-  import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
 
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+  import { createRenderer } from '@/renderers/webgpu/createRenderer.js';
 
   let camera, scene, renderer;
   let mixer, clock;
@@ -113,7 +113,8 @@
 
     // renderer
 
-    renderer = new WebGPURenderer();
+    renderer = createRenderer({ antialias: false });
+
     renderer.stencil = false;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -162,7 +163,6 @@
   }
 
   function animate() {
-
     const delta = clock.getDelta();
 
     if (mixer) mixer.update(delta);

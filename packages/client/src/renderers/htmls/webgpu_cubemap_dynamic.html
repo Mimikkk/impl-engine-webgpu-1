@@ -18,28 +18,18 @@
 </div>
 
 
-<script type='importmap'>
-  {
-    "imports": {
-      "three": "../build/three.module.js",
-      "three/nodes": "./jsm/nodes/Nodes.js",
-      "three/examples/jsm/": "./jsm/"
-    }
-  }
-</script>
-
 <script type='module'>
 
   import * as THREE from 'three';
   import * as Nodes from 'three/nodes';
 
-  import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
 
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
   import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader.js';
 
   import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
   import Stats from 'three/examples/jsm/libs/stats.module.js';
+  import { createRenderer } from '@/renderers/webgpu/createRenderer.js';
 
   let camera, scene, renderer, stats;
   let cube, sphere, torus, material;
@@ -53,7 +43,7 @@
   function init() {
 
 
-    renderer = new WebGPURenderer( /*{ antialias: true }*/);
+    renderer = createRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setAnimationLoop(animation);

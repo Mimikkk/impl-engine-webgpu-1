@@ -1,23 +1,23 @@
 import {
   GPUFeatureName,
-  GPUTextureFormat,
+  GPUIndexFormat,
   GPULoadOp,
   GPUStoreOp,
-  GPUIndexFormat,
+  GPUTextureFormat,
   GPUTextureViewDimension,
 } from './utils/constants.js';
 
 import WebGPUNodeBuilder from './nodes/WebGPUNodeBuilder.js';
 
 import {
-  DepthTexture,
   DepthFormat,
   DepthStencilFormat,
+  DepthTexture,
   UnsignedInt248Type,
   UnsignedIntType,
-  WebGPUCoordinateSystem,
   Vector2,
   Vector4,
+  WebGPUCoordinateSystem,
 } from 'three';
 
 import { createUtilitiesState } from './utils/createUtilitiesState.js';
@@ -30,12 +30,12 @@ let vector2 = new Vector2();
 let vector4 = new Vector4();
 
 class CreateOrganizer {
-  constructor({ antialias = true, requiredLimits = {}, sampleCount = antialias ? 4 : 1, ...parameters } = {}) {
+  constructor(options = {}) {
+    const { antialias = true, requiredLimits = {}, sampleCount = antialias ? 4 : 1, ...parameters } = options;
     this.parameters = { antialias, sampleCount, requiredLimits, ...parameters };
-
     /** @type {WeakMap<object, object>} */
     this.resources = new WeakMap();
-    /** @type {WebGPURenderer} */
+    /** @type {CreateRenderer} */
     this.renderer = null;
     /** @type {HTMLCanvasElement} */
     this.canvas = null;
@@ -649,4 +649,5 @@ class CreateOrganizer {
     });
   }
 }
+
 export const createOrganizer = parameters => new CreateOrganizer(parameters);

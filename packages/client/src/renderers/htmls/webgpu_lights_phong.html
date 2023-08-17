@@ -26,7 +26,7 @@
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
   import { TeapotGeometry } from 'three/examples/jsm/geometries/TeapotGeometry.js';
 
-  import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
+  import { createRenderer } from '@/renderers/webgpu/createRenderer.js';
 
   let camera, scene, renderer,
     light1, light2, light3, light4,
@@ -115,7 +115,7 @@
 
     // renderer
 
-    renderer = new WebGPURenderer();
+    renderer = createRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setAnimationLoop(animate);

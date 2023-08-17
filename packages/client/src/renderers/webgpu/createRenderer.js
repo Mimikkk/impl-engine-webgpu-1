@@ -33,7 +33,7 @@ const _frustum = new Frustum();
 const _projScreenMatrix = new Matrix4();
 const _vector3 = new Vector3();
 
-class WebGPURenderer {
+class CreateRenderer {
   constructor(parameters = {}) {
     const backend = createOrganizer(parameters);
     this.domElement = backend.getDomElement();
@@ -214,7 +214,6 @@ class WebGPURenderer {
     if (camera.parent === null && camera.matrixWorldAutoUpdate === true) camera.updateMatrixWorld();
 
     if (this.statistics.autoReset) this.statistics.reset();
-    console.log(this.statistics);
     this.statistics.render.frame++;
 
     //
@@ -715,5 +714,4 @@ class WebGPURenderer {
   }
 }
 
-export default WebGPURenderer;
-export const createRenderer = () => new WebGPURenderer();
+export const createRenderer = () => new CreateRenderer();

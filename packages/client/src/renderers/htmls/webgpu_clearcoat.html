@@ -17,7 +17,6 @@
 
   import * as THREE from 'three';
 
-  import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
 
   import Stats from 'three/examples/jsm/libs/stats.module.js';
 
@@ -25,6 +24,7 @@
   import { HDRCubeTextureLoader } from 'three/examples/jsm/loaders/HDRCubeTextureLoader.js';
 
   import { FlakesTexture } from 'three/examples/jsm/textures/FlakesTexture.js';
+  import { createRenderer } from '@/renderers/webgpu/createRenderer.js';
 
   let container, stats;
 
@@ -168,7 +168,7 @@
 
     particleLight.add(new THREE.PointLight(0xffffff, 30));
 
-    renderer = new WebGPURenderer();
+    renderer = createRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);

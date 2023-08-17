@@ -33,7 +33,6 @@
     toneMapping,
   } from 'three/nodes';
 
-  import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
 
   import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader.js';
 
@@ -41,6 +40,7 @@
   import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
   import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
+  import { createRenderer } from '@/renderers/webgpu/createRenderer.js';
 
   let camera, scene, renderer;
 
@@ -147,7 +147,7 @@
 
     // renderer and controls
 
-    renderer = new WebGPURenderer();
+    renderer = createRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.toneMappingNode = toneMapping(THREE.LinearToneMapping, 1);

@@ -27,13 +27,13 @@
 
   import * as THREE from 'three';
 
-  import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
 
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
   import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
   import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
   import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
+  import { createRenderer } from '@/renderers/webgpu/createRenderer.js';
 
   let camera, scene, renderer, controls;
 
@@ -69,7 +69,7 @@
 
       });
 
-    renderer = new WebGPURenderer({ antialias: true });
+    renderer = createRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
