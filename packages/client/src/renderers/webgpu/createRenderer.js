@@ -90,21 +90,9 @@ class CreateRenderer {
     this._clearStencil = 0;
 
     this._renderTarget = null;
-    this._currentActiveCubeFace = 0;
 
     this._initialized = false;
     this._initPromise = null;
-
-    // backwards compatibility
-
-    this.shadowMap = {
-      enabled: false,
-      type: null,
-    };
-
-    this.xr = {
-      enabled: false,
-    };
   }
 
   async initialize() {
@@ -714,4 +702,4 @@ class CreateRenderer {
   }
 }
 
-export const createRenderer = () => new CreateRenderer();
+export const createRenderer = parameters => new CreateRenderer(parameters);
