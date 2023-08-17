@@ -1,5 +1,5 @@
 import { createOrganizer } from './createOrganizer.js';
-import Animation from '../common/Animation.js';
+import { createAnimation } from '../common/Animation.ts';
 import RenderObjects from '../common/RenderObjects.js';
 import Attributes from '../common/Attributes.js';
 import Geometries from '../common/Geometries.js';
@@ -76,7 +76,7 @@ class WebGPURenderer {
     this._textures = null;
     this._background = null;
 
-    this._animation = new Animation();
+    this._animation = createAnimation();
 
     this._currentRenderContext = null;
     this._lastRenderContext = null;
@@ -107,7 +107,7 @@ class WebGPURenderer {
     };
   }
 
-  async init() {
+  async initialize() {
     if (this._initialized) {
       throw new Error('Renderer: Backend has already been initialized.');
     }
@@ -154,7 +154,7 @@ class WebGPURenderer {
 
       //
 
-      this._animation.setNodes(this._nodes);
+      this._animation.nodes = this._nodes;
       this._animation.start();
 
       this._initialized = true;
@@ -174,7 +174,7 @@ class WebGPURenderer {
   }
 
   async render(scene, camera) {
-    if (this._initialized === false) await this.init();
+    if (this._initialized === false) await this.initialize();
 
     // preserve render tree
 
@@ -207,7 +207,7 @@ class WebGPURenderer {
 
     //
 
-    if (this._animation.isAnimating === false) nodeFrame.update();
+    if (!this._animation.ongoing) nodeFrame.update();
 
     if (scene.matrixWorldAutoUpdate === true) scene.updateMatrixWorld();
 
@@ -311,14 +311,11 @@ class WebGPURenderer {
     sceneRef.onAfterRender(this, scene, camera, renderTarget);
   }
 
-  setAnimationLoop(callback) {
-    if (this._initialized === false) this.init();
+  setAnimationLoop(animate) {
+    if (!this._initialized) this.initialize();
 
-    const animation = this._animation;
-
-    animation.setAnimationLoop(callback);
-
-    callback === null ? animation.stop() : animation.start();
+    this._animation.animate = animate;
+    !animate ? this._animation.stop() : this._animation.start();
   }
 
   getArrayBuffer(attribute) {
@@ -506,7 +503,7 @@ class WebGPURenderer {
   }
 
   async compute(computeNodes) {
-    if (this._initialized === false) await this.init();
+    if (this._initialized === false) await this.initialize();
 
     const backend = this.backend;
     const pipelines = this._pipelines;
