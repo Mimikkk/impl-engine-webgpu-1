@@ -18,16 +18,6 @@ class UniformsGroup extends UniformBuffer {
     return this;
   }
 
-  removeUniform(uniform) {
-    const index = this.uniforms.indexOf(uniform);
-
-    if (index !== -1) {
-      this.uniforms.splice(index, 1);
-    }
-
-    return this;
-  }
-
   get buffer() {
     let buffer = this._buffer;
 

@@ -1,5 +1,5 @@
 import DataMap from './DataMap.ts';
-import ChainMap from './ChainMap.js';
+import ChainMap from './ChainMap.ts';
 import RenderObject from './RenderObject.js';
 
 class RenderObjects {

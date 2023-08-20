@@ -1,28 +1,28 @@
-import ChainMap from './ChainMap.js';
+import ChainMap from './ChainMap.ts';
 import RenderList from './RenderList.js';
 
 class RenderLists {
-	constructor() {
-		this.lists = new ChainMap();
-	}
+  constructor() {
+    this.lists = new ChainMap();
+  }
 
-	get(scene, camera) {
-		const lists = this.lists;
-		const keys = [scene, camera];
+  get(scene, camera) {
+    const lists = this.lists;
+    const keys = [scene, camera];
 
-		let list = lists.get(keys);
+    let list = lists.get(keys);
 
-		if (list === undefined) {
-			list = new RenderList();
-			lists.set(keys, list);
-		}
+    if (list === undefined) {
+      list = new RenderList();
+      lists.set(keys, list);
+    }
 
-		return list;
-	}
+    return list;
+  }
 
-	dispose() {
-		this.lists = new ChainMap();
-	}
+  dispose() {
+    this.lists = new ChainMap();
+  }
 }
 
 export default RenderLists;
