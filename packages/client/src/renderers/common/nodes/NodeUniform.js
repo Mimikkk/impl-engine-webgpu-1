@@ -8,7 +8,7 @@ import {
   Matrix4Uniform,
 } from '../Uniform.ts';
 
-class FloatNodeUniform extends FloatUniform {
+export class FloatNodeUniform extends FloatUniform {
   constructor(nodeUniform) {
     super(nodeUniform.name, nodeUniform.value);
 
@@ -20,7 +20,7 @@ class FloatNodeUniform extends FloatUniform {
   }
 }
 
-class Vector2NodeUniform extends Vector2Uniform {
+export class Vector2NodeUniform extends Vector2Uniform {
   constructor(nodeUniform) {
     super(nodeUniform.name, nodeUniform.value);
 
@@ -32,7 +32,7 @@ class Vector2NodeUniform extends Vector2Uniform {
   }
 }
 
-class Vector3NodeUniform extends Vector3Uniform {
+export class Vector3NodeUniform extends Vector3Uniform {
   constructor(nodeUniform) {
     super(nodeUniform.name, nodeUniform.value);
 
@@ -44,7 +44,7 @@ class Vector3NodeUniform extends Vector3Uniform {
   }
 }
 
-class Vector4NodeUniform extends Vector4Uniform {
+export class Vector4NodeUniform extends Vector4Uniform {
   constructor(nodeUniform) {
     super(nodeUniform.name, nodeUniform.value);
 
@@ -56,7 +56,7 @@ class Vector4NodeUniform extends Vector4Uniform {
   }
 }
 
-class ColorNodeUniform extends ColorUniform {
+export class ColorNodeUniform extends ColorUniform {
   constructor(nodeUniform) {
     super(nodeUniform.name, nodeUniform.value);
 
@@ -68,7 +68,7 @@ class ColorNodeUniform extends ColorUniform {
   }
 }
 
-class Matrix3NodeUniform extends Matrix3Uniform {
+export class Matrix3NodeUniform extends Matrix3Uniform {
   constructor(nodeUniform) {
     super(nodeUniform.name, nodeUniform.value);
 
@@ -80,7 +80,7 @@ class Matrix3NodeUniform extends Matrix3Uniform {
   }
 }
 
-class Matrix4NodeUniform extends Matrix4Uniform {
+export class Matrix4NodeUniform extends Matrix4Uniform {
   constructor(nodeUniform) {
     super(nodeUniform.name, nodeUniform.value);
 
@@ -91,13 +91,3 @@ class Matrix4NodeUniform extends Matrix4Uniform {
     return this.nodeUniform.value;
   }
 }
-
-export {
-  FloatNodeUniform,
-  Vector2NodeUniform,
-  Vector3NodeUniform,
-  Vector4NodeUniform,
-  ColorNodeUniform,
-  Matrix3NodeUniform,
-  Matrix4NodeUniform,
-};

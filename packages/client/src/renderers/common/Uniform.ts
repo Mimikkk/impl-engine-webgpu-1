@@ -1,6 +1,6 @@
 import { Color, Matrix3, Matrix4, Vector2, Vector3, Vector4 } from 'three';
 
-class FloatUniform {
+export class FloatUniform {
   name: string;
   boundary: number;
   itemSize: number;
@@ -18,7 +18,7 @@ class FloatUniform {
   }
 }
 
-class Vector2Uniform {
+export class Vector2Uniform {
   name: string;
   boundary: number;
   itemSize: number;
@@ -36,7 +36,7 @@ class Vector2Uniform {
   }
 }
 
-class Vector3Uniform {
+export class Vector3Uniform {
   name: string;
   boundary: number;
   itemSize: number;
@@ -54,7 +54,7 @@ class Vector3Uniform {
   }
 }
 
-class Vector4Uniform {
+export class Vector4Uniform {
   name: string;
   boundary: number;
   itemSize: number;
@@ -72,7 +72,7 @@ class Vector4Uniform {
   }
 }
 
-class ColorUniform {
+export class ColorUniform {
   name: string;
   boundary: number;
   itemSize: number;
@@ -90,7 +90,7 @@ class ColorUniform {
   }
 }
 
-class Matrix3Uniform {
+export class Matrix3Uniform {
   name: string;
   boundary: number;
   itemSize: number;
@@ -108,7 +108,7 @@ class Matrix3Uniform {
   }
 }
 
-class Matrix4Uniform {
+export class Matrix4Uniform {
   name: string;
   boundary: number;
   itemSize: number;
@@ -125,5 +125,3 @@ class Matrix4Uniform {
     this.itemSize = 16;
   }
 }
-
-export { FloatUniform, Vector2Uniform, Vector3Uniform, Vector4Uniform, ColorUniform, Matrix3Uniform, Matrix4Uniform };

@@ -96,10 +96,6 @@ class RenderList {
     this.lightsArray.push(light);
   }
 
-  getLightsNode() {
-    return this.lightsNode.fromLights(this.lightsArray);
-  }
-
   sort(customOpaqueSort, customTransparentSort) {
     if (this.opaque.length > 1) this.opaque.sort(customOpaqueSort || painterSortStable);
     if (this.transparent.length > 1) this.transparent.sort(customTransparentSort || reversePainterSortStable);

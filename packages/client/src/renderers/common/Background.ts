@@ -10,7 +10,7 @@ import {
   normalWorld,
   vec4,
 } from 'three/examples/jsm/nodes/Nodes.js';
-import { CreateRenderer } from '../webgpu/createRenderer.js';
+import { Renderer } from '../webgpu/createRenderer.js';
 import Nodes from './nodes/Nodes.js';
 import RenderList from './RenderList.js';
 import { RenderContext } from './RenderContext.js';
@@ -19,7 +19,7 @@ import DataMap from './DataMap.js';
 let _clearAlpha: number;
 const _clearColor = new Color();
 
-export const createBackground = (renderer: CreateRenderer, nodes: Nodes) => {
+export const createBackground = (renderer: Renderer, nodes: Nodes) => {
   let map = new DataMap<any>();
   let backgroundMesh: any = null;
   let backgroundMeshNode: any = null;
@@ -65,7 +65,7 @@ export const createBackground = (renderer: CreateRenderer, nodes: Nodes) => {
           backgroundMesh = backgroundMesh = new Mesh(new SphereGeometry(1, 32, 32), nodeMaterial);
           backgroundMesh.frustumCulled = false;
 
-          backgroundMesh.onBeforeRender = function (renderer: CreateRenderer, scene: any, camera: any) {
+          backgroundMesh.onBeforeRender = function (renderer: Renderer, scene: any, camera: any) {
             this.matrixWorld.copyPosition(camera.matrixWorld);
           };
         }

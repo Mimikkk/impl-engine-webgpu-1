@@ -1,6 +1,6 @@
 import DataMap from './DataMap.ts';
 import ChainMap from './ChainMap.ts';
-import RenderObject from './RenderObject.js';
+import RenderObject from './RenderObject.ts';
 
 class RenderObjects {
   constructor(renderer, nodes, geometries, pipelines, bindings, info) {

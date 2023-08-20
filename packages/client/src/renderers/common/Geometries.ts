@@ -42,6 +42,11 @@ const getWireframeIndex = (geometry: Geometry) => {
   return attribute;
 };
 
+export interface Geometries {
+  updateForRender: (renderObject: RenderObject) => void;
+  getIndex: (renderObject: RenderObject) => any;
+}
+
 export const createGeometries = (attributes: Attributes, statistics: Statistics) => {
   const map = new WeakMap();
   const attributeFrame = new WeakMap();

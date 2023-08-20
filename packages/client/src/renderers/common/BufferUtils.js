@@ -1,23 +1,8 @@
 import { Std140ChunkBytes } from './Constants.ts';
 
-function getFloatLength(floatLength) {
-  // ensure chunk size alignment (STD140 layout)
+export const getFloatLength = floatLength =>
+  floatLength + ((Std140ChunkBytes - (floatLength % Std140ChunkBytes)) % Std140ChunkBytes);
 
-  return floatLength + ((Std140ChunkBytes - (floatLength % Std140ChunkBytes)) % Std140ChunkBytes);
-}
+export const getVectorLength = (count, vectorLength = 4) => getFloatLength(getStrideLength(vectorLength) * count);
 
-function getVectorLength(count, vectorLength = 4) {
-  const strideLength = getStrideLength(vectorLength);
-
-  const floatLength = strideLength * count;
-
-  return getFloatLength(floatLength);
-}
-
-function getStrideLength(vectorLength) {
-  const strideLength = 4;
-
-  return vectorLength + ((strideLength - (vectorLength % strideLength)) % strideLength);
-}
-
-export { getFloatLength, getVectorLength, getStrideLength };
+export const getStrideLength = length => length + ((4 - (length % 4)) % 4);

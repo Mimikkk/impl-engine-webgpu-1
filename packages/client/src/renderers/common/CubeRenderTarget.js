@@ -14,8 +14,6 @@ import { texture as TSL_Texture } from 'three/examples/jsm/nodes/accessors/Textu
 import { positionWorldDirection } from 'three/examples/jsm/nodes/accessors/PositionNode.js';
 import { createNodeMaterialFromType } from 'three/examples/jsm/nodes/materials/NodeMaterial.js';
 
-// @TODO: Consider rename WebGLCubeRenderTarget to just CubeRenderTarget
-
 class CubeRenderTarget extends WebGLCubeRenderTarget {
   constructor(size = 1, options = {}) {
     super(size, options);

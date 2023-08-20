@@ -6,7 +6,7 @@ import { createGeometries } from '../common/Geometries.ts';
 import { createStatistics } from '../common/createStatistics.ts';
 import Pipelines from '../common/Pipelines.js';
 import Bindings from '../common/Bindings.js';
-import RenderLists from '../common/RenderLists.js';
+import { createRenderLists } from '../common/RenderLists.ts';
 import RenderContexts from '../common/RenderContexts.js';
 import { createTextures } from '../common/Textures.ts';
 import { createBackground } from '../common/Background.ts';
@@ -33,7 +33,7 @@ const _frustum = new Frustum();
 const _projScreenMatrix = new Matrix4();
 const _vector3 = new Vector3();
 
-export class CreateRenderer {
+export class Renderer {
   constructor(parameters = {}) {
     const backend = createOrganizer(parameters);
     this.domElement = backend.getDomElement();
@@ -141,7 +141,7 @@ export class CreateRenderer {
         this._bindings,
         this.statistics,
       );
-      this._renderLists = new RenderLists();
+      this._renderLists = createRenderLists();
       this._renderContexts = new RenderContexts();
 
       //
@@ -247,7 +247,7 @@ export class CreateRenderer {
     _projScreenMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
     _frustum.setFromProjectionMatrix(_projScreenMatrix, coordinateSystem);
 
-    const renderList = this._renderLists.get(scene, camera);
+    const renderList = this._renderLists.get([scene, camera]);
     renderList.init();
 
     this._projectObject(scene, camera, 0, renderList);
@@ -706,4 +706,4 @@ export class CreateRenderer {
   }
 }
 
-export const createRenderer = parameters => new CreateRenderer(parameters);
+export const createRenderer = parameters => new Renderer(parameters);
