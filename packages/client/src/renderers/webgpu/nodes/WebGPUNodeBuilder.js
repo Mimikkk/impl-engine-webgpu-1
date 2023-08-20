@@ -1,6 +1,6 @@
 import { RenderTarget, NoColorSpace } from 'three';
 
-import UniformsGroup from '../../common/UniformsGroup.js';
+import UniformsGroup from '../../common/UniformsGroup.ts';
 import {
   FloatNodeUniform,
   Vector2NodeUniform,

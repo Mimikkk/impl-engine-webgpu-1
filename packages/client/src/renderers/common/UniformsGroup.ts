@@ -1,20 +1,33 @@
-import UniformBuffer from './UniformBuffer.ts';
-import { Std140ChunkBytes } from './Constants.ts';
+//@ts-nocheck
+import { Std140ChunkBytes } from './Constants.js';
+import { BindingState, createBinding, ShaderStage } from './Binding.js';
 
-class UniformsGroup extends UniformBuffer {
-  constructor(name) {
-    super(name);
+class UniformsGroup {
+  name: string;
+  bytesPerElement: number;
+  _buffer: ArrayBuffer;
+  binding: BindingState;
+  isUniformBuffer: boolean;
+  isUniformsGroup: boolean;
+  uniforms: any[];
 
+  constructor(name: string) {
     this.isUniformsGroup = true;
-
-    // the order of uniforms in this array must match the order of uniforms in the shader
-
     this.uniforms = [];
+    this.bytesPerElement = Float32Array.BYTES_PER_ELEMENT;
+    this._buffer = null as unknown as ArrayBuffer;
+    this.name = name;
+    this.binding = createBinding(name);
+    this.isUniformBuffer = true;
+  }
+
+  setVisibility = (visibility: ShaderStage) => this.binding.actions.visibility.toggle(visibility);
+  get visibility() {
+    return this.binding.state.visibility;
   }
 
   addUniform(uniform) {
     this.uniforms.push(uniform);
-
     return this;
   }
 
@@ -224,12 +237,9 @@ class UniformsGroup extends UniformBuffer {
   }
 }
 
-function arraysEqual(a, b, offset) {
-  for (let i = 0, l = b.length; i < l; i++) {
-    if (a[offset + i] !== b[i]) return false;
-  }
-
+const arraysEqual = (a: any[], b: any[], offset: number) => {
+  for (let i = 0, l = b.length; i < l; i++) if (a[offset + i] !== b[i]) return false;
   return true;
-}
+};
 
 export default UniformsGroup;
