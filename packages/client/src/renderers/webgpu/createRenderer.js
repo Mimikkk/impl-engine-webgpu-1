@@ -3,7 +3,7 @@ import { createUpdateLoop } from '../common/createUpdateLoop.ts';
 import RenderObjects from '../common/RenderObjects.js';
 import AttributeState from '../common/AttributeState.ts';
 import Geometries from '../common/Geometries.js';
-import { createStatistics } from '../common/Statistics.ts';
+import { createStatistics } from '../common/createStatistics.ts';
 import Pipelines from '../common/Pipelines.js';
 import Bindings from '../common/Bindings.js';
 import RenderLists from '../common/RenderLists.js';

@@ -1,8 +1,9 @@
-import DataMap from './DataMap.js';
+import DataMap, { createDataMap } from './DataMap.js';
 import { AttributeType } from './Constants.js';
 import { DynamicDrawUsage } from 'three';
 import type { Organizer } from '../webgpu/createOrganizer.js';
 
+// TODO - this is a mess
 type Attribute = {
   version: any;
   /** whether inner buffer's layout contains attributes of multiple types */
@@ -12,11 +13,11 @@ type Attribute = {
 };
 
 class AttributeState {
-  map = new DataMap<Attribute>();
+  map: DataMap<Attribute>;
   api: Organizer;
 
   constructor(api: Organizer) {
-    this.map = new DataMap();
+    this.map = createDataMap(() => ({}) as Attribute);
     this.api = api;
   }
 

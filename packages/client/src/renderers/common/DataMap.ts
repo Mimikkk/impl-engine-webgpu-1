@@ -1,11 +1,16 @@
 class DataMap<T extends {}> {
   map = new WeakMap<object, T>();
+  create: () => T;
 
-  get(object: any) {
+  constructor(create: () => T = () => ({}) as T) {
+    this.create = create;
+  }
+
+  get(object: T) {
     let item = this.map.get(object);
 
     if (!item) {
-      item = {} as T;
+      item = this.create();
       this.map.set(object, item);
     }
 
@@ -28,3 +33,4 @@ class DataMap<T extends {}> {
 }
 
 export default DataMap;
+export const createDataMap = <T extends {}>(create: () => T) => new DataMap<T>(create);
