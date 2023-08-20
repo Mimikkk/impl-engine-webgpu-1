@@ -3,12 +3,13 @@ import { Texture } from 'three';
 
 let id = 0;
 
-export class SampledTexture {
+export class SampledCubemap {
   name: string;
   texture: Texture;
   version: number;
   id: number;
   isSampledTexture: boolean;
+  isSampledCubeTexture: boolean;
   binding: BindingState;
 
   constructor(name: string, texture: Texture) {
@@ -19,6 +20,7 @@ export class SampledTexture {
     this.texture = texture;
     this.version = texture.version;
     this.isSampledTexture = true;
+    this.isSampledCubeTexture = true;
   }
 
   get needsBindingsUpdate() {
@@ -35,10 +37,5 @@ export class SampledTexture {
     }
 
     return false;
-  }
-
-  setVisibility = (visibility: ShaderStage) => this.binding.actions.visibility.toggle(visibility);
-  get visibility() {
-    return this.binding.state.visibility;
   }
 }

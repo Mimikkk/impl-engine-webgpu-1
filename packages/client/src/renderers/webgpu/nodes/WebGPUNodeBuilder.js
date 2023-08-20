@@ -11,7 +11,7 @@ import {
   Matrix4NodeUniform,
 } from '../../common/nodes/NodeUniform.js';
 import NodeSampler, { createNodeSampler } from '../../common/nodes/NodeSampler.ts';
-import { NodeSampledTexture, NodeSampledCubemap } from '../../common/nodes/NodeSampledTexture.js';
+import { NodeSampledTexture, NodeSampledCubemap } from '../../common/nodes/NodeSampledTexture.ts';
 
 import UniformBuffer from '../../common/UniformBuffer.js';
 import StorageBuffer from '../../common/StorageBuffer.js';
