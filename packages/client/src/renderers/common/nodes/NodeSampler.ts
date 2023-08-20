@@ -3,6 +3,7 @@ import { TextureNode } from 'three/examples/jsm/nodes/Nodes.js';
 import { Texture } from 'three';
 
 class NodeSampler {
+  name: string;
   binding: BindingState;
   texture: Texture;
   version: any;

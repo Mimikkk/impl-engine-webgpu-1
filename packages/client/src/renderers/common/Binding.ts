@@ -26,24 +26,11 @@ export namespace ShaderStage {
   export const { toNames, toValues, toString } = withFlagMethods<ShaderStage>(ShaderStage);
 }
 
-class Binding {
-  name: string;
-  visibility: ShaderStage;
-
-  constructor(name: string = '', visibility: ShaderStage = ShaderStage.None) {
-    this.name = name;
-    this.visibility = visibility;
-  }
-
-  setVisibility(visibility: ShaderStage) {
-    this.visibility |= visibility;
-  }
-}
-
-export default Binding;
-
 export interface BindingState {
-  state: { visibility: ShaderStage; name: string };
+  state: {
+    name: string;
+    visibility: ShaderStage;
+  };
   actions: {
     visibility: {
       set: (visibility: ShaderStage) => ShaderStage;

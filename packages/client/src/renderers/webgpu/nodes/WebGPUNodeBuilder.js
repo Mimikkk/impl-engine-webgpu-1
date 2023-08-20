@@ -11,7 +11,7 @@ import {
   Matrix4NodeUniform,
 } from '../../common/nodes/NodeUniform.js';
 import NodeSampler, { createNodeSampler } from '../../common/nodes/NodeSampler.ts';
-import { NodeSampledTexture, NodeSampledCubeTexture } from '../../common/nodes/NodeSampledTexture.js';
+import { NodeSampledTexture, NodeSampledCubemap } from '../../common/nodes/NodeSampledTexture.js';
 
 import UniformBuffer from '../../common/UniformBuffer.js';
 import StorageBuffer from '../../common/StorageBuffer.js';
@@ -230,7 +230,7 @@ class WebGPUNodeBuilder extends NodeBuilder {
         if (type === 'texture') {
           texture = new NodeSampledTexture(uniformNode.name, uniformNode.node);
         } else if (type === 'cubeTexture') {
-          texture = new NodeSampledCubeTexture(uniformNode.name, uniformNode.node);
+          texture = new NodeSampledCubemap(uniformNode.name, uniformNode.node);
         }
 
         texture.setVisibility(gpuShaderStageLib[shaderStage]);

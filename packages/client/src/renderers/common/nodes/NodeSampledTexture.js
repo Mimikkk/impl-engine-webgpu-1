@@ -1,4 +1,4 @@
-import { SampledCubeTexture, SampledTexture } from '../SampledTexture.ts';
+import { SampledCubemap, SampledTexture } from '../SampledTexture.ts';
 
 class NodeSampledTexture extends SampledTexture {
   constructor(name, textureNode) {
@@ -6,10 +6,10 @@ class NodeSampledTexture extends SampledTexture {
   }
 }
 
-class NodeSampledCubeTexture extends SampledCubeTexture {
+class NodeSampledCubemap extends SampledCubemap {
   constructor(name, textureNode) {
     super(name, textureNode.value);
   }
 }
 
-export { NodeSampledTexture, NodeSampledCubeTexture };
+export { NodeSampledTexture, NodeSampledCubemap };
