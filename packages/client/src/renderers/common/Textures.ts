@@ -152,9 +152,5 @@ export const createTextures = (backend: Organizer, info: Statistics) => {
     }
   };
 
-  return {
-    updateRenderTarget,
-    updateTexture,
-    get: (object: object) => map.get(object),
-  };
+  return { updateRenderTarget, updateTexture, get: (object: object) => map.get(object) };
 };
