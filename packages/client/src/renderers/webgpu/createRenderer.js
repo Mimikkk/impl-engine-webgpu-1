@@ -1,8 +1,8 @@
 import { createOrganizer } from './createOrganizer.js';
 import { createUpdateLoop } from '../common/createUpdateLoop.ts';
 import RenderObjects from '../common/RenderObjects.js';
-import AttributeState from '../common/AttributeState.ts';
-import Geometries from '../common/Geometries.js';
+import Attributes from '../common/Attributes.ts';
+import { createGeometries } from '../common/Geometries.ts';
 import { createStatistics } from '../common/createStatistics.ts';
 import Pipelines from '../common/Pipelines.js';
 import Bindings from '../common/Bindings.js';
@@ -120,9 +120,9 @@ export class CreateRenderer {
 
       this.statistics = createStatistics();
       this._nodes = new Nodes(this, backend);
-      this._attributes = new AttributeState(backend);
+      this._attributes = new Attributes(backend);
       this._background = createBackground(this, this._nodes);
-      this._geometries = new Geometries(this._attributes, this.statistics);
+      this._geometries = createGeometries(this._attributes, this.statistics);
       this._textures = createTextures(backend, this.statistics);
       this._pipelines = new Pipelines(backend, this._nodes);
       this._bindings = new Bindings(

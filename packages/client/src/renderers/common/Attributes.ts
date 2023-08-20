@@ -12,7 +12,7 @@ type Attribute = {
   usage: any;
 };
 
-class AttributeState {
+class Attributes {
   map: DataMap<Attribute>;
   api: Organizer;
 
@@ -57,4 +57,4 @@ class AttributeState {
   }
 }
 
-export default AttributeState;
+export default Attributes;

@@ -8,7 +8,7 @@ type Texture = any;
 type RenderTarget = any;
 
 export const createTextures = (backend: Organizer, info: Statistics) => {
-  const map = new DataMap<Texture>();
+  const map = new DataMap<Texture | RenderTarget>();
   const getSize = (texture: Texture, target = _size) => {
     if (texture.isCubeTexture) {
       target.width = texture.image[0].width;
@@ -100,24 +100,23 @@ export const createTextures = (backend: Organizer, info: Statistics) => {
 
     textureData.version = texture.version;
   };
-  function updateRenderTarget(renderTarget: RenderTarget) {
-    const renderTargetData = map.get(renderTarget);
-    const sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
-
-    const texture = renderTarget.texture;
+  const updateRenderTarget = (targetCpu: RenderTarget) => {
+    const targetGpu = map.get(targetCpu);
+    const sampleCount = targetCpu.samples || 1;
+    const texture = targetCpu.texture;
     const size = getSize(texture);
 
-    let depthTexture = renderTarget.depthTexture || renderTargetData.depthTexture;
+    let depthTexture = targetCpu.depthTexture || targetGpu.depthTexture;
 
-    if (depthTexture === undefined) {
-      depthTexture = new DepthTexture();
+    if (!depthTexture) {
+      depthTexture = new DepthTexture(0, 0);
       depthTexture.format = DepthStencilFormat;
       depthTexture.type = UnsignedInt248Type;
       depthTexture.image.width = size.width;
       depthTexture.image.height = size.height;
     }
 
-    if (renderTargetData.width !== size.width || size.height !== renderTargetData.height) {
+    if (targetGpu.width !== size.width || size.height !== targetGpu.height) {
       texture.needsUpdate = true;
       depthTexture.needsUpdate = true;
 
@@ -125,40 +124,37 @@ export const createTextures = (backend: Organizer, info: Statistics) => {
       depthTexture.image.height = size.height;
     }
 
-    renderTargetData.width = size.width;
-    renderTargetData.height = size.height;
-    renderTargetData.texture = texture;
-    renderTargetData.depthTexture = depthTexture;
+    targetGpu.width = size.width;
+    targetGpu.height = size.height;
+    targetGpu.texture = texture;
+    targetGpu.depthTexture = depthTexture;
 
-    if (renderTargetData.sampleCount !== sampleCount) {
+    if (targetGpu.sampleCount !== sampleCount) {
       texture.needsUpdate = true;
       depthTexture.needsUpdate = true;
 
-      renderTargetData.sampleCount = sampleCount;
+      targetGpu.sampleCount = sampleCount;
     }
 
     const options = { sampleCount };
-
     updateTexture(texture, options);
     updateTexture(depthTexture, options);
-
-    // dispose handler
-
-    if (renderTargetData.initialized !== true) {
-      renderTargetData.initialized = true;
-
-      // dispose
+    if (!targetGpu.initialized) {
+      targetGpu.initialized = true;
 
       const onDispose = () => {
-        renderTarget.removeEventListener('dispose', onDispose);
-
+        targetCpu.removeEventListener('dispose', onDispose);
         destroyTexture(texture);
         destroyTexture(depthTexture);
       };
 
-      renderTarget.addEventListener('dispose', onDispose);
+      targetCpu.addEventListener('dispose', onDispose);
     }
-  }
+  };
 
-  return { updateRenderTarget, updateTexture };
+  return {
+    updateRenderTarget,
+    updateTexture,
+    get: (object: object) => map.get(object),
+  };
 };
