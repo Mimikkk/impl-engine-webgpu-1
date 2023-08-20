@@ -9,7 +9,7 @@ import Bindings from '../common/Bindings.js';
 import RenderLists from '../common/RenderLists.js';
 import RenderContexts from '../common/RenderContexts.js';
 import Textures from '../common/Textures.js';
-import Background from '../common/Background.js';
+import { createBackground } from '../common/Background.ts';
 import Nodes from '../common/nodes/Nodes.js';
 import {
   BackSide,
@@ -121,7 +121,7 @@ export class CreateRenderer {
       this.statistics = createStatistics();
       this._nodes = new Nodes(this, backend);
       this._attributes = new AttributeState(backend);
-      this._background = new Background(this, this._nodes);
+      this._background = createBackground(this, this._nodes);
       this._geometries = new Geometries(this._attributes, this.statistics);
       this._textures = new Textures(backend, this.statistics);
       this._pipelines = new Pipelines(backend, this._nodes);
