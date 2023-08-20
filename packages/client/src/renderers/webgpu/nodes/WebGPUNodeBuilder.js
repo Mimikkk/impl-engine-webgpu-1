@@ -16,7 +16,7 @@ import { NodeSampledCubemap } from '../../common/nodes/NodeSampledCubemap.ts';
 
 import UniformBuffer from '../../common/UniformBuffer.ts';
 import StorageBuffer from '../../common/StorageBuffer.ts';
-import { getVectorLength, getStrideLength } from '../../common/BufferUtils.js';
+import { getVectorLength, getStrideLength } from '../../common/BufferUtils.ts';
 
 import CubeRenderTarget from '../../common/CubeRenderTarget.js';
 
