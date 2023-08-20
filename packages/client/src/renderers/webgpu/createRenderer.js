@@ -78,8 +78,8 @@ export class CreateRenderer {
 
     this._animation = createUpdateLoop({
       immediate: false,
-      updatesPerSecond: 10,
-      rendersPerSecond: 10,
+      updatesPerSecond: 2,
+      rendersPerSecond: 2,
     });
 
     this._currentRenderContext = null;

@@ -38,4 +38,9 @@ export class SampledCubemap {
 
     return false;
   }
+
+  setVisibility = (visibility: ShaderStage) => this.binding.actions.visibility.toggle(visibility);
+  get visibility() {
+    return this.binding.state.visibility;
+  }
 }
