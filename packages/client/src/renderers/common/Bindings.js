@@ -12,7 +12,8 @@ class Bindings extends DataMap {
     this.nodes = nodes;
     this.info = info;
 
-    this.pipelines.bindings = this; // assign bindings to pipelines
+    // assign bindings to pipelines
+    this.pipelines.bindings = this;
 
     this.updateMap = new WeakMap();
   }

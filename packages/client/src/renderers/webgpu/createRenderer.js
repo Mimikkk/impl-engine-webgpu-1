@@ -1,13 +1,13 @@
 import { createOrganizer } from './createOrganizer.js';
 import { createUpdateLoop } from '../common/createUpdateLoop.ts';
-import RenderObjects from '../common/RenderObjects.js';
+import RenderObjects from '../common/RenderObjects.ts';
 import Attributes from '../common/Attributes.ts';
 import { createGeometries } from '../common/Geometries.ts';
 import { createStatistics } from '../common/createStatistics.ts';
-import Pipelines from '../common/Pipelines.js';
+import Pipelines from '../common/Pipelines.ts';
 import Bindings from '../common/Bindings.js';
 import { createRenderLists } from '../common/RenderLists.ts';
-import RenderContexts from '../common/RenderContexts.js';
+import { createRenderContexts } from '../common/RenderContexts.ts';
 import { createTextures } from '../common/Textures.ts';
 import { createBackground } from '../common/Background.ts';
 import Nodes from '../common/nodes/Nodes.js';
@@ -142,7 +142,7 @@ export class Renderer {
         this.statistics,
       );
       this._renderLists = createRenderLists();
-      this._renderContexts = new RenderContexts();
+      this._renderContexts = createRenderContexts();
 
       //
 

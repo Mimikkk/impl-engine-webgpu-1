@@ -1,6 +1,9 @@
 import DataMap from './DataMap.ts';
 import ChainMap from './ChainMap.ts';
 import RenderObject from './RenderObject.ts';
+import { Renderer } from '../webgpu/createRenderer.js';
+import Nodes from './nodes/Nodes.js';
+import { Geometries } from './Geometries.js';
 
 class RenderObjects {
   constructor(renderer, nodes, geometries, pipelines, bindings, info) {
@@ -11,8 +14,8 @@ class RenderObjects {
     this.bindings = bindings;
     this.info = info;
 
-    this.chainMaps = {};
-    this.dataMap = new DataMap();
+    this.chains = {};
+    this.map = new DataMap();
   }
 
   get(object, material, scene, camera, lightsNode, renderContext, passId) {
@@ -37,7 +40,7 @@ class RenderObjects {
 
       chainMap.set(chainArray, renderObject);
     } else {
-      const data = this.dataMap.get(renderObject);
+      const data = this.map.get(renderObject);
       const cacheKey = renderObject.getCacheKey();
 
       if (data.cacheKey !== cacheKey) {
@@ -50,18 +53,16 @@ class RenderObjects {
     return renderObject;
   }
 
-  getChainMap(passId = 'default') {
-    return this.chainMaps[passId] || (this.chainMaps[passId] = new ChainMap());
-  }
+  getChainMap = (passId = 'default') => this.chains[passId] || (this.chains[passId] = new ChainMap());
 
   dispose() {
-    this.chainMaps = {};
-    this.dataMap = new DataMap();
+    this.chains = {};
+    this.map = new DataMap();
   }
 
   createRenderObject(nodes, geometries, renderer, object, material, scene, camera, lightsNode, renderContext, passId) {
     const chainMap = this.getChainMap(passId);
-    const dataMap = this.dataMap;
+    const dataMap = this.map;
 
     const renderObject = new RenderObject(
       nodes,
@@ -93,3 +94,11 @@ class RenderObjects {
 }
 
 export default RenderObjects;
+export const createRenderObjects = (
+  renderer: Renderer,
+  nodes: Nodes,
+  geometries: Geometries,
+  pipelines,
+  bindings,
+  info,
+) => new RenderObjects(renderer, nodes, geometries, pipelines, bindings, info);

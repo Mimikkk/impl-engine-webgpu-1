@@ -6,7 +6,7 @@ class DataMap<T extends {}> {
     this.create = create;
   }
 
-  get(object: T) {
+  get(object: object) {
     let item = this.map.get(object);
 
     if (!item) {
@@ -17,7 +17,7 @@ class DataMap<T extends {}> {
     return item;
   }
 
-  delete(object: T) {
+  delete(object: object) {
     let item;
 
     if (this.map.has(object)) {
@@ -29,7 +29,7 @@ class DataMap<T extends {}> {
     return item;
   }
 
-  has = (item: T) => this.map.has(item);
+  has = (object: object) => this.map.has(object);
 }
 
 export default DataMap;

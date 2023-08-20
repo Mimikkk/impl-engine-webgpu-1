@@ -18,8 +18,6 @@ import UniformBuffer from '../../common/UniformBuffer.ts';
 import StorageBuffer from '../../common/StorageBuffer.ts';
 import { getVectorLength, getStrideLength } from '../../common/BufferUtils.ts';
 
-import CubeRenderTarget from '../../common/CubeRenderTarget.js';
-
 import { NodeBuilder, CodeNode, NodeMaterial } from 'three/examples/jsm/nodes/Nodes.js';
 
 import WebGPUNodeParser from './WebGPUNodeParser.js';
@@ -562,10 +560,6 @@ class WebGPUNodeBuilder extends NodeBuilder {
 
   getRenderTarget(width, height, options) {
     return new RenderTarget(width, height, options);
-  }
-
-  getCubeRenderTarget(size, options) {
-    return new CubeRenderTarget(size, options);
   }
 
   getMethod(method) {
