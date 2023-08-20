@@ -1,6 +1,6 @@
 import DataMap from './DataMap.ts';
-import RenderPipeline from './RenderPipeline.js';
-import ComputePipeline from './ComputePipeline.js';
+import { createRenderPipeline } from './RenderPipeline.ts';
+import { createComputePipeline } from './ComputePipeline.ts';
 import ProgrammableStage from './ProgrammableStage.js';
 
 class Pipelines extends DataMap {
@@ -200,7 +200,7 @@ class Pipelines extends DataMap {
     let pipeline = this.caches.get(cacheKey);
 
     if (pipeline === undefined) {
-      pipeline = new ComputePipeline(cacheKey, stageCompute);
+      pipeline = createComputePipeline(cacheKey, stageCompute);
 
       this.caches.set(cacheKey, pipeline);
 
@@ -218,7 +218,7 @@ class Pipelines extends DataMap {
     let pipeline = this.caches.get(cacheKey);
 
     if (pipeline === undefined) {
-      pipeline = new RenderPipeline(cacheKey, stageVertex, stageFragment);
+      pipeline = createRenderPipeline(cacheKey, stageVertex, stageFragment);
 
       this.caches.set(cacheKey, pipeline);
 
