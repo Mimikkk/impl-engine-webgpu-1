@@ -29,9 +29,6 @@ export namespace ShaderStage {
 class Binding {
   name: string;
   visibility: ShaderStage;
-  get string() {
-    return this.name;
-  }
 
   constructor(name: string = '', visibility: ShaderStage = ShaderStage.None) {
     this.name = name;

@@ -10,7 +10,7 @@ import {
   Matrix3NodeUniform,
   Matrix4NodeUniform,
 } from '../../common/nodes/NodeUniform.js';
-import NodeSampler from '../../common/nodes/NodeSampler.js';
+import NodeSampler, { createNodeSampler } from '../../common/nodes/NodeSampler.ts';
 import { NodeSampledTexture, NodeSampledCubeTexture } from '../../common/nodes/NodeSampledTexture.js';
 
 import UniformBuffer from '../../common/UniformBuffer.js';
@@ -240,7 +240,7 @@ class WebGPUNodeBuilder extends NodeBuilder {
         const index = lastBinding && lastBinding.isUniformsGroup ? bindings.length - 1 : bindings.length;
 
         if (shaderStage === 'fragment') {
-          const sampler = new NodeSampler(`${uniformNode.name}_sampler`, uniformNode.node);
+          const sampler = createNodeSampler(`${uniformNode.name}_sampler`, uniformNode.node);
           sampler.setVisibility(gpuShaderStageLib[shaderStage]);
 
           bindings.splice(index, 0, sampler, texture);

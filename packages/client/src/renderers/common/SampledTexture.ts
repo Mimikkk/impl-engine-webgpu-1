@@ -1,28 +1,35 @@
-import Binding from './Binding.ts';
+import Binding, { ShaderStage } from './Binding.js';
+import { Texture } from 'three';
 
 let id = 0;
 
 class SampledTexture extends Binding {
-  constructor(name, texture) {
+  name: string;
+  visibility: ShaderStage;
+  texture: Texture;
+  version: number;
+  id: number;
+  isSampledTexture: boolean;
+
+  constructor(name: string, texture: Texture) {
     super(name);
     this.id = ++id;
 
     this.texture = texture;
     this.version = texture.version;
-
     this.isSampledTexture = true;
   }
 
   get needsBindingsUpdate() {
-    const { texture, version } = this;
+    const { texture } = this;
 
-    return texture.isVideoTexture ? true : version !== texture.version; // @TODO: version === 0 && texture.version > 0 ( add it just to External Textures like PNG,JPG )
+    //@ts-expect-error
+    return this.texture.isVideoTexture ? true : this.version !== texture.version;
   }
 
   update() {
     if (this.version !== this.texture.version) {
       this.version = this.texture.version;
-
       return true;
     }
 
@@ -31,9 +38,10 @@ class SampledTexture extends Binding {
 }
 
 class SampledCubeTexture extends SampledTexture {
-  constructor(name, texture) {
-    super(name, texture);
+  isSampledCubeTexture: boolean;
 
+  constructor(name: string, texture: Texture) {
+    super(name, texture);
     this.isSampledCubeTexture = true;
   }
 }

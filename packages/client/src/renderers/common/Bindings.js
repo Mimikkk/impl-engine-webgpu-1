@@ -63,7 +63,7 @@ class Bindings extends DataMap {
 
   _init(bindings) {
     for (const binding of bindings) {
-      if (binding.isSampler || binding.isSampledTexture) {
+      if (binding.type === 'sampler' || binding.isSampledTexture) {
         this.textures.updateTexture(binding.texture);
       } else if (binding.isStorageBuffer) {
         const attribute = binding.attribute;
