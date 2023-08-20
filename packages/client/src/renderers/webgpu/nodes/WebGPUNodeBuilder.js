@@ -13,8 +13,8 @@ import {
 import NodeSampler, { createNodeSampler } from '../../common/nodes/NodeSampler.ts';
 import { NodeSampledTexture, NodeSampledCubemap } from '../../common/nodes/NodeSampledTexture.ts';
 
-import UniformBuffer from '../../common/UniformBuffer.js';
-import StorageBuffer from '../../common/StorageBuffer.js';
+import UniformBuffer from '../../common/UniformBuffer.ts';
+import StorageBuffer from '../../common/StorageBuffer.ts';
 import { getVectorLength, getStrideLength } from '../../common/BufferUtils.js';
 
 import CubeRenderTarget from '../../common/CubeRenderTarget.js';

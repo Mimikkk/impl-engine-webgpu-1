@@ -1,4 +1,4 @@
-import UniformBuffer from './UniformBuffer.js';
+import UniformBuffer from './UniformBuffer.ts';
 import { Std140ChunkBytes } from './Constants.ts';
 
 class UniformsGroup extends UniformBuffer {
