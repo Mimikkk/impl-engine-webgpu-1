@@ -24,79 +24,79 @@ export const createBackground = (renderer: CreateRenderer, nodes: Nodes) => {
   let backgroundMesh: any = null;
   let backgroundMeshNode: any = null;
 
-  const update = (scene: Scene, renderList: RenderList, renderContext: RenderContext) => {
-    const background = nodes.getBackgroundNode(scene) || scene.background;
+  return {
+    update: (scene: Scene, renderList: RenderList, renderContext: RenderContext) => {
+      const background = nodes.getBackgroundNode(scene) || scene.background;
 
-    let forceClear = false;
-    if (!background) {
-      _clearColor.copyLinearToSRGB(renderer._clearColor);
-      _clearAlpha = renderer._clearAlpha;
-    } else if (background.isColor) {
-      _clearColor.copyLinearToSRGB(background);
-      _clearAlpha = 1;
-      forceClear = true;
-    } else if (background.isNode) {
-      const sceneData = map.get(scene);
-      const backgroundNode = background;
+      let forceClear = false;
+      if (!background) {
+        _clearColor.copyLinearToSRGB(renderer._clearColor);
+        _clearAlpha = renderer._clearAlpha;
+      } else if (background.isColor) {
+        _clearColor.copyLinearToSRGB(background);
+        _clearAlpha = 1;
+        forceClear = true;
+      } else if (background.isNode) {
+        const sceneData = map.get(scene);
+        const backgroundNode = background;
 
-      _clearColor.copy(renderer._clearColor);
-      _clearAlpha = renderer._clearAlpha;
+        _clearColor.copy(renderer._clearColor);
+        _clearAlpha = renderer._clearAlpha;
 
-      if (!backgroundMesh) {
-        backgroundMeshNode = (
-          context(backgroundNode, {
-            getUVNode: () => normalWorld,
-            getSamplerLevelNode: () => backgroundBlurriness,
-          }) as unknown as { mul: (a: any) => any }
-        ).mul(backgroundIntensity);
+        if (!backgroundMesh) {
+          backgroundMeshNode = (
+            context(backgroundNode, {
+              getUVNode: () => normalWorld,
+              getSamplerLevelNode: () => backgroundBlurriness,
+            }) as unknown as { mul: (a: any) => any }
+          ).mul(backgroundIntensity);
 
-        let viewProj = modelViewProjection();
-        viewProj = vec4(viewProj.x, viewProj.y, viewProj.w, viewProj.w);
+          let viewProj = modelViewProjection();
+          viewProj = vec4(viewProj.x, viewProj.y, viewProj.w, viewProj.w);
 
-        const nodeMaterial = new NodeMaterial() as NodeMaterial & { vertexNode: any; outputNode: any };
-        nodeMaterial.outputNode = backgroundMeshNode;
-        nodeMaterial.side = BackSide;
-        nodeMaterial.depthTest = false;
-        nodeMaterial.depthWrite = false;
-        nodeMaterial.fog = false;
-        nodeMaterial.vertexNode = viewProj;
+          const nodeMaterial = new NodeMaterial() as NodeMaterial & { vertexNode: any; outputNode: any };
+          nodeMaterial.outputNode = backgroundMeshNode;
+          nodeMaterial.side = BackSide;
+          nodeMaterial.depthTest = false;
+          nodeMaterial.depthWrite = false;
+          nodeMaterial.fog = false;
+          nodeMaterial.vertexNode = viewProj;
 
-        backgroundMesh = backgroundMesh = new Mesh(new SphereGeometry(1, 32, 32), nodeMaterial);
-        backgroundMesh.frustumCulled = false;
+          backgroundMesh = backgroundMesh = new Mesh(new SphereGeometry(1, 32, 32), nodeMaterial);
+          backgroundMesh.frustumCulled = false;
 
-        backgroundMesh.onBeforeRender = function (renderer: CreateRenderer, scene: any, camera: any) {
-          this.matrixWorld.copyPosition(camera.matrixWorld);
-        };
+          backgroundMesh.onBeforeRender = function (renderer: CreateRenderer, scene: any, camera: any) {
+            this.matrixWorld.copyPosition(camera.matrixWorld);
+          };
+        }
+
+        const backgroundCacheKey = backgroundNode.getCacheKey();
+
+        if (sceneData.backgroundCacheKey !== backgroundCacheKey) {
+          backgroundMeshNode.node = backgroundNode;
+
+          backgroundMesh.material.needsUpdate = true;
+
+          sceneData.backgroundCacheKey = backgroundCacheKey;
+        }
+
+        renderList.unshift(backgroundMesh, backgroundMesh.geometry, backgroundMesh.material, 0, 0, null);
       }
 
-      const backgroundCacheKey = backgroundNode.getCacheKey();
-
-      if (sceneData.backgroundCacheKey !== backgroundCacheKey) {
-        backgroundMeshNode.node = backgroundNode;
-
-        backgroundMesh.material.needsUpdate = true;
-
-        sceneData.backgroundCacheKey = backgroundCacheKey;
+      if (renderer.autoClear || forceClear) {
+        _clearColor.multiplyScalar(_clearAlpha);
+        renderContext.clearColorValue.r = _clearColor.r;
+        renderContext.clearColorValue.g = _clearColor.g;
+        renderContext.clearColorValue.b = _clearColor.b;
+        renderContext.clearColorValue.a = _clearAlpha;
+        renderContext.clearColor = !!renderer.autoClearColor;
+        renderContext.clearDepth = !!renderer.autoClearDepth;
+        renderContext.clearStencil = !!renderer.autoClearStencil;
+      } else {
+        renderContext.clearColor = false;
+        renderContext.clearDepth = false;
+        renderContext.clearStencil = false;
       }
-
-      renderList.unshift(backgroundMesh, backgroundMesh.geometry, backgroundMesh.material, 0, 0, null);
-    }
-
-    if (renderer.autoClear || forceClear) {
-      _clearColor.multiplyScalar(_clearAlpha);
-      renderContext.clearColorValue.r = _clearColor.r;
-      renderContext.clearColorValue.g = _clearColor.g;
-      renderContext.clearColorValue.b = _clearColor.b;
-      renderContext.clearColorValue.a = _clearAlpha;
-      renderContext.clearColor = !!renderer.autoClearColor;
-      renderContext.clearDepth = !!renderer.autoClearDepth;
-      renderContext.clearStencil = !!renderer.autoClearStencil;
-    } else {
-      renderContext.clearColor = false;
-      renderContext.clearDepth = false;
-      renderContext.clearStencil = false;
-    }
+    },
   };
-
-  return { update };
 };
