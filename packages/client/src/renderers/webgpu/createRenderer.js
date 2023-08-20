@@ -8,7 +8,7 @@ import Pipelines from '../common/Pipelines.js';
 import Bindings from '../common/Bindings.js';
 import RenderLists from '../common/RenderLists.js';
 import RenderContexts from '../common/RenderContexts.js';
-import Textures from '../common/Textures.js';
+import { createTextures } from '../common/Textures.ts';
 import { createBackground } from '../common/Background.ts';
 import Nodes from '../common/nodes/Nodes.js';
 import {
@@ -123,7 +123,7 @@ export class CreateRenderer {
       this._attributes = new AttributeState(backend);
       this._background = createBackground(this, this._nodes);
       this._geometries = new Geometries(this._attributes, this.statistics);
-      this._textures = new Textures(backend, this.statistics);
+      this._textures = createTextures(backend, this.statistics);
       this._pipelines = new Pipelines(backend, this._nodes);
       this._bindings = new Bindings(
         backend,

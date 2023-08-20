@@ -6,24 +6,25 @@ interface RenderObject {
   isLine?: boolean;
 }
 
-export const createStatistics = () => {
+export interface Statistics {
+  memory: { textures: number; geometries: number };
+  render: { triangles: number; calls: number; lines: number; frame: number; points: number };
+  autoReset: boolean;
+  update(renderObject: RenderObject, vertexCount: number, instanceCount: number): void;
+  reset(): void;
+  dispose(): void;
+}
+
+export const createStatistics = (): Statistics => {
   const autoReset = true;
   const render = { frame: 0, calls: 0, triangles: 0, points: 0, lines: 0 };
   const memory = { geometries: 0, textures: 0 };
 
   return {
     autoReset,
-    get render() {
-      return render;
-    },
-    get memory() {
-      return memory;
-    },
-    update(
-      { isMesh, isSprite, isPoints, isLineSegments, isLine }: RenderObject,
-      vertexCount: number,
-      instanceCount: number,
-    ) {
+    render,
+    memory,
+    update({ isMesh, isSprite, isPoints, isLineSegments, isLine }, vertexCount, instanceCount) {
       ++render.calls;
 
       if (isMesh || isSprite) {
