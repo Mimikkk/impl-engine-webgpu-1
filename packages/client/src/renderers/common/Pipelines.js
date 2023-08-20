@@ -1,7 +1,7 @@
 import DataMap from './DataMap.ts';
 import { createRenderPipeline } from './RenderPipeline.ts';
 import { createComputePipeline } from './ComputePipeline.ts';
-import ProgrammableStage from './ProgrammableStage.js';
+import { createProgrammableStage } from './ProgrammableStage.ts';
 
 class Pipelines extends DataMap {
   constructor(backend, nodes) {
@@ -45,7 +45,7 @@ class Pipelines extends DataMap {
         if (previousPipeline && previousPipeline.computeProgram.usedTimes === 0)
           this._releaseProgram(previousPipeline.computeProgram);
 
-        stageCompute = new ProgrammableStage(nodeBuilder.computeShader, 'compute');
+        stageCompute = createProgrammableStage(nodeBuilder.computeShader, 'compute');
         this.programs.compute.set(nodeBuilder.computeShader, stageCompute);
 
         backend.createProgram(stageCompute);
@@ -103,7 +103,7 @@ class Pipelines extends DataMap {
         if (previousPipeline && previousPipeline.vertexProgram.usedTimes === 0)
           this._releaseProgram(previousPipeline.vertexProgram);
 
-        stageVertex = new ProgrammableStage(nodeBuilder.vertexShader, 'vertex');
+        stageVertex = createProgrammableStage(nodeBuilder.vertexShader, 'vertex');
         this.programs.vertex.set(nodeBuilder.vertexShader, stageVertex);
 
         backend.createProgram(stageVertex);
@@ -115,7 +115,7 @@ class Pipelines extends DataMap {
         if (previousPipeline && previousPipeline.fragmentProgram.usedTimes === 0)
           this._releaseProgram(previousPipeline.fragmentProgram);
 
-        stageFragment = new ProgrammableStage(nodeBuilder.fragmentShader, 'fragment');
+        stageFragment = createProgrammableStage(nodeBuilder.fragmentShader, 'fragment');
         this.programs.fragment.set(nodeBuilder.fragmentShader, stageFragment);
 
         backend.createProgram(stageFragment);

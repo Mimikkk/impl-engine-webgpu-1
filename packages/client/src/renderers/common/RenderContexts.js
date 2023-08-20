@@ -1,5 +1,5 @@
 import ChainMap from './ChainMap.ts';
-import RenderContext from './RenderContext.js';
+import { createRenderContext } from './RenderContext.ts';
 
 class RenderContexts {
   constructor() {
@@ -15,17 +15,16 @@ class RenderContexts {
 
     const chainMap = this.getChainMap(attachmentState);
 
-    let renderState = chainMap.get(chainKey);
+    let context = chainMap.get(chainKey);
 
-    if (renderState === undefined) {
-      renderState = new RenderContext();
-
-      chainMap.set(chainKey, renderState);
+    if (!context) {
+      context = createRenderContext();
+      chainMap.set(chainKey, context);
     }
 
-    if (renderTarget !== null) renderState.sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
+    if (renderTarget) context.sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
 
-    return renderState;
+    return context;
   }
 
   getChainMap(attachmentState) {

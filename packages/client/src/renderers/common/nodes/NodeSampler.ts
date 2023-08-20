@@ -1,6 +1,7 @@
-import { BindingState, createBinding, ShaderStage } from '../Binding.js';
+import { BindingState, createBinding } from '../Binding.js';
 import { TextureNode } from 'three/examples/jsm/nodes/Nodes.js';
 import { Texture } from 'three';
+import { ShaderStage } from '../ShaderStage.js';
 
 class NodeSampler {
   name: string;

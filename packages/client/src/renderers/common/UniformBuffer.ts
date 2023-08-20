@@ -1,4 +1,5 @@
-import { BindingState, createBinding, ShaderStage } from './Binding.js';
+import { ShaderStage } from './ShaderStage.js';
+import { BindingState, createBinding } from './Binding.js';
 import { getFloatLength } from './BufferUtils.js';
 
 class UniformBuffer {

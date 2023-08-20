@@ -1,5 +1,6 @@
-import { BindingState, createBinding, ShaderStage } from './Binding.js';
+import { BindingState, createBinding } from './Binding.js';
 import { getFloatLength } from './BufferUtils.js';
+import { ShaderStage } from './ShaderStage.js';
 
 class StorageBuffer {
   name: string;

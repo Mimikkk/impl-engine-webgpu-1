@@ -1,5 +1,6 @@
-import { BindingState, createBinding, ShaderStage } from './Binding.js';
+import { BindingState, createBinding } from './Binding.js';
 import { Texture } from 'three';
+import { ShaderStage } from './ShaderStage.js';
 
 let id = 0;
 

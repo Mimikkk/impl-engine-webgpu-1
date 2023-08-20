@@ -1,6 +1,7 @@
 //@ts-nocheck
 import { Std140ChunkBytes } from './Constants.js';
-import { BindingState, createBinding, ShaderStage } from './Binding.js';
+import { BindingState, createBinding } from './Binding.js';
+import { ShaderStage } from './ShaderStage.js';
 
 class UniformsGroup {
   name: string;

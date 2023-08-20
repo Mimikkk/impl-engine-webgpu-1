@@ -13,7 +13,7 @@ import {
 import { CreateRenderer } from '../webgpu/createRenderer.js';
 import Nodes from './nodes/Nodes.js';
 import RenderList from './RenderList.js';
-import RenderContext from './RenderContext.js';
+import { RenderContext } from './RenderContext.js';
 import DataMap from './DataMap.js';
 
 let _clearAlpha: number;
