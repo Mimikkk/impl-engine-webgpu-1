@@ -25,5 +25,4 @@ class NodeSampler {
   }
 }
 
-export default NodeSampler;
 export const createNodeSampler = (name: string, node: TextureNode) => new NodeSampler(name, node);

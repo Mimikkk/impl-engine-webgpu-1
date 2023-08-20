@@ -10,8 +10,9 @@ import {
   Matrix3NodeUniform,
   Matrix4NodeUniform,
 } from '../../common/nodes/NodeUniform.js';
-import NodeSampler, { createNodeSampler } from '../../common/nodes/NodeSampler.ts';
-import { NodeSampledTexture, NodeSampledCubemap } from '../../common/nodes/NodeSampledTexture.ts';
+import { createNodeSampler } from '../../common/nodes/NodeSampler.ts';
+import { NodeSampledTexture } from '../../common/nodes/NodeSampledTexture.ts';
+import { NodeSampledCubemap } from '../../common/nodes/NodeSampledCubemap.ts';
 
 import UniformBuffer from '../../common/UniformBuffer.ts';
 import StorageBuffer from '../../common/StorageBuffer.ts';
