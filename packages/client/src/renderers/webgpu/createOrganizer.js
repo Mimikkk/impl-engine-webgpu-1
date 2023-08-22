@@ -27,7 +27,6 @@ import { createPipelinesState } from './utils/createPipelinesState.js';
 import { createTexturesState } from './utils/createTexturesState.js';
 
 let vector2 = new Vector2();
-let vector4 = new Vector4();
 
 export class Organizer {
   constructor(options = {}) {
@@ -59,8 +58,6 @@ export class Organizer {
     geometry.isInstancedBufferGeometry ? geometry.instanceCount : object.isInstancedMesh ? object.count : 1;
 
   getDrawingBufferSize = () => this.renderer.getDrawingBufferSize(vector2);
-
-  getScissor = () => this.renderer.getScissor(vector4);
 
   getDomElement() {
     if (!this.canvas) this.canvas = this.parameters.canvas ?? this.createCanvasElement();
@@ -539,52 +536,6 @@ export class Organizer {
   }
 
   // utils public
-
-  hasFeature(name) {
-    const features = Object.values(GPUFeatureName);
-
-    if (!features.includes(name)) throw Error(`THREE.WebGPURenderer: Unknown WebGPU GPU feature: ${name}`);
-
-    return this.adapter.features.has(name);
-  }
-
-  copyFramebufferToTexture(texture, renderContext) {
-    const renderContextData = this.get(renderContext);
-
-    const { encoder, descriptor } = renderContextData;
-
-    let sourceGPU = null;
-
-    if (texture.isFramebufferTexture) {
-      sourceGPU = this.context.getCurrentTexture();
-    } else if (texture.isDepthTexture) {
-      sourceGPU = this.#getDepthBufferGPU(renderContext);
-    }
-
-    const destinationGPU = this.get(texture).texture;
-
-    renderContextData.currentPass.end();
-
-    encoder.copyTextureToTexture(
-      {
-        texture: sourceGPU,
-        origin: { x: 0, y: 0, z: 0 },
-      },
-      {
-        texture: destinationGPU,
-      },
-      [texture.image.width, texture.image.height],
-    );
-
-    if (texture.generateMipmaps) this.textures.mipmap(texture);
-
-    descriptor.colorAttachments[0].loadOp = GPULoadOp.Load;
-    if (renderContext.depth) descriptor.depthStencilAttachment.depthLoadOp = GPULoadOp.Load;
-    if (renderContext.stencil) descriptor.depthStencilAttachment.stencilLoadOp = GPULoadOp.Load;
-
-    renderContextData.currentPass = encoder.beginRenderPass(descriptor);
-    renderContextData.currentAttributesSet = {};
-  }
 
   #getDepthBufferGPU(renderContext) {
     const { width, height } = this.getDrawingBufferSize();
