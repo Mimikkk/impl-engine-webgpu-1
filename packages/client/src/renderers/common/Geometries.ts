@@ -1,8 +1,7 @@
 import { AttributeType } from './Constants.js';
 import { Uint16BufferAttribute, Uint32BufferAttribute } from 'three';
-import { Statistics } from './createStatistics.js';
 import RenderObject from './RenderObject.js';
-import Attributes from './Attributes.js';
+import { Renderer } from '../webgpu/createRenderer.js';
 
 type Geometry = any;
 
@@ -47,7 +46,7 @@ export interface Geometries {
   getIndex: (renderObject: RenderObject) => any;
 }
 
-export const createGeometries = (attributes: Attributes, statistics: Statistics) => {
+export const createGeometries = ({ attributes, statistics }: Renderer) => {
   const map = new WeakMap();
   const attributeFrame = new WeakMap();
   const wireframes = new WeakMap();

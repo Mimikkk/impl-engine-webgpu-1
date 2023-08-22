@@ -1,24 +1,36 @@
-import DataMap from './DataMap.ts';
-import ChainMap from './ChainMap.ts';
-import RenderObject from './RenderObject.ts';
+import DataMap from './DataMap.js';
+import ChainMap from './ChainMap.js';
+import RenderObject from './RenderObject.js';
 import { Renderer } from '../webgpu/createRenderer.js';
 import Nodes from './nodes/Nodes.js';
 import { Geometries } from './Geometries.js';
+import Pipelines from './Pipelines.js';
+import Bindings from './Bindings.js';
+import { Statistics } from './createStatistics.js';
 
 class RenderObjects {
-  constructor(renderer, nodes, geometries, pipelines, bindings, info) {
+  renderer: Renderer;
+  nodes: Nodes;
+  geometries: Geometries;
+  pipelines: Pipelines;
+  bindings: Bindings;
+  info: Statistics;
+  chains: any;
+  map: DataMap<any>;
+
+  constructor(renderer: Renderer) {
     this.renderer = renderer;
-    this.nodes = nodes;
-    this.geometries = geometries;
-    this.pipelines = pipelines;
-    this.bindings = bindings;
-    this.info = info;
+    this.nodes = renderer.nodes;
+    this.geometries = renderer.geometries;
+    this.pipelines = renderer.pipelines;
+    this.bindings = renderer.bindings;
+    this.info = renderer.statistics;
 
     this.chains = {};
     this.map = new DataMap();
   }
 
-  get(object, material, scene, camera, lightsNode, renderContext, passId) {
+  get(object: any, material: any, scene: any, camera: any, lightsNode: any, renderContext: any, passId: any) {
     const chainMap = this.getChainMap(passId);
     const chainArray = [object, material, renderContext, lightsNode];
 
@@ -60,7 +72,18 @@ class RenderObjects {
     this.map = new DataMap();
   }
 
-  createRenderObject(nodes, geometries, renderer, object, material, scene, camera, lightsNode, renderContext, passId) {
+  createRenderObject(
+    nodes: any,
+    geometries: any,
+    renderer: any,
+    object: any,
+    material: any,
+    scene: any,
+    camera: any,
+    lightsNode: any,
+    renderContext: any,
+    passId: any,
+  ) {
     const chainMap = this.getChainMap(passId);
     const dataMap = this.map;
 
@@ -94,11 +117,3 @@ class RenderObjects {
 }
 
 export default RenderObjects;
-export const createRenderObjects = (
-  renderer: Renderer,
-  nodes: Nodes,
-  geometries: Geometries,
-  pipelines,
-  bindings,
-  info,
-) => new RenderObjects(renderer, nodes, geometries, pipelines, bindings, info);

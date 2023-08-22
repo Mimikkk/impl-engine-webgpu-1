@@ -1,8 +1,6 @@
 import { BackSide, Color, Mesh, Scene, SphereGeometry } from 'three';
 import {
-  //@ts-expect-error
   backgroundBlurriness,
-  //@ts-expect-error
   backgroundIntensity,
   context,
   modelViewProjection,
@@ -11,7 +9,6 @@ import {
   vec4,
 } from 'three/examples/jsm/nodes/Nodes.js';
 import { Renderer } from '../webgpu/createRenderer.js';
-import Nodes from './nodes/Nodes.js';
 import RenderList from './RenderList.js';
 import { RenderContext } from './RenderContext.js';
 import DataMap from './DataMap.js';
@@ -19,14 +16,18 @@ import DataMap from './DataMap.js';
 let _clearAlpha: number;
 const _clearColor = new Color();
 
-export const createBackground = (renderer: Renderer, nodes: Nodes) => {
+export interface Background {
+  update: (scene: Scene, renderList: RenderList, renderContext: RenderContext) => void;
+}
+
+export const createBackground = (renderer: Renderer): Background => {
   let map = new DataMap<any>();
   let backgroundMesh: any = null;
   let backgroundMeshNode: any = null;
 
   return {
     update: (scene: Scene, renderList: RenderList, renderContext: RenderContext) => {
-      const background = nodes.getBackgroundNode(scene) || scene.background;
+      const background = renderer.nodes.getBackgroundNode(scene) || scene.background;
 
       let forceClear = false;
       if (!background) {

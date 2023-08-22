@@ -1,4 +1,4 @@
-type Chain<T extends object> = WeakMap<object, Chain<T>> | T;
+export type Chain<T extends object> = WeakMap<object, Chain<T>> | T;
 
 export default class ChainMap<T extends object> {
   map: WeakMap<object, Chain<T>>;

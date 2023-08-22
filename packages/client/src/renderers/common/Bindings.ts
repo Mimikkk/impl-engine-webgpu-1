@@ -5,6 +5,7 @@ import Attributes from './Attributes.js';
 import Pipelines from './Pipelines.js';
 import { Textures } from './Textures.js';
 import { Organizer } from '../webgpu/createOrganizer.js';
+import { Renderer } from '../webgpu/createRenderer.js';
 
 class Bindings {
   map = new WeakMap();
@@ -16,20 +17,13 @@ class Bindings {
   info: Statistics;
   updateMap: WeakMap<object, any>;
 
-  constructor(
-    backend: Organizer,
-    nodes: Nodes,
-    textures: Textures,
-    attributes: Attributes,
-    pipelines: Pipelines,
-    info: Statistics,
-  ) {
-    this.backend = backend;
-    this.textures = textures;
-    this.pipelines = pipelines;
-    this.attributes = attributes;
-    this.nodes = nodes;
-    this.info = info;
+  constructor(api: Renderer) {
+    this.backend = api.backend;
+    this.textures = api.textures;
+    this.pipelines = api.pipelines;
+    this.attributes = api.attributes;
+    this.nodes = api.nodes;
+    this.info = api.statistics;
 
     // assign bindings to pipelines
     this.pipelines.bindings = this;

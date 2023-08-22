@@ -6,22 +6,19 @@ import Nodes from './nodes/Nodes.js';
 import { Organizer } from '../webgpu/createOrganizer.js';
 import Bindings from './Bindings.js';
 import { ShaderStage } from './ShaderStage.js';
+import { Renderer } from '../webgpu/createRenderer.js';
 
 class Pipelines {
   api: Organizer;
   map: DataMap<{ pipeline: any; version: number }>;
   nodes: any;
-  bindings: Bindings;
   caches: Map<any, any>;
   programs: { vertex: Map<any, any>; fragment: Map<any, any>; compute: Map<any, any> };
 
-  constructor(backend: Organizer, nodes: Nodes) {
+  constructor(renderer: Renderer) {
     this.map = new DataMap();
-    this.api = backend;
-    this.nodes = nodes;
-
-    // set by the bindings why the fuck
-    this.bindings = null as never;
+    this.api = renderer.backend;
+    this.nodes = renderer.nodes;
 
     this.caches = new Map();
     this.programs = {

@@ -35,7 +35,7 @@ export class Organizer {
     this.parameters = { antialias, sampleCount, requiredLimits, ...parameters };
     /** @type {WeakMap<object, object>} */
     this.resources = new WeakMap();
-    /** @type {CreateRenderer} */
+    /** @type {Renderer} */
     this.renderer = null;
     /** @type {HTMLCanvasElement} */
     this.canvas = null;

@@ -1,7 +1,13 @@
 import ChainMap from './ChainMap.js';
 import { createRenderContext } from './RenderContext.js';
+import { Renderer } from '../webgpu/createRenderer.js';
 
-export const createRenderContexts = () => {
+export interface RenderContexts {
+  get: (scene: any, camera: any, target?: any) => any;
+  dispose: () => Map<any, any>;
+}
+
+export const createRenderContexts = (renderer: Renderer): RenderContexts => {
   let maps = new Map<string, any>();
   const get = (key: any) => {
     if (!maps.has(key)) maps.set(key, new ChainMap());

@@ -2,6 +2,7 @@ import DataMap, { createDataMap } from './DataMap.js';
 import { AttributeType } from './Constants.js';
 import { DynamicDrawUsage } from 'three';
 import type { Organizer } from '../webgpu/createOrganizer.js';
+import { Renderer } from '../webgpu/createRenderer.js';
 
 // TODO - this is a mess
 type Attribute = {
@@ -14,18 +15,18 @@ type Attribute = {
 
 class Attributes {
   map: DataMap<Attribute>;
-  api: Organizer;
+  backend: Organizer;
 
-  constructor(api: Organizer) {
+  constructor(renderer: Renderer) {
     this.map = createDataMap(() => ({}) as Attribute);
-    this.api = api;
+    this.backend = renderer.backend;
   }
 
   get = (attributeCpu: Attribute) => this.map.get(attributeCpu);
 
   delete(attributeCpu: Attribute) {
     const attributeGpu = this.map.delete(attributeCpu);
-    if (attributeGpu) this.api.destroyAttribute(attributeCpu);
+    if (attributeGpu) this.backend.destroyAttribute(attributeCpu);
   }
 
   update(attribute: Attribute, type: AttributeType) {
@@ -33,11 +34,11 @@ class Attributes {
 
     if (!data.version) {
       if (type === AttributeType.Vertex) {
-        this.api.createVertexAttribute(attribute);
+        this.backend.createVertexAttribute(attribute);
       } else if (type === AttributeType.Index) {
-        this.api.createIndexAttribute(attribute);
+        this.backend.createIndexAttribute(attribute);
       } else if (type === AttributeType.Storage) {
-        this.api.createStorageAttribute(attribute);
+        this.backend.createStorageAttribute(attribute);
       }
 
       data.version = this._getBufferAttribute(attribute).version;
@@ -45,7 +46,7 @@ class Attributes {
       const bufferAttribute = this._getBufferAttribute(attribute);
 
       if (data.version < bufferAttribute.version || bufferAttribute.usage === DynamicDrawUsage) {
-        this.api.updateAttribute(attribute);
+        this.backend.updateAttribute(attribute);
         data.version = bufferAttribute.version;
       }
     }

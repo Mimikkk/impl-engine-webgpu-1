@@ -1,7 +1,6 @@
 import DataMap from './DataMap.js';
 import { DepthStencilFormat, DepthTexture, UnsignedInt248Type, Vector2 } from 'three';
-import type { Organizer } from '../webgpu/createOrganizer.js';
-import { Statistics } from './createStatistics.js';
+import { Renderer } from '../webgpu/createRenderer.js';
 
 const _size = new Vector2();
 type Texture = any;
@@ -11,10 +10,11 @@ export interface Textures {
   updateTexture: (texture: Texture, options?: {}) => void;
   get: (object: object) => any;
   updateRenderTarget: (targetCpu: RenderTarget) => void;
+  dispose: () => void;
 }
 
-export const createTextures = (api: Organizer, statistics: Statistics): Textures => {
-  const map = new DataMap<Texture | RenderTarget>();
+export const createTextures = ({ statistics, backend }: Renderer): Textures => {
+  let map = new DataMap<Texture | RenderTarget>();
   const getSize = (texture: Texture, target = _size) => {
     if (texture.isCubeTexture) {
       target.width = texture.image[0].width;
@@ -27,8 +27,8 @@ export const createTextures = (api: Organizer, statistics: Statistics): Textures
     return target;
   };
   const destroyTexture = (texture: Texture) => {
-    api.destroySampler(texture);
-    api.destroyTexture(texture);
+    backend.destroySampler(texture);
+    backend.destroyTexture(texture);
     map.delete(texture);
   };
 
@@ -41,19 +41,19 @@ export const createTextures = (api: Organizer, statistics: Statistics): Textures
     if (isRenderTarget && textureData.initialized === true) {
       // it's an update
 
-      api.destroySampler(texture);
-      api.destroyTexture(texture);
+      backend.destroySampler(texture);
+      backend.destroyTexture(texture);
     }
 
     //
 
     if (isRenderTarget) {
-      api.createSampler(texture);
-      api.createTexture(texture, options);
+      backend.createSampler(texture);
+      backend.createTexture(texture, options);
     } else {
       const needsCreate = textureData.initialized !== true;
 
-      if (needsCreate) api.createSampler(texture);
+      if (needsCreate) backend.createSampler(texture);
 
       if (texture.version > 0) {
         const image = texture.image;
@@ -64,17 +64,17 @@ export const createTextures = (api: Organizer, statistics: Statistics): Textures
           console.warn('THREE.Renderer: Texture marked for update but image is incomplete.');
         } else {
           if (textureData.isDefaultTexture === undefined || textureData.isDefaultTexture === true) {
-            api.createTexture(texture, options);
+            backend.createTexture(texture, options);
 
             textureData.isDefaultTexture = false;
           }
 
-          api.updateTexture(texture);
+          backend.updateTexture(texture);
         }
       } else {
         // async update
 
-        api.createDefaultTexture(texture);
+        backend.createDefaultTexture(texture);
 
         textureData.isDefaultTexture = true;
       }
@@ -158,5 +158,12 @@ export const createTextures = (api: Organizer, statistics: Statistics): Textures
     }
   };
 
-  return { updateRenderTarget, updateTexture, get: (object: object) => map.get(object) };
+  return {
+    updateRenderTarget,
+    updateTexture,
+    get: (object: object) => map.get(object),
+    dispose() {
+      map = new DataMap();
+    },
+  };
 };

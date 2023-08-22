@@ -11,17 +11,22 @@ import {
   toneMapping,
   viewportBottomLeft,
 } from 'three/examples/jsm/nodes/Nodes.js';
+import { Organizer } from '../../webgpu/createOrganizer.js';
+import { Renderer } from '../../webgpu/createRenderer.js';
 
-class Nodes {
+export default class Nodes {
   map = new WeakMap();
+  renderer: Renderer;
+  backend: Organizer;
+  nodeFrame: NodeFrame;
 
-  constructor(renderer, backend) {
+  constructor(renderer: Renderer) {
     this.renderer = renderer;
-    this.backend = backend;
+    this.backend = renderer.backend;
     this.nodeFrame = new NodeFrame();
   }
 
-  getForRender(renderObject) {
+  getForRender(renderObject: any) {
     const renderObjectData = this.get(renderObject);
 
     let nodeBuilder = renderObjectData.nodeBuilder;
@@ -41,7 +46,7 @@ class Nodes {
     return nodeBuilder;
   }
 
-  getForCompute(computeNode) {
+  getForCompute(computeNode: any) {
     const computeData = this.get(computeNode);
 
     let nodeBuilder = computeData.nodeBuilder;
@@ -56,25 +61,25 @@ class Nodes {
     return nodeBuilder;
   }
 
-  getEnvironmentNode(scene) {
+  getEnvironmentNode(scene: any) {
     return scene.environmentNode || this.get(scene).environmentNode || null;
   }
 
-  getBackgroundNode(scene) {
+  getBackgroundNode(scene: any) {
     return scene.backgroundNode || this.get(scene).backgroundNode || null;
   }
 
-  getFogNode(scene) {
+  getFogNode(scene: any) {
     return scene.fogNode || this.get(scene).fogNode || null;
   }
 
   getToneMappingNode() {
-    if (this.isToneMappingState === false) return null;
+    if (!this.isToneMappingState) return null;
 
     return this.renderer.toneMappingNode || this.get(this.renderer).toneMappingNode || null;
   }
 
-  getCacheKey(scene, lightsNode) {
+  getCacheKey(scene: any, lightsNode: any) {
     const environmentNode = this.getEnvironmentNode(scene);
     const fogNode = this.getFogNode(scene);
     const toneMappingNode = this.getToneMappingNode();
@@ -89,7 +94,7 @@ class Nodes {
     return '{' + cacheKey.join(',') + '}';
   }
 
-  updateScene(scene) {
+  updateScene(scene: any) {
     this.updateEnvironment(scene);
     this.updateFog(scene);
     this.updateBackground(scene);
@@ -100,7 +105,7 @@ class Nodes {
     const renderer = this.renderer;
     const renderTarget = renderer.getRenderTarget();
 
-    return renderTarget && renderTarget.isCubeRenderTarget ? false : true;
+    return !(renderTarget && renderTarget.isCubeRenderTarget);
   }
 
   updateToneMapping() {
@@ -112,7 +117,7 @@ class Nodes {
       if (rendererData.toneMapping !== rendererToneMapping) {
         const rendererToneMappingNode =
           rendererData.rendererToneMappingNode ||
-          toneMapping(rendererToneMapping, reference('toneMappingExposure', 'float', renderer));
+          toneMapping(rendererToneMapping, reference('toneMappingExposure', 'float', renderer), undefined as never);
         rendererToneMappingNode.toneMapping = rendererToneMapping;
 
         rendererData.rendererToneMappingNode = rendererToneMappingNode;
@@ -126,7 +131,7 @@ class Nodes {
     }
   }
 
-  updateBackground(scene) {
+  updateBackground(scene: any) {
     const sceneData = this.get(scene);
     const background = scene.background;
 
@@ -134,7 +139,7 @@ class Nodes {
       if (sceneData.background !== background) {
         let backgroundNode = null;
 
-        if (background.isCubeTexture === true) {
+        if (background.isCubeTexture) {
           backgroundNode = cubeTexture(background, normalWorld);
         } else if (background.isTexture === true) {
           let nodeUV = null;
@@ -149,7 +154,7 @@ class Nodes {
           }
 
           backgroundNode = texture(background, nodeUV).setUpdateMatrix(true);
-        } else if (background.isColor !== true) {
+        } else if (!background.isColor) {
           console.error('WebGPUNodes: Unsupported background configuration.', background);
         }
 
@@ -162,7 +167,7 @@ class Nodes {
     }
   }
 
-  updateFog(scene) {
+  updateFog(scene: any) {
     const sceneData = this.get(scene);
     const fog = scene.fog;
 
@@ -191,7 +196,7 @@ class Nodes {
     }
   }
 
-  updateEnvironment(scene) {
+  updateEnvironment(scene: any) {
     const sceneData = this.get(scene);
     const environment = scene.environment;
 
@@ -216,7 +221,7 @@ class Nodes {
     }
   }
 
-  getNodeFrame(renderObject) {
+  getNodeFrame(renderObject: any) {
     const nodeFrame = this.nodeFrame;
     nodeFrame.scene = renderObject.scene;
     nodeFrame.object = renderObject.object;
@@ -227,7 +232,7 @@ class Nodes {
     return nodeFrame;
   }
 
-  updateBefore(renderObject) {
+  updateBefore(renderObject: any) {
     const nodeFrame = this.getNodeFrame(renderObject);
     const nodeBuilder = this.getForRender(renderObject);
 
@@ -236,9 +241,7 @@ class Nodes {
     }
   }
 
-  updateForCompute(/*computeNode*/) {}
-
-  updateForRender(renderObject) {
+  updateForRender(renderObject: any) {
     const nodeFrame = this.getNodeFrame(renderObject);
     const nodeBuilder = this.getForRender(renderObject);
 
@@ -248,12 +251,11 @@ class Nodes {
   }
 
   dispose() {
-    super.dispose();
-
+    this.map = new WeakMap();
     this.nodeFrame = new NodeFrame();
   }
 
-  get(object) {
+  get(object: object) {
     let item = this.map.get(object);
 
     if (!item) {
@@ -264,7 +266,7 @@ class Nodes {
     return item;
   }
 
-  delete(object) {
+  delete(object: object) {
     let item;
 
     if (this.map.has(object)) {
@@ -276,7 +278,5 @@ class Nodes {
     return item;
   }
 
-  has = object => this.map.has(object);
+  has = (object: object) => this.map.has(object);
 }
-
-export default Nodes;
