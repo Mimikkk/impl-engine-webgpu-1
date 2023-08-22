@@ -22,7 +22,7 @@ export default class Nodes {
 
   constructor(renderer: Renderer) {
     this.renderer = renderer;
-    this.backend = renderer.backend;
+    this.backend = renderer.organizer;
     this.nodeFrame = new NodeFrame();
   }
 

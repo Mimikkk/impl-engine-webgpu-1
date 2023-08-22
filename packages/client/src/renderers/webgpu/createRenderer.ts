@@ -74,16 +74,16 @@ export class Renderer {
   autoClearStencil: boolean;
   autoClearDepth: boolean;
   autoClear: boolean;
-  backend: Organizer;
+  organizer: Organizer;
   domElement: HTMLCanvasElement;
   autoClearColor: boolean;
   _context: any;
   _activeCubeFace: number;
 
   constructor(parameters = {}) {
-    const backend = createOrganizer(parameters);
-    this.domElement = backend.getDomElement();
-    this.backend = backend;
+    const organizer = createOrganizer(parameters);
+    this.domElement = organizer.getDomElement();
+    this.organizer = organizer;
 
     this.autoClear = true;
     this.autoClearColor = true;
@@ -150,7 +150,7 @@ export class Renderer {
     if (this.initializer) return this.initializer;
 
     this.initializer = new Promise(async (resolve, reject) => {
-      const api = this.backend;
+      const api = this.organizer;
 
       try {
         await api.init(this);
@@ -182,7 +182,7 @@ export class Renderer {
   }
 
   get coordinateSystem() {
-    return this.backend.coordinateSystem;
+    return this.organizer.coordinateSystem;
   }
 
   async render(scene: any, camera: any) {
@@ -208,17 +208,12 @@ export class Renderer {
     nodeFrame.frameId++;
 
     //
-
-    const coordinateSystem = this.coordinateSystem;
-
-    if (camera.coordinateSystem !== coordinateSystem) {
-      camera.coordinateSystem = coordinateSystem;
-
+    if (camera.coordinateSystem !== this.coordinateSystem) {
+      camera.coordinateSystem = this.coordinateSystem;
       camera.updateProjectionMatrix();
     }
 
     //
-
     if (!this._animation.state.ongoing) nodeFrame.update();
 
     if (scene.matrixWorldAutoUpdate) scene.updateMatrixWorld();
@@ -229,7 +224,6 @@ export class Renderer {
     this.statistics.render.frame++;
 
     //
-
     let viewport = this._viewport as any;
     let scissor = this._scissor;
     let pixelRatio = this._pixelRatio;
@@ -265,7 +259,7 @@ export class Renderer {
     //
 
     _projScreenMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
-    _frustum.setFromProjectionMatrix(_projScreenMatrix, coordinateSystem);
+    _frustum.setFromProjectionMatrix(_projScreenMatrix, this.coordinateSystem);
 
     const renderList = this.renderLists.get([scene, camera]) as any;
     renderList.init();
@@ -295,7 +289,7 @@ export class Renderer {
     renderContext.activeCubeFace = activeCubeFace;
     this.nodes.updateScene(sceneRef);
     this.background.update(sceneRef, renderList, renderContext);
-    this.backend.beginRender(renderContext);
+    this.organizer.beginRender(renderContext);
 
     // process render lists
 
@@ -308,7 +302,7 @@ export class Renderer {
 
     // finish render pass
 
-    this.backend.finishRender(renderContext);
+    this.organizer.finishRender(renderContext);
 
     // restore render tree
 
@@ -330,7 +324,7 @@ export class Renderer {
   }
 
   async getArrayBufferAsync(attribute: any) {
-    return await this.backend.getArrayBufferAsync(attribute);
+    return await this.organizer.getArrayBufferAsync(attribute);
   }
 
   getContext() {
@@ -360,7 +354,7 @@ export class Renderer {
 
     this.setViewport(0, 0, width, height);
 
-    if (this._initialized) this.backend.updateSize();
+    if (this._initialized) this.organizer.updateSize();
   }
 
   setViewport(x: any, y: number, width: number, height: number, minDepth: number = 0, maxDepth: number = 1) {
@@ -379,7 +373,7 @@ export class Renderer {
   clear(color: boolean, depth: boolean, stencil: boolean) {
     const renderContext = this._currentRenderContext || this._lastRenderContext;
 
-    if (renderContext) this.backend.clear(renderContext, color, depth, stencil);
+    if (renderContext) this.organizer.clear(renderContext, color, depth, stencil);
   }
   clearColor = () => this.clear(true, false, false);
   clearDepth = () => this.clear(false, true, false);
@@ -411,7 +405,7 @@ export class Renderer {
   async compute(computeNodes: any) {
     if (!this._initialized) await this.initialize();
 
-    const backend = this.backend;
+    const backend = this.organizer;
     const pipelines = this.pipelines;
     const bindings = this.bindings;
     const nodes = this.nodes;
@@ -547,7 +541,7 @@ export class Renderer {
             viewportValue.minDepth = minDepth;
             viewportValue.maxDepth = maxDepth;
 
-            this.backend.updateViewport(this._currentRenderContext);
+            this.organizer.updateViewport(this._currentRenderContext);
 
             this._renderObject(object, scene, camera2, geometry, material, group, lightsNode);
           }
@@ -604,7 +598,7 @@ export class Renderer {
     this.geometries.updateForRender(renderObject);
     this.bindings.updateForRender(renderObject);
     this.pipelines.updateForRender(renderObject);
-    this.backend.draw(renderObject, this.statistics);
+    this.organizer.draw(renderObject, this.statistics);
   }
 }
 

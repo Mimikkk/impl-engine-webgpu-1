@@ -18,7 +18,7 @@ class Bindings {
   updateMap: WeakMap<object, any>;
 
   constructor(api: Renderer) {
-    this.backend = api.backend;
+    this.backend = api.organizer;
     this.textures = api.textures;
     this.pipelines = api.pipelines;
     this.attributes = api.attributes;

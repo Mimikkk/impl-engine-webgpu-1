@@ -19,7 +19,7 @@ class Attributes {
 
   constructor(renderer: Renderer) {
     this.map = createDataMap(() => ({}) as Attribute);
-    this.backend = renderer.backend;
+    this.backend = renderer.organizer;
   }
 
   get = (attributeCpu: Attribute) => this.map.get(attributeCpu);

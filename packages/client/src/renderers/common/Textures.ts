@@ -13,7 +13,7 @@ export interface Textures {
   dispose: () => void;
 }
 
-export const createTextures = ({ statistics, backend }: Renderer): Textures => {
+export const createTextures = ({ statistics, organizer }: Renderer): Textures => {
   let map = new DataMap<Texture | RenderTarget>();
   const getSize = (texture: Texture, target = _size) => {
     if (texture.isCubeTexture) {
@@ -27,8 +27,8 @@ export const createTextures = ({ statistics, backend }: Renderer): Textures => {
     return target;
   };
   const destroyTexture = (texture: Texture) => {
-    backend.destroySampler(texture);
-    backend.destroyTexture(texture);
+    organizer.destroySampler(texture);
+    organizer.destroyTexture(texture);
     map.delete(texture);
   };
 
@@ -41,19 +41,19 @@ export const createTextures = ({ statistics, backend }: Renderer): Textures => {
     if (isRenderTarget && textureData.initialized === true) {
       // it's an update
 
-      backend.destroySampler(texture);
-      backend.destroyTexture(texture);
+      organizer.destroySampler(texture);
+      organizer.destroyTexture(texture);
     }
 
     //
 
     if (isRenderTarget) {
-      backend.createSampler(texture);
-      backend.createTexture(texture, options);
+      organizer.createSampler(texture);
+      organizer.createTexture(texture, options);
     } else {
       const needsCreate = textureData.initialized !== true;
 
-      if (needsCreate) backend.createSampler(texture);
+      if (needsCreate) organizer.createSampler(texture);
 
       if (texture.version > 0) {
         const image = texture.image;
@@ -64,17 +64,17 @@ export const createTextures = ({ statistics, backend }: Renderer): Textures => {
           console.warn('THREE.Renderer: Texture marked for update but image is incomplete.');
         } else {
           if (textureData.isDefaultTexture === undefined || textureData.isDefaultTexture === true) {
-            backend.createTexture(texture, options);
+            organizer.createTexture(texture, options);
 
             textureData.isDefaultTexture = false;
           }
 
-          backend.updateTexture(texture);
+          organizer.updateTexture(texture);
         }
       } else {
         // async update
 
-        backend.createDefaultTexture(texture);
+        organizer.createDefaultTexture(texture);
 
         textureData.isDefaultTexture = true;
       }

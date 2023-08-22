@@ -17,7 +17,7 @@ class Pipelines {
 
   constructor(renderer: Renderer) {
     this.map = new DataMap();
-    this.api = renderer.backend;
+    this.api = renderer.organizer;
     this.nodes = renderer.nodes;
 
     this.caches = new Map();
