@@ -1,22 +1,21 @@
-import DataMap from '../DataMap.ts';
-import { NoToneMapping, EquirectangularReflectionMapping, EquirectangularRefractionMapping } from 'three';
+import { EquirectangularReflectionMapping, EquirectangularRefractionMapping, NoToneMapping } from 'three';
 import {
-  NodeFrame,
   cubeTexture,
-  texture,
-  rangeFog,
   densityFog,
-  reference,
-  toneMapping,
   equirectUV,
-  viewportBottomLeft,
+  NodeFrame,
   normalWorld,
+  rangeFog,
+  reference,
+  texture,
+  toneMapping,
+  viewportBottomLeft,
 } from 'three/examples/jsm/nodes/Nodes.js';
 
-class Nodes extends DataMap {
-  constructor(renderer, backend) {
-    super();
+class Nodes {
+  map = new WeakMap();
 
+  constructor(renderer, backend) {
     this.renderer = renderer;
     this.backend = backend;
     this.nodeFrame = new NodeFrame();
@@ -253,6 +252,31 @@ class Nodes extends DataMap {
 
     this.nodeFrame = new NodeFrame();
   }
+
+  get(object) {
+    let item = this.map.get(object);
+
+    if (!item) {
+      item = {};
+      this.map.set(object, item);
+    }
+
+    return item;
+  }
+
+  delete(object) {
+    let item;
+
+    if (this.map.has(object)) {
+      item = this.map.get(object);
+
+      this.map.delete(object);
+    }
+
+    return item;
+  }
+
+  has = object => this.map.has(object);
 }
 
 export default Nodes;

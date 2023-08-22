@@ -1,10 +1,9 @@
-import DataMap from './DataMap.ts';
 import { AttributeType } from './Constants.ts';
 
-class Bindings extends DataMap {
-  constructor(backend, nodes, textures, attributes, pipelines, info) {
-    super();
+class Bindings {
+  map = new WeakMap();
 
+  constructor(backend, nodes, textures, attributes, pipelines, info) {
     this.backend = backend;
     this.textures = textures;
     this.pipelines = pipelines;
@@ -121,6 +120,31 @@ class Bindings extends DataMap {
 
     this.updateMap = new WeakMap();
   }
+
+  get(object) {
+    let item = this.map.get(object);
+
+    if (!item) {
+      item = {};
+      this.map.set(object, item);
+    }
+
+    return item;
+  }
+
+  delete(object) {
+    let item;
+
+    if (this.map.has(object)) {
+      item = this.map.get(object);
+
+      this.map.delete(object);
+    }
+
+    return item;
+  }
+
+  has = object => this.map.has(object);
 }
 
 export default Bindings;
