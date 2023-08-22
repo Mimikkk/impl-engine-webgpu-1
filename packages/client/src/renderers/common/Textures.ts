@@ -7,7 +7,13 @@ const _size = new Vector2();
 type Texture = any;
 type RenderTarget = any;
 
-export const createTextures = (api: Organizer, statistics: Statistics) => {
+export interface Textures {
+  updateTexture: (texture: Texture, options?: {}) => void;
+  get: (object: object) => any;
+  updateRenderTarget: (targetCpu: RenderTarget) => void;
+}
+
+export const createTextures = (api: Organizer, statistics: Statistics): Textures => {
   const map = new DataMap<Texture | RenderTarget>();
   const getSize = (texture: Texture, target = _size) => {
     if (texture.isCubeTexture) {

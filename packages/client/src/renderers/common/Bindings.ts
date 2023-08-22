@@ -1,9 +1,29 @@
-import { AttributeType } from './Constants.ts';
+import { AttributeType } from './Constants.js';
+import { Statistics } from './createStatistics.js';
+import Nodes from './nodes/Nodes.js';
+import Attributes from './Attributes.js';
+import Pipelines from './Pipelines.js';
+import { Textures } from './Textures.js';
+import { Organizer } from '../webgpu/createOrganizer.js';
 
 class Bindings {
   map = new WeakMap();
+  backend: Organizer;
+  textures: Textures;
+  pipelines: Pipelines;
+  attributes: Attributes;
+  nodes: Nodes;
+  info: Statistics;
+  updateMap: WeakMap<object, any>;
 
-  constructor(backend, nodes, textures, attributes, pipelines, info) {
+  constructor(
+    backend: Organizer,
+    nodes: Nodes,
+    textures: Textures,
+    attributes: Attributes,
+    pipelines: Pipelines,
+    info: Statistics,
+  ) {
     this.backend = backend;
     this.textures = textures;
     this.pipelines = pipelines;
@@ -17,7 +37,7 @@ class Bindings {
     this.updateMap = new WeakMap();
   }
 
-  getForRender(renderObject) {
+  getForRender(renderObject: any) {
     const bindings = renderObject.getBindings();
 
     const data = this.get(renderObject);
@@ -35,7 +55,7 @@ class Bindings {
     return data.bindings;
   }
 
-  getForCompute(computeNode) {
+  getForCompute(computeNode: any) {
     const data = this.get(computeNode);
 
     if (data.bindings === undefined) {
@@ -53,15 +73,15 @@ class Bindings {
     return data.bindings;
   }
 
-  updateForCompute(computeNode) {
+  updateForCompute(computeNode: any) {
     this._update(computeNode, this.getForCompute(computeNode));
   }
 
-  updateForRender(renderObject) {
+  updateForRender(renderObject: any) {
     this._update(renderObject, this.getForRender(renderObject));
   }
 
-  _init(bindings) {
+  _init(bindings: any[]) {
     for (const binding of bindings) {
       if (binding.type === 'sampler' || binding.isSampledTexture) {
         this.textures.updateTexture(binding.texture);
@@ -73,7 +93,7 @@ class Bindings {
     }
   }
 
-  _update(object, bindings) {
+  _update(object: any, bindings: any[]) {
     const { backend } = this;
 
     const updateMap = this.updateMap;
@@ -108,20 +128,19 @@ class Bindings {
       updateMap.set(binding, frame);
     }
 
-    if (needsBindingsUpdate === true) {
+    if (needsBindingsUpdate) {
       const pipeline = this.pipelines.getForRender(object);
 
-      this.backend.updateBindings(bindings, pipeline);
+      this.backend.updateBindings(bindings);
     }
   }
 
   dispose() {
-    super.dispose();
-
+    this.map = new WeakMap();
     this.updateMap = new WeakMap();
   }
 
-  get(object) {
+  get(object: object) {
     let item = this.map.get(object);
 
     if (!item) {
@@ -132,7 +151,7 @@ class Bindings {
     return item;
   }
 
-  delete(object) {
+  delete(object: object) {
     let item;
 
     if (this.map.has(object)) {
@@ -144,7 +163,7 @@ class Bindings {
     return item;
   }
 
-  has = object => this.map.has(object);
+  has = (object: object) => this.map.has(object);
 }
 
 export default Bindings;

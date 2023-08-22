@@ -5,7 +5,7 @@ import Attributes from '../common/Attributes.ts';
 import { createGeometries } from '../common/Geometries.ts';
 import { createStatistics } from '../common/createStatistics.ts';
 import Pipelines from '../common/Pipelines.ts';
-import Bindings from '../common/Bindings.js';
+import Bindings from '../common/Bindings.ts';
 import { createRenderLists } from '../common/RenderLists.ts';
 import { createRenderContexts } from '../common/RenderContexts.ts';
 import { createTextures } from '../common/Textures.ts';

@@ -1,6 +1,6 @@
 import { lights } from 'three/examples/jsm/nodes/Nodes.js';
 
-function painterSortStable(a, b) {
+function painterSortStable(a: any, b: any) {
   if (a.groupOrder !== b.groupOrder) {
     return a.groupOrder - b.groupOrder;
   } else if (a.renderOrder !== b.renderOrder) {
@@ -14,7 +14,7 @@ function painterSortStable(a, b) {
   }
 }
 
-function reversePainterSortStable(a, b) {
+function reversePainterSortStable(a: any, b: any) {
   if (a.groupOrder !== b.groupOrder) {
     return a.groupOrder - b.groupOrder;
   } else if (a.renderOrder !== b.renderOrder) {
@@ -27,6 +27,13 @@ function reversePainterSortStable(a, b) {
 }
 
 class RenderList {
+  renderItems: any[];
+  renderItemsIndex: number;
+  opaque: any[];
+  transparent: any[];
+  lightsNode: any;
+  lightsArray: any[];
+
   constructor() {
     this.renderItems = [];
     this.renderItemsIndex = 0;
@@ -48,7 +55,7 @@ class RenderList {
     return this;
   }
 
-  getNextRenderItem(object, geometry, material, groupOrder, z, group) {
+  getNextRenderItem(object: any, geometry: any, material: any, groupOrder: any, z: any, group: any) {
     let renderItem = this.renderItems[this.renderItemsIndex];
 
     if (renderItem === undefined) {
@@ -80,34 +87,32 @@ class RenderList {
     return renderItem;
   }
 
-  push(object, geometry, material, groupOrder, z, group) {
+  push(object: any, geometry: any, material: any, groupOrder: any, z: any, group: any) {
     const renderItem = this.getNextRenderItem(object, geometry, material, groupOrder, z, group);
 
     (material.transparent === true ? this.transparent : this.opaque).push(renderItem);
   }
 
-  unshift(object, geometry, material, groupOrder, z, group) {
+  unshift(object: any, geometry: any, material: any, groupOrder: any, z: any, group: any) {
     const renderItem = this.getNextRenderItem(object, geometry, material, groupOrder, z, group);
 
     (material.transparent === true ? this.transparent : this.opaque).unshift(renderItem);
   }
 
-  pushLight(light) {
+  pushLight(light: any) {
     this.lightsArray.push(light);
   }
 
-  sort(customOpaqueSort, customTransparentSort) {
+  sort(customOpaqueSort: any, customTransparentSort: any) {
     if (this.opaque.length > 1) this.opaque.sort(customOpaqueSort || painterSortStable);
     if (this.transparent.length > 1) this.transparent.sort(customTransparentSort || reversePainterSortStable);
   }
 
   finish() {
     // update lights
-
     this.lightsNode.fromLights(this.lightsArray);
 
     // Clear references from inactive renderItems in the list
-
     for (let i = this.renderItemsIndex, il = this.renderItems.length; i < il; i++) {
       const renderItem = this.renderItems[i];
 

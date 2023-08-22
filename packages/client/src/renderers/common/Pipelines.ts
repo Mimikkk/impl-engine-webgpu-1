@@ -11,7 +11,7 @@ class Pipelines {
   api: Organizer;
   map: DataMap<{ pipeline: any; version: number }>;
   nodes: any;
-  bindings: null;
+  bindings: Bindings;
   caches: Map<any, any>;
   programs: { vertex: Map<any, any>; fragment: Map<any, any>; compute: Map<any, any> };
 
@@ -21,7 +21,7 @@ class Pipelines {
     this.nodes = nodes;
 
     // set by the bindings why the fuck
-    this.bindings = null;
+    this.bindings = null as never;
 
     this.caches = new Map();
     this.programs = {
