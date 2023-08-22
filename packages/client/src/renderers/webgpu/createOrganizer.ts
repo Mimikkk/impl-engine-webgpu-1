@@ -5,7 +5,7 @@ import {
   GPUStoreOp,
   GPUTextureFormat,
   GPUTextureViewDimension,
-} from './utils/constants.ts';
+} from './utils/constants.js';
 
 import WebGPUNodeBuilder from './nodes/WebGPUNodeBuilder.js';
 
@@ -16,45 +16,55 @@ import {
   UnsignedInt248Type,
   UnsignedIntType,
   Vector2,
-  Vector4,
   WebGPUCoordinateSystem,
 } from 'three';
 
-import { createUtilitiesState } from './utils/createUtilitiesState.ts';
-import { createAttributesState } from './utils/createAttributesState.ts';
-import { createBindingsState } from './utils/createBindingsState.ts';
-import { createPipelinesState } from './utils/createPipelinesState.ts';
-import { createTexturesState } from './utils/createTexturesState.ts';
+import { createUtilitiesState } from './utils/createUtilitiesState.js';
+import { createAttributesState } from './utils/createAttributesState.js';
+import { createBindingsState } from './utils/createBindingsState.js';
+import { createPipelinesState } from './utils/createPipelinesState.js';
+import { createTexturesState } from './utils/createTexturesState.js';
 
 let vector2 = new Vector2();
 
 export class Organizer {
+  parameters: any;
+  resources: WeakMap<object, any>;
+  renderer: any;
+  canvas: any;
+  adapter: any;
+  context: any;
+  device: any;
+  defaultDepthTexture: any;
+  colorBuffer: any;
+  utilities: any;
+  bindings: any;
+  pipelines: any;
+  attributes: any;
+  textures: any;
+
   constructor(options = {}) {
-    const { antialias = true, requiredLimits = {}, sampleCount = antialias ? 4 : 1, ...parameters } = options;
+    const { antialias = true, requiredLimits = {}, sampleCount = antialias ? 4 : 1, ...parameters }: any = options;
     this.parameters = { antialias, sampleCount, requiredLimits, ...parameters };
-    /** @type {WeakMap<object, object>} */
     this.resources = new WeakMap();
-    /** @type {Renderer} */
     this.renderer = null;
-    /** @type {HTMLCanvasElement} */
     this.canvas = null;
     this.adapter = null;
     this.device = null;
-    /** @type {CanvasRenderingContext2D} */
     this.context = null;
     this.colorBuffer = null;
 
-    this.defaultDepthTexture = new DepthTexture();
+    this.defaultDepthTexture = new DepthTexture(0, 0);
     this.defaultDepthTexture.name = 'depthBuffer';
 
-    this.utilites = createUtilitiesState(this);
+    this.utilities = createUtilitiesState(this);
     this.attributes = createAttributesState(this);
     this.bindings = createBindingsState(this);
     this.pipelines = createPipelinesState(this);
     this.textures = createTexturesState(this);
   }
 
-  getInstanceCount = ({ object, geometry }) =>
+  getInstanceCount = ({ object, geometry }: any) =>
     geometry.isInstancedBufferGeometry ? geometry.instanceCount : object.isInstancedMesh ? object.count : 1;
 
   getDrawingBufferSize = () => this.renderer.getDrawingBufferSize(vector2);
@@ -70,7 +80,7 @@ export class Organizer {
     return canvas;
   }
 
-  get(object) {
+  get(object: any) {
     let resource = this.resources.get(object);
     if (!resource) {
       resource = {};
@@ -79,9 +89,9 @@ export class Organizer {
     return resource;
   }
 
-  delete = object => this.resources.delete(object);
+  delete = (object: any) => this.resources.delete(object);
 
-  async init(renderer) {
+  async init(renderer: any) {
     this.renderer = renderer;
 
     this.adapter = await navigator.gpu.requestAdapter({
@@ -103,11 +113,11 @@ export class Organizer {
     return WebGPUCoordinateSystem;
   }
 
-  async getArrayBufferAsync(attribute) {
+  async getArrayBufferAsync(attribute: any) {
     return await this.attributes.readBuffer(attribute);
   }
 
-  beginRender(context) {
+  beginRender(context: any) {
     const contextGpu = this.get(context);
 
     const device = this.device;
@@ -123,8 +133,8 @@ export class Organizer {
       },
     };
 
-    const colorAttachment = descriptor.colorAttachments[0];
-    const depthStencilAttachment = descriptor.depthStencilAttachment;
+    const colorAttachment = descriptor.colorAttachments[0] as any;
+    const depthStencilAttachment = descriptor.depthStencilAttachment as any;
 
     const antialias = this.parameters.antialias;
 
@@ -222,7 +232,7 @@ export class Organizer {
     }
   }
 
-  finishRender(renderContext) {
+  finishRender(renderContext: any) {
     const renderContextData = this.get(renderContext);
 
     renderContextData.currentPass.end();
@@ -236,14 +246,14 @@ export class Organizer {
     }
   }
 
-  updateViewport(renderContext) {
+  updateViewport(renderContext: any) {
     const { currentPass } = this.get(renderContext);
     const { x, y, width, height, minDepth, maxDepth } = renderContext.viewportValue;
 
     currentPass.setViewport(x, y, width, height, minDepth, maxDepth);
   }
 
-  clear(renderContext, color, depth, stencil) {
+  clear(renderContext: any, color: any, depth: any, stencil: any) {
     const device = this.device;
     const renderContextData = this.get(renderContext);
 
@@ -299,14 +309,14 @@ export class Organizer {
 
   // compute
 
-  beginCompute(computeGroup) {
+  beginCompute(computeGroup: any) {
     const groupGPU = this.get(computeGroup);
 
     groupGPU.cmdEncoderGPU = this.device.createCommandEncoder({});
     groupGPU.passEncoderGPU = groupGPU.cmdEncoderGPU.beginComputePass();
   }
 
-  compute(computeGroup, computeNode, bindings, pipeline) {
+  compute(computeGroup: any, computeNode: any, bindings: any, pipeline: any) {
     const { passEncoderGPU } = this.get(computeGroup);
 
     // pipeline
@@ -322,7 +332,7 @@ export class Organizer {
     passEncoderGPU.dispatchWorkgroups(computeNode.dispatchCount);
   }
 
-  finishCompute(computeGroup) {
+  finishCompute(computeGroup: any) {
     const groupData = this.get(computeGroup);
 
     groupData.passEncoderGPU.end();
@@ -331,7 +341,7 @@ export class Organizer {
 
   // render object
 
-  draw(renderObject, info) {
+  draw(renderObject: any, info: any) {
     const { object, geometry, context, pipeline } = renderObject;
 
     const bindingsData = this.get(renderObject.getBindings());
@@ -408,16 +418,16 @@ export class Organizer {
 
   // cache key
 
-  needsUpdate(renderObject) {
+  needsUpdate(renderObject: any) {
     const renderObjectGPU = this.get(renderObject);
 
     const { object, material } = renderObject;
 
-    const sampleCount = this.utilites.findSampleCount(renderObject.context);
-    const colorSpace = this.utilites.findCurrentColorSpace(renderObject.context);
-    const colorFormat = this.utilites.findCurrentColorFormat(renderObject.context);
-    const depthStencilFormat = this.utilites.findCurrentDepthStencilFormat(renderObject.context);
-    const primitiveTopology = this.utilites.findPrimitiveTopology(object, material);
+    const sampleCount = this.utilities.findSampleCount(renderObject.context);
+    const colorSpace = this.utilities.findCurrentColorSpace(renderObject.context);
+    const colorFormat = this.utilities.findCurrentColorFormat(renderObject.context);
+    const depthStencilFormat = this.utilities.findCurrentDepthStencilFormat(renderObject.context);
+    const primitiveTopology = this.utilities.findPrimitiveTopology(object, material);
 
     let needsUpdate = false;
 
@@ -440,59 +450,59 @@ export class Organizer {
     return needsUpdate;
   }
 
-  getCacheKey(renderObject) {
+  getCacheKey(renderObject: any) {
     const { object, material } = renderObject;
 
     const renderContext = renderObject.context;
 
     return [
-      this.utilites.findSampleCount(renderContext),
-      this.utilites.findCurrentColorSpace(renderContext),
-      this.utilites.findCurrentColorFormat(renderContext),
-      this.utilites.findCurrentDepthStencilFormat(renderContext),
-      this.utilites.findPrimitiveTopology(object, material),
+      this.utilities.findSampleCount(renderContext),
+      this.utilities.findCurrentColorSpace(renderContext),
+      this.utilities.findCurrentColorFormat(renderContext),
+      this.utilities.findCurrentDepthStencilFormat(renderContext),
+      this.utilities.findPrimitiveTopology(object, material),
     ].join();
   }
 
   // textures
 
-  createSampler(texture) {
+  createSampler(texture: any) {
     this.textures.createSampler(texture);
   }
 
-  destroySampler(texture) {
+  destroySampler(texture: any) {
     this.textures.destroySampler(texture);
   }
 
-  createDefaultTexture(texture) {
+  createDefaultTexture(texture: any) {
     this.textures.applyTexture(texture);
   }
 
-  createTexture(texture, options) {
+  createTexture(texture: any, options: any) {
     this.textures.createTexture(texture, options);
   }
 
-  updateTexture(texture) {
+  updateTexture(texture: any) {
     this.textures.updateTexture(texture);
   }
 
-  destroyTexture(texture) {
+  destroyTexture(texture: any) {
     this.textures.destroyTexture(texture);
   }
 
-  copyTextureToBuffer(texture, x, y, width, height) {
+  copyTextureToBuffer(texture: any, x: any, y: any, width: any, height: any) {
     return this.textures.copyTextureToBuffer(texture, x, y, width, height);
   }
 
   // node builder
 
-  createNodeBuilder(object, renderer, scene = null) {
+  createNodeBuilder(object: any, renderer: any, scene = null) {
     return new WebGPUNodeBuilder(object, renderer, scene);
   }
 
   // program
 
-  createProgram(program) {
+  createProgram(program: any) {
     const programGPU = this.get(program);
 
     programGPU.module = {
@@ -501,33 +511,32 @@ export class Organizer {
     };
   }
 
-  destroyProgram = program => this.delete(program);
-
   // pipelines
-  createRenderPipeline = renderable => this.pipelines.createRender(renderable);
-  createComputePipeline = (computePipeline, bindings) => this.pipelines.createCompute(computePipeline, bindings);
+  createRenderPipeline = (renderable: any) => this.pipelines.createRender(renderable);
+  createComputePipeline = (computePipeline: any, bindings: any) =>
+    this.pipelines.createCompute(computePipeline, bindings);
 
   // bindings
-  createBindings = bindings => this.bindings.create(bindings);
-  updateBindings = bindings => this.bindings.create(bindings);
-  updateBinding = binding => this.bindings.update(binding);
+  createBindings = (bindings: any) => this.bindings.create(bindings);
+  updateBindings = (bindings: any) => this.bindings.create(bindings);
+  updateBinding = (binding: any) => this.bindings.update(binding);
 
   // attributes
 
-  createIndexAttribute = attribute =>
+  createIndexAttribute = (attribute: any) =>
     this.attributes.create(attribute, GPUBufferUsage.INDEX | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST);
 
-  createVertexAttribute = attribute =>
+  createVertexAttribute = (attribute: any) =>
     this.attributes.create(attribute, GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST);
 
-  createStorageAttribute = attribute =>
+  createStorageAttribute = (attribute: any) =>
     this.attributes.create(
       attribute,
       GPUBufferUsage.STORAGE | GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
     );
 
-  updateAttribute = attribute => this.attributes.update(attribute);
-  destroyAttribute = attribute => this.attributes.destroy(attribute);
+  updateAttribute = (attribute: any) => this.attributes.update(attribute);
+  destroyAttribute = (attribute: any) => this.attributes.destroy(attribute);
 
   // canvas
   updateSize() {
@@ -537,7 +546,7 @@ export class Organizer {
 
   // utils public
 
-  #getDepthBufferGPU(renderContext) {
+  #getDepthBufferGPU(renderContext: any) {
     const { width, height } = this.getDrawingBufferSize();
 
     const depthTexture = this.defaultDepthTexture;
@@ -601,4 +610,4 @@ export class Organizer {
   }
 }
 
-export const createOrganizer = parameters => new Organizer(parameters);
+export const createOrganizer = (parameters: any) => new Organizer(parameters);

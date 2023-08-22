@@ -236,7 +236,7 @@ const findBlending = ({
 
 export const createPipelinesState = (backend: Organizer) => {
   const findPrimitiveState = (object: any, geometry: any, material: any) => {
-    const topology = backend.utilites.findPrimitiveTopology(object, material);
+    const topology = backend.utilities.findPrimitiveTopology(object, material);
     const stripIndexFormat =
       object.isLine && !object.isLineSegments
         ? (geometry.index ? geometry.index.count : geometry.attributes.position.count) > 0xffff
@@ -277,7 +277,7 @@ export const createPipelinesState = (backend: Organizer) => {
         fragment: Object.assign({}, (backend.get(fragmentProgram) as any).module, {
           targets: [
             {
-              format: backend.utilites.findCurrentColorFormat(context),
+              format: backend.utilities.findCurrentColorFormat(context),
               blend: material.transparent && material.blending ? findBlending(material) : undefined,
               writeMask: findColorWriteMask(material),
             },
@@ -285,7 +285,7 @@ export const createPipelinesState = (backend: Organizer) => {
         }),
         primitive: findPrimitiveState(object, geometry, material) as any,
         depthStencil: {
-          format: backend.utilites.findCurrentDepthStencilFormat(context),
+          format: backend.utilities.findCurrentDepthStencilFormat(context),
           depthWriteEnabled: material.depthWrite,
           depthCompare: findDepthCompare(material) as any,
           stencilFront: material.stencilWrite
@@ -301,7 +301,7 @@ export const createPipelinesState = (backend: Organizer) => {
           stencilWriteMask: material.stencilWriteMask,
         },
         multisample: {
-          count: backend.utilites.findSampleCount(renderObject.context),
+          count: backend.utilities.findSampleCount(renderObject.context),
           alphaToCoverageEnabled: material.alphaToCoverage,
         },
         layout: backend.device!.createPipelineLayout({
