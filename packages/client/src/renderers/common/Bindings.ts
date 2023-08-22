@@ -24,10 +24,6 @@ class Bindings {
     this.attributes = api.attributes;
     this.nodes = api.nodes;
     this.info = api.statistics;
-
-    // assign bindings to pipelines
-    this.pipelines.bindings = this;
-
     this.updateMap = new WeakMap();
   }
 
