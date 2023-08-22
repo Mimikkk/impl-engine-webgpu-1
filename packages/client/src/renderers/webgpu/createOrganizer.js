@@ -5,7 +5,7 @@ import {
   GPUStoreOp,
   GPUTextureFormat,
   GPUTextureViewDimension,
-} from './utils/constants.js';
+} from './utils/constants.ts';
 
 import WebGPUNodeBuilder from './nodes/WebGPUNodeBuilder.js';
 
@@ -20,11 +20,11 @@ import {
   WebGPUCoordinateSystem,
 } from 'three';
 
-import { createUtilitiesState } from './utils/createUtilitiesState.js';
-import { createAttributesState } from './utils/createAttributesState.js';
-import { createBindingsState } from './utils/createBindingsState.js';
-import { createPipelinesState } from './utils/createPipelinesState.js';
-import { createTexturesState } from './utils/createTexturesState.js';
+import { createUtilitiesState } from './utils/createUtilitiesState.ts';
+import { createAttributesState } from './utils/createAttributesState.ts';
+import { createBindingsState } from './utils/createBindingsState.ts';
+import { createPipelinesState } from './utils/createPipelinesState.ts';
+import { createTexturesState } from './utils/createTexturesState.ts';
 
 let vector2 = new Vector2();
 

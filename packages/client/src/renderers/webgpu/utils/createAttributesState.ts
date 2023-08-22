@@ -1,7 +1,8 @@
 import { Float16BufferAttribute } from 'three';
 import { GPUInputStepMode } from './constants.js';
+import { Organizer } from '../createOrganizer.js';
 
-const typedArraysToVertexFormatPrefix = new Map([
+const typedArraysToVertexFormatPrefix = new Map<any, any>([
   [Int8Array, ['sint8', 'snorm8']],
   [Uint8Array, ['uint8', 'unorm8']],
   [Int16Array, ['sint16', 'snorm16']],
@@ -10,15 +11,15 @@ const typedArraysToVertexFormatPrefix = new Map([
   [Uint32Array, ['uint32', 'unorm32']],
   [Float32Array, ['float32']],
 ]);
-const typedAttributeToVertexFormatPrefix = new Map([[Float16BufferAttribute, ['float16']]]);
-const typeArraysToVertexFormatPrefixForItemSize = new Map([
+const typedAttributeToVertexFormatPrefix = new Map<any, any>([[Float16BufferAttribute, ['float16']]]);
+const typeArraysToVertexFormatPrefixForItemSize = new Map<any, any>([
   [Int32Array, 'sint32'],
   [Uint32Array, 'uint32'],
   [Float32Array, 'float32'],
 ]);
 
-export const createAttributesState = backend => {
-  const createShaderVertexBuffers = renderObject => {
+export const createAttributesState = (backend: Organizer) => {
+  const createShaderVertexBuffers = (renderObject: any) => {
     const attributes = renderObject.getAttributes();
     const buffers = new Map();
 
@@ -29,7 +30,7 @@ export const createAttributesState = backend => {
 
       let layout = buffers.get(bufferAttribute);
       if (!layout) {
-        const createLayout = (stride, isInstanced) => ({
+        const createLayout = (stride: any, isInstanced: any) => ({
           arrayStride: stride * bytesPerElement,
           stepMode: isInstanced ? GPUInputStepMode.Instance : GPUInputStepMode.Vertex,
           attributes: [],
@@ -51,7 +52,7 @@ export const createAttributesState = backend => {
 
     return Array.from(buffers.values());
   };
-  const findVertexFormat = geometryAttribute => {
+  const findVertexFormat = (geometryAttribute: any) => {
     const { itemSize, normalized, constructor: AttributeType } = geometryAttribute;
     const { constructor: ArrayType } = geometryAttribute.array;
 
@@ -74,13 +75,13 @@ export const createAttributesState = backend => {
 
     console.error('THREE.WebGPUAttributeUtils: Vertex format not supported yet.');
   };
-  const findBuffer = attribute => (attribute.isInterleavedBufferAttribute ? attribute.data : attribute);
-  const create = (attribute, usage) => {
+  const findBuffer = (attribute: any) => (attribute.isInterleavedBufferAttribute ? attribute.data : attribute);
+  const create = (attribute: any, usage: any) => {
     const bufferCpu = findBuffer(attribute);
-    const bufferGpu = backend.get(bufferCpu);
+    const bufferGpu = backend.get(bufferCpu) as any;
     if (bufferGpu.buffer) return;
 
-    bufferGpu.buffer = backend.device.createBuffer({
+    bufferGpu.buffer = backend.device!.createBuffer({
       label: bufferCpu.array.name,
       size: bufferCpu.array.byteLength + ((4 - (bufferCpu.array.byteLength % 4)) % 4),
       usage: usage,
@@ -89,18 +90,18 @@ export const createAttributesState = backend => {
     new bufferCpu.array.constructor(bufferGpu.buffer.getMappedRange()).set(bufferCpu.array);
     bufferGpu.buffer.unmap();
   };
-  const update = attribute => {
-    const bufferCpu = findBuffer(attribute);
+  const update = (attribute: any) => {
+    const bufferCpu = findBuffer(attribute) as any;
 
-    const { buffer: bufferGpu } = backend.get(bufferCpu);
+    const { buffer: bufferGpu } = backend.get(bufferCpu) as any;
     const { array, updateRange } = bufferCpu;
 
     if (updateRange.count === -1) {
-      backend.device.queue.writeBuffer(bufferGpu, 0, array, 0);
+      backend.device!.queue.writeBuffer(bufferGpu, 0, array, 0);
       return;
     }
 
-    backend.device.queue.writeBuffer(
+    backend.device!.queue.writeBuffer(
       bufferGpu,
       0,
       array,
@@ -111,12 +112,12 @@ export const createAttributesState = backend => {
     // reset range
     updateRange.count = -1;
   };
-  const destroy = attribute => {
-    backend.get(findBuffer(attribute)).buffer.destroy();
+  const destroy = (attribute: any) => {
+    (backend.get(findBuffer(attribute)) as any).buffer.destroy();
     backend.delete(attribute);
   };
-  const readBuffer = async attribute => {
-    const bufferCpu = backend.get(findBuffer(attribute));
+  const readBuffer = async (attribute: any) => {
+    const bufferCpu = backend.get(findBuffer(attribute)) as any;
 
     const bufferGpu = bufferCpu.buffer;
     const { size } = bufferGpu;
@@ -124,19 +125,19 @@ export const createAttributesState = backend => {
     let shouldUnmap = true;
     if (!bufferCpu.readBuffer) {
       shouldUnmap = false;
-      bufferCpu.readBuffer = backend.device.createBuffer({
+      bufferCpu.readBuffer = backend.device!.createBuffer({
         label: attribute.name,
         size,
         usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
       });
     }
 
-    const cmdEncoder = backend.device.createCommandEncoder({});
+    const cmdEncoder = backend.device!.createCommandEncoder({});
     cmdEncoder.copyBufferToBuffer(bufferGpu, 0, bufferCpu.readBuffer, 0, size);
 
     if (shouldUnmap) bufferCpu.readBuffer.unmap();
 
-    backend.device.queue.submit([cmdEncoder.finish()]);
+    backend.device!.queue.submit([cmdEncoder.finish()]);
 
     await bufferCpu.readBuffer.mapAsync(GPUMapMode.READ);
     return bufferCpu.readBuffer.getMappedRange();

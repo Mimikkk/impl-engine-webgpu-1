@@ -1,70 +1,70 @@
-import { BlendColorFactor, OneMinusBlendColorFactor } from '../../common/Constants.ts';
+import { BlendColorFactor, OneMinusBlendColorFactor } from '../../common/Constants.js';
 
 import {
-  GPUFrontFace,
-  GPUCullMode,
-  GPUColorWriteFlags,
-  GPUCompareFunction,
   GPUBlendFactor,
   GPUBlendOperation,
+  GPUColorWriteFlags,
+  GPUCompareFunction,
+  GPUCullMode,
+  GPUFrontFace,
   GPUIndexFormat,
   GPUStencilOperation,
 } from './constants.js';
 
 import {
-  FrontSide,
-  BackSide,
-  DoubleSide,
-  NeverDepth,
-  AlwaysDepth,
-  LessDepth,
-  LessEqualDepth,
-  EqualDepth,
-  GreaterEqualDepth,
-  GreaterDepth,
-  NotEqualDepth,
-  NoBlending,
-  NormalBlending,
-  AdditiveBlending,
-  SubtractiveBlending,
-  MultiplyBlending,
-  CustomBlending,
-  ZeroFactor,
-  OneFactor,
-  SrcColorFactor,
-  OneMinusSrcColorFactor,
-  SrcAlphaFactor,
-  OneMinusSrcAlphaFactor,
-  DstColorFactor,
-  OneMinusDstColorFactor,
-  DstAlphaFactor,
-  OneMinusDstAlphaFactor,
-  SrcAlphaSaturateFactor,
   AddEquation,
-  SubtractEquation,
-  ReverseSubtractEquation,
-  MinEquation,
-  MaxEquation,
-  KeepStencilOp,
-  ZeroStencilOp,
-  ReplaceStencilOp,
-  InvertStencilOp,
-  IncrementStencilOp,
-  DecrementStencilOp,
-  IncrementWrapStencilOp,
-  DecrementWrapStencilOp,
-  NeverStencilFunc,
+  AdditiveBlending,
+  AlwaysDepth,
   AlwaysStencilFunc,
-  LessStencilFunc,
-  LessEqualStencilFunc,
+  BackSide,
+  CustomBlending,
+  DecrementStencilOp,
+  DecrementWrapStencilOp,
+  DoubleSide,
+  DstAlphaFactor,
+  DstColorFactor,
+  EqualDepth,
   EqualStencilFunc,
+  FrontSide,
+  GreaterDepth,
+  GreaterEqualDepth,
   GreaterEqualStencilFunc,
   GreaterStencilFunc,
+  IncrementStencilOp,
+  IncrementWrapStencilOp,
+  InvertStencilOp,
+  KeepStencilOp,
+  LessDepth,
+  LessEqualDepth,
+  LessEqualStencilFunc,
+  LessStencilFunc,
+  MaxEquation,
+  MinEquation,
+  MultiplyBlending,
+  NeverDepth,
+  NeverStencilFunc,
+  NormalBlending,
+  NotEqualDepth,
   NotEqualStencilFunc,
+  OneFactor,
+  OneMinusDstAlphaFactor,
+  OneMinusDstColorFactor,
+  OneMinusSrcAlphaFactor,
+  OneMinusSrcColorFactor,
+  ReplaceStencilOp,
+  ReverseSubtractEquation,
+  SrcAlphaFactor,
+  SrcAlphaSaturateFactor,
+  SrcColorFactor,
+  SubtractEquation,
+  SubtractiveBlending,
+  ZeroFactor,
+  ZeroStencilOp,
 } from 'three';
+import { Organizer } from '../createOrganizer.js';
 
-const findColorWriteMask = ({ colorWrite }) => (colorWrite ? GPUColorWriteFlags.All : GPUColorWriteFlags.None);
-const findDepthCompare = ({ depthFunc, depthTest }) => {
+const findColorWriteMask = ({ colorWrite }: any) => (colorWrite ? GPUColorWriteFlags.All : GPUColorWriteFlags.None);
+const findDepthCompare = ({ depthFunc, depthTest }: any) => {
   if (!depthTest) return GPUCompareFunction.Always;
 
   switch (depthFunc) {
@@ -88,7 +88,7 @@ const findDepthCompare = ({ depthFunc, depthTest }) => {
       console.error('THREE.WebGPUPipelineUtils: Invalid depth function.', depthFunc);
   }
 };
-const findBlendOperation = blendEquation => {
+const findBlendOperation = (blendEquation: any) => {
   switch (blendEquation) {
     case AddEquation:
       return GPUBlendOperation.Add;
@@ -104,7 +104,7 @@ const findBlendOperation = blendEquation => {
       console.error('THREE.WebGPUPipelineUtils: Blend equation not supported.', blendEquation);
   }
 };
-const findStencilOperation = operation => {
+const findStencilOperation = (operation: any) => {
   switch (operation) {
     case KeepStencilOp:
       return GPUStencilOperation.Keep;
@@ -123,10 +123,10 @@ const findStencilOperation = operation => {
     case DecrementWrapStencilOp:
       return GPUStencilOperation.DecrementWrap;
     default:
-      console.error('THREE.WebGPURenderer: Invalid stencil operation.', stencilOperation);
+      console.error('THREE.WebGPURenderer: Invalid stencil operation.', operation);
   }
 };
-const findStencilCompare = ({ stencilFunc }) => {
+const findStencilCompare = ({ stencilFunc }: any) => {
   switch (stencilFunc) {
     case NeverStencilFunc:
       return GPUCompareFunction.Never;
@@ -148,7 +148,7 @@ const findStencilCompare = ({ stencilFunc }) => {
       console.error('THREE.WebGPURenderer: Invalid stencil function.', stencilFunc);
   }
 };
-const findBlendFactor = blend => {
+const findBlendFactor = (blend: any) => {
   switch (blend) {
     case ZeroFactor:
       return GPUBlendFactor.Zero;
@@ -189,10 +189,10 @@ const findBlending = ({
   blendDstAlpha,
   blendEquationAlpha,
   premultipliedAlpha,
-}) => {
+}: any) => {
   const { SrcAlpha, One, Src, Zero, OneMinusSrcAlpha, OneMinusSrc } = GPUBlendFactor;
   const { Add } = GPUBlendOperation;
-  const create = (srcRgb, dstRgb, srcAlpha, dstAlpha, srcOp = Add, dstOp = Add) => ({
+  const create = (srcRgb: any, dstRgb: any, srcAlpha: any, dstAlpha: any, srcOp = Add, dstOp = Add) => ({
     color: { srcFactor: srcRgb, dstFactor: dstRgb, operation: srcOp },
     alpha: { srcFactor: srcAlpha, dstFactor: dstAlpha, operation: dstOp },
   });
@@ -234,8 +234,8 @@ const findBlending = ({
   console.error('THREE.WebGPURenderer: Invalid blending: ', blending);
 };
 
-export const createPipelinesState = backend => {
-  const findPrimitiveState = (object, geometry, material) => {
+export const createPipelinesState = (backend: Organizer) => {
+  const findPrimitiveState = (object: any, geometry: any, material: any) => {
     const topology = backend.utilites.findPrimitiveTopology(object, material);
     const stripIndexFormat =
       object.isLine && !object.isLineSegments
@@ -245,7 +245,7 @@ export const createPipelinesState = backend => {
         : undefined;
     const frontFace = GPUFrontFace.CW;
 
-    const create = cullMode => ({ topology, stripIndexFormat, frontFace, cullMode });
+    const create = (cullMode: any) => ({ topology, stripIndexFormat, frontFace, cullMode });
 
     switch (material.side) {
       case FrontSide:
@@ -260,7 +260,7 @@ export const createPipelinesState = backend => {
   };
 
   return {
-    createRender: renderObject => {
+    createRender: (renderObject: any) => {
       const {
         object,
         material,
@@ -270,11 +270,11 @@ export const createPipelinesState = backend => {
         context,
       } = renderObject;
 
-      backend.get(pipeline).pipeline = backend.device.createRenderPipeline({
-        vertex: Object.assign({}, backend.get(vertexProgram).module, {
+      (backend.get(pipeline) as any).pipeline = backend.device!.createRenderPipeline({
+        vertex: Object.assign({}, (backend.get(vertexProgram) as any).module, {
           buffers: backend.attributes.createShaderVertexBuffers(renderObject),
         }),
-        fragment: Object.assign({}, backend.get(fragmentProgram).module, {
+        fragment: Object.assign({}, (backend.get(fragmentProgram) as any).module, {
           targets: [
             {
               format: backend.utilites.findCurrentColorFormat(context),
@@ -283,11 +283,11 @@ export const createPipelinesState = backend => {
             },
           ],
         }),
-        primitive: findPrimitiveState(object, geometry, material),
+        primitive: findPrimitiveState(object, geometry, material) as any,
         depthStencil: {
           format: backend.utilites.findCurrentDepthStencilFormat(context),
           depthWriteEnabled: material.depthWrite,
-          depthCompare: findDepthCompare(material),
+          depthCompare: findDepthCompare(material) as any,
           stencilFront: material.stencilWrite
             ? {
                 compare: findStencilCompare(material),
@@ -295,7 +295,7 @@ export const createPipelinesState = backend => {
                 depthFailOp: findStencilOperation(material.stencilZFail),
                 passOp: findStencilOperation(material.stencilZPass),
               }
-            : {},
+            : ({} as any),
           stencilBack: {},
           stencilReadMask: material.stencilFuncMask,
           stencilWriteMask: material.stencilWriteMask,
@@ -304,15 +304,15 @@ export const createPipelinesState = backend => {
           count: backend.utilites.findSampleCount(renderObject.context),
           alphaToCoverageEnabled: material.alphaToCoverage,
         },
-        layout: backend.device.createPipelineLayout({
-          bindGroupLayouts: [backend.get(renderObject.getBindings()).layout],
+        layout: backend.device!.createPipelineLayout({
+          bindGroupLayouts: [(backend.get(renderObject.getBindings()) as any).layout],
         }),
       });
     },
-    createCompute: (pipeline, bindings) => {
-      backend.get(pipeline).pipeline = backend.device.createComputePipeline({
-        compute: backend.get(pipeline.computeProgram).module,
-        layout: backend.device.createPipelineLayout({ bindGroupLayouts: [backend.get(bindings).layout] }),
+    createCompute: (pipeline: any, bindings: any) => {
+      (backend.get(pipeline) as any).pipeline = backend.device!.createComputePipeline({
+        compute: (backend.get(pipeline.computeProgram) as any).module,
+        layout: backend.device!.createPipelineLayout({ bindGroupLayouts: [(backend.get(bindings) as any).layout] }),
       });
     },
   };

@@ -55,6 +55,7 @@ import {
 } from 'three';
 
 import { createMipMapState } from './createMipMapState.js';
+import { Organizer } from '../createOrganizer.js';
 
 const compareMap = {
   [NeverCompare]: 'never',
@@ -74,8 +75,8 @@ const environmentMappings = [
 ];
 const filters = [NearestFilter, LinearFilter];
 
-export const createTexturesState = backend => {
-  const findFormat = ({ format, type, colorSpace, isFramebufferTexture, isCompressedTexture, internalFormat }) => {
+export const createTexturesState = (backend: Organizer) => {
+  const findFormat = ({ format, type, colorSpace, isFramebufferTexture, isCompressedTexture, internalFormat }: any) => {
     if (internalFormat) return internalFormat;
 
     if (isFramebufferTexture) return GPUTextureFormat.BGRA8Unorm;
@@ -178,7 +179,7 @@ export const createTexturesState = backend => {
           case UnsignedInt248Type:
             return GPUTextureFormat.Depth24PlusStencil8;
           case FloatType:
-            if (!backend.device.features.has(GPUFeatureName.Depth32FloatStencil8))
+            if (!backend.device!.features.has(GPUFeatureName.Depth32FloatStencil8))
               console.error(
                 'WebGPURenderer: Depth textures with DepthStencilFormat + FloatType can only be used with the "depth32float-stencil8" GPU feature.',
               );
@@ -192,7 +193,7 @@ export const createTexturesState = backend => {
         console.error('WebGPURenderer: Unsupported texture format.', format);
     }
   };
-  const findBytesPerTexel = format => {
+  const findBytesPerTexel = (format: any) => {
     switch (format) {
       case GPUTextureFormat.R8Unorm:
         return 1;
@@ -211,7 +212,7 @@ export const createTexturesState = backend => {
         return 16;
     }
   };
-  const findTypedArrayType = format => {
+  const findTypedArrayType = (format: any) => {
     switch (format) {
       case GPUTextureFormat.R8Uint:
       case GPUTextureFormat.R8Unorm:
@@ -251,16 +252,16 @@ export const createTexturesState = backend => {
         console.error('WebGPURenderer: Unsupported texture format.', format);
     }
   };
-  const findDimension = ({ isData3DTexture }) =>
+  const findDimension = ({ isData3DTexture }: any) =>
     isData3DTexture ? GPUTextureDimension.ThreeD : GPUTextureDimension.TwoD;
-  const findMipLevelCount = (texture, width, height, needsMipmaps) => {
+  const findMipLevelCount = (texture: any, width: any, height: any, needsMipmaps: any) => {
     if (texture.isCompressedTexture) return texture.mipmaps.length;
     if (needsMipmaps) return Math.floor(Math.log2(Math.max(width, height))) + 1;
     return 1;
   };
 
   // texture utilities ( should be inside texture as variables )
-  const findBlockSize = format => {
+  const findBlockSize = (format: any) => {
     switch (format) {
       case GPUTextureFormat.BC1RGBAUnorm:
       case GPUTextureFormat.BC1RGBAUnormSRGB:
@@ -331,7 +332,7 @@ export const createTexturesState = backend => {
         return { byteLength: 16, width: 12, height: 12 };
     }
   };
-  const findAddressMode = mode => {
+  const findAddressMode = (mode: any) => {
     switch (mode) {
       case RepeatWrapping:
         return GPUAddressMode.Repeat;
@@ -341,7 +342,7 @@ export const createTexturesState = backend => {
         return GPUAddressMode.ClampToEdge;
     }
   };
-  const findFilterMode = mode => {
+  const findFilterMode = (mode: any) => {
     switch (mode) {
       case NearestFilter:
       case NearestMipmapNearestFilter:
@@ -351,7 +352,7 @@ export const createTexturesState = backend => {
         return GPUFilterMode.Linear;
     }
   };
-  const findSize = ({ image, isCubeTexture }) => {
+  const findSize = ({ image, isCubeTexture }: any) => {
     if (isCubeTexture) {
       image = image.length > 0 ? image[0].image || image[0] : null;
 
@@ -360,9 +361,9 @@ export const createTexturesState = backend => {
 
     return { width: image?.width ?? 1, height: image?.height ?? 1, depth: image?.depth ?? 1 };
   };
-  const shouldMipmap = ({ mapping, isCompressedTexture, minFilter }) =>
+  const shouldMipmap = ({ mapping, isCompressedTexture, minFilter }: any) =>
     environmentMappings.includes(mapping) || !(isCompressedTexture || filters.includes(minFilter));
-  const findUsage = ({ isCompressedTexture }) =>
+  const findUsage = ({ isCompressedTexture }: any) =>
     isCompressedTexture
       ? GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC
       : GPUTextureUsage.TEXTURE_BINDING |
@@ -386,10 +387,10 @@ export const createTexturesState = backend => {
 
         this.createTexture(texture);
 
-        state.texture = texture;
+        state.texture = texture as any;
       }
 
-      return backend.get(state.texture).texture;
+      return (backend.get(state.texture) as any).texture;
     }
 
     get cubemap() {
@@ -400,35 +401,35 @@ export const createTexturesState = backend => {
 
         this.createTexture(texture);
 
-        state.cubemap = texture;
+        state.cubemap = texture as any;
       }
 
-      return backend.get(state.cubemap).texture;
+      return (backend.get(state.cubemap) as any).texture;
     }
 
     get mipmaper() {
-      if (!state.mipmaps) state.mipmaps = createMipMapState(backend);
+      if (!state.mipmaps) (state.mipmaps as any) = createMipMapState(backend);
       return state.mipmaps;
     }
 
-    createSampler = textureCpu => {
+    createSampler = (textureCpu: any) => {
       const { wrapS, wrapT, wrapR, magFilter, minFilter, anisotropy, isDepthTexture, compareFunction } = textureCpu;
-      backend.get(textureCpu).sampler = backend.device.createSampler({
-        addressModeU: findAddressMode(wrapS),
-        addressModeV: findAddressMode(wrapT),
-        addressModeW: findAddressMode(wrapR),
-        magFilter: findFilterMode(magFilter),
-        minFilter: findFilterMode(minFilter),
-        mipmapFilter: findFilterMode(minFilter),
+      (backend.get(textureCpu) as any).sampler = backend.device!.createSampler({
+        addressModeU: findAddressMode(wrapS) as any,
+        addressModeV: findAddressMode(wrapT) as any,
+        addressModeW: findAddressMode(wrapR) as any,
+        magFilter: findFilterMode(magFilter) as any,
+        minFilter: findFilterMode(minFilter) as any,
+        mipmapFilter: findFilterMode(minFilter) as any,
         maxAnisotropy: anisotropy,
-        compare: isDepthTexture && compareFunction ? compareMap[compareFunction] : undefined,
+        compare: isDepthTexture && compareFunction ? (compareMap as any)[compareFunction] : undefined,
       });
     };
-    destroySampler = textureCpu => delete backend.get(textureCpu).sampler;
-    applyTexture = textureCpu =>
-      (backend.get(textureCpu).texture = textureCpu.isCubeTexture ? this.cubemap : this.texture);
-    createTexture = (textureCpu, options = {}) => {
-      const textureGpu = backend.get(textureCpu);
+    destroySampler = (textureCpu: any) => delete (backend.get(textureCpu) as any).sampler;
+    applyTexture = (textureCpu: any) =>
+      ((backend.get(textureCpu) as any).texture = textureCpu.isCubeTexture ? this.cubemap : this.texture);
+    createTexture = (textureCpu: any, options: any = {}) => {
+      const textureGpu = backend.get(textureCpu) as any;
 
       const { width, height, depth } = findSize(textureCpu);
       const needsMipmaps = shouldMipmap(textureCpu);
@@ -462,15 +463,15 @@ export const createTexturesState = backend => {
           return this.applyTexture(textureCpu);
         }
 
-        textureGpu.texture = backend.device.createTexture(textureDescriptorGpu);
+        textureGpu.texture = backend.device!.createTexture(textureDescriptorGpu as any);
       }
 
       if (textureCpu.isRenderTargetTexture && sampleCount > 1) {
-        textureGpu.msaaTexture = backend.device.createTexture({
+        textureGpu.msaaTexture = backend.device!.createTexture({
           label: `${textureCpu.name}-msaa`,
           size: textureDescriptorGpu.size,
           mipLevelCount: textureDescriptorGpu.mipLevelCount,
-          dimension: textureDescriptorGpu.dimension,
+          dimension: textureDescriptorGpu.dimension as any,
           format: textureDescriptorGpu.format,
           usage: textureDescriptorGpu.usage,
           sampleCount,
@@ -480,126 +481,158 @@ export const createTexturesState = backend => {
       textureGpu.needsMipmaps = needsMipmaps;
       textureGpu.textureDescriptorGpu = textureDescriptorGpu;
     };
-    destroyTexture = textureCpu => {
-      const textureGpu = backend.get(textureCpu);
+    destroyTexture = (textureCpu: any) => {
+      const textureGpu = backend.get(textureCpu) as any;
 
       textureGpu.texture.destroy();
       if (textureGpu.msaaTexture) textureGpu.msaaTexture.destroy();
 
       backend.delete(textureCpu);
     };
-    mipmap = textureCpu => {
-      const { texture, textureDescriptorGpu } = backend.get(textureCpu);
+    mipmap = (textureCpu: any) => {
+      const { texture, textureDescriptorGpu } = backend.get(textureCpu) as any;
 
-      this.mipmaper.generate(texture, textureDescriptorGpu, 0);
+      (this.mipmaper as any).generate(texture, textureDescriptorGpu, 0);
 
       if (!textureCpu.isCubeTexture) return;
-      for (let level = 1; level < 6; level++) this.mipmaper.generate(texture, textureDescriptorGpu, level);
+      for (let level = 1; level < 6; level++) (this.mipmaper as any).generate(texture, textureDescriptorGpu, level);
     };
-    updateTexture = texture => {
-      const textureGpu = backend.get(texture);
+    updateTexture = (textureCpu: any) => {
+      const textureGpu = backend.get(textureCpu) as any;
       const { needsMipmaps, textureDescriptorGpu } = textureGpu;
       if (!textureDescriptorGpu) return;
 
       // transfer texture data
-      if (texture.isDataTexture || texture.isDataArrayTexture || texture.isData3DTexture) {
-        this._copyBufferToTexture(texture.image, textureGpu.texture, textureDescriptorGpu, needsMipmaps, 0);
-      } else if (texture.isCompressedTexture) {
-        this._copyCompressedBufferToTexture(texture.mipmaps, textureGpu.texture, textureDescriptorGpu);
-      } else if (texture.isCubeTexture) {
-        if (texture.image.length !== 6) return;
-        this._copyCubeMapToTexture(texture.image, texture, textureGpu.texture, textureDescriptorGpu, needsMipmaps);
-      } else if (texture.isRenderTargetTexture) {
-        if (needsMipmaps) this.mipmaper.generate(textureGpu.texture, textureDescriptorGpu);
-      } else if (texture.isVideoTexture) {
-        textureGpu.externalTexture = texture.source.data;
-      } else if (texture.image) {
-        this._copyImageToTexture(texture.image, texture, textureGpu.texture, textureDescriptorGpu, needsMipmaps);
+      if (textureCpu.isDataTexture || textureCpu.isDataArrayTexture || textureCpu.isData3DTexture) {
+        this._copyBufferToTexture(textureCpu.image, textureGpu.texture, textureDescriptorGpu, needsMipmaps, 0);
+      } else if (textureCpu.isCompressedTexture) {
+        this._copyCompressedBufferToTexture(textureCpu.mipmaps, textureGpu.texture, textureDescriptorGpu);
+      } else if (textureCpu.isCubeTexture) {
+        if (textureCpu.image.length !== 6) return;
+        this._copyCubeMapToTexture(
+          textureCpu.image,
+          textureCpu,
+          textureGpu.texture,
+          textureDescriptorGpu,
+          needsMipmaps,
+        );
+      } else if (textureCpu.isRenderTargetTexture) {
+        if (needsMipmaps) (this.mipmaper as any).generate(textureGpu.texture, textureDescriptorGpu);
+      } else if (textureCpu.isVideoTexture) {
+        textureGpu.externalTexture = textureCpu.source.data;
+      } else if (textureCpu.image) {
+        this._copyImageToTexture(
+          textureCpu.image,
+          textureCpu,
+          textureGpu.texture,
+          textureDescriptorGpu,
+          needsMipmaps,
+          undefined,
+        );
       } else console.warn('WebGPUTextureUtils: Unable to update texture.');
 
       //
 
-      textureGpu.version = texture.version;
+      textureGpu.version = textureCpu.version;
 
-      if (texture.onUpdate) texture.onUpdate(texture);
+      if (textureCpu.onUpdate) textureCpu.onUpdate(textureCpu);
     };
-    copyTextureToBuffer = async (texture, x, y, width, height) => {
-      const textureGpu = backend.get(texture);
+    copyTextureToBuffer = async (texture: any, x: any, y: any, width: any, height: any) => {
+      const textureGpu = backend.get(texture) as any;
       const format = textureGpu.textureDescriptorGpu.format;
       const bytesPerTexel = findBytesPerTexel(format);
 
-      const readBuffer = backend.device.createBuffer({
-        size: width * height * bytesPerTexel,
+      const readBuffer = backend.device!.createBuffer({
+        size: width * height * bytesPerTexel!,
         usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
       });
 
-      const encoder = backend.device.createCommandEncoder();
+      const encoder = backend.device!.createCommandEncoder();
 
       encoder.copyTextureToBuffer(
         { texture: textureGpu.texture, origin: { x, y } },
-        { buffer: readBuffer, bytesPerRow: width * bytesPerTexel },
+        { buffer: readBuffer, bytesPerRow: width * bytesPerTexel! },
         { width, height },
       );
 
-      backend.device.queue.submit([encoder.finish()]);
+      backend.device!.queue.submit([encoder.finish()]);
       await readBuffer.mapAsync(GPUMapMode.READ);
 
       const TypedArray = findTypedArrayType(format);
-      return new TypedArray(readBuffer.getMappedRange());
+      return new (TypedArray as any)(readBuffer.getMappedRange());
     };
-    _readImageBitmap = (image, textureCpu) =>
+    _readImageBitmap = (image: any, textureCpu: any) =>
       createImageBitmap(image, 0, 0, image.width, image.height, {
         imageOrientation: textureCpu.flipY === true ? 'flipY' : 'none',
         premultiplyAlpha: textureCpu.premultiplyAlpha ? 'premultiply' : 'default',
       });
-    _isHTMLImage = image => image instanceof HTMLImageElement || image instanceof HTMLCanvasElement;
-    _copyImageToTexture = (image, textureCpu, textureGpu, textureDescriptorGpu, needsMipmaps, originDepth) => {
+    _isHTMLImage = (image: any) => image instanceof HTMLImageElement || image instanceof HTMLCanvasElement;
+    _copyImageToTexture = (
+      image: any,
+      textureCpu: any,
+      textureGpu: any,
+      textureDescriptorGpu: any,
+      needsMipmaps: any,
+      originDepth: any,
+    ) => {
       if (this._isHTMLImage(image)) {
         this._readImageBitmap(image, textureCpu).then(bitmap =>
           this._copyExternalImageToTexture(bitmap, textureGpu, textureDescriptorGpu, needsMipmaps, originDepth),
         );
       } else this._copyExternalImageToTexture(image, textureGpu, textureDescriptorGpu, needsMipmaps, originDepth);
     };
-    _copyCubeMapToTexture = (images, textureCpu, textureGpu, textureDescriptorGpu, needsMipmaps) =>
-      images.forEach((image, level) => {
+    _copyCubeMapToTexture = (
+      images: any,
+      textureCpu: any,
+      textureGpu: any,
+      textureDescriptorGpu: any,
+      needsMipmaps: any,
+    ) =>
+      images.forEach((image: any, level: any) => {
         if (image.isDataTexture) {
           this._copyBufferToTexture(image.image, textureGpu, textureDescriptorGpu, needsMipmaps, level);
           return;
         }
         this._copyImageToTexture(image, textureCpu, textureGpu, textureDescriptorGpu, needsMipmaps, level);
       });
-    _copyExternalImageToTexture = (image, textureGpu, textureDescriptorGpu, needsMipmaps, depth) => {
-      backend.device.queue.copyExternalImageToTexture(
+    _copyExternalImageToTexture = (
+      image: any,
+      textureGpu: any,
+      textureDescriptorGpu: any,
+      needsMipmaps: any,
+      depth: any,
+    ) => {
+      backend.device!.queue.copyExternalImageToTexture(
         { source: image },
         { texture: textureGpu, mipLevel: 0, origin: { x: 0, y: 0, z: depth } },
         { width: image.width, height: image.height, depthOrArrayLayers: 1 },
       );
 
-      if (needsMipmaps) this.mipmaper.generate(textureGpu, textureDescriptorGpu, depth);
+      if (needsMipmaps) (this.mipmaper as any).generate(textureGpu, textureDescriptorGpu, depth);
     };
     _copyBufferToTexture = (
-      { width, height, depth, data },
-      textureGpu,
-      textureDescriptorGpu,
-      needsMipmaps,
-      originDepth,
+      { width, height, depth, data }: any,
+      textureGpu: any,
+      textureDescriptorGpu: any,
+      needsMipmaps: any,
+      originDepth: any,
     ) => {
-      backend.device.queue.writeTexture(
+      backend.device!.queue.writeTexture(
         { texture: textureGpu, mipLevel: 0, origin: { x: 0, y: 0, z: originDepth } },
         data,
-        { offset: 0, bytesPerRow: width * findBytesPerTexel(textureDescriptorGpu.format) },
+        { offset: 0, bytesPerRow: width * findBytesPerTexel(textureDescriptorGpu.format)! },
         { width, height, depthOrArrayLayers: depth ?? 1 },
       );
 
-      if (needsMipmaps) this.mipmaper.generate(textureGpu, textureDescriptorGpu, originDepth);
+      if (needsMipmaps) (this.mipmaper as any).generate(textureGpu, textureDescriptorGpu, originDepth);
     };
-    _copyCompressedBufferToTexture = (mipmaps, textureGpu, textureDescriptorGpu) => {
-      const size = findBlockSize(textureDescriptorGpu.format);
+    _copyCompressedBufferToTexture = (mipmaps: any, textureGpu: any, textureDescriptorGpu: any) => {
+      const size = findBlockSize(textureDescriptorGpu.format)!;
 
-      mipmaps.forEach(({ width, height, data }, level) => {
+      mipmaps.forEach(({ width, height, data }: any, level: any) => {
         const bytesPerRow = Math.ceil(width / size.width) * size.byteLength;
 
-        backend.device.queue.writeTexture(
+        backend.device!.queue.writeTexture(
           { texture: textureGpu, mipLevel: level },
           data,
           { offset: 0, bytesPerRow },

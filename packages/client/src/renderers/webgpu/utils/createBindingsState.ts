@@ -1,14 +1,15 @@
 import { GPUBufferBindingType, GPUTextureAspect, GPUTextureViewDimension } from './constants.js';
+import { Organizer } from '../createOrganizer.js';
 
-export const createBindingsState = backend => {
+export const createBindingsState = (backend: Organizer) => {
   const self = {
-    layout: bindingsCpu =>
-      backend.device.createBindGroupLayout({
-        entries: bindingsCpu.map((bindingCpu, slot) => {
-          const bindingGpu = { binding: slot, visibility: bindingCpu.visibility };
+    layout: (bindingsCpu: any) =>
+      backend.device!.createBindGroupLayout({
+        entries: bindingsCpu.map((bindingCpu: any, slot: any) => {
+          const bindingGpu = { binding: slot, visibility: bindingCpu.visibility } as any;
 
           if (bindingCpu.isUniformBuffer || bindingCpu.isStorageBuffer) {
-            const buffer = /*GPUBufferBindingLayout*/ {};
+            const buffer = /*GPUBufferBindingLayout*/ {} as any;
 
             if (bindingCpu.isStorageBuffer) buffer.type = GPUBufferBindingType.Storage;
 
@@ -17,7 +18,7 @@ export const createBindingsState = backend => {
           }
 
           if (bindingCpu.isSampler) {
-            const sampler = /* GPUSamplerBindingLayout */ {};
+            const sampler = /* GPUSamplerBindingLayout */ {} as any;
 
             if (bindingCpu.texture.isDepthTexture && bindingCpu.texture.compareFunction) sampler.type = 'comparison';
 
@@ -31,7 +32,7 @@ export const createBindingsState = backend => {
           }
 
           if (bindingCpu.isSampledTexture) {
-            const texture = /* GPUTextureBindingLayout */ {};
+            const texture = /* GPUTextureBindingLayout */ {} as any;
 
             if (bindingCpu.texture.isDepthTexture) texture.sampleType = 'depth';
             if (bindingCpu.isSampledCubeTexture) texture.viewDimension = GPUTextureViewDimension.Cube;
@@ -44,22 +45,23 @@ export const createBindingsState = backend => {
           return bindingGpu;
         }),
       }),
-    create: bindingsCpu => {
-      const bindingsGpu = backend.get(bindingsCpu);
+    create: (bindingsCpu: any) => {
+      const bindingsGpu = backend.get(bindingsCpu) as any;
       bindingsGpu.layout = self.layout(bindingsCpu);
       bindingsGpu.group = self.group(bindingsCpu, bindingsGpu.layout);
       bindingsGpu.bindings = bindingsCpu;
     },
-    update: bindingCpu => backend.device.queue.writeBuffer(backend.get(bindingCpu).buffer, 0, bindingCpu.buffer, 0),
-    group: (bindingsCpu, layoutGpu) =>
-      backend.device.createBindGroup({
+    update: (bindingCpu: any) =>
+      backend.device!.queue.writeBuffer((backend.get(bindingCpu) as any).buffer, 0, bindingCpu.buffer, 0),
+    group: (bindingsCpu: any, layoutGpu: any) =>
+      backend.device!.createBindGroup({
         layout: layoutGpu,
-        entries: bindingsCpu.map((bindingCpu, slot) => {
+        entries: bindingsCpu.map((bindingCpu: any, slot: any) => {
           if (bindingCpu.isUniformBuffer) {
-            const bindingGpu = backend.get(bindingCpu);
+            const bindingGpu = backend.get(bindingCpu) as any;
 
             if (!bindingGpu.buffer)
-              bindingGpu.buffer = backend.device.createBuffer({
+              bindingGpu.buffer = backend.device!.createBuffer({
                 label: 'bindingBuffer',
                 size: bindingCpu.byteLength,
                 usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
@@ -69,31 +71,32 @@ export const createBindingsState = backend => {
           }
 
           if (bindingCpu.isStorageBuffer) {
-            const bindingGpu = backend.get(bindingCpu);
+            const bindingGpu = backend.get(bindingCpu) as any;
 
-            if (!bindingGpu.buffer) bindingGpu.buffer = backend.get(bindingCpu.attribute).buffer;
+            if (!bindingGpu.buffer) bindingGpu.buffer = (backend.get(bindingCpu.attribute) as any).buffer;
 
             return { binding: slot, resource: { buffer: bindingGpu.buffer } };
           }
 
-          if (bindingCpu.isSampler) return { binding: slot, resource: backend.get(bindingCpu.texture).sampler };
+          if (bindingCpu.isSampler)
+            return { binding: slot, resource: (backend.get(bindingCpu.texture) as any).sampler };
 
           if (bindingCpu.isSampledTexture) {
-            const textureGpu = backend.get(bindingCpu.texture);
+            const textureGpu = backend.get(bindingCpu.texture) as any;
 
             const dimensionViewGpu = bindingCpu.isSampledCubeTexture
               ? GPUTextureViewDimension.Cube
               : GPUTextureViewDimension.TwoD;
 
             const resourceGpu = textureGpu.externalTexture
-              ? backend.device.importExternalTexture({ source: textureGpu.externalTexture })
+              ? backend.device!.importExternalTexture({ source: textureGpu.externalTexture })
               : textureGpu.texture.createView({ aspect: GPUTextureAspect.All, dimension: dimensionViewGpu });
 
             return { binding: slot, resource: resourceGpu };
           }
 
           console.error(`WebGPUBindingUtils: Unsupported binding "${bindingCpu}".`);
-          return bindingGpu;
+          return;
         }),
       }),
   };
