@@ -1,6 +1,8 @@
 import { BackSide, Color, Mesh, Scene, SphereGeometry } from 'three';
 import {
+  //@ts-expect-error
   backgroundBlurriness,
+  //@ts-expect-error
   backgroundIntensity,
   context,
   modelViewProjection,

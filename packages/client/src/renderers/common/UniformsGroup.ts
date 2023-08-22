@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { Std140ChunkBytes } from './Constants.js';
 import { BindingState, createBinding } from './Binding.js';
 import { ShaderStage } from './ShaderStage.js';
@@ -27,7 +26,7 @@ class UniformsGroup {
     return this.binding.state.visibility;
   }
 
-  addUniform(uniform) {
+  addUniform(uniform: any) {
     this.uniforms.push(uniform);
     return this;
   }
@@ -89,7 +88,7 @@ class UniformsGroup {
     return updated;
   }
 
-  updateByType(uniform) {
+  updateByType(uniform: any) {
     if (uniform.isFloatUniform) return this.updateNumber(uniform);
     if (uniform.isVector2Uniform) return this.updateVector2(uniform);
     if (uniform.isVector3Uniform) return this.updateVector3(uniform);
@@ -101,10 +100,10 @@ class UniformsGroup {
     console.error('THREE.WebGPUUniformsGroup: Unsupported uniform type.', uniform);
   }
 
-  updateNumber(uniform) {
+  updateNumber(uniform: any) {
     let updated = false;
 
-    const a = this.buffer;
+    const a = this.buffer as any;
     const v = uniform.getValue();
     const offset = uniform.offset;
 
@@ -116,10 +115,10 @@ class UniformsGroup {
     return updated;
   }
 
-  updateVector2(uniform) {
+  updateVector2(uniform: any) {
     let updated = false;
 
-    const a = this.buffer;
+    const a = this.buffer as any;
     const v = uniform.getValue();
     const offset = uniform.offset;
 
@@ -133,10 +132,10 @@ class UniformsGroup {
     return updated;
   }
 
-  updateVector3(uniform) {
+  updateVector3(uniform: any) {
     let updated = false;
 
-    const a = this.buffer;
+    const a = this.buffer as any;
     const v = uniform.getValue();
     const offset = uniform.offset;
 
@@ -151,10 +150,10 @@ class UniformsGroup {
     return updated;
   }
 
-  updateVector4(uniform) {
+  updateVector4(uniform: any) {
     let updated = false;
 
-    const a = this.buffer;
+    const a = this.buffer as any;
     const v = uniform.getValue();
     const offset = uniform.offset;
 
@@ -170,10 +169,10 @@ class UniformsGroup {
     return updated;
   }
 
-  updateColor(uniform) {
+  updateColor(uniform: any) {
     let updated = false;
 
-    const a = this.buffer;
+    const a = this.buffer as any;
     const c = uniform.getValue();
     const offset = uniform.offset;
 
@@ -188,10 +187,10 @@ class UniformsGroup {
     return updated;
   }
 
-  updateMatrix3(uniform) {
+  updateMatrix3(uniform: any) {
     let updated = false;
 
-    const a = this.buffer;
+    const a = this.buffer as any;
     const e = uniform.getValue().elements;
     const offset = uniform.offset;
 
@@ -222,14 +221,14 @@ class UniformsGroup {
     return updated;
   }
 
-  updateMatrix4(uniform) {
+  updateMatrix4(uniform: any) {
     let updated = false;
 
-    const a = this.buffer;
+    const a = this.buffer as any;
     const e = uniform.getValue().elements;
     const offset = uniform.offset;
 
-    if (arraysEqual(a, e, offset) === false) {
+    if (!arraysEqual(a, e, offset)) {
       a.set(e, offset);
       updated = true;
     }
