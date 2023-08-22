@@ -9,7 +9,7 @@ import {
   ColorNodeUniform,
   Matrix3NodeUniform,
   Matrix4NodeUniform,
-} from '../../common/nodes/NodeUniform.js';
+} from '../../common/nodes/NodeUniform.ts';
 import { createNodeSampler } from '../../common/nodes/NodeSampler.ts';
 import { NodeSampledTexture } from '../../common/nodes/NodeSampledTexture.ts';
 import { NodeSampledCubemap } from '../../common/nodes/NodeSampledCubemap.ts';
