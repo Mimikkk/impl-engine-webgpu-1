@@ -7,7 +7,7 @@ const _size = new Vector2();
 type Texture = any;
 type RenderTarget = any;
 
-export const createTextures = (backend: Organizer, info: Statistics) => {
+export const createTextures = (api: Organizer, statistics: Statistics) => {
   const map = new DataMap<Texture | RenderTarget>();
   const getSize = (texture: Texture, target = _size) => {
     if (texture.isCubeTexture) {
@@ -21,8 +21,8 @@ export const createTextures = (backend: Organizer, info: Statistics) => {
     return target;
   };
   const destroyTexture = (texture: Texture) => {
-    backend.destroySampler(texture);
-    backend.destroyTexture(texture);
+    api.destroySampler(texture);
+    api.destroyTexture(texture);
     map.delete(texture);
   };
 
@@ -35,19 +35,19 @@ export const createTextures = (backend: Organizer, info: Statistics) => {
     if (isRenderTarget && textureData.initialized === true) {
       // it's an update
 
-      backend.destroySampler(texture);
-      backend.destroyTexture(texture);
+      api.destroySampler(texture);
+      api.destroyTexture(texture);
     }
 
     //
 
     if (isRenderTarget) {
-      backend.createSampler(texture);
-      backend.createTexture(texture, options);
+      api.createSampler(texture);
+      api.createTexture(texture, options);
     } else {
       const needsCreate = textureData.initialized !== true;
 
-      if (needsCreate) backend.createSampler(texture);
+      if (needsCreate) api.createSampler(texture);
 
       if (texture.version > 0) {
         const image = texture.image;
@@ -58,17 +58,17 @@ export const createTextures = (backend: Organizer, info: Statistics) => {
           console.warn('THREE.Renderer: Texture marked for update but image is incomplete.');
         } else {
           if (textureData.isDefaultTexture === undefined || textureData.isDefaultTexture === true) {
-            backend.createTexture(texture, options);
+            api.createTexture(texture, options);
 
             textureData.isDefaultTexture = false;
           }
 
-          backend.updateTexture(texture);
+          api.updateTexture(texture);
         }
       } else {
         // async update
 
-        backend.createDefaultTexture(texture);
+        api.createDefaultTexture(texture);
 
         textureData.isDefaultTexture = true;
       }
@@ -81,7 +81,7 @@ export const createTextures = (backend: Organizer, info: Statistics) => {
 
       //
 
-      info.memory.textures++;
+      statistics.memory.textures++;
 
       // dispose
 
@@ -90,7 +90,7 @@ export const createTextures = (backend: Organizer, info: Statistics) => {
 
         destroyTexture(texture);
 
-        info.memory.textures--;
+        statistics.memory.textures--;
       };
 
       texture.addEventListener('dispose', onDispose);
