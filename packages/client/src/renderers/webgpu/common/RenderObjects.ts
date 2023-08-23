@@ -1,7 +1,7 @@
 import DataMap from './DataMap.js';
 import ChainMap from './ChainMap.js';
 import RenderObject from './RenderObject.js';
-import { Renderer } from '../webgpu/createRenderer.js';
+import { Renderer } from '../createRenderer.js';
 import Nodes from './nodes/Nodes.js';
 import { Geometries } from './Geometries.js';
 import Pipelines from './Pipelines.js';

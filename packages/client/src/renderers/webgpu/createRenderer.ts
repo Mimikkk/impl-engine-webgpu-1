@@ -1,16 +1,16 @@
 import { createOrganizer, Organizer } from './createOrganizer.js';
-import { createUpdateLoop, UpdateLoop } from '../common/createUpdateLoop.js';
-import RenderObjects from '../common/RenderObjects.js';
-import Attributes from '../common/Attributes.js';
-import { createGeometries, Geometries } from '../common/Geometries.js';
-import { createStatistics, Statistics } from '../common/createStatistics.js';
-import Pipelines from '../common/Pipelines.js';
-import Bindings from '../common/Bindings.js';
-import { createRenderLists, RenderLists } from '../common/RenderLists.js';
-import { createRenderContexts, RenderContexts } from '../common/RenderContexts.js';
-import { createTextures, Textures } from '../common/Textures.js';
-import { Background, createBackground } from '../common/Background.js';
-import Nodes from '../common/nodes/Nodes.js';
+import { createUpdateLoop, UpdateLoop } from './common/createUpdateLoop.js';
+import RenderObjects from './common/RenderObjects.js';
+import Attributes from './common/Attributes.js';
+import { createGeometries, Geometries } from './common/Geometries.js';
+import { createStatistics, Statistics } from './common/createStatistics.js';
+import Pipelines from './common/Pipelines.js';
+import Bindings from './common/Bindings.js';
+import { createRenderLists, RenderLists } from './common/RenderLists.js';
+import { createRenderContexts, RenderContexts } from './common/RenderContexts.js';
+import { createTextures, Textures } from './common/Textures.js';
+import { Background, createBackground } from './common/Background.js';
+import Nodes from './common/nodes/Nodes.js';
 import {
   BackSide,
   Color,

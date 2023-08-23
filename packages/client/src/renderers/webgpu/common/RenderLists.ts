@@ -1,6 +1,6 @@
 import ChainMap, { Chain } from './ChainMap.js';
 import RenderList from './RenderList.js';
-import { Renderer } from '../webgpu/createRenderer.js';
+import { Renderer } from '../createRenderer.js';
 
 export interface RenderLists {
   get: (keys: [object, object]) => WeakMap<object, Chain<RenderList>> | RenderList;

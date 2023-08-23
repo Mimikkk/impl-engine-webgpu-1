@@ -1,4 +1,4 @@
-import { Renderer } from '../webgpu/createRenderer.js';
+import { Renderer } from '../createRenderer.js';
 interface RenderObject {
   isMesh?: boolean;
   isSprite?: boolean;

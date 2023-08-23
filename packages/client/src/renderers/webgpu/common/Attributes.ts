@@ -1,8 +1,8 @@
 import DataMap, { createDataMap } from './DataMap.js';
 import { AttributeType } from './Constants.js';
 import { DynamicDrawUsage } from 'three';
-import type { Organizer } from '../webgpu/createOrganizer.js';
-import { Renderer } from '../webgpu/createRenderer.js';
+import type { Organizer } from '../createOrganizer.js';
+import { Renderer } from '../createRenderer.js';
 
 // TODO - this is a mess
 type Attribute = {

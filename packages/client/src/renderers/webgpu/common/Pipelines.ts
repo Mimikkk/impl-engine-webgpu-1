@@ -3,10 +3,10 @@ import { createRenderPipeline } from './RenderPipeline.js';
 import { createComputePipeline } from './ComputePipeline.js';
 import { createProgrammableStage } from './ProgrammableStage.js';
 import Nodes from './nodes/Nodes.js';
-import { Organizer } from '../webgpu/createOrganizer.js';
+import { Organizer } from '../createOrganizer.js';
 import Bindings from './Bindings.js';
 import { ShaderStage } from './ShaderStage.js';
-import { Renderer } from '../webgpu/createRenderer.js';
+import { Renderer } from '../createRenderer.js';
 
 class Pipelines {
   api: Organizer;

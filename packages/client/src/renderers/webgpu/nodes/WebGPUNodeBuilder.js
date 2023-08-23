@@ -1,6 +1,6 @@
 import { RenderTarget, NoColorSpace } from 'three';
 
-import UniformsGroup from '../../common/UniformsGroup.ts';
+import UniformsGroup from '../common/UniformsGroup.ts';
 import {
   FloatNodeUniform,
   Vector2NodeUniform,
@@ -9,14 +9,14 @@ import {
   ColorNodeUniform,
   Matrix3NodeUniform,
   Matrix4NodeUniform,
-} from '../../common/nodes/NodeUniform.ts';
-import { createNodeSampler } from '../../common/nodes/NodeSampler.ts';
-import { NodeSampledTexture } from '../../common/nodes/NodeSampledTexture.ts';
-import { NodeSampledCubemap } from '../../common/nodes/NodeSampledCubemap.ts';
+} from '../common/nodes/NodeUniform.ts';
+import { createNodeSampler } from '../common/nodes/NodeSampler.ts';
+import { NodeSampledTexture } from '../common/nodes/NodeSampledTexture.ts';
+import { NodeSampledCubemap } from '../common/nodes/NodeSampledCubemap.ts';
 
-import UniformBuffer from '../../common/UniformBuffer.ts';
-import StorageBuffer from '../../common/StorageBuffer.ts';
-import { getVectorLength, getStrideLength } from '../../common/BufferUtils.ts';
+import UniformBuffer from '../common/UniformBuffer.ts';
+import StorageBuffer from '../common/StorageBuffer.ts';
+import { getVectorLength, getStrideLength } from '../common/BufferUtils.ts';
 
 import { NodeBuilder, CodeNode, NodeMaterial } from 'three/examples/jsm/nodes/Nodes.js';
 

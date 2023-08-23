@@ -10,7 +10,7 @@ import {
   normalWorld,
   vec4,
 } from 'three/examples/jsm/nodes/Nodes.js';
-import { Renderer } from '../webgpu/createRenderer.js';
+import { Renderer } from '../createRenderer.js';
 import RenderList from './RenderList.js';
 import { RenderContext } from './RenderContext.js';
 import DataMap from './DataMap.js';
