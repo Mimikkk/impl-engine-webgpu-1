@@ -1,22 +1,10 @@
-import { BlendColorFactor, OneMinusBlendColorFactor } from '../common/Constants.js';
-
-import {
-  GPUBlendFactor,
-  GPUBlendOperation,
-  GPUColorWriteFlags,
-  GPUCompareFunction,
-  GPUCullMode,
-  GPUFrontFace,
-  GPUIndexFormat,
-  GPUStencilOperation,
-} from './constants.js';
-
 import {
   AddEquation,
   AdditiveBlending,
   AlwaysDepth,
   AlwaysStencilFunc,
   BackSide,
+  BlendColorFactor,
   CustomBlending,
   DecrementStencilOp,
   DecrementWrapStencilOp,
@@ -47,6 +35,7 @@ import {
   NotEqualDepth,
   NotEqualStencilFunc,
   OneFactor,
+  OneMinusBlendColorFactor,
   OneMinusDstAlphaFactor,
   OneMinusDstColorFactor,
   OneMinusSrcAlphaFactor,
@@ -60,7 +49,18 @@ import {
   SubtractiveBlending,
   ZeroFactor,
   ZeroStencilOp,
-} from 'three';
+} from '../common/Constants.js';
+
+import {
+  GPUBlendFactor,
+  GPUBlendOperation,
+  GPUColorWriteFlags,
+  GPUCompareFunction,
+  GPUCullMode,
+  GPUFrontFace,
+  GPUIndexFormat,
+  GPUStencilOperation,
+} from './constants.js';
 import { Organizer } from '../createOrganizer.js';
 
 const findColorWriteMask = ({ colorWrite }: any) => (colorWrite ? GPUColorWriteFlags.All : GPUColorWriteFlags.None);
