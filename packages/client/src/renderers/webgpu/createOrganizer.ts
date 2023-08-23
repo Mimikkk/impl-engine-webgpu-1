@@ -544,6 +544,44 @@ export class Organizer {
     this.#setupColorBuffer();
   }
 
+  copyFramebufferToTexture(texture: any, renderContext: any) {
+    const renderContextData = this.get(renderContext);
+
+    const { encoder, descriptor } = renderContextData;
+
+    let sourceGPU = null;
+
+    if (texture.isFramebufferTexture) {
+      sourceGPU = this.context.getCurrentTexture();
+    } else if (texture.isDepthTexture) {
+      sourceGPU = this.#getDepthBufferGPU(renderContext);
+    }
+
+    const destinationGPU = this.get(texture).texture;
+
+    renderContextData.currentPass.end();
+
+    encoder.copyTextureToTexture(
+      {
+        texture: sourceGPU,
+        origin: { x: 0, y: 0, z: 0 },
+      },
+      {
+        texture: destinationGPU,
+      },
+      [texture.image.width, texture.image.height],
+    );
+
+    if (texture.generateMipmaps) this.textures.mipmap(texture);
+
+    descriptor.colorAttachments[0].loadOp = GPULoadOp.Load;
+    if (renderContext.depth) descriptor.depthStencilAttachment.depthLoadOp = GPULoadOp.Load;
+    if (renderContext.stencil) descriptor.depthStencilAttachment.stencilLoadOp = GPULoadOp.Load;
+
+    renderContextData.currentPass = encoder.beginRenderPass(descriptor);
+    renderContextData.currentAttributesSet = {};
+  }
+
   // utils public
 
   #getDepthBufferGPU(renderContext: any) {

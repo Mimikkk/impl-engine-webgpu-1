@@ -600,6 +600,14 @@ export class Renderer {
     this.pipelines.updateForRender(renderObject);
     this.organizer.draw(renderObject, this.statistics);
   }
+
+  copyFramebufferToTexture(framebufferTexture: any) {
+    const renderContext = this._currentRenderContext || this._lastRenderContext;
+
+    this.textures.updateTexture(framebufferTexture);
+
+    this.organizer.copyFramebufferToTexture(framebufferTexture, renderContext);
+  }
 }
 
 export const createRenderer = (parameters: any) => new Renderer(parameters);
