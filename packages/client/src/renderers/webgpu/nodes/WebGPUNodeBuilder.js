@@ -20,7 +20,7 @@ import { getVectorLength, getStrideLength } from '../common/BufferUtils.ts';
 
 import { NodeBuilder, CodeNode, NodeMaterial } from 'three/examples/jsm/nodes/Nodes.js';
 
-import WebGPUNodeParser from './WebGPUNodeParser.js';
+import WebGPUNodeParser from './WebGPUNodeParser.ts';
 
 const gpuShaderStageLib = {
   vertex: GPUShaderStage.VERTEX,
