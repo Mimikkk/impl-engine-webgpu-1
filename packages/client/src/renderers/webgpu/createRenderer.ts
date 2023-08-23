@@ -11,21 +11,8 @@ import { createRenderContexts, RenderContexts } from './common/RenderContexts.js
 import { createTextures, Textures } from './common/Textures.js';
 import { Background, createBackground } from './common/Background.js';
 import Nodes from './common/nodes/Nodes.js';
-import {
-  BackSide,
-  Color,
-  DoubleSide,
-  FrontSide,
-  Frustum,
-  Matrix4,
-  NoToneMapping,
-  Scene,
-  SRGBColorSpace,
-  Vector2,
-  Vector3,
-  Vector4,
-} from 'three';
-
+import { Color, Frustum, Matrix4, Scene, Vector2, Vector3, Vector4 } from 'three';
+import { BackSide, DoubleSide, FrontSide, NoToneMapping, SRGBColorSpace } from './common/Constants.js';
 const _scene = new Scene();
 const _drawingBufferSize = new Vector2();
 const _screen = new Vector4();

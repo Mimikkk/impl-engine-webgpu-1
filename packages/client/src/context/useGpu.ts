@@ -3,7 +3,7 @@ import { create as createStore } from 'zustand';
 import { createEngine, createUpdateLoop, type UpdateLoop } from '@zd/engine';
 import exampleShader from '@assets/resources/shaders/example.wgsl?raw';
 import { Status } from '@typings/status.js';
-import { ExampleName } from '../renderers/htmls/examples.js';
+import { ExampleName } from '../renderers/examples/examples.js';
 
 export interface ContextStore {
   example: ExampleName;
