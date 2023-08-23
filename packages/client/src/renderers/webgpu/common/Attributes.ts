@@ -1,6 +1,5 @@
 import DataMap, { createDataMap } from './DataMap.js';
-import { AttributeType } from './Constants.js';
-import { DynamicDrawUsage } from 'three';
+import { AttributeType, DynamicDrawUsage } from './Constants.js';
 import type { Organizer } from '../createOrganizer.js';
 import { Renderer } from '../createRenderer.js';
 

@@ -1,4 +1,19 @@
-import NodeFunctionInput from 'three/examples/jsm/nodes/core/NodeFunctionInput.js';
+class NodeFunctionInput {
+  static isNodeFunctionInput: boolean = true;
+  type: any;
+  name: any;
+  count: null;
+  qualifier: string;
+  isConst: boolean;
+
+  constructor(type: string, name: string, count = null, qualifier = '', isConst = false) {
+    this.type = type;
+    this.name = name;
+    this.count = count;
+    this.qualifier = qualifier;
+    this.isConst = isConst;
+  }
+}
 
 const declarationRegexp = /^[fn]*\s*([a-z_0-9]+)?\s*\(([\s\S]*?)\)\s*[\-\>]*\s*([a-z_0-9]+)?/i;
 const propertiesRegexp = /[a-z_0-9]+/gi;

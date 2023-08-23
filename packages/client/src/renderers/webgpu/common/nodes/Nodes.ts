@@ -1,4 +1,4 @@
-import { EquirectangularReflectionMapping, EquirectangularRefractionMapping, NoToneMapping } from 'three';
+import { EquirectangularReflectionMapping, EquirectangularRefractionMapping, NoToneMapping } from '../Constants.js';
 import {
   cubeTexture,
   densityFog,
@@ -28,7 +28,6 @@ export default class Nodes {
 
   getForRender(renderObject: any) {
     const renderObjectData = this.get(renderObject);
-
     let nodeBuilder = renderObjectData.nodeBuilder;
 
     if (nodeBuilder === undefined) {
