@@ -1,5 +1,5 @@
-import { RenderTarget, NoColorSpace } from 'three';
-
+import { RenderTarget } from 'three';
+import { NoColorSpace } from '../common/Constants.ts';
 import UniformsGroup from '../common/UniformsGroup.ts';
 import {
   FloatNodeUniform,

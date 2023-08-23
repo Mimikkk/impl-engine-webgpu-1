@@ -246,7 +246,7 @@ export class Renderer {
     //
 
     _projScreenMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
-    _frustum.setFromProjectionMatrix(_projScreenMatrix, this.coordinateSystem);
+    _frustum.setFromProjectionMatrix(_projScreenMatrix, this.coordinateSystem as any);
 
     const renderList = this.renderLists.get([scene, camera]) as any;
     renderList.init();
