@@ -4,8 +4,8 @@ import Nodes from './nodes/Nodes.js';
 import Attributes from './Attributes.js';
 import Pipelines from './Pipelines.js';
 import { Textures } from './Textures.js';
-import { Organizer } from '../createOrganizer.js';
-import { Renderer } from '../createRenderer.js';
+import { Organizer } from '../webgpu/createOrganizer.js';
+import { Renderer } from '../webgpu/createRenderer.js';
 
 class Bindings {
   map = new WeakMap();

@@ -1,6 +1,8 @@
-import { Color, Mesh, Scene, SphereGeometry } from 'three';
+import { BackSide, Color, Mesh, Scene, SphereGeometry } from 'three';
 import {
+  //@ts-expect-error
   backgroundBlurriness,
+  //@ts-expect-error
   backgroundIntensity,
   context,
   modelViewProjection,
@@ -8,11 +10,10 @@ import {
   normalWorld,
   vec4,
 } from 'three/examples/jsm/nodes/Nodes.js';
-import { Renderer } from '../createRenderer.js';
+import { Renderer } from '../webgpu/createRenderer.js';
 import RenderList from './RenderList.js';
 import { RenderContext } from './RenderContext.js';
 import DataMap from './DataMap.js';
-import { BackSide } from './Constants.js';
 
 let _clearAlpha: number;
 const _clearColor = new Color();

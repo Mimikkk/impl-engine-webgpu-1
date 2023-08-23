@@ -1,6 +1,6 @@
 import ChainMap from './ChainMap.js';
 import { createRenderContext } from './RenderContext.js';
-import { Renderer } from '../createRenderer.js';
+import { Renderer } from '../webgpu/createRenderer.js';
 
 export interface RenderContexts {
   get: (scene: any, camera: any, target?: any) => any;

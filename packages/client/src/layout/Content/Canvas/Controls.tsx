@@ -2,7 +2,7 @@ import { useGpu } from '@context/context.js';
 import { useHydrate } from '@hooks/useHydrate.js';
 import { StatusBarrier } from '@components/flow/StatusBarrier.js';
 import { Checkbox, Slider } from '@components/forms/forms.js';
-import { Example, ExampleName } from '../../../renderers/examples/examples.js';
+import { Example, ExampleName } from '../../../renderers/htmls/examples.js';
 
 export const Controls = () => {
   const hydrate = useHydrate();

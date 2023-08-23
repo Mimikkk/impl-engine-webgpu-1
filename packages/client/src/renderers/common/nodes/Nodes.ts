@@ -11,8 +11,8 @@ import {
   toneMapping,
   viewportBottomLeft,
 } from 'three/examples/jsm/nodes/Nodes.js';
-import { Organizer } from '../../createOrganizer.js';
-import { Renderer } from '../../createRenderer.js';
+import { Organizer } from '../../webgpu/createOrganizer.js';
+import { Renderer } from '../../webgpu/createRenderer.js';
 
 export default class Nodes {
   map = new WeakMap();

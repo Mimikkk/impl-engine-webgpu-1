@@ -1,27 +1,32 @@
-import { RenderTarget } from 'three';
+import { RenderTarget, NoColorSpace } from 'three';
 
-import UniformsGroup from '.././common/UniformsGroup.js';
+import UniformsGroup from '../../common/UniformsGroup.ts';
 import {
-  ColorNodeUniform,
   FloatNodeUniform,
-  Matrix3NodeUniform,
-  Matrix4NodeUniform,
   Vector2NodeUniform,
   Vector3NodeUniform,
   Vector4NodeUniform,
-} from '.././common/nodes/NodeUniform.js';
-import { createNodeSampler } from '.././common/nodes/NodeSampler.js';
-import { NodeSampledTexture } from '.././common/nodes/NodeSampledTexture.js';
-import { NodeSampledCubemap } from '.././common/nodes/NodeSampledCubemap.js';
+  ColorNodeUniform,
+  Matrix3NodeUniform,
+  Matrix4NodeUniform,
+} from '../../common/nodes/NodeUniform.ts';
+import { createNodeSampler } from '../../common/nodes/NodeSampler.ts';
+import { NodeSampledTexture } from '../../common/nodes/NodeSampledTexture.ts';
+import { NodeSampledCubemap } from '../../common/nodes/NodeSampledCubemap.ts';
 
-import UniformBuffer from '.././common/UniformBuffer.js';
-import StorageBuffer from '.././common/StorageBuffer.js';
-import { getStrideLength, getVectorLength } from '.././common/BufferUtils.js';
+import UniformBuffer from '../../common/UniformBuffer.ts';
+import StorageBuffer from '../../common/StorageBuffer.ts';
+import { getVectorLength, getStrideLength } from '../../common/BufferUtils.ts';
 
-import { CodeNode, NodeBuilder, NodeMaterial } from 'three/examples/jsm/nodes/Nodes.js';
+import { NodeBuilder, CodeNode, NodeMaterial } from 'three/examples/jsm/nodes/Nodes.js';
 
 import WebGPUNodeParser from './WebGPUNodeParser.js';
-import { NoColorSpace } from '../common/Constants.js';
+
+const gpuShaderStageLib = {
+  vertex: GPUShaderStage.VERTEX,
+  fragment: GPUShaderStage.FRAGMENT,
+  compute: GPUShaderStage.COMPUTE,
+};
 
 const supports = {
   instance: true,
@@ -92,11 +97,6 @@ fn threejs_repeatWrapping( uv : vec2<f32>, dimension : vec2<u32> ) -> vec2<u32> 
 
 }
 `),
-};
-const gpuShaderStageLib = {
-  vertex: GPUShaderStage.VERTEX,
-  fragment: GPUShaderStage.FRAGMENT,
-  compute: GPUShaderStage.COMPUTE,
 };
 
 class WebGPUNodeBuilder extends NodeBuilder {
