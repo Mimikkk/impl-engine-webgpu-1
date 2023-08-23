@@ -1,10 +1,8 @@
 import { GPUAddressMode, GPUFeatureName, GPUFilterMode, GPUTextureDimension, GPUTextureFormat } from './constants.js';
-
 import {
   AlwaysCompare,
   CubeReflectionMapping,
   CubeRefractionMapping,
-  CubeTexture,
   DepthFormat,
   DepthStencilFormat,
   EqualCompare,
@@ -47,12 +45,12 @@ import {
   RGBAFormat,
   RGFormat,
   SRGBColorSpace,
-  Texture,
   UnsignedByteType,
   UnsignedInt248Type,
   UnsignedIntType,
   UnsignedShortType,
-} from 'three';
+} from '../common/Constants.js';
+import { CubeTexture, Texture } from 'three';
 
 import { createMipMapState } from './createMipMapState.js';
 import { Organizer } from '../createOrganizer.js';
