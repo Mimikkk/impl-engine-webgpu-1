@@ -1,5 +1,6 @@
-import { Color, Matrix3, Matrix4, Vector2, Vector3, Vector4 } from 'three';
+import { Matrix3, Matrix4, Vector2, Vector3, Vector4 } from 'three';
 import { NodeUniform } from 'three/examples/jsm/nodes/Nodes.js';
+import { Color } from '../../core/Color.js';
 
 export class FloatNodeUniform {
   name: string;
@@ -108,7 +109,7 @@ export class ColorNodeUniform {
   nodeUniform: any;
   constructor(nodeUniform: NodeUniform) {
     this.name = nodeUniform.name;
-    this.value = (nodeUniform.value ?? new Color()) as Color;
+    this.value = (nodeUniform.value ?? new Color(1, 1, 1)) as Color;
 
     this.isColorUniform = true;
 

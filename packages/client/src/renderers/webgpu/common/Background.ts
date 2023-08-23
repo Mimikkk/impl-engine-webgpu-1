@@ -1,8 +1,6 @@
-import { Color, Mesh, Scene, SphereGeometry } from 'three';
+import { Mesh, Scene, SphereGeometry } from 'three';
 import {
-  //@ts-expect-error
   backgroundBlurriness,
-  //@ts-expect-error
   backgroundIntensity,
   context,
   modelViewProjection,
@@ -15,9 +13,10 @@ import RenderList from './RenderList.js';
 import { RenderContext } from './RenderContext.js';
 import DataMap from './DataMap.js';
 import { BackSide } from './Constants.js';
+import { Color } from '../core/Color.js';
 
 let _clearAlpha: number;
-const _clearColor = new Color();
+const _clearColor = new Color(1, 1, 1);
 
 export interface Background {
   update: (scene: Scene, renderList: RenderList, renderContext: RenderContext) => void;
@@ -52,13 +51,18 @@ export const createBackground = (renderer: Renderer): Background => {
             context(backgroundNode, {
               getUVNode: () => normalWorld,
               getSamplerLevelNode: () => backgroundBlurriness,
-            }) as unknown as { mul: (a: any) => any }
+            }) as unknown as {
+              mul: (a: any) => any;
+            }
           ).mul(backgroundIntensity);
 
           let viewProj = modelViewProjection();
           viewProj = vec4(viewProj.x, viewProj.y, viewProj.w, viewProj.w);
 
-          const nodeMaterial = new NodeMaterial() as NodeMaterial & { vertexNode: any; outputNode: any };
+          const nodeMaterial = new NodeMaterial() as NodeMaterial & {
+            vertexNode: any;
+            outputNode: any;
+          };
           nodeMaterial.outputNode = backgroundMeshNode;
           nodeMaterial.side = BackSide;
           nodeMaterial.depthTest = false;
