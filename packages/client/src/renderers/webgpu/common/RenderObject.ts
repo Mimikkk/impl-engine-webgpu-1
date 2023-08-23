@@ -1,6 +1,6 @@
 import type Nodes from './nodes/Nodes.js';
 import type { Geometries } from './Geometries.js';
-import type { Renderer } from '../webgpu/createRenderer.js';
+import type { Renderer } from '../createRenderer.js';
 let id = 0;
 
 export default class RenderObject {

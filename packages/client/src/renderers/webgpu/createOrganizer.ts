@@ -6,18 +6,16 @@ import {
   GPUTextureFormat,
   GPUTextureViewDimension,
 } from './utils/constants.js';
-
-import WebGPUNodeBuilder from './nodes/WebGPUNodeBuilder.js';
-
 import {
   DepthFormat,
   DepthStencilFormat,
-  DepthTexture,
   UnsignedInt248Type,
   UnsignedIntType,
-  Vector2,
   WebGPUCoordinateSystem,
-} from 'three';
+} from './common/Constants.js';
+import WebGPUNodeBuilder from './nodes/WebGPUNodeBuilder.js';
+
+import { DepthTexture, Vector2 } from 'three';
 
 import { createUtilitiesState } from './utils/createUtilitiesState.js';
 import { createAttributesState } from './utils/createAttributesState.js';

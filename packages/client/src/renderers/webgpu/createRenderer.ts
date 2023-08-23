@@ -1,30 +1,18 @@
 import { createOrganizer, Organizer } from './createOrganizer.js';
-import { createUpdateLoop, UpdateLoop } from '../common/createUpdateLoop.js';
-import RenderObjects from '../common/RenderObjects.js';
-import Attributes from '../common/Attributes.js';
-import { createGeometries, Geometries } from '../common/Geometries.js';
-import { createStatistics, Statistics } from '../common/createStatistics.js';
-import Pipelines from '../common/Pipelines.js';
-import Bindings from '../common/Bindings.js';
-import { createRenderLists, RenderLists } from '../common/RenderLists.js';
-import { createRenderContexts, RenderContexts } from '../common/RenderContexts.js';
-import { createTextures, Textures } from '../common/Textures.js';
-import { Background, createBackground } from '../common/Background.js';
-import Nodes from '../common/nodes/Nodes.js';
-import {
-  BackSide,
-  Color,
-  DoubleSide,
-  FrontSide,
-  Frustum,
-  Matrix4,
-  NoToneMapping,
-  Scene,
-  SRGBColorSpace,
-  Vector2,
-  Vector3,
-  Vector4,
-} from 'three';
+import { createUpdateLoop, UpdateLoop } from './common/createUpdateLoop.js';
+import RenderObjects from './common/RenderObjects.js';
+import Attributes from './common/Attributes.js';
+import { createGeometries, Geometries } from './common/Geometries.js';
+import { createStatistics, Statistics } from './common/createStatistics.js';
+import Pipelines from './common/Pipelines.js';
+import Bindings from './common/Bindings.js';
+import { createRenderLists, RenderLists } from './common/RenderLists.js';
+import { createRenderContexts, RenderContexts } from './common/RenderContexts.js';
+import { createTextures, Textures } from './common/Textures.js';
+import { Background, createBackground } from './common/Background.js';
+import Nodes from './common/nodes/Nodes.js';
+import { Color, Frustum, Matrix4, Scene, Vector2, Vector3, Vector4 } from 'three';
+import { BackSide, DoubleSide, FrontSide, NoToneMapping, SRGBColorSpace } from './common/Constants.js';
 
 const _scene = new Scene();
 const _drawingBufferSize = new Vector2();

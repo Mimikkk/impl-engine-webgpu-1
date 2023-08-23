@@ -3,15 +3,15 @@ import { createRenderPipeline } from './RenderPipeline.js';
 import { createComputePipeline } from './ComputePipeline.js';
 import { createProgrammableStage } from './ProgrammableStage.js';
 import Nodes from './nodes/Nodes.js';
-import { Organizer } from '../webgpu/createOrganizer.js';
+import { Organizer } from '../createOrganizer.js';
 import Bindings from './Bindings.js';
 import { ShaderStage } from './ShaderStage.js';
-import { Renderer } from '../webgpu/createRenderer.js';
+import { Renderer } from '../createRenderer.js';
 
 class Pipelines {
   api: Organizer;
   map: DataMap<{ pipeline: any; version: number }>;
-  nodes: any;
+  nodes: Nodes;
   caches: Map<any, any>;
   programs: { vertex: Map<any, any>; fragment: Map<any, any>; compute: Map<any, any> };
 

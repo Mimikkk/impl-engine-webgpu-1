@@ -1,4 +1,4 @@
-import { BlendColorFactor, OneMinusBlendColorFactor } from '../../common/Constants.js';
+import { BlendColorFactor, OneMinusBlendColorFactor } from '.././common/Constants.js';
 
 import {
   GPUBlendFactor,

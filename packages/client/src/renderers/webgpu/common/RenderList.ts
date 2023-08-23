@@ -1,29 +1,18 @@
 import { lights } from 'three/examples/jsm/nodes/Nodes.js';
 
 function painterSortStable(a: any, b: any) {
-  if (a.groupOrder !== b.groupOrder) {
-    return a.groupOrder - b.groupOrder;
-  } else if (a.renderOrder !== b.renderOrder) {
-    return a.renderOrder - b.renderOrder;
-  } else if (a.material.id !== b.material.id) {
-    return a.material.id - b.material.id;
-  } else if (a.z !== b.z) {
-    return a.z - b.z;
-  } else {
-    return a.id - b.id;
-  }
+  if (a.groupOrder !== b.groupOrder) return a.groupOrder - b.groupOrder;
+  if (a.renderOrder !== b.renderOrder) return a.renderOrder - b.renderOrder;
+  if (a.material.id !== b.material.id) return a.material.id - b.material.id;
+  if (a.z !== b.z) return a.z - b.z;
+  return a.id - b.id;
 }
 
 function reversePainterSortStable(a: any, b: any) {
-  if (a.groupOrder !== b.groupOrder) {
-    return a.groupOrder - b.groupOrder;
-  } else if (a.renderOrder !== b.renderOrder) {
-    return a.renderOrder - b.renderOrder;
-  } else if (a.z !== b.z) {
-    return b.z - a.z;
-  } else {
-    return a.id - b.id;
-  }
+  if (a.groupOrder !== b.groupOrder) return a.groupOrder - b.groupOrder;
+  if (a.renderOrder !== b.renderOrder) return a.renderOrder - b.renderOrder;
+  if (a.z !== b.z) return b.z - a.z;
+  return a.id - b.id;
 }
 
 class RenderList {
