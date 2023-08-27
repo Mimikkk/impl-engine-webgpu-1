@@ -2,23 +2,27 @@ import { WebGLCoordinateSystem, WebGPUCoordinateSystem } from '../common/Constan
 import { Vector3 } from './Vector3.js';
 import { Sphere } from './Sphere.js';
 import { Plane } from './Plane.js';
+import { Matrix4 } from './Matrix4.js';
+import { Object3D, Sprite } from 'three';
+import { Box3 } from './Box3.js';
 
 const _sphere = /*@__PURE__*/ new Sphere();
 const _vector = /*@__PURE__*/ new Vector3();
 
-class Frustum {
+export class Frustum {
+  planes: [Plane, Plane, Plane, Plane, Plane, Plane];
   constructor(
-    p0 = new Plane(),
-    p1 = new Plane(),
-    p2 = new Plane(),
-    p3 = new Plane(),
-    p4 = new Plane(),
-    p5 = new Plane(),
+    p0: Plane = new Plane(),
+    p1: Plane = new Plane(),
+    p2: Plane = new Plane(),
+    p3: Plane = new Plane(),
+    p4: Plane = new Plane(),
+    p5: Plane = new Plane(),
   ) {
     this.planes = [p0, p1, p2, p3, p4, p5];
   }
 
-  set(p0, p1, p2, p3, p4, p5) {
+  set(p0: Plane, p1: Plane, p2: Plane, p3: Plane, p4: Plane, p5: Plane) {
     const planes = this.planes;
 
     planes[0].copy(p0);
@@ -31,7 +35,7 @@ class Frustum {
     return this;
   }
 
-  copy(frustum) {
+  copy(frustum: Frustum) {
     const planes = this.planes;
 
     for (let i = 0; i < 6; i++) {
@@ -41,7 +45,7 @@ class Frustum {
     return this;
   }
 
-  setFromProjectionMatrix(m, coordinateSystem = WebGLCoordinateSystem) {
+  setFromProjectionMatrix(m: Matrix4, coordinateSystem: number = WebGLCoordinateSystem) {
     const planes = this.planes;
     const me = m.elements;
     const me0 = me[0],
@@ -78,7 +82,7 @@ class Frustum {
     return this;
   }
 
-  intersectsObject(object) {
+  intersectsObject(object: Object3D) {
     if (object.boundingSphere !== undefined) {
       if (object.boundingSphere === null) object.computeBoundingSphere();
 
@@ -94,7 +98,7 @@ class Frustum {
     return this.intersectsSphere(_sphere);
   }
 
-  intersectsSprite(sprite) {
+  intersectsSprite(sprite: Sprite) {
     _sphere.center.set(0, 0, 0);
     _sphere.radius = 0.7071067811865476;
     _sphere.applyMatrix4(sprite.matrixWorld);
@@ -102,7 +106,7 @@ class Frustum {
     return this.intersectsSphere(_sphere);
   }
 
-  intersectsSphere(sphere) {
+  intersectsSphere(sphere: Sphere) {
     const planes = this.planes;
     const center = sphere.center;
     const negRadius = -sphere.radius;
@@ -118,7 +122,7 @@ class Frustum {
     return true;
   }
 
-  intersectsBox(box) {
+  intersectsBox(box: Box3) {
     const planes = this.planes;
 
     for (let i = 0; i < 6; i++) {
@@ -138,7 +142,7 @@ class Frustum {
     return true;
   }
 
-  containsPoint(point) {
+  containsPoint(point: Vector3) {
     const planes = this.planes;
 
     for (let i = 0; i < 6; i++) {
@@ -151,8 +155,6 @@ class Frustum {
   }
 
   clone() {
-    return new this.constructor().copy(this);
+    return new Frustum().copy(this);
   }
 }
-
-export { Frustum };
