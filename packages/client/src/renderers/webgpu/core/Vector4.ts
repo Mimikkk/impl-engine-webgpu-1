@@ -1,4 +1,5 @@
-import { Matrix3, Matrix4, Quaternion } from 'three';
+import { Matrix3, Matrix4 } from 'three';
+import { Quaternion } from './Quaternion.js';
 
 export class Vector4 {
   static isVector4: boolean = true;

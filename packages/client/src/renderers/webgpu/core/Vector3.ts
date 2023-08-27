@@ -1,6 +1,8 @@
 import { MathUtils } from './MathUtils.js';
 import { Quaternion } from './Quaternion.js';
-import { Camera, Color, Cylindrical, Euler, Matrix3, Matrix4, Spherical } from 'three';
+import { Camera, Cylindrical, Matrix3, Matrix4, Spherical } from 'three';
+import { Euler } from './Euler.js';
+import { Color } from './Color.js';
 
 export class Vector3 {
   static isVector3: boolean = true;
