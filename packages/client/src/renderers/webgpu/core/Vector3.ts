@@ -1,6 +1,8 @@
 import { MathUtils } from './MathUtils.js';
 import { Quaternion } from './Quaternion.js';
-import { Camera, Cylindrical, Matrix3, Matrix4, Spherical } from 'three';
+import { Camera, Matrix3, Matrix4 } from 'three';
+import { Cylindrical } from './Cylindrical.js';
+import { Spherical } from './Spherical.js';
 import { Euler } from './Euler.js';
 import { Color } from './Color.js';
 
