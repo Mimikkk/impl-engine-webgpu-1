@@ -1,13 +1,14 @@
 import { Quaternion } from './Quaternion.js';
 import { clamp } from './MathUtils.js';
-import { Matrix3, Matrix4 } from 'three';
 import { Vector3 } from './Vector3.js';
+import { Matrix4 } from './Matrix4.js';
+import { Matrix3 } from './Matrix3.js';
 
 const _matrix = /*@__PURE__*/ new Matrix4();
 const _quaternion = /*@__PURE__*/ new Quaternion();
 
 export class Euler {
-  public static DEFAULT_ORDER: Euler.Order = 'XYZ';
+  static DEFAULT_ORDER: Euler.Order = 'XYZ';
   static isEuler: boolean = true;
   _x: number;
   _y: number;
@@ -83,7 +84,7 @@ export class Euler {
     return this;
   }
 
-  setFromRotationMatrix(m: Matrix3, order: Euler.Order = this._order, update: boolean = true) {
+  setFromRotationMatrix(m: Matrix4, order: Euler.Order = this._order, update: boolean = true) {
     // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
 
     const te = m.elements;

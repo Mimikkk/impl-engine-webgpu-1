@@ -1,6 +1,8 @@
 import { MathUtils } from './MathUtils.js';
 import { Quaternion } from './Quaternion.js';
-import { Camera, Matrix3, Matrix4 } from 'three';
+import { Camera } from 'three';
+import { Matrix4 } from './Matrix4.js';
+import { Matrix3 } from './Matrix3.js';
 import { Cylindrical } from './Cylindrical.js';
 import { Spherical } from './Spherical.js';
 import { Euler } from './Euler.js';
@@ -502,7 +504,7 @@ export class Vector3 {
     return this;
   }
 
-  setFromMatrixScale(m: Matrix3) {
+  setFromMatrixScale(m: Matrix4) {
     const sx = this.setFromMatrixColumn(m, 0).length();
     const sy = this.setFromMatrixColumn(m, 1).length();
     const sz = this.setFromMatrixColumn(m, 2).length();
@@ -514,7 +516,7 @@ export class Vector3 {
     return this;
   }
 
-  setFromMatrixColumn(m: Matrix3, index: number) {
+  setFromMatrixColumn(m: Matrix4, index: number) {
     return this.fromArray(m.elements, index * 4);
   }
 

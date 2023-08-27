@@ -1,4 +1,5 @@
-import { Matrix3, Matrix4 } from 'three';
+import { Matrix4 } from './Matrix4.js';
+import { Matrix3 } from './Matrix3.js';
 import { Quaternion } from './Quaternion.js';
 
 export class Vector4 {

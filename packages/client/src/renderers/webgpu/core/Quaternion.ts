@@ -1,7 +1,8 @@
 import { MathUtils } from './MathUtils.js';
-import { Matrix3 } from 'three';
 import { Euler } from './Euler.js';
 import { Vector3 } from './Vector3.js';
+import { Matrix3 } from './Matrix3.js';
+import { Matrix4 } from './Matrix4.js';
 
 export class Quaternion {
   isQuaternion: boolean = true;
@@ -269,7 +270,7 @@ export class Quaternion {
     return this;
   }
 
-  setFromRotationMatrix(m: Matrix3) {
+  setFromRotationMatrix(m: Matrix4) {
     // http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
 
     // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)

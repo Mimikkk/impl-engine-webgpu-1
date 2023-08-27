@@ -1,5 +1,5 @@
 import { MathUtils } from './MathUtils.js';
-import { Matrix3 } from 'three';
+import { Matrix3 } from './Matrix3.js';
 
 export class Vector2 {
   static isVector2: boolean = true;

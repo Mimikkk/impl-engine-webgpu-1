@@ -1,8 +1,8 @@
 import { clamp, euclideanModulo, lerp } from './MathUtils.js';
 import { ColorManagement, ColorSpace, LinearToSRGB, SRGBToLinear } from './ColorManagement.js';
 import { SRGBColorSpace } from '../common/Constants.js';
-import { Matrix3 } from 'three';
 import { Vector3 } from './Vector3.js';
+import { Matrix3 } from './Matrix3.js';
 
 const colorMap = {
   aliceblue: 0xf0f8ff,

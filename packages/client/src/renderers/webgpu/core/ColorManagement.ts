@@ -1,5 +1,5 @@
 import { DisplayP3ColorSpace, LinearSRGBColorSpace, SRGBColorSpace } from '../common/Constants.js';
-import { Matrix3 } from 'three';
+import { Matrix3 } from './Matrix3.js';
 import type { Color } from './Color.js';
 
 export const SRGBToLinear = (c: number) =>

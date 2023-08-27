@@ -1,8 +1,8 @@
 import { Vector3 } from './Vector3.js';
 export class Cylindrical {
-  private radius: number;
-  private theta: number;
-  private y: number;
+  radius: number;
+  theta: number;
+  y: number;
 
   constructor(radius: number = 1, theta: number = 0, y: number = 0) {
     this.radius = radius; // distance from the origin to a point in the x-z plane
