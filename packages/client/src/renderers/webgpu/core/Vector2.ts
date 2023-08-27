@@ -2,9 +2,9 @@ import { MathUtils } from './MathUtils.js';
 import { Matrix3 } from 'three';
 
 export class Vector2 {
+  static isVector2: boolean = true;
   x: number;
   y: number;
-  static isVector2: boolean = true;
 
   constructor(x: number = 0, y: number = 0) {
     this.x = x;
