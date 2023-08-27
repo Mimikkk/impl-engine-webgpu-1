@@ -1,4 +1,8 @@
-import { Matrix3, Matrix4, Vector2, Vector3, Vector4 } from 'three';
+import { Matrix3 } from '../../core/Matrix3.js';
+import { Matrix4 } from '../../core/Matrix4.js';
+import { Vector2 } from '../../core/Vector2.js';
+import { Vector3 } from '../../core/Vector3.js';
+import { Vector4 } from '../../core/Vector4.js';
 import { NodeUniform } from 'three/examples/jsm/nodes/Nodes.js';
 import { Color } from '../../core/Color.js';
 

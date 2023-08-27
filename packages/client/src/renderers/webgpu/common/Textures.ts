@@ -1,7 +1,8 @@
 import DataMap from './DataMap.js';
-import { DepthTexture, Vector2 } from 'three';
+import { DepthTexture } from 'three';
 import { DepthStencilFormat, UnsignedInt248Type } from './Constants.js';
 import { Renderer } from '../createRenderer.js';
+import { Vector2 } from '../core/Vector2.js';
 
 const _size = new Vector2();
 type Texture = any;

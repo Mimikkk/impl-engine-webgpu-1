@@ -9,7 +9,8 @@ import {
 
 import WebGPUNodeBuilder from './nodes/WebGPUNodeBuilder.js';
 
-import { DepthTexture, Vector2 } from 'three';
+import { DepthTexture } from 'three';
+import { Vector2 } from './core/Vector2.js';
 import {
   DepthFormat,
   DepthStencilFormat,

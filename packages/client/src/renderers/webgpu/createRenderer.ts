@@ -11,9 +11,15 @@ import { createRenderContexts, RenderContexts } from './common/RenderContexts.js
 import { createTextures, Textures } from './common/Textures.js';
 import { Background, createBackground } from './common/Background.js';
 import Nodes from './common/nodes/Nodes.js';
-import { Frustum, Matrix4, Scene, Vector2, Vector3, Vector4 } from 'three';
 import { BackSide, DoubleSide, FrontSide, NoToneMapping, SRGBColorSpace } from './common/Constants.js';
 import { Color } from './core/Color.js';
+import { Matrix4 } from './core/Matrix4.js';
+import { Vector2 } from './core/Vector2.js';
+import { Vector3 } from './core/Vector3.js';
+import { Vector4 } from './core/Vector4.js';
+import { Scene } from './core/scenes/Scene.js';
+import { Frustum } from './core/Frustum.js';
+
 const _scene = new Scene();
 const _drawingBufferSize = new Vector2();
 const _screen = new Vector4();
