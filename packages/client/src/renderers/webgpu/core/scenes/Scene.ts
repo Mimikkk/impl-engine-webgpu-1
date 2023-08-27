@@ -1,12 +1,14 @@
-import { Material, Object3D, Texture, CubeTexture, FogBase } from 'three';
+import { CubeTexture, Material, Object3D, Texture } from 'three';
 import { Color } from '../Color.js';
+import { Fog } from './Fog.js';
+import { FogExp2 } from './FogExp2.js';
 
 export class Scene extends Object3D {
   isScene: boolean = true;
   type: string = 'Scene';
   background: Color | Texture | CubeTexture | null;
   environment: Texture | null;
-  fog: FogBase | null;
+  fog: Fog | FogExp2 | null;
   backgroundBlurriness: number;
   backgroundIntensity: number;
   overrideMaterial: Material | null;

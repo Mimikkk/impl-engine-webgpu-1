@@ -1,7 +1,8 @@
 import { WebGLCoordinateSystem, WebGPUCoordinateSystem } from '../../common/Constants.js';
-import { Object3D, Scene } from 'three';
+import { Object3D } from 'three';
 import { PerspectiveCamera } from './PerspectiveCamera.js';
 import { Renderer } from '../../createRenderer.js';
+import { Scene } from '../scenes/Scene.js';
 
 const fov = -90; // negative fov is not an error
 const aspect = 1;

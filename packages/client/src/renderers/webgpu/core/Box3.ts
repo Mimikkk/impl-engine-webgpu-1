@@ -1,7 +1,8 @@
 import { Vector3 } from './Vector3.js';
-import { Object3D, Triangle } from 'three';
+import { Object3D } from 'three';
 import { Sphere } from './Sphere.js';
 import { Plane } from './Plane.js';
+import { Triangle } from './Triangle.js';
 import { Matrix4 } from './Matrix4.js';
 
 export class Box3 {
