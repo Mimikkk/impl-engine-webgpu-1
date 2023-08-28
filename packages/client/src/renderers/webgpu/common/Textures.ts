@@ -1,5 +1,5 @@
 import DataMap from './DataMap.js';
-import { DepthTexture } from 'three';
+import { DepthTexture } from '../core/textures/DepthTexture.js';
 import { DepthStencilFormat, UnsignedInt248Type } from './Constants.js';
 import { Renderer } from '../createRenderer.js';
 import { Vector2 } from '../core/Vector2.js';

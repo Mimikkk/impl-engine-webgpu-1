@@ -1,7 +1,7 @@
 import { TextureNode } from 'three/examples/jsm/nodes/Nodes.js';
-import { Texture } from 'three';
 import { BindingState, createBinding } from '../Binding.js';
 import { ShaderStage } from '../ShaderStage.js';
+import { Texture } from '../../core/textures/Texture.js';
 
 export class NodeSampledCubemap {
   name: string;

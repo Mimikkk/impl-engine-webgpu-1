@@ -1,8 +1,10 @@
-import { CubeTexture, Object3D, Texture } from 'three';
+import { Object3D } from 'three';
 import { Color } from '../Color.js';
 import { Fog } from './Fog.js';
 import { FogExp2 } from './FogExp2.js';
 import { Material } from '../materials/Material.js';
+import { Texture } from '../textures/Texture.js';
+import { CubeTexture } from '../textures/CubeTexture.js';
 
 export class Scene extends Object3D {
   isScene: boolean = true;

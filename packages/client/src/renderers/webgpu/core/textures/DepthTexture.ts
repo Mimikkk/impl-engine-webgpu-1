@@ -13,14 +13,14 @@ export class DepthTexture extends Texture {
   constructor(
     width: number,
     height: number,
-    type: number,
-    mapping: number,
-    wrapS: number,
-    wrapT: number,
-    magFilter: number,
-    minFilter: number,
-    anisotropy: number,
-    format: number,
+    type?: number,
+    mapping?: number,
+    wrapS?: number,
+    wrapT?: number,
+    magFilter?: number,
+    minFilter?: number,
+    anisotropy?: number,
+    format?: number,
   ) {
     format = format !== undefined ? format : DepthFormat;
 

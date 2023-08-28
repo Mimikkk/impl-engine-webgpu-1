@@ -9,7 +9,6 @@ import {
 
 import WebGPUNodeBuilder from './nodes/WebGPUNodeBuilder.js';
 
-import { DepthTexture } from 'three';
 import { Vector2 } from './core/Vector2.js';
 import {
   DepthFormat,
@@ -23,6 +22,7 @@ import { createAttributesState } from './utils/createAttributesState.js';
 import { createBindingsState } from './utils/createBindingsState.js';
 import { createPipelinesState } from './utils/createPipelinesState.js';
 import { createTexturesState } from './utils/createTexturesState.js';
+import { DepthTexture } from './core/textures/DepthTexture.js';
 
 let vector2 = new Vector2();
 

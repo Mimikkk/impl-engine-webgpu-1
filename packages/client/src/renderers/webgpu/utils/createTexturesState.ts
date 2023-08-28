@@ -50,10 +50,11 @@ import {
   UnsignedIntType,
   UnsignedShortType,
 } from '../common/Constants.js';
-import { CubeTexture, Texture } from 'three';
 
 import { createMipMapState } from './createMipMapState.js';
 import { Organizer } from '../createOrganizer.js';
+import { Texture } from '../core/textures/Texture.js';
+import { CubeTexture } from '../core/textures/CubeTexture.js';
 
 const compareMap = {
   [NeverCompare]: 'never',
