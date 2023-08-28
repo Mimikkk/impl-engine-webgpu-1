@@ -1,4 +1,4 @@
-import { Mesh, SphereGeometry } from 'three';
+import { SphereGeometry } from 'three';
 import {
   backgroundBlurriness,
   backgroundIntensity,
@@ -15,6 +15,7 @@ import DataMap from './DataMap.js';
 import { BackSide } from './Constants.js';
 import { Color } from '../core/Color.js';
 import { Scene } from '../core/scenes/Scene.js';
+import { Mesh } from '../core/objects/Mesh.js';
 
 let _clearAlpha: number;
 const _clearColor = new Color(1, 1, 1);

@@ -1,7 +1,7 @@
 import { WebGLCoordinateSystem } from '../../common/Constants.js';
 import { Matrix4 } from '../Matrix4.js';
 import { Vector3 } from '../Vector3.js';
-import { Object3D } from 'three';
+import { Object3D } from '../Object3D.js';
 
 export class Camera extends Object3D {
   static isCamera: boolean = true;

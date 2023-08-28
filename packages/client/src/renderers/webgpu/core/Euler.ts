@@ -188,7 +188,7 @@ export class Euler {
     return this;
   }
 
-  setFromQuaternion(q: Quaternion, order: Euler.Order, update?: boolean) {
+  setFromQuaternion(q: Quaternion, order?: Euler.Order, update?: boolean) {
     _matrix.makeRotationFromQuaternion(q);
 
     return this.setFromRotationMatrix(_matrix, order, update);

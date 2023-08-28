@@ -1,5 +1,5 @@
 import { Vector3 } from './Vector3.js';
-import { Object3D } from 'three';
+import { Object3D } from './Object3D.js';
 import { Sphere } from './Sphere.js';
 import { Plane } from './Plane.js';
 import { Triangle } from './Triangle.js';

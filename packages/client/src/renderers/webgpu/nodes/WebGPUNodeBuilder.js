@@ -1,14 +1,13 @@
-import { RenderTarget } from 'three';
 import { NoColorSpace } from '../common/Constants.ts';
 import UniformsGroup from '../common/UniformsGroup.ts';
 import {
+  ColorNodeUniform,
   FloatNodeUniform,
+  Matrix3NodeUniform,
+  Matrix4NodeUniform,
   Vector2NodeUniform,
   Vector3NodeUniform,
   Vector4NodeUniform,
-  ColorNodeUniform,
-  Matrix3NodeUniform,
-  Matrix4NodeUniform,
 } from '../common/nodes/NodeUniform.ts';
 import { createNodeSampler } from '../common/nodes/NodeSampler.ts';
 import { NodeSampledTexture } from '../common/nodes/NodeSampledTexture.ts';
@@ -16,11 +15,12 @@ import { NodeSampledCubemap } from '../common/nodes/NodeSampledCubemap.ts';
 
 import UniformBuffer from '../common/UniformBuffer.ts';
 import StorageBuffer from '../common/StorageBuffer.ts';
-import { getVectorLength, getStrideLength } from '../common/BufferUtils.ts';
+import { getStrideLength, getVectorLength } from '../common/BufferUtils.ts';
 
-import { NodeBuilder, CodeNode, NodeMaterial } from 'three/examples/jsm/nodes/Nodes.js';
+import { CodeNode, NodeBuilder, NodeMaterial } from 'three/examples/jsm/nodes/Nodes.js';
 
 import WebGPUNodeParser from './WebGPUNodeParser.ts';
+import { RenderTarget } from '../core/RenderTarget.ts';
 
 const gpuShaderStageLib = {
   vertex: GPUShaderStage.VERTEX,

@@ -1,5 +1,5 @@
 import { WebGLCoordinateSystem, WebGPUCoordinateSystem } from '../../common/Constants.js';
-import { Object3D } from 'three';
+import { Object3D } from '../Object3D.js';
 import { PerspectiveCamera } from './PerspectiveCamera.js';
 import { Renderer } from '../../createRenderer.js';
 import { Scene } from '../scenes/Scene.js';

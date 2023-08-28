@@ -1,4 +1,4 @@
-import { Object3D } from 'three';
+import { Object3D } from '../Object3D.js';
 import { Color } from '../Color.js';
 import { Fog } from './Fog.js';
 import { FogExp2 } from './FogExp2.js';

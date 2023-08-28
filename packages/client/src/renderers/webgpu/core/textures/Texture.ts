@@ -37,7 +37,7 @@ export class Texture extends EventDispatcher {
   minFilter: number;
   wrapT: number;
   anisotropy: number;
-  internalFormat: null;
+  internalFormat: number | null;
   format: number;
   type: number;
   offset: Vector2;
