@@ -1,17 +1,53 @@
-import { MultiplyOperation, TangentSpaceNormalMap } from '../constants.js';
-import { Material } from './Material.ts';
-import { Vector2 } from '../math/Vector2.js';
-import { Color } from '../math/Color.js';
+import { TangentSpaceNormalMap } from '../../common/Constants.js';
+import { Material } from './Material.js';
+import { Vector2 } from '../Vector2.js';
+import { Color } from '../Color.js';
 
-class MeshLambertMaterial extends Material {
-  constructor(parameters) {
+export class MeshStandardMaterial extends Material {
+  isMeshStandardMaterial: boolean;
+  defines: { STANDARD: string };
+  color: Color;
+  metalness: number;
+  roughness: number;
+  map: null;
+  lightMap: null;
+  lightMapIntensity: number;
+  aoMap: null;
+  aoMapIntensity: number;
+  emissive: Color;
+  emissiveIntensity: number;
+  emissiveMap: null;
+  bumpMap: null;
+  bumpScale: number;
+  normalMap: null;
+  normalMapType: number;
+  normalScale: Vector2;
+  displacementScale: number;
+  displacementMap: null;
+  displacementBias: number;
+  roughnessMap: null;
+  metalnessMap: null;
+  alphaMap: null;
+  envMap: null;
+  envMapIntensity: number;
+  wireframe: boolean;
+  wireframeLinewidth: number;
+  wireframeLinecap: string;
+  wireframeLinejoin: string;
+  flatShading: boolean;
+  fog: boolean;
+  constructor(parameters?: any) {
     super();
 
-    this.isMeshLambertMaterial = true;
+    this.isMeshStandardMaterial = true;
 
-    this.type = 'MeshLambertMaterial';
+    this.defines = { STANDARD: '' };
+
+    this.type = 'MeshStandardMaterial';
 
     this.color = new Color(0xffffff); // diffuse
+    this.roughness = 1.0;
+    this.metalness = 0.0;
 
     this.map = null;
 
@@ -36,14 +72,14 @@ class MeshLambertMaterial extends Material {
     this.displacementScale = 1;
     this.displacementBias = 0;
 
-    this.specularMap = null;
+    this.roughnessMap = null;
+
+    this.metalnessMap = null;
 
     this.alphaMap = null;
 
     this.envMap = null;
-    this.combine = MultiplyOperation;
-    this.reflectivity = 1;
-    this.refractionRatio = 0.98;
+    this.envMapIntensity = 1.0;
 
     this.wireframe = false;
     this.wireframeLinewidth = 1;
@@ -57,10 +93,14 @@ class MeshLambertMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: MeshStandardMaterial) {
     super.copy(source);
 
+    this.defines = { STANDARD: '' };
+
     this.color.copy(source.color);
+    this.roughness = source.roughness;
+    this.metalness = source.metalness;
 
     this.map = source.map;
 
@@ -85,14 +125,14 @@ class MeshLambertMaterial extends Material {
     this.displacementScale = source.displacementScale;
     this.displacementBias = source.displacementBias;
 
-    this.specularMap = source.specularMap;
+    this.roughnessMap = source.roughnessMap;
+
+    this.metalnessMap = source.metalnessMap;
 
     this.alphaMap = source.alphaMap;
 
     this.envMap = source.envMap;
-    this.combine = source.combine;
-    this.reflectivity = source.reflectivity;
-    this.refractionRatio = source.refractionRatio;
+    this.envMapIntensity = source.envMapIntensity;
 
     this.wireframe = source.wireframe;
     this.wireframeLinewidth = source.wireframeLinewidth;
@@ -106,5 +146,3 @@ class MeshLambertMaterial extends Material {
     return this;
   }
 }
-
-export { MeshLambertMaterial };

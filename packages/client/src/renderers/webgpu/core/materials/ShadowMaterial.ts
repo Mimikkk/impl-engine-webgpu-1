@@ -1,8 +1,11 @@
-import { Material } from './Material.ts';
-import { Color } from '../math/Color.js';
+import { Material } from './Material.js';
+import { Color } from '../Color.js';
 
-class ShadowMaterial extends Material {
-  constructor(parameters) {
+export class ShadowMaterial extends Material {
+  fog: boolean;
+  color: Color;
+  isShadowMaterial: boolean;
+  constructor(parameters?: any) {
     super();
 
     this.isShadowMaterial = true;
@@ -17,7 +20,7 @@ class ShadowMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: ShadowMaterial) {
     super.copy(source);
 
     this.color.copy(source.color);
@@ -27,5 +30,3 @@ class ShadowMaterial extends Material {
     return this;
   }
 }
-
-export { ShadowMaterial };

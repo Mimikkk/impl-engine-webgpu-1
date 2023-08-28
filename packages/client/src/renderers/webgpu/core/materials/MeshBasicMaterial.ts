@@ -1,16 +1,34 @@
-import { Material } from './Material.ts';
-import { MultiplyOperation } from '../constants.js';
-import { Color } from '../math/Color.js';
+import { Material } from './Material.js';
+import { MultiplyOperation } from '../../common/Constants.js';
+import { Color } from '../Color.js';
 
-class MeshBasicMaterial extends Material {
-  constructor(parameters) {
+export class MeshBasicMaterial extends Material {
+  isMeshBasicMaterial: boolean;
+  color: Color;
+  map: null;
+  lightMap: null;
+  lightMapIntensity: number;
+  aoMap: null;
+  aoMapIntensity: number;
+  specularMap: null;
+  alphaMap: null;
+  envMap: null;
+  combine: number;
+  reflectivity: number;
+  refractionRatio: number;
+  wireframe: boolean;
+  wireframeLinewidth: number;
+  wireframeLinecap: string;
+  wireframeLinejoin: string;
+  fog: boolean;
+  constructor(parameters?: any) {
     super();
 
     this.isMeshBasicMaterial = true;
-
     this.type = 'MeshBasicMaterial';
 
-    this.color = new Color(0xffffff); // emissive
+    // emissive
+    this.color = new Color(0xffffff);
 
     this.map = null;
 
@@ -39,7 +57,7 @@ class MeshBasicMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: MeshBasicMaterial) {
     super.copy(source);
 
     this.color.copy(source.color);
@@ -71,5 +89,3 @@ class MeshBasicMaterial extends Material {
     return this;
   }
 }
-
-export { MeshBasicMaterial };

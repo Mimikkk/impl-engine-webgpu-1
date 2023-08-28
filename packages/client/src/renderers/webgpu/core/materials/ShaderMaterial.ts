@@ -1,11 +1,33 @@
-import { Material } from './Material.ts';
-import { cloneUniforms, cloneUniformsGroups } from '../renderers/shaders/UniformsUtils.js';
+import { Material } from './Material.js';
+import { cloneUniforms, cloneUniformsGroups } from './UniformsUtils.js';
 
-import default_vertex from '../renderers/shaders/ShaderChunk/default_vertex.glsl.js';
-import default_fragment from '../renderers/shaders/ShaderChunk/default_fragment.glsl.js';
+import vertexShader from './ShaderMaterial.vertex.glsl?raw';
+import fragmentShader from './ShaderMaterial.fragment.glsl?raw';
 
-class ShaderMaterial extends Material {
-  constructor(parameters) {
+export class ShaderMaterial extends Material {
+  isShaderMaterial: boolean;
+  defines: {};
+  uniforms: Record<string, any>;
+  uniformsGroups: any[];
+  vertexShader: any;
+  fragmentShader: any;
+  linewidth: number;
+  wireframe: boolean;
+  wireframeLinewidth: number;
+  lights: boolean;
+  fog: boolean;
+  clipping: boolean;
+  extensions: {
+    derivatives: boolean; // set to use derivatives
+    fragDepth: boolean; // set to use fragment depth values
+    drawBuffers: boolean; // set to use draw buffers
+    shaderTextureLOD: boolean;
+  };
+  defaultAttributeValues: { color: number[]; uv: number[]; uv1: number[] };
+  index0AttributeName: undefined;
+  uniformsNeedUpdate: boolean;
+  glslVersion: null;
+  constructor(parameters?: any) {
     super();
 
     this.isShaderMaterial = true;
@@ -16,8 +38,8 @@ class ShaderMaterial extends Material {
     this.uniforms = {};
     this.uniformsGroups = [];
 
-    this.vertexShader = default_vertex;
-    this.fragmentShader = default_fragment;
+    this.vertexShader = vertexShader;
+    this.fragmentShader = fragmentShader;
 
     this.linewidth = 1;
 
@@ -50,12 +72,10 @@ class ShaderMaterial extends Material {
 
     this.glslVersion = null;
 
-    if (parameters !== undefined) {
-      this.setValues(parameters);
-    }
+    this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: ShaderMaterial) {
     super.copy(source);
 
     this.fragmentShader = source.fragmentShader;
@@ -80,8 +100,8 @@ class ShaderMaterial extends Material {
     return this;
   }
 
-  toJSON(meta) {
-    const data = super.toJSON(meta);
+  toJSON(meta: any) {
+    const data = super.toJSON(meta) as ShaderMaterial;
 
     data.glslVersion = this.glslVersion;
     data.uniforms = {};
@@ -142,10 +162,9 @@ class ShaderMaterial extends Material {
     data.lights = this.lights;
     data.clipping = this.clipping;
 
-    const extensions = {};
-
+    const extensions: typeof this.extensions = {} as any;
     for (const key in this.extensions) {
-      if (this.extensions[key] === true) extensions[key] = true;
+      if (this.extensions[key as keyof typeof this.extensions]) extensions[key as keyof typeof this.extensions] = true;
     }
 
     if (Object.keys(extensions).length > 0) data.extensions = extensions;
@@ -153,5 +172,3 @@ class ShaderMaterial extends Material {
     return data;
   }
 }
-
-export { ShaderMaterial };

@@ -1,8 +1,15 @@
-import { Material } from './Material.ts';
-import { Color } from '../math/Color.js';
+import { Material } from './Material.js';
+import { Color } from '../Color.js';
 
-class SpriteMaterial extends Material {
-  constructor(parameters) {
+export class SpriteMaterial extends Material {
+  isSpriteMaterial: boolean;
+  color: Color;
+  map: null;
+  alphaMap: null;
+  rotation: number;
+  sizeAttenuation: boolean;
+  fog: boolean;
+  constructor(parameters?: any) {
     super();
 
     this.isSpriteMaterial = true;
@@ -26,23 +33,16 @@ class SpriteMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: SpriteMaterial) {
     super.copy(source);
 
     this.color.copy(source.color);
-
     this.map = source.map;
-
     this.alphaMap = source.alphaMap;
-
     this.rotation = source.rotation;
-
     this.sizeAttenuation = source.sizeAttenuation;
-
     this.fog = source.fog;
 
     return this;
   }
 }
-
-export { SpriteMaterial };

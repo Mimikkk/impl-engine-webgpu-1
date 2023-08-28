@@ -1,9 +1,21 @@
-import { TangentSpaceNormalMap } from '../constants.js';
-import { Material } from './Material.ts';
-import { Vector2 } from '../math/Vector2.js';
+import { TangentSpaceNormalMap } from '../../common/Constants.js';
+import { Material } from './Material.js';
+import { Vector2 } from '../Vector2.js';
 
-class MeshNormalMaterial extends Material {
-  constructor(parameters) {
+export class MeshNormalMaterial extends Material {
+  isMeshNormalMaterial: boolean;
+  bumpMap: null;
+  bumpScale: number;
+  normalMap: null;
+  normalMapType: number;
+  normalScale: Vector2;
+  displacementScale: number;
+  displacementMap: null;
+  displacementBias: number;
+  wireframeLinewidth: number;
+  wireframe: boolean;
+  flatShading: boolean;
+  constructor(parameters?: any) {
     super();
 
     this.isMeshNormalMaterial = true;
@@ -29,7 +41,7 @@ class MeshNormalMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: MeshNormalMaterial) {
     super.copy(source);
 
     this.bumpMap = source.bumpMap;
@@ -51,5 +63,3 @@ class MeshNormalMaterial extends Material {
     return this;
   }
 }
-
-export { MeshNormalMaterial };

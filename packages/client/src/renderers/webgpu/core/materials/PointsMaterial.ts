@@ -1,8 +1,15 @@
-import { Material } from './Material.ts';
-import { Color } from '../math/Color.js';
+import { Material } from './Material.js';
+import { Color } from '../Color.js';
 
-class PointsMaterial extends Material {
-  constructor(parameters) {
+export class PointsMaterial extends Material {
+  isPointsMaterial: boolean;
+  color: Color;
+  map: null;
+  alphaMap: null;
+  size: number;
+  sizeAttenuation: boolean;
+  fog: boolean;
+  constructor(parameters?: any) {
     super();
 
     this.isPointsMaterial = true;
@@ -23,7 +30,7 @@ class PointsMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: PointsMaterial) {
     super.copy(source);
 
     this.color.copy(source.color);
@@ -40,5 +47,3 @@ class PointsMaterial extends Material {
     return this;
   }
 }
-
-export { PointsMaterial };

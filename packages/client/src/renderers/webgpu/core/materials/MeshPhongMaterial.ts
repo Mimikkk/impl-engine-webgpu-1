@@ -1,22 +1,53 @@
-import { TangentSpaceNormalMap } from '../constants.js';
-import { Material } from './Material.ts';
-import { Vector2 } from '../math/Vector2.js';
-import { Color } from '../math/Color.js';
+import { MultiplyOperation, TangentSpaceNormalMap } from '../../common/Constants.js';
+import { Material } from './Material.js';
+import { Vector2 } from '../Vector2.js';
+import { Color } from '../Color.js';
 
-class MeshToonMaterial extends Material {
-  constructor(parameters) {
+export class MeshPhongMaterial extends Material {
+  isMeshPhongMaterial: boolean;
+  color: Color;
+  specular: Color;
+  shininess: number;
+  map: null;
+  lightMap: null;
+  lightMapIntensity: number;
+  aoMap: null;
+  aoMapIntensity: number;
+  emissiveIntensity: number;
+  emissive: Color;
+  emissiveMap: null;
+  bumpMap: null;
+  bumpScale: number;
+  normalMap: null;
+  normalMapType: number;
+  normalScale: Vector2;
+  displacementMap: null;
+  displacementScale: number;
+  displacementBias: number;
+  specularMap: null;
+  alphaMap: null;
+  envMap: null;
+  combine: number;
+  reflectivity: number;
+  refractionRatio: number;
+  wireframe: boolean;
+  wireframeLinewidth: number;
+  wireframeLinecap: string;
+  wireframeLinejoin: string;
+  flatShading: boolean;
+  fog: boolean;
+  constructor(parameters?: any) {
     super();
 
-    this.isMeshToonMaterial = true;
+    this.isMeshPhongMaterial = true;
 
-    this.defines = { TOON: '' };
+    this.type = 'MeshPhongMaterial';
 
-    this.type = 'MeshToonMaterial';
-
-    this.color = new Color(0xffffff);
+    this.color = new Color(0xffffff); // diffuse
+    this.specular = new Color(0x111111);
+    this.shininess = 30;
 
     this.map = null;
-    this.gradientMap = null;
 
     this.lightMap = null;
     this.lightMapIntensity = 1.0;
@@ -39,25 +70,35 @@ class MeshToonMaterial extends Material {
     this.displacementScale = 1;
     this.displacementBias = 0;
 
+    this.specularMap = null;
+
     this.alphaMap = null;
+
+    this.envMap = null;
+    this.combine = MultiplyOperation;
+    this.reflectivity = 1;
+    this.refractionRatio = 0.98;
 
     this.wireframe = false;
     this.wireframeLinewidth = 1;
     this.wireframeLinecap = 'round';
     this.wireframeLinejoin = 'round';
 
+    this.flatShading = false;
+
     this.fog = true;
 
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: MeshPhongMaterial) {
     super.copy(source);
 
     this.color.copy(source.color);
+    this.specular.copy(source.specular);
+    this.shininess = source.shininess;
 
     this.map = source.map;
-    this.gradientMap = source.gradientMap;
 
     this.lightMap = source.lightMap;
     this.lightMapIntensity = source.lightMapIntensity;
@@ -80,17 +121,24 @@ class MeshToonMaterial extends Material {
     this.displacementScale = source.displacementScale;
     this.displacementBias = source.displacementBias;
 
+    this.specularMap = source.specularMap;
+
     this.alphaMap = source.alphaMap;
+
+    this.envMap = source.envMap;
+    this.combine = source.combine;
+    this.reflectivity = source.reflectivity;
+    this.refractionRatio = source.refractionRatio;
 
     this.wireframe = source.wireframe;
     this.wireframeLinewidth = source.wireframeLinewidth;
     this.wireframeLinecap = source.wireframeLinecap;
     this.wireframeLinejoin = source.wireframeLinejoin;
 
+    this.flatShading = source.flatShading;
+
     this.fog = source.fog;
 
     return this;
   }
 }
-
-export { MeshToonMaterial };

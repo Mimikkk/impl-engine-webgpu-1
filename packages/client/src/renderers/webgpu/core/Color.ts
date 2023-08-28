@@ -186,7 +186,8 @@ export class Color {
   g: number = 1;
   b: number = 1;
 
-  constructor(r: number, g: number, b: number) {
+  constructor(r: Color | ColorName | number, g?: number, b?: number) {
+    //@ts-expect-error
     return this.set(r, g, b);
   }
 

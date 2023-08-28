@@ -15,7 +15,7 @@ import { MeshBasicMaterial } from './MeshBasicMaterial.js';
 import { MeshMatcapMaterial } from './MeshMatcapMaterial.js';
 import { LineDashedMaterial } from './LineDashedMaterial.js';
 import { LineBasicMaterial } from './LineBasicMaterial.js';
-import { Material } from './Material.ts';
+import { Material } from './Material.js';
 
 export {
   ShadowMaterial,

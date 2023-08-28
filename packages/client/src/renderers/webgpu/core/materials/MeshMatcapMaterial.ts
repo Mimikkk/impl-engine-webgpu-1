@@ -1,10 +1,26 @@
-import { TangentSpaceNormalMap } from '../constants.js';
-import { Material } from './Material.ts';
-import { Vector2 } from '../math/Vector2.js';
-import { Color } from '../math/Color.js';
+import { TangentSpaceNormalMap } from '../../common/Constants.js';
+import { Material } from './Material.js';
+import { Vector2 } from '../Vector2.js';
+import { Color } from '../Color.js';
 
-class MeshMatcapMaterial extends Material {
-  constructor(parameters) {
+export class MeshMatcapMaterial extends Material {
+  isMeshMatcapMaterial: boolean;
+  defines: { MATCAP: string };
+  color: Color;
+  matcap: null;
+  map: null;
+  bumpMap: null;
+  bumpScale: number;
+  normalMap: null;
+  normalMapType: number;
+  normalScale: Vector2;
+  displacementMap: null;
+  displacementScale: number;
+  displacementBias: number;
+  alphaMap: null;
+  flatShading: boolean;
+  fog: boolean;
+  constructor(parameters?: any) {
     super();
 
     this.isMeshMatcapMaterial = true;
@@ -39,7 +55,7 @@ class MeshMatcapMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: MeshMatcapMaterial) {
     super.copy(source);
 
     this.defines = { MATCAP: '' };
@@ -70,5 +86,3 @@ class MeshMatcapMaterial extends Material {
     return this;
   }
 }
-
-export { MeshMatcapMaterial };

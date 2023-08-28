@@ -1,8 +1,16 @@
-import { Material } from './Material.ts';
-import { Color } from '../math/Color.js';
+import { Material } from './Material.js';
+import { Color } from '../Color.js';
 
-class LineBasicMaterial extends Material {
-  constructor(parameters) {
+export class LineBasicMaterial extends Material {
+  isLineBasicMaterial: boolean = true;
+  color: Color;
+  map: null;
+  linewidth: number;
+  linecap: string;
+  linejoin: string;
+  private fog: boolean;
+
+  constructor(parameters?: any) {
     super();
 
     this.isLineBasicMaterial = true;
@@ -22,21 +30,16 @@ class LineBasicMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: LineBasicMaterial) {
     super.copy(source);
 
     this.color.copy(source.color);
-
     this.map = source.map;
-
     this.linewidth = source.linewidth;
     this.linecap = source.linecap;
     this.linejoin = source.linejoin;
-
     this.fog = source.fog;
 
     return this;
   }
 }
-
-export { LineBasicMaterial };

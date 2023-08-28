@@ -3,3 +3,9 @@ declare module '*.wgsl?raw' {
 
   export default content;
 }
+
+declare module '*.glsl?raw' {
+  const content: string;
+
+  export default content;
+}
