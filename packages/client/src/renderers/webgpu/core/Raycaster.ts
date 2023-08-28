@@ -1,13 +1,33 @@
 import { Ray } from './Ray.js';
 import { Layers } from './Layers.js';
 import { Object3D } from './Object3D.js';
-import { Intersection } from 'three';
 import { Camera } from './camera/Camera.js';
 import { Mesh } from './objects/Mesh.js';
 import { Vector3 } from './Vector3.js';
 import { PerspectiveCamera } from './camera/PerspectiveCamera.js';
 import { OrthographicCamera } from './camera/OrthographicCamera.js';
+import { Vector2 } from 'three/src/math/Vector2.js';
+import { Face } from 'three/src/core/Raycaster.js';
 
+export interface Intersection<TIntersected extends Object3D = Object3D> {
+  /** Distance between the origin of the ray and the intersection */
+  distance: number;
+  distanceToRay?: number | undefined;
+  /** Point of intersection, in world coordinates */
+  point: Vector3;
+  index?: number | undefined;
+  /** Intersected face */
+  face?: Face | null | undefined;
+  /** Index of the intersected face */
+  faceIndex?: number | undefined;
+  /** The intersected object */
+  object: TIntersected;
+  uv?: Vector2 | undefined;
+  uv1?: Vector2 | undefined;
+  normal?: Vector3;
+  /** The index number of the instance where the ray intersects the {@link THREE.InstancedMesh | InstancedMesh } */
+  instanceId?: number | undefined;
+}
 export class Raycaster {
   ray: Ray;
   near: number;

@@ -3,9 +3,10 @@ import { Ray } from '../Ray.js';
 import { Matrix4 } from '../Matrix4.js';
 import { Vector3 } from '../Vector3.js';
 import { PointsMaterial } from '../materials/PointsMaterial.js';
-import { BufferGeometry, Intersection, Raycaster } from 'three';
+import { BufferGeometry } from 'three';
 import { Vector2 } from '../Vector2.js';
 import { Object3D } from '../Object3D.js';
+import { Intersection, Raycaster } from '../Raycaster.js';
 
 const _inverseMatrix = /*@__PURE__*/ new Matrix4();
 const _ray = /*@__PURE__*/ new Ray();

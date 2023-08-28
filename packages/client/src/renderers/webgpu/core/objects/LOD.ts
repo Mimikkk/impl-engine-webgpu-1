@@ -1,7 +1,6 @@
 import { Object3D } from '../Object3D.js';
-import { Raycaster } from '../Raycaster.js';
+import { Intersection, Raycaster } from '../Raycaster.js';
 import { Vector3 } from '../Vector3.js';
-import { Intersection } from 'three';
 import { Camera } from '../camera/Camera.js';
 
 const _v1 = /*@__PURE__*/ new Vector3();
