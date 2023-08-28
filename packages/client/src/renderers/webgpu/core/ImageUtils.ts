@@ -2,7 +2,7 @@ import { SRGBToLinear } from './ColorManagement.js';
 
 let _canvas: HTMLCanvasElement;
 export namespace ImageUtils {
-  export const getDataURL = (image: HTMLImageElement | HTMLCanvasElement) => {
+  export const getDataURL = (image: HTMLImageElement | HTMLCanvasElement | ImageBitmap | ImageData) => {
     if ('src' in image && /^data:/i.test(image.src)) {
       return image.src;
     }
