@@ -6,6 +6,7 @@ import { Euler } from './Euler.js';
 import { Layers } from './Layers.js';
 import { Matrix3 } from './Matrix3.js';
 import { MathUtils } from './MathUtils.js';
+import { Intersection, Raycaster } from './Raycaster.js';
 
 let _object3DId = 0;
 
@@ -425,7 +426,7 @@ class Object3D extends EventDispatcher {
     return target.set(e[8], e[9], e[10]).normalize();
   }
 
-  raycast(/* raycaster, intersects */) {}
+  raycast(raycaster: Raycaster, intersects: Intersection[]) {}
 
   traverse(callback: (object: Object3D) => void) {
     callback(this);
