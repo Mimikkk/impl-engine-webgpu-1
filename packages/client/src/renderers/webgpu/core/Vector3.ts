@@ -7,12 +7,14 @@ import { Cylindrical } from './Cylindrical.js';
 import { Spherical } from './Spherical.js';
 import { Euler } from './Euler.js';
 import { Color } from './Color.js';
+import { TypedArray } from 'three';
 
 export class Vector3 {
   static isVector3: boolean = true;
   x: number;
   y: number;
   z: number;
+  needsUpdate: boolean;
 
   constructor(x: number = 0, y: number = 0, z: number = 0) {
     this.x = x;
@@ -544,7 +546,7 @@ export class Vector3 {
     return v.x === this.x && v.y === this.y && v.z === this.z;
   }
 
-  fromArray(array: number[], offset: number = 0) {
+  fromArray(array: TypedArray | number[], offset: number = 0) {
     this.x = array[offset];
     this.y = array[offset + 1];
     this.z = array[offset + 2];

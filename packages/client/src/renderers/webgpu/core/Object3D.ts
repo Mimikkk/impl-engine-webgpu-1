@@ -230,7 +230,7 @@ class Object3D extends EventDispatcher {
     return vector.applyMatrix4(_m1.copy(this.matrixWorld).invert());
   }
 
-  lookAt(x: Vector3 | number, y: number, z: number) {
+  lookAt(x: Vector3 | number, y?: number, z?: number) {
     // This method does not support objects having non-uniformly-scaled parent(s)
 
     if (typeof x === 'object') {

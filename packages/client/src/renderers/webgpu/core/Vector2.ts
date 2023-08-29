@@ -1,5 +1,6 @@
 import { MathUtils } from './MathUtils.js';
 import { Matrix3 } from './Matrix3.js';
+import { TypedArray } from 'three';
 
 export class Vector2 {
   static isVector2: boolean = true;
@@ -326,7 +327,7 @@ export class Vector2 {
     return v.x === this.x && v.y === this.y;
   }
 
-  fromArray(array: number[], offset = 0) {
+  fromArray(array: TypedArray | number[], offset = 0) {
     this.x = array[offset];
     this.y = array[offset + 1];
 
