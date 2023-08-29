@@ -102,7 +102,13 @@ export class TorusGeometry extends BufferGeometry {
     return this;
   }
 
-  static fromJSON(data: any) {
+  static fromJSON(data: {
+    radius: number;
+    tube: number;
+    tubularSegments: number;
+    radialSegments: number;
+    arc: number;
+  }) {
     return new TorusGeometry(data.radius, data.tube, data.radialSegments, data.tubularSegments, data.arc);
   }
 }
