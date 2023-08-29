@@ -1,3 +1,4 @@
+import { TypedArray } from 'three';
 const _lut = [
   '00',
   '01',
@@ -355,7 +356,7 @@ export const ceilPowerOfTwo = (value: number) => Math.pow(2, Math.ceil(Math.log(
 
 export const floorPowerOfTwo = (value: number) => Math.pow(2, Math.floor(Math.log(value) / Math.LN2));
 
-export const denormalize = (value: number, array: number[]) => {
+export const denormalize = (value: number, array: TypedArray) => {
   switch (array.constructor) {
     case Float32Array:
       return value;
@@ -383,7 +384,7 @@ export const denormalize = (value: number, array: number[]) => {
   }
 };
 
-export const normalize = (value: number, array: number[]) => {
+export const normalize = (value: number, array: TypedArray) => {
   switch (array.constructor) {
     case Float32Array:
       return value;
