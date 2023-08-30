@@ -1,5 +1,5 @@
 import { InterleavedBuffer } from './InterleavedBuffer.js';
-import { TypedArray } from 'three';
+import { TypedArray } from './types.js';
 
 export class InstancedInterleavedBuffer extends InterleavedBuffer {
   isInstancedInterleavedBuffer: boolean;

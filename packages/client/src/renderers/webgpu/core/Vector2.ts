@@ -1,6 +1,6 @@
 import { MathUtils } from './MathUtils.js';
 import { Matrix3 } from './Matrix3.js';
-import { TypedArray } from 'three';
+import { TypedArray } from './types.js';
 
 export class Vector2 {
   static isVector2: boolean = true;

@@ -1,6 +1,6 @@
 import { MathUtils } from './MathUtils.js';
 import { StaticDrawUsage } from '../common/Constants.js';
-import { TypedArray } from 'three';
+import { TypedArray } from './types.js';
 
 export class InterleavedBuffer {
   isInterleavedBuffer: boolean;

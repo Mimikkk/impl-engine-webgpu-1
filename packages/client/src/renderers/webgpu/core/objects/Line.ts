@@ -2,9 +2,10 @@ import { Sphere } from '../Sphere.js';
 import { Ray } from '../Ray.js';
 import { Matrix4 } from '../Matrix4.js';
 import { Object3D } from '../Object3D.js';
-import { BufferGeometry, Float32BufferAttribute } from 'three';
+import { Float32BufferAttribute } from '../BufferAttribute.js';
 import { Vector3 } from '../Vector3.js';
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
+import { BufferGeometry } from '../BufferGeometry.js';
 
 const _start = /*@__PURE__*/ new Vector3();
 const _end = /*@__PURE__*/ new Vector3();

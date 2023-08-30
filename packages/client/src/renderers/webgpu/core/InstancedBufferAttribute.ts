@@ -1,5 +1,5 @@
 import { BufferAttribute } from './BufferAttribute.js';
-import { TypedArray } from 'three';
+import { TypedArray } from './types.js';
 
 export class InstancedBufferAttribute extends BufferAttribute {
   isInstancedBufferAttribute: boolean;

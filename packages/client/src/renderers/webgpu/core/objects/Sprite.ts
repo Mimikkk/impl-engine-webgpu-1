@@ -3,9 +3,11 @@ import { Vector3 } from '../Vector3.js';
 import { Matrix4 } from '../Matrix4.js';
 import { Triangle } from '../Triangle.js';
 import { Object3D } from '../Object3D.js';
-import { BufferGeometry, InterleavedBuffer, InterleavedBufferAttribute } from 'three';
 import { SpriteMaterial } from '../materials/SpriteMaterial.js';
 import { Geometry } from 'three/examples/jsm/deprecated/Geometry.js';
+import { InterleavedBufferAttribute } from '../InterleavedBufferAttribute.js';
+import { InterleavedBuffer } from '../InterleavedBuffer.js';
+import { BufferGeometry } from '../BufferGeometry.js';
 
 let _geometry: Geometry;
 

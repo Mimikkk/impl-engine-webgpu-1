@@ -16,7 +16,7 @@ import * as MathUtils from './MathUtils.js';
 import { arrayNeedsUint32 } from './utils.js';
 import { Quaternion } from './Quaternion.js';
 import { InterleavedBufferAttribute } from './InterleavedBufferAttribute.js';
-import { TypedArray } from 'three';
+import { TypedArray } from './types.js';
 
 let _id = 0;
 
@@ -821,11 +821,11 @@ export class BufferGeometry extends EventDispatcher {
     return data;
   }
 
-  clone() {
+  clone(): BufferGeometry {
     return new BufferGeometry().copy(this);
   }
 
-  copy(source: BufferGeometry) {
+  copy(source: BufferGeometry): BufferGeometry {
     // reset
 
     this.index = null;

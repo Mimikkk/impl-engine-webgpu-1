@@ -1,4 +1,4 @@
-import { TypedArray } from 'three';
+import { TypedArray } from './types.js';
 const _lut = [
   '00',
   '01',

@@ -3,9 +3,9 @@ import { Vector2 } from './Vector2.js';
 import { denormalize, normalize } from './MathUtils.js';
 import { FloatType, StaticDrawUsage } from '../common/Constants.js';
 import { fromHalfFloat, toHalfFloat } from './DataUtils.js';
-import { TypedArray } from 'three';
 import { Matrix3 } from './Matrix3.js';
 import { Matrix4 } from './Matrix4.js';
+import { TypedArray } from './types.js';
 
 const _vector = /*@__PURE__*/ new Vector3();
 const _vector2 = /*@__PURE__*/ new Vector2();

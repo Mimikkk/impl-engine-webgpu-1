@@ -1,7 +1,7 @@
 import { AttributeType } from './Constants.js';
-import { Uint16BufferAttribute, Uint32BufferAttribute } from 'three';
 import RenderObject from './RenderObject.js';
 import { Renderer } from '../createRenderer.js';
+import { Uint16BufferAttribute, Uint32BufferAttribute } from '../core/BufferAttribute.js';
 
 type Geometry = any;
 

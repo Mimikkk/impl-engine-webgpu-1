@@ -7,7 +7,7 @@ import { Cylindrical } from './Cylindrical.js';
 import { Spherical } from './Spherical.js';
 import { Euler } from './Euler.js';
 import { Color } from './Color.js';
-import { TypedArray } from 'three';
+import { TypedArray } from './types.js';
 
 export class Vector3 {
   static isVector3: boolean = true;

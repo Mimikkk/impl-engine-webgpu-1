@@ -559,7 +559,7 @@ class ExtrudeGeometry extends BufferGeometry {
     }
   }
 
-  copy(source) {
+  copy(source: ExtrudeGeometry): ExtrudeGeometry {
     super.copy(source);
 
     this.parameters = Object.assign({}, source.parameters);

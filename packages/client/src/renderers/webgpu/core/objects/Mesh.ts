@@ -4,10 +4,10 @@ import { Sphere } from '../Sphere.js';
 import { Ray } from '../Ray.js';
 import { Matrix4 } from '../Matrix4.js';
 import { Object3D } from '../Object3D.js';
-import { BufferGeometry } from 'three';
 import { Triangle } from '../Triangle.js';
 import { BackSide, FrontSide } from '../../common/Constants.js';
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js';
+import { BufferGeometry } from '../BufferGeometry.js';
 
 const _inverseMatrix = /*@__PURE__*/ new Matrix4();
 const _ray = /*@__PURE__*/ new Ray();

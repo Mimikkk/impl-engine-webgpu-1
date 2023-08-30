@@ -1,5 +1,6 @@
-import { Path } from 'three';
 import { LatheGeometry } from './LatheGeometry.js';
+import { Path } from '../Path.js';
+import { Vector2 } from '../Vector2.js';
 
 //@ts-expect-error
 export class CapsuleGeometry extends LatheGeometry {
@@ -8,7 +9,7 @@ export class CapsuleGeometry extends LatheGeometry {
     path.absarc(0, -length / 2, radius, Math.PI * 1.5, 0, false);
     path.absarc(0, length / 2, radius, 0, Math.PI * 0.5, false);
 
-    super(path.getPoints(capSegments), radialSegments);
+    super(path.getPoints(capSegments) as [Vector2, Vector2, Vector2], radialSegments);
 
     this.type = 'CapsuleGeometry';
 
