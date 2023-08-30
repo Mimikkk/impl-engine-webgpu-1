@@ -6,7 +6,7 @@ export class Spherical {
   phi: number;
   theta: number;
 
-  constructor(radius = 1, phi = 0, theta = 0) {
+  constructor(radius: number = 1, phi: number = 0, theta: number = 0) {
     this.radius = radius;
     this.phi = phi; // polar angle
     this.theta = theta; // azimuthal angle

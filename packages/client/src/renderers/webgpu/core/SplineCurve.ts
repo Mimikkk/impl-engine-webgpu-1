@@ -2,7 +2,7 @@ import { Curve } from './Curve.js';
 import { CatmullRom } from './Interpolations.js';
 import { Vector2 } from './Vector2.js';
 
-export class SplineCurve extends Curve {
+export class SplineCurve extends Curve<Vector2> {
   isSplineCurve: boolean;
   points: Vector2[];
 
@@ -16,7 +16,6 @@ export class SplineCurve extends Curve {
     this.points = points;
   }
 
-  //@ts-expect-error
   getPoint(t: number, optionalTarget: Vector2 = new Vector2()): Vector2 {
     const point = optionalTarget;
 
@@ -36,9 +35,8 @@ export class SplineCurve extends Curve {
     return point;
   }
 
-  //@ts-expect-error
   copy(source: SplineCurve): SplineCurve {
-    super.copy(source as unknown as Curve);
+    super.copy(source);
 
     this.points = [];
 
@@ -64,7 +62,6 @@ export class SplineCurve extends Curve {
     return data;
   }
 
-  //@ts-expect-error
   fromJSON(json: { arcLengthDivisions: number; points: number[][] }): SplineCurve {
     super.fromJSON(json);
 

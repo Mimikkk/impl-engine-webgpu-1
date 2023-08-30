@@ -2,7 +2,7 @@ import { Curve } from './/Curve.js';
 import { CubicBezier } from './/Interpolations.js';
 import { Vector3 } from './Vector3.js';
 
-export class CubicBezierCurve3 extends Curve {
+export class CubicBezierCurve3 extends Curve<Vector3> {
   isCubicBezierCurve3: boolean;
   v0: Vector3;
   v1: Vector3;
@@ -27,7 +27,6 @@ export class CubicBezierCurve3 extends Curve {
     this.v3 = v3;
   }
 
-  //@ts-expect-error
   getPoint(t: number, optionalTarget: Vector3 = new Vector3()): Vector3 {
     const point = optionalTarget;
 
@@ -45,9 +44,8 @@ export class CubicBezierCurve3 extends Curve {
     return point;
   }
 
-  //@ts-expect-error
   copy(source: CubicBezierCurve3): CubicBezierCurve3 {
-    super.copy(source as unknown as Curve);
+    super.copy(source);
 
     this.v0.copy(source.v0);
     this.v1.copy(source.v1);
@@ -68,7 +66,6 @@ export class CubicBezierCurve3 extends Curve {
     return data;
   }
 
-  //@ts-expect-error
   fromJSON(json: {
     arcLengthDivisions: number;
     v0: number[];

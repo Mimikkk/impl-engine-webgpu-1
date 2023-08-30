@@ -53,7 +53,7 @@ const px = /*@__PURE__*/ new CubicPoly();
 const py = /*@__PURE__*/ new CubicPoly();
 const pz = /*@__PURE__*/ new CubicPoly();
 
-export class CatmullRomCurve3 extends Curve {
+export class CatmullRomCurve3 extends Curve<Vector3> {
   isCatmullRomCurve3: boolean;
   points: Vector3[];
   closed: boolean;
@@ -69,7 +69,6 @@ export class CatmullRomCurve3 extends Curve {
     super();
 
     this.isCatmullRomCurve3 = true;
-
     this.type = 'CatmullRomCurve3';
 
     this.points = points;
@@ -78,7 +77,6 @@ export class CatmullRomCurve3 extends Curve {
     this.tension = tension;
   }
 
-  //@ts-expect-error
   getPoint(t: number, optionalTarget: Vector3 = new Vector3()): Vector3 {
     const point = optionalTarget;
 
@@ -143,9 +141,8 @@ export class CatmullRomCurve3 extends Curve {
     return point;
   }
 
-  //@ts-expect-error
   copy(source: CatmullRomCurve3): CatmullRomCurve3 {
-    super.copy(source as unknown as Curve);
+    super.copy(source);
 
     this.points = [];
 
@@ -179,7 +176,6 @@ export class CatmullRomCurve3 extends Curve {
     return data;
   }
 
-  //@ts-expect-error
   fromJSON(json: {
     arcLengthDivisions: number;
     points: [number, number, number][];

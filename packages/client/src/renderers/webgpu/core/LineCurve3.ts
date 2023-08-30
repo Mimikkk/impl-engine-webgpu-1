@@ -1,7 +1,7 @@
 import { Vector3 } from './Vector3.js';
 import { Curve } from './Curve.js';
 
-export class LineCurve3 extends Curve {
+export class LineCurve3 extends Curve<Vector3> {
   isLineCurve3: boolean;
   v1: Vector3;
   v2: Vector3;
@@ -16,7 +16,6 @@ export class LineCurve3 extends Curve {
     this.v2 = v2;
   }
 
-  //@ts-expect-error
   getPoint(t: number, optionalTarget = new Vector3()): Vector3 {
     const point = optionalTarget;
 
@@ -30,7 +29,6 @@ export class LineCurve3 extends Curve {
     return point;
   }
 
-  //@ts-expect-error
   getPointAt(u: number, optionalTarget?: Vector3) {
     return this.getPoint(u, optionalTarget);
   }
@@ -43,9 +41,8 @@ export class LineCurve3 extends Curve {
     return this.getTangent(u, optionalTarget);
   }
 
-  //@ts-expect-error
   copy(source: LineCurve3): LineCurve3 {
-    super.copy(source as unknown as Curve);
+    super.copy(source);
 
     this.v1.copy(source.v1);
     this.v2.copy(source.v2);
@@ -62,7 +59,6 @@ export class LineCurve3 extends Curve {
     return data;
   }
 
-  //@ts-expect-error
   fromJSON(json: { arcLengthDivisions: number; v1: number[]; v2: number[] }): LineCurve3 {
     super.fromJSON(json);
 

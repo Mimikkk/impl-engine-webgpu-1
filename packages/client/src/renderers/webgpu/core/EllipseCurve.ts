@@ -1,7 +1,7 @@
 import { Curve } from './Curve.js';
 import { Vector2 } from './Vector2.js';
 
-export class EllipseCurve extends Curve {
+export class EllipseCurve extends Curve<Vector2> {
   isEllipseCurve: boolean;
   aX: number;
   aY: number;
@@ -41,7 +41,6 @@ export class EllipseCurve extends Curve {
     this.aRotation = aRotation;
   }
 
-  //@ts-expect-error
   getPoint(t: number, optionalTarget?: Vector2): Vector2 {
     const point = optionalTarget || new Vector2();
 
@@ -88,9 +87,8 @@ export class EllipseCurve extends Curve {
     return point.set(x, y);
   }
 
-  //@ts-expect-error
   copy(source: EllipseCurve): EllipseCurve {
-    super.copy(source as unknown as Curve);
+    super.copy(source);
 
     this.aX = source.aX;
     this.aY = source.aY;
@@ -127,7 +125,6 @@ export class EllipseCurve extends Curve {
     return data;
   }
 
-  //@ts-expect-error
   fromJSON(json: {
     arcLengthDivisions: number;
     aX: number;

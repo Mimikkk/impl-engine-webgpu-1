@@ -777,7 +777,7 @@ export class BufferGeometry extends EventDispatcher {
       data.data.attributes[key] = attribute.toJSON(data.data);
     }
 
-    const morphAttributes = {};
+    const morphAttributes: Record<string, any[]> = {};
     let hasMorphAttributes = false;
 
     for (const key in this.morphAttributes) {

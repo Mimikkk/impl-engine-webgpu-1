@@ -32,7 +32,7 @@ export class Raycaster {
   ray: Ray;
   near: number;
   far: number;
-  camera: Camera;
+  camera: Camera | null;
   layers: Layers;
   params: { Mesh: Mesh; Line: { threshold: number }; LOD: {}; Points: { threshold: number }; Sprite: {} };
 
@@ -46,7 +46,7 @@ export class Raycaster {
     this.layers = new Layers();
 
     this.params = {
-      Mesh: {},
+      Mesh: {} as Mesh,
       Line: { threshold: 1 },
       LOD: {},
       Points: { threshold: 1 },
