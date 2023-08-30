@@ -6,8 +6,15 @@ import { Mesh } from './objects/Mesh.js';
 import { Vector3 } from './Vector3.js';
 import { PerspectiveCamera } from './camera/PerspectiveCamera.js';
 import { OrthographicCamera } from './camera/OrthographicCamera.js';
-import { Vector2 } from 'three/src/math/Vector2.js';
-import { Face } from 'three/src/core/Raycaster.js';
+import { Vector2 } from './Vector2.js';
+
+export interface Face {
+  a: number;
+  b: number;
+  c: number;
+  normal: Vector3;
+  materialIndex: number;
+}
 
 export interface Intersection<TIntersected extends Object3D = Object3D> {
   /** Distance between the origin of the ray and the intersection */

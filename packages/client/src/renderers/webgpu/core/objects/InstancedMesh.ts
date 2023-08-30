@@ -2,9 +2,9 @@ import { Mesh } from './Mesh.js';
 import { Box3 } from '../Box3.js';
 import { Matrix4 } from '../Matrix4.js';
 import { Sphere } from '../Sphere.js';
-import { Geometry } from 'three/examples/jsm/deprecated/Geometry.js';
 import { Material } from '../materials/Material.js';
 import { InstancedBufferAttribute } from '../InstancedBufferAttribute.js';
+import { BufferGeometry } from '../BufferGeometry.js';
 
 const _instanceLocalMatrix = /*@__PURE__*/ new Matrix4();
 const _instanceWorldMatrix = /*@__PURE__*/ new Matrix4();
@@ -24,7 +24,7 @@ class InstancedMesh extends Mesh {
   boundingBox: null;
   boundingSphere: null;
 
-  constructor(geometry: Geometry, material: Material, count: number) {
+  constructor(geometry: BufferGeometry, material: Material, count: number) {
     super(geometry, material);
 
     this.isInstancedMesh = true;
@@ -172,7 +172,7 @@ class InstancedMesh extends Mesh {
   updateMorphTargets() {}
 
   dispose() {
-    this.dispatchEvent({ type: 'dispose' });
+    this.dispatchEvent({ target: null, type: 'dispose' });
   }
 }
 

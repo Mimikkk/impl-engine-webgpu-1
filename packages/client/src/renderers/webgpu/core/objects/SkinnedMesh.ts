@@ -5,7 +5,6 @@ import { Sphere } from '../Sphere.js';
 import { Vector3 } from '../Vector3.js';
 import { Vector4 } from '../Vector4.js';
 import { Ray } from '../Ray.js';
-import { Geometry } from 'three/examples/jsm/deprecated/Geometry.js';
 import { Material } from '../materials/Material.js';
 
 const _basePosition = /*@__PURE__*/ new Vector3();
@@ -29,7 +28,7 @@ class SkinnedMesh extends Mesh {
   bindMatrixInverse: Matrix4;
   boundingBox: null;
   boundingSphere: null;
-  constructor(geometry: Geometry, material: Material) {
+  constructor(geometry: any, material: Material) {
     super(geometry, material);
 
     this.isSkinnedMesh = true;
