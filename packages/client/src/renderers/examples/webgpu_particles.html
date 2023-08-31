@@ -34,6 +34,7 @@
 
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
+  import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
 
   let camera, scene, renderer;
   let controls;
@@ -45,7 +46,7 @@
 
     const { innerWidth, innerHeight } = window;
 
-    camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 5000);
+    camera = new PerspectiveCamera(60, innerWidth / innerHeight, 1, 5000);
     camera.position.set(1300, 500, 0);
 
     scene = new THREE.Scene();

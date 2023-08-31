@@ -27,6 +27,7 @@
   import * as THREE from 'three';
 
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
+  import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
 
   let camera, scene, renderer;
 
@@ -47,7 +48,7 @@
 
     const container = document.getElementById('container');
 
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .25, 10);
+    camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, .25, 10);
 
     scene = new THREE.Scene();
 

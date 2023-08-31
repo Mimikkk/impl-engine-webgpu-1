@@ -24,6 +24,7 @@
   import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
+  import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
 
   let camera, scene, renderer, stats;
 
@@ -37,7 +38,7 @@
   function init() {
 
 
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera = new PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(amount * 0.9, amount * 0.9, amount * 0.9);
     camera.lookAt(0, 0, 0);
 

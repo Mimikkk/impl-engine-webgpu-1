@@ -29,6 +29,7 @@
   import { TeapotGeometry } from 'three/examples/jsm/geometries/TeapotGeometry.js';
 
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
+  import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
 
   let camera, scene, renderer,
     light1, light2, light3, light4,
@@ -39,7 +40,7 @@
   function init() {
 
 
-    camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 100);
+    camera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 100);
     camera.position.z = 7;
 
     scene = new THREE.Scene();

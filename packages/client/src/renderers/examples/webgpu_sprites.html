@@ -20,6 +20,7 @@
   import { texture, uv, userData, rangeFog, color, SpriteNodeMaterial } from 'three/nodes';
 
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
+  import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
 
   let camera, scene, renderer;
 
@@ -37,7 +38,7 @@
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    camera = new THREE.PerspectiveCamera(60, width / height, 1, 2100);
+    camera = new PerspectiveCamera(60, width / height, 1, 2100);
     camera.position.z = 1500;
 
     scene = new THREE.Scene();

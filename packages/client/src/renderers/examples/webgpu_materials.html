@@ -52,6 +52,7 @@
 
   import Stats from 'three/examples/jsm/libs/stats.module.js';
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
+  import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
 
   let stats;
 
@@ -67,7 +68,7 @@
     const container = document.createElement('div');
     document.body.appendChild(container);
 
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+    camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera.position.set(0, 200, 800);
 
     scene = new THREE.Scene();

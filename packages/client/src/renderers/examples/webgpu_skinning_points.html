@@ -23,6 +23,7 @@
   import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
+  import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
 
   let camera, scene, renderer;
 
@@ -33,7 +34,7 @@
   function init() {
 
 
-    camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+    camera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.set(0, 300, -85);
 
     scene = new THREE.Scene();

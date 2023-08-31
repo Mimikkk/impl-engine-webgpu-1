@@ -37,6 +37,7 @@
   import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
+  import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
 
   let camera, scene, renderer;
 
@@ -47,7 +48,7 @@
   async function init() {
 
 
-    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10);
+    camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10);
     camera.position.z = 4;
 
     scene = new THREE.Scene();

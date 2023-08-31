@@ -23,6 +23,7 @@
 
   import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
+  import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
 
   let camera, scene, renderer;
   let computeNode;
@@ -167,7 +168,7 @@
     const container = document.createElement('div');
     document.body.appendChild(container);
 
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 30);
+    camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 30);
 
 
     // nodes

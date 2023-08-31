@@ -25,6 +25,7 @@
 
   import { FlakesTexture } from 'three/examples/jsm/textures/FlakesTexture.js';
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
+  import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
 
   let container, stats;
 
@@ -42,7 +43,7 @@
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    camera = new THREE.PerspectiveCamera(27, window.innerWidth / window.innerHeight, 0.25, 50);
+    camera = new PerspectiveCamera(27, window.innerWidth / window.innerHeight, 0.25, 50);
     camera.position.z = 10;
 
     scene = new THREE.Scene();
