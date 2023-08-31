@@ -524,7 +524,7 @@ export class Object3D extends EventDispatcher {
     }
   }
 
-  toJSON(meta?: any) {
+  toJSON(meta?: any): Object3D {
     // meta is a string when called from JSON.stringify
     const isRootObject = meta === undefined || typeof meta === 'string';
 

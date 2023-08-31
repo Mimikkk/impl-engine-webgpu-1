@@ -12,6 +12,7 @@ export class StereoCamera {
   eyeSep: number;
   cameraL: PerspectiveCamera;
   cameraR: PerspectiveCamera;
+
   private _cache: {
     focus: null | number;
     fov: null | number;

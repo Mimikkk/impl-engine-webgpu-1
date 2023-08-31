@@ -43,9 +43,7 @@ export class PerspectiveCamera extends Camera {
     this.updateProjectionMatrix();
   }
 
-  //@ts-expect-error
   copy(source: PerspectiveCamera, recursive?: boolean): PerspectiveCamera {
-    //@ts-expect-error
     super.copy(source, recursive);
 
     this.fov = source.fov;
