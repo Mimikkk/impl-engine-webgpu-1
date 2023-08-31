@@ -1,9 +1,9 @@
-import { Camera } from './Camera.js';
-import { MathUtils } from '../MathUtils.js';
+import { Camera } from 'three';
+import * as MathUtils from '../MathUtils.js';
 
 export class PerspectiveCamera extends Camera {
-  static isPerspectiveCamera = true;
-  static type = 'PerspectiveCamera';
+  isPerspectiveCamera = true;
+  type = 'PerspectiveCamera';
   fov: number;
   zoom: number;
   near: number;
@@ -25,23 +25,27 @@ export class PerspectiveCamera extends Camera {
   constructor(fov: number = 50, aspect: number = 1, near: number = 0.1, far: number = 2000) {
     super();
 
+    this.isPerspectiveCamera = true;
+    this.type = 'PerspectiveCamera';
     this.fov = fov;
     this.zoom = 1;
-
     this.near = near;
     this.far = far;
     this.focus = 10;
-
     this.aspect = aspect;
     this.view = null;
 
-    this.filmGauge = 35; // width of the film (default in millimeters)
-    this.filmOffset = 0; // horizontal film offset (same unit as gauge)
+    // width of the film (default in millimeters)
+    this.filmGauge = 35;
+    // horizontal film offset (same unit as gauge)
+    this.filmOffset = 0;
 
     this.updateProjectionMatrix();
   }
 
-  copy(source: PerspectiveCamera, recursive?: boolean) {
+  //@ts-expect-error
+  copy(source: PerspectiveCamera, recursive?: boolean): PerspectiveCamera {
+    //@ts-expect-error
     super.copy(source, recursive);
 
     this.fov = source.fov;
@@ -52,7 +56,7 @@ export class PerspectiveCamera extends Camera {
     this.focus = source.focus;
 
     this.aspect = source.aspect;
-    this.view = source.view === null ? null : Object.assign({}, source.view);
+    this.view = structuredClone(source.view);
 
     this.filmGauge = source.filmGauge;
     this.filmOffset = source.filmOffset;
@@ -174,15 +178,13 @@ export class PerspectiveCamera extends Camera {
     let height = 2 * top;
     let width = this.aspect * height;
     let left = -0.5 * width;
+    const view = this.view;
 
-    if (this.view?.enabled) {
-      const fullWidth = this.view.fullWidth,
-        fullHeight = this.view.fullHeight;
-
-      left += (this.view.offsetX * width) / fullWidth;
-      top -= (this.view.offsetY * height) / fullHeight;
-      width *= this.view.width / fullWidth;
-      height *= this.view.height / fullHeight;
+    if (view?.enabled) {
+      top -= (view.offsetY * height) / view.fullHeight;
+      left += (view.offsetX * width) / view.fullWidth;
+      width *= view.width / view.fullWidth;
+      height *= view.height / view.fullHeight;
     }
 
     const skew = this.filmOffset;
@@ -192,22 +194,18 @@ export class PerspectiveCamera extends Camera {
     this.projectionMatrixInverse.copy(this.projectionMatrix).invert();
   }
 
-  toJSON(meta: any) {
+  toJSON(meta: { geometries: any; materials: any; textures: any; images: any }) {
     const data = super.toJSON(meta);
 
-    data.object.fov = this.fov;
-    data.object.zoom = this.zoom;
-
-    data.object.near = this.near;
-    data.object.far = this.far;
-    data.object.focus = this.focus;
-
-    data.object.aspect = this.aspect;
-
-    if (this.view !== null) data.object.view = Object.assign({}, this.view);
-
-    data.object.filmGauge = this.filmGauge;
     data.object.filmOffset = this.filmOffset;
+    data.object.filmGauge = this.filmGauge;
+    data.object.aspect = this.aspect;
+    data.object.focus = this.focus;
+    data.object.near = this.near;
+    data.object.zoom = this.zoom;
+    data.object.fov = this.fov;
+    data.object.far = this.far;
+    if (this.view) data.object.view = structuredClone(this.view);
 
     return data;
   }

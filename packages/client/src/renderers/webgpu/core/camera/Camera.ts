@@ -1,11 +1,11 @@
 import { WebGLCoordinateSystem } from '../../common/Constants.js';
-import { Matrix4 } from '../Matrix4.js';
-import { Vector3 } from '../Vector3.js';
-import { Object3D } from '../Object3D.js';
+import { Matrix4 } from 'three';
+import { Vector3 } from 'three';
+import { Object3D } from 'three';
 
 export class Camera extends Object3D {
-  static isCamera: boolean = true;
-  static type: string = 'Camera';
+  isCamera: boolean = true;
+  type: string = 'Camera';
   matrixWorldInverse: Matrix4;
   projectionMatrix: Matrix4;
   coordinateSystem: number;

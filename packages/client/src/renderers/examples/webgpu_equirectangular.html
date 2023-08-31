@@ -16,8 +16,9 @@
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
   import { Scene } from '@/renderers/webgpu/core/scenes/Scene.ts';
-  import { PerspectiveCamera, TextureLoader } from 'three';
+  import { TextureLoader } from 'three';
   import { texture, equirectUV } from 'three/nodes';
+  import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
 
   const camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 20);
   camera.position.set(1, 0, 0);
