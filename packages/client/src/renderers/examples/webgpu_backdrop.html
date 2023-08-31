@@ -13,8 +13,6 @@
 </div>
 
 
-
-
 <script type='module'>
 
   import * as THREE from 'three';
@@ -46,8 +44,6 @@
   init();
 
   function init() {
-
-
     camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 100);
     camera.position.set(1, 2, 3);
 
@@ -130,7 +126,7 @@
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setAnimationLoop(animate);
-    renderer.nodes
+    renderer.nodes;
     renderer.toneMappingNode = toneMapping(THREE.LinearToneMapping, .15);
     document.body.appendChild(renderer.domElement);
 
