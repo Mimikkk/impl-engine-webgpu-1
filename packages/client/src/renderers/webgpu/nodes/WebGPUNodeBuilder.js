@@ -21,6 +21,7 @@ import { CodeNode, NodeBuilder, NodeMaterial } from 'three/examples/jsm/nodes/No
 
 import WebGPUNodeParser from './WebGPUNodeParser.ts';
 import { RenderTarget } from '../core/RenderTarget.ts';
+import { CubeRenderTarget } from '@/renderers/webgpu/core/CubeRenderTarget.js';
 
 const gpuShaderStageLib = {
   vertex: GPUShaderStage.VERTEX,
@@ -572,6 +573,10 @@ class WebGPUNodeBuilder extends NodeBuilder {
 
   getType(type) {
     return wgslTypeLib[type] || type;
+  }
+
+  getCubeRenderTarget(size, options) {
+    return new CubeRenderTarget(size, options);
   }
 
   isAvailable(name) {

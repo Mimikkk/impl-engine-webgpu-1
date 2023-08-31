@@ -23,6 +23,7 @@ import { createBindingsState } from './utils/createBindingsState.js';
 import { createPipelinesState } from './utils/createPipelinesState.js';
 import { createTexturesState } from './utils/createTexturesState.js';
 import { DepthTexture } from './core/textures/DepthTexture.js';
+import { CubeRenderTarget } from './core/CubeRenderTarget.js';
 
 let vector2 = new Vector2();
 

@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
-  <title>three.js webgpu - dynamic cube reflection</title>
+  <title>WebGPU - dynamic cube reflection</title>
   <meta charset='utf-8'>
-  <meta content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0' name='viewport'>
   <link href='styles.css' rel='stylesheet' type='text/css'>
   <style>
       body {
@@ -12,12 +11,7 @@
   </style>
 </head>
 <body>
-
-<div id='info'><a href='https://threejs.org' rel='noopener' target='_blank'>three.js webgpu</a> - dynamic cube
-  reflection
-</div>
-
-
+<div id='info'>WebGPU - Dynamic cube reflection</div>
 <script type='module'>
 
   import * as THREE from 'three';
@@ -31,6 +25,7 @@
   import Stats from 'three/examples/jsm/libs/stats.module.js';
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
   import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
+  import { CubeCamera } from '@/renderers/webgpu/core/camera/CubeCamera.ts';
 
   let camera, scene, renderer, stats;
   let cube, sphere, torus, material;
@@ -84,7 +79,7 @@
     cubeRenderTarget.texture.magFilter = THREE.LinearFilter;
     cubeRenderTarget.texture.generateMipmaps = true;
 
-    cubeCamera = new THREE.CubeCamera(1, 1000, cubeRenderTarget);
+    cubeCamera = new CubeCamera(1, 1000, cubeRenderTarget);
 
     //
 
@@ -163,6 +158,5 @@
   }
 
 </script>
-
 </body>
 </html>

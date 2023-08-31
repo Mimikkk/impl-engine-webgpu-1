@@ -8,7 +8,7 @@ const fov = -90; // negative fov is not an error
 const aspect = 1;
 
 export class CubeCamera extends Object3D {
-  static type: string = 'CubeCamera';
+  type: string = 'CubeCamera';
   renderTarget: any;
   coordinateSystem: number | null;
 
@@ -114,8 +114,8 @@ export class CubeCamera extends Object3D {
 
     const currentRenderTarget = renderer.getRenderTarget();
 
-    // const currentXrEnabled = renderer.xr.enabled;
-    // renderer.xr.enabled = false;
+    const currentXrEnabled = renderer.xr.enabled;
+    renderer.xr.enabled = false;
 
     const generateMipmaps = renderTarget.texture.generateMipmaps;
 
@@ -143,7 +143,7 @@ export class CubeCamera extends Object3D {
 
     renderer.setRenderTarget(currentRenderTarget);
 
-    // renderer.xr.enabled = currentXrEnabled;
+    renderer.xr.enabled = currentXrEnabled;
 
     renderTarget.texture.needsPMREMUpdate = true;
   }
