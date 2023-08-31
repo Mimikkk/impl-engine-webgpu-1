@@ -1,7 +1,7 @@
 import { WebGLCoordinateSystem } from '../../common/Constants.js';
-import { Matrix4 } from 'three';
-import { Vector3 } from 'three';
-import { Object3D } from 'three';
+import { Matrix4 } from '../Matrix4.js';
+import { Vector3 } from '../Vector3.js';
+import { Object3D } from '../Object3D.js';
 
 export class Camera extends Object3D {
   isCamera: boolean = true;
@@ -13,16 +13,14 @@ export class Camera extends Object3D {
 
   constructor() {
     super();
-
     this.matrixWorldInverse = new Matrix4();
     this.projectionMatrix = new Matrix4();
-    this.projectionMatrix = new Matrix4();
-
+    this.projectionMatrixInverse = new Matrix4();
     this.coordinateSystem = WebGLCoordinateSystem;
   }
 
-  copy(source: Camera, recursive?: boolean) {
-    super.copy(source as this, recursive);
+  copy(source: Camera, recursive?: boolean): Camera {
+    super.copy(source, recursive);
 
     this.matrixWorldInverse.copy(source.matrixWorldInverse);
     this.projectionMatrix.copy(source.projectionMatrix);
@@ -52,7 +50,7 @@ export class Camera extends Object3D {
     this.matrixWorldInverse.copy(this.matrixWorld).invert();
   }
 
-  clone(recursive?: boolean) {
-    return new Camera().copy(this) as this;
+  clone(recursive?: boolean): Camera {
+    return new Camera().copy(this, recursive);
   }
 }

@@ -26,7 +26,7 @@ const _zAxis = /*@__PURE__*/ new Vector3(0, 0, 1);
 const _addedEvent = { type: 'added', target: null };
 const _removedEvent = { type: 'removed', target: null };
 
-class Object3D extends EventDispatcher {
+export class Object3D extends EventDispatcher {
   layers: any;
   static DEFAULT_UP: Vector3 = new Vector3(0, 1, 0);
   static DEFAULT_MATRIX_AUTO_UPDATE: boolean = true;
@@ -713,11 +713,11 @@ class Object3D extends EventDispatcher {
     }
   }
 
-  clone(recursive?: boolean) {
+  clone(recursive?: boolean): Object3D {
     return new Object3D().copy(this, recursive);
   }
 
-  copy(source: Object3D, recursive: boolean = true) {
+  copy(source: Object3D, recursive: boolean = true): Object3D {
     this.name = source.name;
 
     this.up.copy(source.up);
@@ -758,5 +758,3 @@ class Object3D extends EventDispatcher {
     return this;
   }
 }
-
-export { Object3D };

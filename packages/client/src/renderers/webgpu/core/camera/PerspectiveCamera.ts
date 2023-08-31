@@ -1,4 +1,4 @@
-import { Camera } from 'three';
+import { Camera } from './Camera.js';
 import * as MathUtils from '../MathUtils.js';
 
 export class PerspectiveCamera extends Camera {
