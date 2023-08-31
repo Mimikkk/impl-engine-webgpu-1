@@ -1,8 +1,8 @@
 import { MathUtils } from './MathUtils.js';
 import { Euler } from './Euler.js';
 import { Vector3 } from './Vector3.js';
-import { Matrix3 } from './Matrix3.js';
 import { Matrix4 } from './Matrix4.js';
+import { TypedArray } from './types.js';
 
 export class Quaternion {
   isQuaternion: boolean = true;
@@ -21,11 +21,11 @@ export class Quaternion {
   }
 
   static slerpFlat(
-    dst: number[],
+    dst: TypedArray | number[],
     dstOffset: number,
-    src0: number[],
+    src0: TypedArray | number[],
     srcOffset0: number,
-    src1: number[],
+    src1: TypedArray | number[],
     srcOffset1: number,
     t: number,
   ) {
