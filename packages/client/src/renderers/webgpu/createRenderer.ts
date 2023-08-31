@@ -426,8 +426,6 @@ export class Renderer {
         computeNode.onInit({ renderer: this });
       }
 
-      //@ts-expect-error
-      nodes.updateForCompute(computeNode);
       bindings.updateForCompute(computeNode);
 
       const computeBindings = bindings.getForCompute(computeNode);

@@ -1,224 +1,130 @@
 <html lang='en'>
 <head>
-  <title>three.js - WebGPU - Audio Processing</title>
+  <title>WebGPU - Audio Processing</title>
   <meta charset='utf-8'>
   <meta content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0' name='viewport'>
   <link href='styles.css' rel='stylesheet' type='text/css'>
 </head>
 <body>
-
 <div id='overlay'>
   <button id='startButton'>Play</button>
 </div>
-
 <div id='info'>
   <a href='https://threejs.org' rel='noopener' target='_blank'>three.js</a> WebGPU - Audio Processing
   <br>Click on screen to process the audio using WebGPU.
 </div>
-
 <script type='module'>
-
   import * as THREE from 'three';
   import { ShaderNode, uniform, storage, instanceIndex, float, texture, viewportTopLeft, color } from 'three/nodes';
 
   import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
   import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
+  import { Scene } from '@/renderers/webgpu/core/scenes/Scene.ts';
+  import { DataTexture } from '@/renderers/webgpu/core/textures/DataTexture.ts';
+  import { containRenderer, createResize } from '@/renderers/examples/patterns/patterns.ts';
+  import { InstancedBufferAttribute } from '@/renderers/webgpu/core/InstancedBufferAttribute.ts';
 
-  let camera, scene, renderer;
-  let computeNode;
-  let waveBuffer, sampleRate;
-  let waveGPUBuffer;
-  let currentAudio, currentAnalyser;
   const analyserBuffer = new Uint8Array(1024);
-  let analyserTexture;
 
-  init();
 
-  async function playAudioBuffer() {
+  const sound = await fetch('sounds/webgpu-audio-processing.mp3');
+  const soundBuffer = await sound.arrayBuffer();
+  const audioContext = new AudioContext();
+  const audioBuffer = await audioContext.decodeAudioData(soundBuffer);
 
-    if (currentAudio) currentAudio.stop();
+  const waveBuffer = audioBuffer.getChannelData(0);
+  const sampleRate = audioBuffer.sampleRate / audioBuffer.numberOfChannels;
+  const waveGPUBuffer = new InstancedBufferAttribute(waveBuffer, 1);
+  const waveStorageNode = storage(waveGPUBuffer, 'float', waveBuffer.length);
+  const waveNode = storage(new InstancedBufferAttribute(waveBuffer, 1), 'float', waveBuffer.length);
+  const pitch = uniform(1.5);
+  const delayVolume = uniform(.2);
+  const delayOffset = uniform(.55);
 
-    // compute audio
+  const computeShaderNode = new ShaderNode((stack) => {
+    const index = float(instanceIndex);
+    // pitch
+    const time = index.mul(pitch);
+    let wave = waveNode.element(time);
 
-    renderer.compute(computeNode);
+    // delay
+    for (let i = 1; i < 7; i++) {
+      const waveOffset = waveNode.element(index.sub(delayOffset.mul(sampleRate).mul(i)).mul(pitch));
+      const waveOffsetVolume = waveOffset.mul(delayVolume.div(i * i));
 
-    const waveArray = new Float32Array(await renderer.getArrayBufferAsync(waveGPUBuffer));
+      wave = wave.add(waveOffsetVolume);
+    }
 
-    // play result
 
-    const audioOutputContext = new AudioContext({ sampleRate });
-    const audioOutputBuffer = audioOutputContext.createBuffer(1, waveArray.length, sampleRate);
+    // store
+    const waveStorageElementNode = waveStorageNode.element(instanceIndex);
 
-    audioOutputBuffer.copyToChannel(waveArray, 0);
+    stack.assign(waveStorageElementNode, wave);
 
-    const source = audioOutputContext.createBufferSource();
-    source.connect(audioOutputContext.destination);
-    source.buffer = audioOutputBuffer;
-    source.start();
+  });
+  const computeNode = computeShaderNode.compute(waveBuffer.length);
 
-    currentAudio = source;
+  const gui = new GUI();
+  gui.add(pitch, 'value', .5, 2, 0.01).name('pitch');
+  gui.add(delayVolume, 'value', 0, 1, .01).name('delayVolume');
+  gui.add(delayOffset, 'value', .1, 1, .01).name('delayOffset');
 
-    // visual feedback
 
-    currentAnalyser = audioOutputContext.createAnalyser();
-    currentAnalyser.fftSize = 2048;
+  // renderer
+  console.log(PerspectiveCamera);
+  const camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 30);
 
-    source.connect(currentAnalyser);
 
-  }
+  // nodes
+  const analyserTexture = new DataTexture(analyserBuffer, analyserBuffer.length, 1, THREE.RedFormat);
+  const spectrum = texture(analyserTexture, viewportTopLeft.x).x.mul(viewportTopLeft.y);
+  const backgroundNode = color(0x0000FF).mul(spectrum);
 
-  async function init() {
+  // scene
+  const scene = new Scene();
+  scene.backgroundNode = backgroundNode;
 
-
-    document.onclick = () => {
-
-      const overlay = document.getElementById('overlay');
-      if (overlay !== null) overlay.remove();
-
-      playAudioBuffer();
-
-    };
-
-    // audio buffer
-
-    const soundBuffer = await fetch('sounds/webgpu-audio-processing.mp3').then(res => res.arrayBuffer());
-    const audioContext = new AudioContext();
-
-    const audioBuffer = await audioContext.decodeAudioData(soundBuffer);
-
-    waveBuffer = audioBuffer.getChannelData(0);
-
-    // adding extra silence to delay and pitch
-    waveBuffer = new Float32Array([...waveBuffer, ...new Float32Array(200000)]);
-
-    sampleRate = audioBuffer.sampleRate / audioBuffer.numberOfChannels;
-
-
-    // create webgpu buffers
-
-    waveGPUBuffer = new THREE.InstancedBufferAttribute(waveBuffer, 1);
-
-    const waveStorageNode = storage(waveGPUBuffer, 'float', waveBuffer.length);
-
-
-    // read-only buffer
-
-    const waveNode = storage(new THREE.InstancedBufferAttribute(waveBuffer, 1), 'float', waveBuffer.length);
-
-
-    // params
-
-    const pitch = uniform(1.5);
-    const delayVolume = uniform(.2);
-    const delayOffset = uniform(.55);
-
-
-    // compute (shader-node)
-
-    const computeShaderNode = new ShaderNode((stack) => {
-
-      const index = float(instanceIndex);
-
-
-      // pitch
-
-      const time = index.mul(pitch);
-
-      let wave = waveNode.element(time);
-
-
-      // delay
-
-      for (let i = 1; i < 7; i++) {
-
-        const waveOffset = waveNode.element(index.sub(delayOffset.mul(sampleRate).mul(i)).mul(pitch));
-        const waveOffsetVolume = waveOffset.mul(delayVolume.div(i * i));
-
-        wave = wave.add(waveOffsetVolume);
-
-      }
-
-
-      // store
-
-      const waveStorageElementNode = waveStorageNode.element(instanceIndex);
-
-      stack.assign(waveStorageElementNode, wave);
-
-    });
-
-
-    // compute
-
-    computeNode = computeShaderNode.compute(waveBuffer.length);
-
-
-    // gui
-
-    const gui = new GUI();
-
-    gui.add(pitch, 'value', .5, 2, 0.01).name('pitch');
-    gui.add(delayVolume, 'value', 0, 1, .01).name('delayVolume');
-    gui.add(delayOffset, 'value', .1, 1, .01).name('delayOffset');
-
-
-    // renderer
-
-    const container = document.createElement('div');
-    document.body.appendChild(container);
-
-    camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 30);
-
-
-    // nodes
-
-    analyserTexture = new THREE.DataTexture(analyserBuffer, analyserBuffer.length, 1, THREE.RedFormat);
-
-    const spectrum = texture(analyserTexture, viewportTopLeft.x).x.mul(viewportTopLeft.y);
-    const backgroundNode = color(0x0000FF).mul(spectrum);
-
-
-    // scene
-
-    scene = new THREE.Scene();
-    scene.backgroundNode = backgroundNode;
-
-    // renderer
-
-    renderer = createRenderer();
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setAnimationLoop(render);
-    container.appendChild(renderer.domElement);
-
-    window.addEventListener('resize', onWindowResize);
-
-  }
-
-  function onWindowResize() {
-
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-  }
-
-  function render() {
-
-    if (currentAnalyser) {
-
-      currentAnalyser.getByteFrequencyData(analyserBuffer);
-
+  let analyser = null;
+  const renderer = createRenderer();
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setAnimationLoop(() => {
+    if (analyser) {
+      analyser.getByteFrequencyData(analyserBuffer);
       analyserTexture.needsUpdate = true;
-
     }
 
     renderer.render(scene, camera);
+  });
 
-  }
+  window.onresize = createResize(renderer, camera);
 
+  let audio;
+  document.onclick = async () => {
+    const overlay = document.getElementById('overlay');
+    if (overlay) overlay.remove();
+    if (audio) audio.stop();
+
+    await renderer.compute(computeNode);
+    const wave = new Float32Array(await renderer.getArrayBufferAsync(waveGPUBuffer));
+    const context = new AudioContext({ sampleRate });
+
+    audio = context.createBufferSource();
+    audio.connect(context.destination);
+
+    const buffer = context.createBuffer(1, wave.length, sampleRate);
+    buffer.copyToChannel(wave, 0);
+    audio.buffer = buffer;
+
+    audio.start();
+
+    analyser = context.createAnalyser();
+    analyser.fftSize = 2048;
+    audio.connect(analyser);
+  };
+
+  containRenderer(renderer);
 </script>
 </body>
 </html>
