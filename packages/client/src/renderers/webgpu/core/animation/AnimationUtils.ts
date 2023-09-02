@@ -56,8 +56,8 @@ export function sortedArray(values: NumberArray, stride: number, order: NumberAr
 }
 
 // function for parsing AOS keyframe formats
-export function flattenJSON<T extends object>(
-  keys: ({ time: number } & T)[],
+export function flattenJSON<T extends { time: number }>(
+  keys: T[],
   times: number[],
   values: number[],
   property: keyof T,
@@ -148,7 +148,9 @@ export function subclip(
 
     if (times.length === 0) continue;
 
+    //@ts-expect-error
     track.times = convertArray(times, track.times.constructor);
+    //@ts-expect-error
     track.values = convertArray(values, track.values.constructor);
 
     tracks.push(track);
@@ -258,7 +260,6 @@ export function makeClipAdditive(
       if (referenceTrackType === 'quaternion') {
         // Multiply the conjugate for quaternion track types
         Quaternion.multiplyQuaternionsFlat(
-          //@ts-expect-error
           targetTrack.values,
           valueStart,
           referenceValue,

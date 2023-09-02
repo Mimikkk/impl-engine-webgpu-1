@@ -38,7 +38,6 @@ export class Object3D extends EventDispatcher {
   parent: Object3D | null;
   children: Object3D[];
   up: Vector3;
-
   position: Vector3;
   rotation: Euler;
   quaternion: Quaternion;
@@ -57,6 +56,7 @@ export class Object3D extends EventDispatcher {
   renderOrder: number;
   animations: never[];
   userData: any;
+  geometry: any;
 
   constructor() {
     super();
