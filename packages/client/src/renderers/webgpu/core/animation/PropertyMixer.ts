@@ -1,11 +1,35 @@
 import { Quaternion } from '../Quaternion.js';
+import { NumberArray } from '../types.js';
+import { PropertyBinding } from './PropertyBinding.js';
 
 export class PropertyMixer {
-  constructor(binding, typeName, valueSize) {
+  valueSize: number;
+  buffer: NumberArray;
+  _workIndex: number;
+  _mixBufferRegion: (buffer: NumberArray, dstOffset: number, srcOffset: number, t: number, stride: number) => void;
+  _mixBufferRegionAdditive: (
+    buffer: NumberArray,
+    dstOffset: number,
+    srcOffset: number,
+    t: number,
+    stride: number,
+  ) => void;
+  _setIdentity: () => void;
+  _origIndex: number;
+  _addIndex: number;
+  cumulativeWeight: number;
+  cumulativeWeightAdditive: number;
+  useCount: number;
+  referenceCount: number;
+  binding: PropertyBinding;
+
+  constructor(binding: PropertyBinding, typeName: string, valueSize: number) {
     this.binding = binding;
     this.valueSize = valueSize;
 
-    let mixFunction, mixFunctionAdditive, setIdentity;
+    let mixFunction;
+    let mixFunctionAdditive;
+    let setIdentity;
 
     // buffer layout: [ incoming | accu0 | accu1 | orig | addAccu | (optional work) ]
     //
@@ -68,13 +92,13 @@ export class PropertyMixer {
   }
 
   // accumulate data in the 'incoming' region into 'accu<i>'
-  accumulate(accuIndex, weight) {
+  accumulate(accuIndex: number, weight: number) {
     // note: happily accumulating nothing when weight = 0, the caller knows
     // the weight and shouldn't have made the call in the first place
 
-    const buffer = this.buffer,
-      stride = this.valueSize,
-      offset = accuIndex * stride + stride;
+    const buffer = this.buffer;
+    const stride = this.valueSize;
+    const offset = accuIndex * stride + stride;
 
     let currentWeight = this.cumulativeWeight;
 
@@ -98,7 +122,7 @@ export class PropertyMixer {
   }
 
   // accumulate data in the 'incoming' region into 'add'
-  accumulateAdditive(weight) {
+  accumulateAdditive(weight: number) {
     const buffer = this.buffer,
       stride = this.valueSize,
       offset = stride * this._addIndex;
@@ -116,7 +140,7 @@ export class PropertyMixer {
   }
 
   // apply the state of 'accu<i>' to the binding when accus differ
-  apply(accuIndex) {
+  apply(accuIndex: number) {
     const stride = this.valueSize,
       buffer = this.buffer,
       offset = accuIndex * stride + stride,
@@ -204,7 +228,7 @@ export class PropertyMixer {
 
   // mix functions
 
-  _select(buffer, dstOffset, srcOffset, t, stride) {
+  _select(buffer: NumberArray, dstOffset: number, srcOffset: number, t: number, stride: number) {
     if (t >= 0.5) {
       for (let i = 0; i !== stride; ++i) {
         buffer[dstOffset + i] = buffer[srcOffset + i];
@@ -212,11 +236,11 @@ export class PropertyMixer {
     }
   }
 
-  _slerp(buffer, dstOffset, srcOffset, t) {
+  _slerp(buffer: NumberArray, dstOffset: number, srcOffset: number, t: number) {
     Quaternion.slerpFlat(buffer, dstOffset, buffer, dstOffset, buffer, srcOffset, t);
   }
 
-  _slerpAdditive(buffer, dstOffset, srcOffset, t, stride) {
+  _slerpAdditive(buffer: NumberArray, dstOffset: number, srcOffset: number, t: number, stride: number) {
     const workOffset = this._workIndex * stride;
 
     // Store result in intermediate buffer offset
@@ -226,7 +250,7 @@ export class PropertyMixer {
     Quaternion.slerpFlat(buffer, dstOffset, buffer, dstOffset, buffer, workOffset, t);
   }
 
-  _lerp(buffer, dstOffset, srcOffset, t, stride) {
+  _lerp(buffer: NumberArray, dstOffset: number, srcOffset: number, t: number, stride: number) {
     const s = 1 - t;
 
     for (let i = 0; i !== stride; ++i) {
@@ -236,7 +260,7 @@ export class PropertyMixer {
     }
   }
 
-  _lerpAdditive(buffer, dstOffset, srcOffset, t, stride) {
+  _lerpAdditive(buffer: NumberArray, dstOffset: number, srcOffset: number, t: number, stride: number) {
     for (let i = 0; i !== stride; ++i) {
       const j = dstOffset + i;
 

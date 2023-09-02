@@ -2,7 +2,7 @@ import { MathUtils } from './MathUtils.js';
 import { Euler } from './Euler.js';
 import { Vector3 } from './Vector3.js';
 import { Matrix4 } from './Matrix4.js';
-import { TypedArray } from './types.js';
+import { NumberArray } from './types.js';
 
 export class Quaternion {
   isQuaternion: boolean = true;
@@ -21,11 +21,11 @@ export class Quaternion {
   }
 
   static slerpFlat(
-    dst: TypedArray | number[],
+    dst: NumberArray,
     dstOffset: number,
-    src0: TypedArray | number[],
+    src0: NumberArray,
     srcOffset0: number,
-    src1: TypedArray | number[],
+    src1: NumberArray,
     srcOffset1: number,
     t: number,
   ) {
@@ -97,11 +97,11 @@ export class Quaternion {
   }
 
   static multiplyQuaternionsFlat(
-    dst: number[],
+    dst: NumberArray,
     dstOffset: number,
-    src0: number[],
+    src0: NumberArray,
     srcOffset0: number,
-    src1: number[],
+    src1: NumberArray,
     srcOffset1: number,
   ) {
     const x0 = src0[srcOffset0];
@@ -544,7 +544,7 @@ export class Quaternion {
     );
   }
 
-  fromArray(array: number[], offset = 0) {
+  fromArray(array: NumberArray, offset = 0) {
     this._x = array[offset];
     this._y = array[offset + 1];
     this._z = array[offset + 2];
@@ -555,7 +555,7 @@ export class Quaternion {
     return this;
   }
 
-  toArray(array: number[] = [], offset = 0) {
+  toArray(array: NumberArray = [], offset = 0) {
     array[offset] = this._x;
     array[offset + 1] = this._y;
     array[offset + 2] = this._z;
