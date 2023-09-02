@@ -1,14 +1,14 @@
 import { AnimationAction } from './AnimationAction.js';
 import { EventDispatcher } from '../EventDispatcher.js';
-import { LinearInterpolant } from '../math/interpolants/LinearInterpolant.js';
+import { LinearInterpolant } from '../interpolants/LinearInterpolant.js';
 import { PropertyBinding } from './PropertyBinding.js';
 import { PropertyMixer } from './PropertyMixer.js';
 import { AnimationClip } from './AnimationClip.js';
-import { NormalAnimationBlendMode } from '../constants.js';
+import { NormalAnimationBlendMode } from '../../common/Constants.js';
 
 const _controlInterpolantsResultBuffer = new Float32Array(1);
 
-class AnimationMixer extends EventDispatcher {
+export class AnimationMixer extends EventDispatcher {
   constructor(root) {
     super();
 
@@ -595,5 +595,3 @@ class AnimationMixer extends EventDispatcher {
     }
   }
 }
-
-export { AnimationMixer };
