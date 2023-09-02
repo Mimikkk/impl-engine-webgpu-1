@@ -1,4 +1,7 @@
 // Characters [].:/ are reserved for track binding syntax.
+import { NumberArray } from '../types.js';
+import { AnimationObjectGroup } from './AnimationObjectGroup.js';
+import { Object3D } from '../Object3D.js';
 const _RESERVED_CHARS_RE = '\\[\\]\\.:\\/';
 const _reservedRe = new RegExp('[' + _RESERVED_CHARS_RE + ']', 'g');
 
@@ -28,24 +31,38 @@ const _trackRe = new RegExp('' + '^' + _directoryRe + _nodeRe + _objectRe + _pro
 const _supportedObjectNames = ['material', 'materials', 'bones', 'map'];
 
 class Composite {
-  constructor(targetGroup, path, optionalParsedPath) {
+  _targetGroup: AnimationObjectGroup;
+  _bindings: PropertyBinding[];
+
+  constructor(
+    targetGroup: AnimationObjectGroup,
+    path: string,
+    optionalParsedPath?: {
+      nodeName: string;
+      objectName: string;
+      objectIndex: string;
+      propertyName: string;
+      propertyIndex: string;
+      directoryName: string;
+    },
+  ) {
     const parsedPath = optionalParsedPath || PropertyBinding.parseTrackName(path);
 
     this._targetGroup = targetGroup;
     this._bindings = targetGroup.subscribe_(path, parsedPath);
   }
 
-  getValue(array, offset) {
+  getValue(array: NumberArray, offset: number) {
     this.bind(); // bind all binding
 
-    const firstValidIndex = this._targetGroup.nCachedObjects_,
-      binding = this._bindings[firstValidIndex];
+    const firstValidIndex = this._targetGroup.nCachedObjects_;
+    const binding = this._bindings[firstValidIndex];
 
     // and only call .getValue on the first
     if (binding !== undefined) binding.getValue(array, offset);
   }
 
-  setValue(array, offset) {
+  setValue(array: NumberArray, offset: number) {
     const bindings = this._bindings;
 
     for (let i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++i) {
@@ -75,14 +92,44 @@ class Composite {
 // prototype version of these methods with one that represents
 // the bound state. When the property is not found, the methods
 // become no-ops.
-class PropertyBinding {
-  Composite = Composite;
+
+export class PropertyBinding {
+  declare ['constructor']: typeof PropertyBinding;
+  static Composite = Composite;
   BindingType: { Direct: number; EntireArray: number; ArrayElement: number; HasFromToArray: number };
   Versioning: { None: number; NeedsUpdate: number; MatrixWorldNeedsUpdate: number };
   GetterByBindingType: ((buffer: any, offset: any) => void)[];
   SetterByBindingTypeAndVersioning: ((buffer: any, offset: any) => void)[][];
+  path: string;
+  parsedPath: {
+    nodeName: string;
+    objectName: string;
+    objectIndex: string;
+    propertyName: string;
+    propertyIndex: string;
+    directoryName: string;
+  };
+  rootNode: Object3D;
+  getValue: (targetArray: NumberArray, offset: number) => void;
+  setValue: (sourceArray: NumberArray, offset: number) => void;
+  node: Object3D | null;
+  targetObject: any;
+  propertyName: string;
+  resolvedProperty: any;
+  propertyIndex: any;
 
-  constructor(rootNode, path, parsedPath) {
+  constructor(
+    rootNode: Object3D,
+    path: string,
+    parsedPath?: {
+      nodeName: string;
+      objectName: string;
+      objectIndex: string;
+      propertyName: string;
+      propertyIndex: string;
+      directoryName: string;
+    },
+  ) {
     this.path = path;
     this.parsedPath = parsedPath || PropertyBinding.parseTrackName(path);
 
@@ -95,12 +142,21 @@ class PropertyBinding {
     this.setValue = this._setValue_unbound;
   }
 
-  static create(root, path, parsedPath) {
-    if (!(root && root.isAnimationObjectGroup)) {
-      return new PropertyBinding(root, path, parsedPath);
-    } else {
-      return new PropertyBinding.Composite(root, path, parsedPath);
-    }
+  static create(
+    root: Object3D | AnimationObjectGroup,
+    path: string,
+    parsedPath?: {
+      nodeName: string;
+      objectName: string;
+      objectIndex: string;
+      propertyName: string;
+      propertyIndex: string;
+      directoryName: string;
+    },
+  ) {
+    return !('isAnimationObjectGroup' in root)
+      ? new PropertyBinding(root as Object3D, path, parsedPath)
+      : new PropertyBinding.Composite(root, path, parsedPath);
   }
 
   /**
@@ -110,11 +166,11 @@ class PropertyBinding {
    * @param {string} name Node name to be sanitized.
    * @return {string}
    */
-  static sanitizeNodeName(name) {
+  static sanitizeNodeName(name: string) {
     return name.replace(/\s/g, '_').replace(_reservedRe, '');
   }
 
-  static parseTrackName(trackName) {
+  static parseTrackName(trackName: string) {
     const matches = _trackRe.exec(trackName);
 
     if (matches === null) {
@@ -122,15 +178,15 @@ class PropertyBinding {
     }
 
     const results = {
-      // directoryName: matches[ 1 ], // (tschw) currently unused
+      directoryName: matches[1],
       nodeName: matches[2],
       objectName: matches[3],
       objectIndex: matches[4],
-      propertyName: matches[5], // required
+      propertyName: matches[5],
       propertyIndex: matches[6],
     };
 
-    const lastDot = results.nodeName && results.nodeName.lastIndexOf('.');
+    const lastDot = results.nodeName ? results.nodeName.lastIndexOf('.') : undefined;
 
     if (lastDot !== undefined && lastDot !== -1) {
       const objectName = results.nodeName.substring(lastDot + 1);
@@ -152,11 +208,12 @@ class PropertyBinding {
     return results;
   }
 
-  static findNode(root, nodeName) {
+  static findNode(root: Object3D, nodeName: string): Object3D | null {
     if (
       nodeName === undefined ||
       nodeName === '' ||
       nodeName === '.' ||
+      //@ts-expect-error
       nodeName === -1 ||
       nodeName === root.name ||
       nodeName === root.uuid
@@ -167,15 +224,12 @@ class PropertyBinding {
     // search into skeleton bones.
     if (root.skeleton) {
       const bone = root.skeleton.getBoneByName(nodeName);
-
-      if (bone !== undefined) {
-        return bone;
-      }
+      if (bone) return bone;
     }
 
     // search into node subtree.
     if (root.children) {
-      const searchNodeSubtree = function (children) {
+      const searchNodeSubtree = (children: Object3D[]): Object3D | null => {
         for (let i = 0; i < children.length; i++) {
           const childNode = children[i];
 
@@ -192,10 +246,7 @@ class PropertyBinding {
       };
 
       const subTreeNode = searchNodeSubtree(root.children);
-
-      if (subTreeNode) {
-        return subTreeNode;
-      }
+      if (subTreeNode) return subTreeNode;
     }
 
     return null;
@@ -207,11 +258,11 @@ class PropertyBinding {
 
   // Getters
 
-  _getValue_direct(buffer, offset) {
-    buffer[offset] = this.targetObject[this.propertyName];
+  _getValue_direct(buffer: NumberArray, offset: number) {
+    buffer[offset] = this.targetObject[this.propertyName as keyof typeof this.targetObject];
   }
 
-  _getValue_array(buffer, offset) {
+  _getValue_array(buffer: NumberArray, offset: number) {
     const source = this.resolvedProperty;
 
     for (let i = 0, n = source.length; i !== n; ++i) {
@@ -219,33 +270,33 @@ class PropertyBinding {
     }
   }
 
-  _getValue_arrayElement(buffer, offset) {
+  _getValue_arrayElement(buffer: NumberArray, offset: number) {
     buffer[offset] = this.resolvedProperty[this.propertyIndex];
   }
 
-  _getValue_toArray(buffer, offset) {
+  _getValue_toArray(buffer: NumberArray, offset: number) {
     this.resolvedProperty.toArray(buffer, offset);
   }
 
   // Direct
 
-  _setValue_direct(buffer, offset) {
-    this.targetObject[this.propertyName] = buffer[offset];
+  _setValue_direct(buffer: NumberArray, offset: number) {
+    this.targetObject[this.propertyName as any]! = buffer[offset] as any;
   }
 
-  _setValue_direct_setNeedsUpdate(buffer, offset) {
+  _setValue_direct_setNeedsUpdate(buffer: NumberArray, offset: number) {
     this.targetObject[this.propertyName] = buffer[offset];
     this.targetObject.needsUpdate = true;
   }
 
-  _setValue_direct_setMatrixWorldNeedsUpdate(buffer, offset) {
+  _setValue_direct_setMatrixWorldNeedsUpdate(buffer: NumberArray, offset: number) {
     this.targetObject[this.propertyName] = buffer[offset];
     this.targetObject.matrixWorldNeedsUpdate = true;
   }
 
   // EntireArray
 
-  _setValue_array(buffer, offset) {
+  _setValue_array(buffer: NumberArray, offset: number) {
     const dest = this.resolvedProperty;
 
     for (let i = 0, n = dest.length; i !== n; ++i) {
@@ -253,7 +304,7 @@ class PropertyBinding {
     }
   }
 
-  _setValue_array_setNeedsUpdate(buffer, offset) {
+  _setValue_array_setNeedsUpdate(buffer: NumberArray, offset: number) {
     const dest = this.resolvedProperty;
 
     for (let i = 0, n = dest.length; i !== n; ++i) {
@@ -263,7 +314,7 @@ class PropertyBinding {
     this.targetObject.needsUpdate = true;
   }
 
-  _setValue_array_setMatrixWorldNeedsUpdate(buffer, offset) {
+  _setValue_array_setMatrixWorldNeedsUpdate(buffer: NumberArray, offset: number) {
     const dest = this.resolvedProperty;
 
     for (let i = 0, n = dest.length; i !== n; ++i) {
@@ -275,49 +326,49 @@ class PropertyBinding {
 
   // ArrayElement
 
-  _setValue_arrayElement(buffer, offset) {
+  _setValue_arrayElement(buffer: NumberArray, offset: number) {
     this.resolvedProperty[this.propertyIndex] = buffer[offset];
   }
 
-  _setValue_arrayElement_setNeedsUpdate(buffer, offset) {
+  _setValue_arrayElement_setNeedsUpdate(buffer: NumberArray, offset: number) {
     this.resolvedProperty[this.propertyIndex] = buffer[offset];
     this.targetObject.needsUpdate = true;
   }
 
-  _setValue_arrayElement_setMatrixWorldNeedsUpdate(buffer, offset) {
+  _setValue_arrayElement_setMatrixWorldNeedsUpdate(buffer: NumberArray, offset: number) {
     this.resolvedProperty[this.propertyIndex] = buffer[offset];
     this.targetObject.matrixWorldNeedsUpdate = true;
   }
 
   // HasToFromArray
 
-  _setValue_fromArray(buffer, offset) {
+  _setValue_fromArray(buffer: NumberArray, offset: number) {
     this.resolvedProperty.fromArray(buffer, offset);
   }
 
-  _setValue_fromArray_setNeedsUpdate(buffer, offset) {
+  _setValue_fromArray_setNeedsUpdate(buffer: NumberArray, offset: number) {
     this.resolvedProperty.fromArray(buffer, offset);
     this.targetObject.needsUpdate = true;
   }
 
-  _setValue_fromArray_setMatrixWorldNeedsUpdate(buffer, offset) {
+  _setValue_fromArray_setMatrixWorldNeedsUpdate(buffer: NumberArray, offset: number) {
     this.resolvedProperty.fromArray(buffer, offset);
     this.targetObject.matrixWorldNeedsUpdate = true;
   }
 
-  _getValue_unbound(targetArray, offset) {
+  _getValue_unbound(targetArray: NumberArray, offset: number) {
     this.bind();
     this.getValue(targetArray, offset);
   }
 
-  _setValue_unbound(sourceArray, offset) {
+  _setValue_unbound(sourceArray: NumberArray, offset: number) {
     this.bind();
     this.setValue(sourceArray, offset);
   }
 
   // create getter / setter pair for a property in the scene graph
   bind() {
-    let targetObject = this.node;
+    let targetObject: any = this.node;
     const parsedPath = this.parsedPath;
 
     const objectName = parsedPath.objectName;
@@ -330,7 +381,7 @@ class PropertyBinding {
       this.node = targetObject;
     }
 
-    // set fail state so we can just 'return' on error
+    // set fail state, so we can just 'return' on error
     this.getValue = this._getValue_unavailable;
     this.setValue = this._setValue_unavailable;
 
@@ -341,7 +392,7 @@ class PropertyBinding {
     }
 
     if (objectName) {
-      let objectIndex = parsedPath.objectIndex;
+      let objectIndex = +parsedPath.objectIndex;
 
       // special cases were we need to reach deeper into the hierarchy to get the face materials....
       switch (objectName) {
@@ -530,20 +581,17 @@ PropertyBinding.prototype.BindingType = {
   ArrayElement: 2,
   HasFromToArray: 3,
 };
-
 PropertyBinding.prototype.Versioning = {
   None: 0,
   NeedsUpdate: 1,
   MatrixWorldNeedsUpdate: 2,
 };
-
 PropertyBinding.prototype.GetterByBindingType = [
   PropertyBinding.prototype._getValue_direct,
   PropertyBinding.prototype._getValue_array,
   PropertyBinding.prototype._getValue_arrayElement,
   PropertyBinding.prototype._getValue_toArray,
 ];
-
 PropertyBinding.prototype.SetterByBindingTypeAndVersioning = [
   [
     // Direct
@@ -571,5 +619,3 @@ PropertyBinding.prototype.SetterByBindingTypeAndVersioning = [
     PropertyBinding.prototype._setValue_fromArray_setMatrixWorldNeedsUpdate,
   ],
 ];
-
-export { PropertyBinding };

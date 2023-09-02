@@ -5,11 +5,26 @@ import { PropertyBinding } from './PropertyBinding.js';
 import { PropertyMixer } from './PropertyMixer.js';
 import { AnimationClip } from './AnimationClip.js';
 import { NormalAnimationBlendMode } from '../../common/Constants.js';
+import { Object3D } from '../Object3D.js';
+import { Interpolant } from '../Interpolant.js';
 
 const _controlInterpolantsResultBuffer = new Float32Array(1);
 
 export class AnimationMixer extends EventDispatcher {
-  constructor(root) {
+  _root: Object3D;
+  _accuIndex: number;
+  timeScale: number;
+  time: number;
+  _actions: AnimationAction[];
+  _nActiveActions: number;
+  _actionsByClip: {};
+  _bindings: PropertyBinding[];
+  _nActiveBindings: number;
+  _bindingsByRootAndName: Record<string, PropertyMixer>;
+  _nActiveControlInterpolants: number;
+  _controlInterpolants: Interpolant[];
+
+  constructor(root: Object3D) {
     super();
 
     this._root = root;
@@ -19,7 +34,7 @@ export class AnimationMixer extends EventDispatcher {
     this.timeScale = 1.0;
   }
 
-  _bindAction(action, prototypeAction) {
+  _bindAction(action: AnimationAction, prototypeAction) {
     const root = action._localRoot || this._root,
       tracks = action._clip.tracks,
       nTracks = tracks.length,
@@ -31,7 +46,7 @@ export class AnimationMixer extends EventDispatcher {
     let bindingsByName = bindingsByRoot[rootUuid];
 
     if (bindingsByName === undefined) {
-      bindingsByName = {};
+      bindingsByName = {} as any;
       bindingsByRoot[rootUuid] = bindingsByName;
     }
 
@@ -76,7 +91,7 @@ export class AnimationMixer extends EventDispatcher {
     }
   }
 
-  _activateAction(action) {
+  _activateAction(action: AnimationAction) {
     if (!this._isActiveAction(action)) {
       if (action._cacheIndex === null) {
         // this action has been forgotten by the cache, but the user
@@ -107,7 +122,7 @@ export class AnimationMixer extends EventDispatcher {
     }
   }
 
-  _deactivateAction(action) {
+  _deactivateAction(action: AnimationAction) {
     if (this._isActiveAction(action)) {
       const bindings = action._propertyBindings;
 

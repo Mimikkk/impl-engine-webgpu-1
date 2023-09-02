@@ -63,6 +63,7 @@ export class Material extends EventDispatcher {
   stencilFail: number;
   stencilZPass: number;
   stencilWrite: boolean;
+  materials?: Material[];
 
   constructor() {
     super();

@@ -1,5 +1,6 @@
 import { PropertyBinding } from './PropertyBinding.js';
 import { MathUtils } from '../MathUtils.js';
+import { Object3D } from '../Object3D.js';
 
 /**
  *
@@ -34,7 +35,7 @@ export class AnimationObjectGroup {
   nCachedObjects_: number;
   isAnimationObjectGroup: boolean;
   uuid: string;
-  _objects: AnimationObjectGroup[];
+  _objects: Object3D[];
   _indicesByUUID: Record<string, number>;
   _paths: string[];
   _parsedPaths: {

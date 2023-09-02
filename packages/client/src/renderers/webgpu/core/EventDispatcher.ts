@@ -1,6 +1,9 @@
-export interface DispatchEvent {
+export interface DispatchEvent<A = never> {
   target: EventDispatcher | null;
+  action?: A;
   type: string;
+  direction?: number;
+  loopDelta?: number;
 }
 export type Listener = (event: DispatchEvent) => void;
 
@@ -42,7 +45,7 @@ export class EventDispatcher {
     }
   }
 
-  dispatchEvent(event: DispatchEvent) {
+  dispatchEvent<T = never>(event: DispatchEvent<T>) {
     if (this._listeners === undefined) return;
 
     const listeners = this._listeners;

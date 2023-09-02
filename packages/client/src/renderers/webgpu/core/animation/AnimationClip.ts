@@ -8,8 +8,13 @@ import { StringKeyframeTrack } from './tracks/StringKeyframeTrack.js';
 import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js';
 import { MathUtils } from '../MathUtils.js';
 import { NormalAnimationBlendMode } from '../../common/Constants.js';
+import { Bone } from '../objects/Bone.js';
+import { Object3D } from '../Object3D.js';
+import { NumberArray } from '../types.js';
+import { Constructable } from 'vitest';
 
 export class AnimationClip {
+  declare ['constructor']: typeof AnimationClip;
   name: any;
   duration: number;
   blendMode: number;
@@ -35,10 +40,17 @@ export class AnimationClip {
     }
   }
 
-  static parse(json) {
-    const tracks = [],
-      jsonTracks = json.tracks,
-      frameTime = 1.0 / (json.fps || 1.0);
+  static parse(json: {
+    name: string;
+    duration: number;
+    tracks: ReturnType<typeof KeyframeTrack.toJSON>[];
+    blendMode: number;
+    fps: number;
+    uuid: string;
+  }) {
+    const tracks = [];
+    const jsonTracks = json.tracks;
+    const frameTime = 1.0 / (json.fps || 1.0);
 
     for (let i = 0, n = jsonTracks.length; i !== n; ++i) {
       tracks.push(parseKeyframeTrack(jsonTracks[i]).scale(frameTime));
@@ -50,8 +62,14 @@ export class AnimationClip {
     return clip;
   }
 
-  static toJSON(clip) {
-    const tracks = [],
+  static toJSON(clip: AnimationClip): {
+    name: string;
+    duration: number;
+    tracks: any[];
+    uuid: string;
+    blendMode: number;
+  } {
+    const tracks: ReturnType<typeof KeyframeTrack.toJSON>[] = [],
       clipTracks = clip.tracks;
 
     const json = {
@@ -62,28 +80,31 @@ export class AnimationClip {
       blendMode: clip.blendMode,
     };
 
-    for (let i = 0, n = clipTracks.length; i !== n; ++i) {
-      tracks.push(KeyframeTrack.toJSON(clipTracks[i]));
-    }
+    for (let i = 0, n = clipTracks.length; i !== n; ++i) tracks.push(KeyframeTrack.toJSON(clipTracks[i]));
 
     return json;
   }
 
-  static CreateFromMorphTargetSequence(name, morphTargetSequence, fps, noLoop) {
+  static CreateFromMorphTargetSequence(
+    name: string,
+    morphTargetSequence: { name: string }[],
+    fps: number,
+    noLoop?: boolean,
+  ) {
     const numMorphTargets = morphTargetSequence.length;
     const tracks = [];
 
     for (let i = 0; i < numMorphTargets; i++) {
-      let times = [];
-      let values = [];
+      let times: number[] = [];
+      let values: number[] = [];
 
       times.push((i + numMorphTargets - 1) % numMorphTargets, i, (i + 1) % numMorphTargets);
 
       values.push(0, 1, 0);
 
       const order = AnimationUtils.getKeyframeOrder(times);
-      times = AnimationUtils.sortedArray(times, 1, order);
-      values = AnimationUtils.sortedArray(values, 1, order);
+      times = AnimationUtils.sortedArray(times, 1, order) as number[];
+      values = AnimationUtils.sortedArray(values, 1, order) as number[];
 
       // if there is a key at the first frame, duplicate it as the
       // last frame as well for perfect loop.
@@ -102,12 +123,14 @@ export class AnimationClip {
     return new this(name, -1, tracks);
   }
 
-  static findByName(objectOrClipArray, name) {
-    let clipArray = objectOrClipArray;
+  static findByName(objectOrClipArray: Object3D | AnimationClip[], name: string): AnimationClip | null {
+    let clipArray: AnimationClip[];
 
     if (!Array.isArray(objectOrClipArray)) {
       const o = objectOrClipArray;
       clipArray = (o.geometry && o.geometry.animations) || o.animations;
+    } else {
+      clipArray = objectOrClipArray;
     }
 
     for (let i = 0; i < clipArray.length; i++) {
@@ -119,8 +142,8 @@ export class AnimationClip {
     return null;
   }
 
-  static CreateClipsFromMorphTargetSequences(morphTargets, fps, noLoop) {
-    const animationToMorphTargets = {};
+  static CreateClipsFromMorphTargetSequences(morphTargets: Object3D[], fps: number, noLoop?: boolean) {
+    const animationToMorphTargets: Record<string, Object3D[]> = {};
 
     // tested with https://regex101.com/ on trick sequences
     // such flamingo_flyA_003, flamingo_run1_003, crdeath0059
@@ -155,18 +178,25 @@ export class AnimationClip {
   }
 
   // parse the animation.hierarchy format
-  static parseAnimation(animation, bones) {
+  static parseAnimation(animation: any, bones: Bone[]) {
     if (!animation) {
       console.error('THREE.AnimationClip: No animation in JSONLoader data.');
       return null;
     }
 
-    const addNonemptyTrack = function (trackType, trackName, animationKeys, propertyName, destTracks) {
+    const addNonemptyTrack = (
+      trackType: Constructable,
+      trackName: string,
+      animationKeys: KeyframeTrack[],
+      propertyName: string,
+      destTracks: KeyframeTrack[],
+    ) => {
       // only return track if there are actually keys.
       if (animationKeys.length !== 0) {
-        const times = [];
-        const values = [];
+        const times: NumberArray = [];
+        const values: NumberArray = [];
 
+        //@ts-expect-error
         AnimationUtils.flattenJSON(animationKeys, times, values, propertyName);
 
         // empty keys are filtered out, so check again
@@ -178,9 +208,9 @@ export class AnimationClip {
 
     const tracks = [];
 
-    const clipName = animation.name || 'default';
-    const fps = animation.fps || 30;
-    const blendMode = animation.blendMode;
+    const clipName: string = animation.name || 'default';
+    const fps: number = animation.fps || 30;
+    const blendMode: number = animation.blendMode;
 
     // automatic length determination in AnimationClip.
     let duration = animation.length || -1;
@@ -196,13 +226,14 @@ export class AnimationClip {
       // process morph targets
       if (animationKeys[0].morphTargets) {
         // figure out all morph targets used in this track
-        const morphTargetNames = {};
+        const morphTargetNames: Record<string, string> = {};
 
         let k;
 
         for (k = 0; k < animationKeys.length; k++) {
           if (animationKeys[k].morphTargets) {
             for (let m = 0; m < animationKeys[k].morphTargets.length; m++) {
+              //@ts-expect-error
               morphTargetNames[animationKeys[k].morphTargets[m]] = -1;
             }
           }
@@ -225,27 +256,21 @@ export class AnimationClip {
           tracks.push(new NumberKeyframeTrack('.morphTargetInfluence[' + morphTargetName + ']', times, values));
         }
 
+        //@ts-expect-error
         duration = morphTargetNames.length * fps;
       } else {
         // ...assume skeletal animation
 
-        const boneName = '.bones[' + bones[h].name + ']';
+        const boneName = `.bones[${bones[h].name}]`;
 
-        addNonemptyTrack(VectorKeyframeTrack, boneName + '.position', animationKeys, 'pos', tracks);
-
-        addNonemptyTrack(QuaternionKeyframeTrack, boneName + '.quaternion', animationKeys, 'rot', tracks);
-
-        addNonemptyTrack(VectorKeyframeTrack, boneName + '.scale', animationKeys, 'scl', tracks);
+        addNonemptyTrack(VectorKeyframeTrack, `${boneName}.position`, animationKeys, 'pos', tracks);
+        addNonemptyTrack(QuaternionKeyframeTrack, `${boneName}.quaternion`, animationKeys, 'rot', tracks);
+        addNonemptyTrack(VectorKeyframeTrack, `${boneName}.scale`, animationKeys, 'scl', tracks);
       }
     }
 
-    if (tracks.length === 0) {
-      return null;
-    }
-
-    const clip = new this(clipName, duration, tracks, blendMode);
-
-    return clip;
+    if (tracks.length === 0) return null;
+    return new this(clipName, duration, tracks, blendMode);
   }
 
   resetDuration() {
@@ -304,7 +329,7 @@ export class AnimationClip {
   }
 }
 
-function getTrackTypeForValueTypeName(typeName) {
+function getTrackTypeForValueTypeName(typeName: string) {
   switch (typeName.toLowerCase()) {
     case 'scalar':
     case 'double':
@@ -338,6 +363,7 @@ function getTrackTypeForValueTypeName(typeName) {
 
 function parseKeyframeTrack(json: {
   name: string;
+  keys?: any;
   times?: number[];
   values: number[];
   interpolation?: number;
@@ -349,6 +375,7 @@ function parseKeyframeTrack(json: {
     const times: number[] = [];
     const values: number[] = [];
 
+    //@ts-expect-error
     AnimationUtils.flattenJSON(json.keys, times, values, 'value');
 
     json.times = times;

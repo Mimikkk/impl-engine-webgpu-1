@@ -7,6 +7,8 @@ import { Layers } from './Layers.js';
 import { Matrix3 } from './Matrix3.js';
 import { MathUtils } from './MathUtils.js';
 import { Intersection, Raycaster } from './Raycaster.js';
+import { Skeleton } from './objects/Skeleton.js';
+import { Material } from './materials/Material.js';
 
 let _object3DId = 0;
 
@@ -57,6 +59,8 @@ export class Object3D extends EventDispatcher {
   animations: never[];
   userData: any;
   geometry: any;
+  skeleton?: Skeleton;
+  material?: Material;
 
   constructor() {
     super();
@@ -245,7 +249,7 @@ export class Object3D extends EventDispatcher {
 
     _position.setFromMatrixPosition(this.matrixWorld);
 
-    if (this.isCamera || this.isLight) {
+    if ('isCamera' in this || 'isLight' in this) {
       _m1.lookAt(_position, _target, this.up);
     } else {
       _m1.lookAt(_target, _position, this.up);
@@ -528,7 +532,7 @@ export class Object3D extends EventDispatcher {
     // meta is a string when called from JSON.stringify
     const isRootObject = meta === undefined || typeof meta === 'string';
 
-    const output = {};
+    const output: any = {};
 
     // meta is a hash used to collect geometries, materials.
     // not providing it implies that this is the root object
