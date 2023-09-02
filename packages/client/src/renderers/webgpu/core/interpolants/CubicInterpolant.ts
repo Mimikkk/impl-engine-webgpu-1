@@ -1,6 +1,6 @@
 import { WrapAroundEnding, ZeroCurvatureEnding, ZeroSlopeEnding } from '../../common/Constants.js';
 import { Interpolant } from '../Interpolant.js';
-import { TypedArray } from '../types.js';
+import { NumberArray } from '../types.js';
 
 /**
  * Fast and simple cubic spline interpolant.
@@ -19,7 +19,12 @@ export class CubicInterpolant extends Interpolant<{
   _weightNext: number = -0;
   _offsetNext: number = -0;
 
-  constructor(parameterPositions: number[], sampleValues: TypedArray, sampleSize: number, resultBuffer: TypedArray) {
+  constructor(
+    parameterPositions: NumberArray,
+    sampleValues: NumberArray,
+    sampleSize: number,
+    resultBuffer: NumberArray,
+  ) {
     super(parameterPositions, sampleValues, sampleSize, resultBuffer);
 
     this.DefaultSettings_ = {
@@ -86,7 +91,7 @@ export class CubicInterpolant extends Interpolant<{
     this._offsetNext = iNext * stride;
   };
 
-  interpolate_ = (i1: number, t0: number, t: number, t1: number): TypedArray => {
+  interpolate_ = (i1: number, t0: number, t: number, t1: number): NumberArray => {
     const result = this.resultBuffer,
       values = this.sampleValues,
       stride = this.valueSize,

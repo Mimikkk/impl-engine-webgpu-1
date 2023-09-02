@@ -1,15 +1,20 @@
-import { TypedArray } from './types.js';
+import { NumberArray, TypedArray } from './types.js';
 
 export abstract class Interpolant<Settings extends {} = {}> {
-  parameterPositions: number[];
+  parameterPositions: NumberArray;
   _cachedIndex: number;
-  resultBuffer: TypedArray;
+  resultBuffer: NumberArray;
   valueSize: number;
-  sampleValues: TypedArray;
+  sampleValues: NumberArray;
   settings: null | Settings;
   DefaultSettings_: Settings;
 
-  constructor(parameterPositions: number[], sampleValues: TypedArray, sampleSize: number, resultBuffer: TypedArray) {
+  constructor(
+    parameterPositions: NumberArray,
+    sampleValues: NumberArray,
+    sampleSize: number,
+    resultBuffer: NumberArray,
+  ) {
     this.parameterPositions = parameterPositions;
     this._cachedIndex = 0;
 
@@ -19,7 +24,7 @@ export abstract class Interpolant<Settings extends {} = {}> {
     this.valueSize = sampleSize;
 
     this.settings = null;
-    this.DefaultSettings_ = {};
+    this.DefaultSettings_ = {} as Settings;
   }
 
   evaluate(t: number) {
@@ -123,6 +128,6 @@ export abstract class Interpolant<Settings extends {} = {}> {
     return this.resultBuffer;
   }
 
-  abstract interpolate_(i1: number, t0: number, t: number, t1: number): TypedArray;
+  abstract interpolate_(i1: number, t0: number, t: number, t1: number): NumberArray;
   intervalChanged_(i1: number, t0: number, t1: number): void {}
 }

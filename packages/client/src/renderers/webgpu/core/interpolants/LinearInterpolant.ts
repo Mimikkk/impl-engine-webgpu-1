@@ -1,12 +1,17 @@
 import { Interpolant } from '../Interpolant.js';
-import { TypedArray } from '../types.js';
+import { NumberArray } from '../types.js';
 
 export class LinearInterpolant extends Interpolant {
-  constructor(parameterPositions: number[], sampleValues: TypedArray, sampleSize: number, resultBuffer: TypedArray) {
+  constructor(
+    parameterPositions: NumberArray,
+    sampleValues: NumberArray,
+    sampleSize: number,
+    resultBuffer: NumberArray,
+  ) {
     super(parameterPositions, sampleValues, sampleSize, resultBuffer);
   }
 
-  interpolate_(i1: number, t0: number, t: number, t1: number): TypedArray {
+  interpolate_(i1: number, t0: number, t: number, t1: number): NumberArray {
     const result = this.resultBuffer,
       values = this.sampleValues,
       stride = this.valueSize,

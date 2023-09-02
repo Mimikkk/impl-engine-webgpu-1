@@ -1,8 +1,13 @@
 import { Interpolant } from '../Interpolant.js';
-import { TypedArray } from '../types.js';
+import { NumberArray } from '../types.js';
 
 export class DiscreteInterpolant extends Interpolant {
-  constructor(parameterPositions: number[], sampleValues: TypedArray, sampleSize: number, resultBuffer: TypedArray) {
+  constructor(
+    parameterPositions: NumberArray,
+    sampleValues: NumberArray,
+    sampleSize: number,
+    resultBuffer: NumberArray,
+  ) {
     super(parameterPositions, sampleValues, sampleSize, resultBuffer);
   }
 
