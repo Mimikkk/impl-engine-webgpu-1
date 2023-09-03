@@ -11,7 +11,6 @@
 </div>
 <script type='module'>
   import { uniform, skinning, PointsNodeMaterial } from 'three/nodes';
-  import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
   import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
   import { Points } from '@/renderers/webgpu/core/objects/Points.ts';
@@ -20,6 +19,7 @@
   import { containRenderer, createResize } from '@/renderers/examples/patterns/patterns.ts';
   import { Color } from '@/renderers/webgpu/core/Color.ts';
   import { AnimationMixer } from '@/renderers/webgpu/core/animation/AnimationMixer.ts';
+  import { GLTFLoader } from '@/renderers/webgpu/core/GLTFLoader.ts';
 
   const camera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
   camera.position.set(0, 300, -85);
