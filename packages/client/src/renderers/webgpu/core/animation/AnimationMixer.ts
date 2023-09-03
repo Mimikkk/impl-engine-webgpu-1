@@ -17,10 +17,10 @@ export class AnimationMixer extends EventDispatcher {
   time: number;
   _actions: AnimationAction[];
   _nActiveActions: number;
-  _actionsByClip: {};
+  _actionsByClip: Record<string, AnimationAction>;
   _bindings: PropertyBinding[];
   _nActiveBindings: number;
-  _bindingsByRootAndName: Record<string, PropertyMixer>;
+  _bindingsByRootAndName: Record<string, PropertyBinding>;
   _nActiveControlInterpolants: number;
   _controlInterpolants: Interpolant[];
 
@@ -34,7 +34,7 @@ export class AnimationMixer extends EventDispatcher {
     this.timeScale = 1.0;
   }
 
-  _bindAction(action: AnimationAction, prototypeAction) {
+  _bindAction(action: AnimationAction, prototypeAction: any) {
     const root = action._localRoot || this._root,
       tracks = action._clip.tracks,
       nTracks = tracks.length,
@@ -46,7 +46,7 @@ export class AnimationMixer extends EventDispatcher {
     let bindingsByName = bindingsByRoot[rootUuid];
 
     if (bindingsByName === undefined) {
-      bindingsByName = {} as any;
+      bindingsByName = {} as PropertyBinding;
       bindingsByRoot[rootUuid] = bindingsByName;
     }
 
@@ -538,7 +538,7 @@ export class AnimationMixer extends EventDispatcher {
   }
 
   // free all resources specific to a particular clip
-  uncacheClip(clip) {
+  uncacheClip(clip: AnimationClip) {
     const actions = this._actions,
       clipUuid = clip.uuid,
       actionsByClip = this._actionsByClip,
@@ -574,7 +574,7 @@ export class AnimationMixer extends EventDispatcher {
   }
 
   // free all resources specific to a particular root target object
-  uncacheRoot(root) {
+  uncacheRoot(root: Object3D) {
     const rootUuid = root.uuid,
       actionsByClip = this._actionsByClip;
 
@@ -601,7 +601,7 @@ export class AnimationMixer extends EventDispatcher {
   }
 
   // remove a targeted clip from the cache
-  uncacheAction(clip, optionalRoot) {
+  uncacheAction(clip: AnimationClip, optionalRoot?: Object3D) {
     const action = this.existingAction(clip, optionalRoot);
 
     if (action !== null) {
