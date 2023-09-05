@@ -1,46 +1,49 @@
-import { FileLoader, ImageBitmapLoader, Loader, TextureLoader } from 'three';
-import { DirectionalLight } from './lights/DirectionalLight.js';
-import { PointLight } from './lights/PointLight.js';
-import { SpotLight } from './lights/SpotLight.js';
-import { Texture } from './textures/Texture.js';
-import { InterleavedBuffer } from './InterleavedBuffer.js';
-import { InterleavedBufferAttribute } from './InterleavedBufferAttribute.js';
-import { Quaternion } from './Quaternion.js';
-import { Line } from './objects/Line.js';
-import { PropertyBinding } from './animation/PropertyBinding.js';
-import { Group } from './objects/Group.js';
-import { Points } from './objects/Points.js';
-import { LineLoop } from './objects/LineLoop.js';
-import { LineSegments } from './objects/LineSegments.js';
-import { InstancedMesh } from './objects/InstancedMesh.js';
-import { Interpolant } from './Interpolant.js';
-import { Sphere } from './Sphere.js';
-import { Object3D } from './Object3D.js';
-import { Skeleton } from './objects/Skeleton.js';
-import { SkinnedMesh } from './objects/SkinnedMesh.js';
-import { Mesh } from './objects/Mesh.js';
-import { Material } from './materials/Material.js';
-import { NumberKeyframeTrack } from './animation/tracks/NumberKeyframeTrack.js';
-import { VectorKeyframeTrack } from './animation/tracks/VectorKeyframeTrack.js';
-import { QuaternionKeyframeTrack } from './animation/tracks/QuaternionKeyframeTrack.js';
-import { LineBasicMaterial } from './materials/LineBasicMaterial.js';
-import { PointsMaterial } from './materials/PointsMaterial.js';
-import { MeshBasicMaterial } from './materials/MeshBasicMaterial.js';
-import { MeshPhysicalMaterial } from './materials/MeshPhysicalMaterial.js';
-import { MeshStandardMaterial } from './materials/MeshStandardMaterial.js';
-import { Matrix4 } from './Matrix4.js';
-import { OrthographicCamera } from './camera/OrthographicCamera.js';
-import { PerspectiveCamera } from './camera/PerspectiveCamera.js';
-import { Vector2 } from './Vector2.js';
-import { Vector3 } from './Vector3.js';
-import { AnimationClip } from './animation/AnimationClip.js';
-import { Bone } from './objects/Bone.js';
-import { Box3 } from './Box3.js';
-import { BufferAttribute } from './BufferAttribute.js';
-import { BufferGeometry } from './BufferGeometry.js';
-import { Color } from './Color.js';
+import { TextureLoader } from './TextureLoader.js';
+import { FileLoader } from './FileLoader.js';
+import { ImageBitmapLoader } from './ImageBitmapLoader.js';
+import { Loader } from './Loader.js';
+import { DirectionalLight } from '../lights/DirectionalLight.js';
+import { PointLight } from '../lights/PointLight.js';
+import { SpotLight } from '../lights/SpotLight.js';
+import { Texture } from '../textures/Texture.js';
+import { InterleavedBuffer } from '../InterleavedBuffer.js';
+import { InterleavedBufferAttribute } from '../InterleavedBufferAttribute.js';
+import { Quaternion } from '../Quaternion.js';
+import { Line } from '../objects/Line.js';
+import { PropertyBinding } from '../animation/PropertyBinding.js';
+import { Group } from '../objects/Group.js';
+import { Points } from '../objects/Points.js';
+import { LineLoop } from '../objects/LineLoop.js';
+import { LineSegments } from '../objects/LineSegments.js';
+import { InstancedMesh } from '../objects/InstancedMesh.js';
+import { Interpolant } from '../Interpolant.js';
+import { Sphere } from '../Sphere.js';
+import { Object3D } from '../Object3D.js';
+import { Skeleton } from '../objects/Skeleton.js';
+import { SkinnedMesh } from '../objects/SkinnedMesh.js';
+import { Mesh } from '../objects/Mesh.js';
+import { Material } from '../materials/Material.js';
+import { NumberKeyframeTrack } from '../animation/tracks/NumberKeyframeTrack.js';
+import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js';
+import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js';
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
+import { PointsMaterial } from '../materials/PointsMaterial.js';
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js';
+import { MeshPhysicalMaterial } from '../materials/MeshPhysicalMaterial.js';
+import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js';
+import { Matrix4 } from '../Matrix4.js';
+import { OrthographicCamera } from '../camera/OrthographicCamera.js';
+import { PerspectiveCamera } from '../camera/PerspectiveCamera.js';
+import { Vector2 } from '../Vector2.js';
+import { Vector3 } from '../Vector3.js';
+import { AnimationClip } from '../animation/AnimationClip.js';
+import { Bone } from '../objects/Bone.js';
+import { Box3 } from '../Box3.js';
+import { BufferAttribute } from '../BufferAttribute.js';
+import { BufferGeometry } from '../BufferGeometry.js';
+import { Color } from '../Color.js';
 
-import { toTrianglesDrawMode } from './BufferGeometryUtils.js';
+import { toTrianglesDrawMode } from '../BufferGeometryUtils.js';
 import {
   ClampToEdgeWrapping,
   DoubleSide,
@@ -58,9 +61,9 @@ import {
   SRGBColorSpace,
   TriangleFanDrawMode,
   TriangleStripDrawMode,
-} from '../common/Constants.js';
-import { MathUtils } from './MathUtils.js';
-import { LoaderUtils } from './LoaderUtils.js';
+} from '../../common/Constants.js';
+import { MathUtils } from '../MathUtils.js';
+import { LoaderUtils } from '../LoaderUtils.js';
 
 class GLTFLoader extends Loader {
   constructor(manager) {
@@ -169,9 +172,8 @@ class GLTFLoader extends Loader {
     loader.setRequestHeader(this.requestHeader);
     loader.setWithCredentials(this.withCredentials);
 
-    loader.load(
-      url,
-      function (data) {
+    loader.load(url, {
+      onLoad: data => {
         try {
           scope.parse(
             data,
@@ -188,8 +190,8 @@ class GLTFLoader extends Loader {
         }
       },
       onProgress,
-      _onError,
-    );
+      onError: _onError,
+    });
   }
 
   setDRACOLoader(dracoLoader) {
@@ -2249,8 +2251,11 @@ class GLTFParser {
     const options = this.options;
 
     return new Promise(function (resolve, reject) {
-      loader.load(LoaderUtils.resolveUrl(bufferDef.uri, options.path), resolve, undefined, function () {
-        reject(new Error('THREE.GLTFLoader: Failed to load buffer "' + bufferDef.uri + '".'));
+      loader.load(LoaderUtils.resolveUrl(bufferDef.uri, options.path), {
+        onLoad: resolve,
+        onError: () => {
+          reject(new Error('THREE.GLTFLoader: Failed to load buffer "' + bufferDef.uri + '".'));
+        },
       });
     });
   }
@@ -2512,7 +2517,10 @@ class GLTFParser {
             };
           }
 
-          loader.load(LoaderUtils.resolveUrl(sourceURI, options.path), onLoad, undefined, reject);
+          loader.load(LoaderUtils.resolveUrl(sourceURI, options.path), {
+            onLoad,
+            onError: reject,
+          });
         });
       })
       .then(function (texture) {

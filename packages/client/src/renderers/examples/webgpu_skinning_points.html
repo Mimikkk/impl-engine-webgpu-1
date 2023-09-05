@@ -19,7 +19,7 @@
   import { containRenderer, createResize } from '@/renderers/examples/patterns/patterns.ts';
   import { Color } from '@/renderers/webgpu/core/Color.ts';
   import { AnimationMixer } from '@/renderers/webgpu/core/animation/AnimationMixer.ts';
-  import { GLTFLoader } from '@/renderers/webgpu/core/GLTFLoader.ts';
+  import { GLTFLoader } from '@/renderers/webgpu/core/loaders/GLTFLoader.ts';
 
   const camera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
   camera.position.set(0, 300, -85);
