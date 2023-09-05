@@ -631,10 +631,6 @@ export class Color {
     return this;
   }
 
-  toJSON() {
-    return this.getHex();
-  }
-
   *[Symbol.iterator]() {
     yield this.r;
     yield this.g;

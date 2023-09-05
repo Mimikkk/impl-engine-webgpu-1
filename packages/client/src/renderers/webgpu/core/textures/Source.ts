@@ -24,51 +24,6 @@ export class Source {
   set needsUpdate(value: boolean) {
     if (value === true) this.version++;
   }
-
-  toJSON(meta: any) {
-    const isRootObject = meta === undefined || typeof meta === 'string';
-
-    if (!isRootObject && meta.images[this.uuid] !== undefined) {
-      return meta.images[this.uuid];
-    }
-
-    const output = {
-      uuid: this.uuid,
-      url: '',
-    };
-
-    const data = this.data;
-
-    if (data !== null) {
-      let url;
-
-      if (Array.isArray(data)) {
-        // cube texture
-
-        url = [];
-
-        for (let i = 0, l = data.length; i < l; i++) {
-          if (data[i].isDataTexture) {
-            url.push(serializeImage(data[i].image));
-          } else {
-            url.push(serializeImage(data[i]));
-          }
-        }
-      } else {
-        // texture
-
-        url = serializeImage(data);
-      }
-
-      output.url = url as any;
-    }
-
-    if (!isRootObject) {
-      meta.images[this.uuid] = output;
-    }
-
-    return output;
-  }
 }
 
 function serializeImage(image: HTMLImageElement | HTMLCanvasElement | ImageBitmap | ImageData) {

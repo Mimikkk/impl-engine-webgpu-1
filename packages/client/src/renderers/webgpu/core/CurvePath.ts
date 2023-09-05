@@ -170,34 +170,4 @@ export class CurvePath extends Curve<Vector2> {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON() as any;
-
-    data.autoClose = this.autoClose;
-    data.curves = [];
-
-    for (let i = 0, l = this.curves.length; i < l; i++) {
-      const curve = this.curves[i];
-      data.curves.push(curve.toJSON());
-    }
-
-    return data;
-  }
-
-  //@ts-expect-error
-  fromJSON(json: { arcLengthDivisions: number; autoClose: boolean; curves: Curve[] }): CurvePath {
-    super.fromJSON(json);
-
-    this.autoClose = json.autoClose;
-    this.curves = [];
-
-    for (let i = 0, l = json.curves.length; i < l; i++) {
-      const curve = json.curves[i];
-      //@ts-expect-error
-      this.curves.push(new Curves[curve.type as keyof typeof Curves]().fromJSON(curve));
-    }
-
-    return this;
-  }
 }

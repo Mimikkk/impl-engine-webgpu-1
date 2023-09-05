@@ -79,8 +79,4 @@ export class CircleGeometry extends BufferGeometry {
 
     return this;
   }
-
-  static fromJSON(data: { radius: number; segments: number; thetaStart: number; thetaLength: number }) {
-    return new CircleGeometry(data.radius, data.segments, data.thetaStart, data.thetaLength);
-  }
 }

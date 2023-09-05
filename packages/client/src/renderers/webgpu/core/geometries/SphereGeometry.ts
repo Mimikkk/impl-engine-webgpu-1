@@ -116,24 +116,4 @@ export class SphereGeometry extends BufferGeometry {
 
     return this;
   }
-
-  static fromJSON(data: {
-    radius: number;
-    widthSegments: number;
-    heightSegments: number;
-    phiStart: number;
-    phiLength: number;
-    thetaStart: number;
-    thetaLength: number;
-  }) {
-    return new SphereGeometry(
-      data.radius,
-      data.widthSegments,
-      data.heightSegments,
-      data.phiStart,
-      data.phiLength,
-      data.thetaStart,
-      data.thetaLength,
-    );
-  }
 }

@@ -105,48 +105,4 @@ export class EllipseCurve extends Curve<Vector2> {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.aX = this.aX;
-    data.aY = this.aY;
-
-    data.xRadius = this.xRadius;
-    data.yRadius = this.yRadius;
-
-    data.aStartAngle = this.aStartAngle;
-    data.aEndAngle = this.aEndAngle;
-
-    data.aClockwise = this.aClockwise;
-
-    data.aRotation = this.aRotation;
-
-    return data;
-  }
-
-  fromJSON(json: {
-    arcLengthDivisions: number;
-    aX: number;
-    aY: number;
-    xRadius: number;
-    yRadius: number;
-    aStartAngle: number;
-    aEndAngle: number;
-    aClockwise: boolean;
-    aRotation: number;
-  }): EllipseCurve {
-    super.fromJSON(json);
-
-    this.aX = json.aX;
-    this.aY = json.aY;
-    this.xRadius = json.xRadius;
-    this.yRadius = json.yRadius;
-    this.aStartAngle = json.aStartAngle;
-    this.aEndAngle = json.aEndAngle;
-    this.aClockwise = json.aClockwise;
-    this.aRotation = json.aRotation;
-
-    return this;
-  }
 }

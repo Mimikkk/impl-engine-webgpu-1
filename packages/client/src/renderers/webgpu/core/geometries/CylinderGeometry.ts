@@ -253,26 +253,4 @@ export class CylinderGeometry extends BufferGeometry {
 
     return this;
   }
-
-  static fromJSON(data: {
-    radiusTop: number;
-    radiusBottom: number;
-    height: number;
-    radialSegments: number;
-    heightSegments: number;
-    openEnded: boolean;
-    thetaStart: number;
-    thetaLength: number;
-  }) {
-    return new CylinderGeometry(
-      data.radiusTop,
-      data.radiusBottom,
-      data.height,
-      data.radialSegments,
-      data.heightSegments,
-      data.openEnded,
-      data.thetaStart,
-      data.thetaLength,
-    );
-  }
 }

@@ -40,24 +40,4 @@ export class QuadraticBezierCurve extends Curve<Vector2> {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.v0 = this.v0.toArray();
-    data.v1 = this.v1.toArray();
-    data.v2 = this.v2.toArray();
-
-    return data;
-  }
-
-  fromJSON(json: { arcLengthDivisions: number; v0: number[]; v1: number[]; v2: number[] }): QuadraticBezierCurve {
-    super.fromJSON(json);
-
-    this.v0.fromArray(json.v0);
-    this.v1.fromArray(json.v1);
-    this.v2.fromArray(json.v2);
-
-    return this;
-  }
 }

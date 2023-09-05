@@ -152,25 +152,4 @@ export class Path extends CurvePath {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON() as any;
-
-    data.currentPoint = this.currentPoint.toArray();
-
-    return data;
-  }
-
-  fromJSON(json: {
-    arcLengthDivisions: number;
-    autoClose: boolean;
-    curves: Curve<Vector2>[];
-    currentPoint: number[];
-  }): Path {
-    super.fromJSON(json);
-
-    this.currentPoint.fromArray(json.currentPoint);
-
-    return this;
-  }
 }

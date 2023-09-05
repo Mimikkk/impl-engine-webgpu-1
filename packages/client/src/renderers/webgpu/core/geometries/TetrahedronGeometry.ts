@@ -1,6 +1,5 @@
 import { PolyhedronGeometry } from './PolyhedronGeometry.js';
 
-//@ts-expect-error
 export class TetrahedronGeometry extends PolyhedronGeometry {
   constructor(radius = 1, detail = 0) {
     const vertices = [1, 1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1];
@@ -15,9 +14,5 @@ export class TetrahedronGeometry extends PolyhedronGeometry {
       radius: radius,
       detail: detail,
     };
-  }
-
-  static fromJSON(data: { radius: number; detail: number }) {
-    return new TetrahedronGeometry(data.radius, data.detail);
   }
 }

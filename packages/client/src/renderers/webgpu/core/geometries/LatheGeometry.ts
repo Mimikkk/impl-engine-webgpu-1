@@ -161,13 +161,4 @@ export class LatheGeometry extends BufferGeometry {
 
     return this;
   }
-
-  static fromJSON(data: {
-    points: [Vector2, Vector2, Vector2];
-    segments: number;
-    phiStart: number;
-    phiLength: number;
-  }) {
-    return new LatheGeometry(data.points, data.segments, data.phiStart, data.phiLength);
-  }
 }

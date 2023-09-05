@@ -109,22 +109,4 @@ export class RingGeometry extends BufferGeometry {
 
     return this;
   }
-
-  static fromJSON(data: {
-    innerRadius: number;
-    outerRadius: number;
-    thetaSegments: number;
-    phiSegments: number;
-    thetaStart: number;
-    thetaLength: number;
-  }) {
-    return new RingGeometry(
-      data.innerRadius,
-      data.outerRadius,
-      data.thetaSegments,
-      data.phiSegments,
-      data.thetaStart,
-      data.thetaLength,
-    );
-  }
 }

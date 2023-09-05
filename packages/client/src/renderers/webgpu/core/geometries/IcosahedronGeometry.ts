@@ -1,6 +1,5 @@
 import { PolyhedronGeometry } from './PolyhedronGeometry.js';
 
-//@ts-expect-error
 export class IcosahedronGeometry extends PolyhedronGeometry {
   constructor(radius: number = 1, detail: number = 0) {
     const t = (1 + Math.sqrt(5)) / 2;
@@ -57,9 +56,5 @@ export class IcosahedronGeometry extends PolyhedronGeometry {
       radius: radius,
       detail: detail,
     };
-  }
-
-  static fromJSON(data: { radius: number; detail: number }) {
-    return new IcosahedronGeometry(data.radius, data.detail);
   }
 }

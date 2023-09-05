@@ -2,7 +2,6 @@ import { LatheGeometry } from './LatheGeometry.js';
 import { Path } from '../Path.js';
 import { Vector2 } from '../Vector2.js';
 
-//@ts-expect-error
 export class CapsuleGeometry extends LatheGeometry {
   constructor(radius: number = 1, length: number = 1, capSegments: number = 4, radialSegments: number = 8) {
     const path = new Path();
@@ -19,9 +18,5 @@ export class CapsuleGeometry extends LatheGeometry {
       capSegments: capSegments,
       radialSegments: radialSegments,
     };
-  }
-
-  static fromJSON(data: { radius: number; length: number; capSegments: number; radialSegments: number }) {
-    return new CapsuleGeometry(data.radius, data.length, data.capSegments, data.radialSegments);
   }
 }

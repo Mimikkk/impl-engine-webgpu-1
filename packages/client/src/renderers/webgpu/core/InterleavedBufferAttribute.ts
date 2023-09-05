@@ -222,49 +222,4 @@ export class InterleavedBufferAttribute {
       );
     }
   }
-
-  toJSON(data: InterleavedBufferAttribute) {
-    if (data === undefined) {
-      console.log(
-        'THREE.InterleavedBufferAttribute.toJSON(): Serializing an interleaved buffer attribute will de-interleave buffer data.',
-      );
-
-      const array = [];
-
-      for (let i = 0; i < this.count; i++) {
-        const index = i * this.data.stride + this.offset;
-
-        for (let j = 0; j < this.itemSize; j++) {
-          array.push(this.data.array[index + j]);
-        }
-      }
-
-      // de-interleave data and save it as an ordinary buffer attribute for now
-
-      return {
-        itemSize: this.itemSize,
-        type: this.array.constructor.name,
-        array: array,
-        normalized: this.normalized,
-      };
-    } else {
-      // save as true interleaved attribute
-
-      if (data.interleavedBuffers === undefined) {
-        data.interleavedBuffers = {};
-      }
-
-      if (data.interleavedBuffers[this.data.uuid] === undefined) {
-        data.interleavedBuffers[this.data.uuid] = this.data.toJSON(data) as any;
-      }
-
-      return {
-        isInterleavedBufferAttribute: true,
-        itemSize: this.itemSize,
-        data: this.data.uuid,
-        offset: this.offset,
-        normalized: this.normalized,
-      };
-    }
-  }
 }

@@ -1,10 +1,7 @@
 import * as AnimationUtils from './AnimationUtils.js';
 import { KeyframeTrack } from './tracks/KeyframeTrack.js';
-import { BooleanKeyframeTrack } from './tracks/BooleanKeyframeTrack.js';
-import { ColorKeyframeTrack } from './tracks/ColorKeyframeTrack.js';
 import { NumberKeyframeTrack } from './tracks/NumberKeyframeTrack.js';
 import { QuaternionKeyframeTrack } from './tracks/QuaternionKeyframeTrack.js';
-import { StringKeyframeTrack } from './tracks/StringKeyframeTrack.js';
 import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js';
 import { MathUtils } from '../MathUtils.js';
 import { NormalAnimationBlendMode } from '../../common/Constants.js';
@@ -38,51 +35,6 @@ export class AnimationClip {
     if (this.duration < 0) {
       this.resetDuration();
     }
-  }
-
-  static parse(json: {
-    name: string;
-    duration: number;
-    tracks: ReturnType<typeof KeyframeTrack.toJSON>[];
-    blendMode: number;
-    fps: number;
-    uuid: string;
-  }) {
-    const tracks = [];
-    const jsonTracks = json.tracks;
-    const frameTime = 1.0 / (json.fps || 1.0);
-
-    for (let i = 0, n = jsonTracks.length; i !== n; ++i) {
-      tracks.push(parseKeyframeTrack(jsonTracks[i]).scale(frameTime));
-    }
-
-    const clip = new this(json.name, json.duration, tracks, json.blendMode);
-    clip.uuid = json.uuid;
-
-    return clip;
-  }
-
-  static toJSON(clip: AnimationClip): {
-    name: string;
-    duration: number;
-    tracks: any[];
-    uuid: string;
-    blendMode: number;
-  } {
-    const tracks: ReturnType<typeof KeyframeTrack.toJSON>[] = [],
-      clipTracks = clip.tracks;
-
-    const json = {
-      name: clip.name,
-      duration: clip.duration,
-      tracks: tracks,
-      uuid: clip.uuid,
-      blendMode: clip.blendMode,
-    };
-
-    for (let i = 0, n = clipTracks.length; i !== n; ++i) tracks.push(KeyframeTrack.toJSON(clipTracks[i]));
-
-    return json;
   }
 
   static CreateFromMorphTargetSequence(
@@ -323,64 +275,4 @@ export class AnimationClip {
 
     return new this.constructor(this.name, this.duration, tracks, this.blendMode);
   }
-
-  toJSON() {
-    return this.constructor.toJSON(this);
-  }
-}
-
-function getTrackTypeForValueTypeName(typeName: string) {
-  switch (typeName.toLowerCase()) {
-    case 'scalar':
-    case 'double':
-    case 'float':
-    case 'number':
-    case 'integer':
-      return NumberKeyframeTrack;
-
-    case 'vector':
-    case 'vector2':
-    case 'vector3':
-    case 'vector4':
-      return VectorKeyframeTrack;
-
-    case 'color':
-      return ColorKeyframeTrack;
-
-    case 'quaternion':
-      return QuaternionKeyframeTrack;
-
-    case 'bool':
-    case 'boolean':
-      return BooleanKeyframeTrack;
-
-    case 'string':
-      return StringKeyframeTrack;
-  }
-
-  throw new Error('THREE.KeyframeTrack: Unsupported typeName: ' + typeName);
-}
-
-function parseKeyframeTrack(json: {
-  name: string;
-  keys?: any;
-  times?: number[];
-  values: number[];
-  interpolation?: number;
-  type: string;
-}) {
-  const trackType = getTrackTypeForValueTypeName(json.type);
-
-  if (json.times === undefined) {
-    const times: number[] = [];
-    const values: number[] = [];
-
-    //@ts-expect-error
-    AnimationUtils.flattenJSON(json.keys, times, values, 'value');
-
-    json.times = times;
-    json.values = values;
-  }
-
-  return new trackType(json.name, json.times, json.values, json.interpolation);
 }

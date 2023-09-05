@@ -114,20 +114,4 @@ export class OrthographicCamera extends Camera {
     this.projectionMatrix.makeOrthographic(left, right, top, bottom, this.near, this.far, this.coordinateSystem);
     this.projectionMatrixInverse.copy(this.projectionMatrix).invert();
   }
-
-  toJSON(meta: any) {
-    const data = super.toJSON(meta);
-
-    data.object.zoom = this.zoom;
-    data.object.left = this.left;
-    data.object.right = this.right;
-    data.object.top = this.top;
-    data.object.bottom = this.bottom;
-    data.object.near = this.near;
-    data.object.far = this.far;
-
-    if (this.view) data.object.view = structuredClone(this.view);
-
-    return data;
-  }
 }

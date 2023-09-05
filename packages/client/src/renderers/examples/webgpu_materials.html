@@ -401,23 +401,18 @@
   }
 
   function testSerialization(mesh) {
+    mesh.position.x = (objects.length % 4) * 200 - 400;
+    mesh.position.z = Math.floor(objects.length / 4) * 200 - 200;
 
-    const json = mesh.toJSON();
-    const loader = new NodeObjectLoader();
-    const serializedMesh = loader.parse(json);
-
-    serializedMesh.position.x = (objects.length % 4) * 200 - 400;
-    serializedMesh.position.z = Math.floor(objects.length / 4) * 200 - 200;
-
-    const scriptableNode = serializedMesh.material.colorNode;
+    const scriptableNode = mesh.material.colorNode;
 
     // it's because local.get( 'material' ) is used in the example ( local/global is unserializable )
-    scriptableNode.setLocal('material', serializedMesh.material);
+    scriptableNode.setLocal('material', mesh.material);
     scriptableNode.setParameter('execFrom', 'serialized');
 
-    objects.push(serializedMesh);
+    objects.push(mesh);
 
-    scene.add(serializedMesh);
+    scene.add(mesh);
 
   }
 
@@ -429,8 +424,6 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
 
   }
-
-  //
 
   function animate() {
 

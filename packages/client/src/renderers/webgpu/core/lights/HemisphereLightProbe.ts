@@ -18,8 +18,8 @@ class HemisphereLightProbe extends LightProbe {
     const c0 = Math.sqrt(Math.PI);
     const c1 = c0 * Math.sqrt(0.75);
 
-    this.sh.coefficients[0].copy(sky).add(ground).multiplyScalar(c0);
-    this.sh.coefficients[1].copy(sky).sub(ground).multiplyScalar(c1);
+    this.sphericalHarmonics3.coefficients[0].copy(sky).add(ground).multiplyScalar(c0);
+    this.sphericalHarmonics3.coefficients[1].copy(sky).sub(ground).multiplyScalar(c1);
   }
 }
 

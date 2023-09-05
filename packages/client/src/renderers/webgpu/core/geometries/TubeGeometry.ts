@@ -153,26 +153,6 @@ class TubeGeometry extends BufferGeometry {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.path = this.parameters.path.toJSON();
-
-    return data;
-  }
-
-  static fromJSON(data) {
-    // This only works for built-in curves (e.g. CatmullRomCurve3).
-    // User defined curves or instances of CurvePath will not be deserialized.
-    return new TubeGeometry(
-      new Curves[data.path.type]().fromJSON(data.path),
-      data.tubularSegments,
-      data.radius,
-      data.radialSegments,
-      data.closed,
-    );
-  }
 }
 
 export { TubeGeometry };

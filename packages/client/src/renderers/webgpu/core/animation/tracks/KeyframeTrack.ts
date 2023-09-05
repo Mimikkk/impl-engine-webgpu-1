@@ -29,31 +29,6 @@ class KeyframeTrack {
     this.setInterpolation(interpolation || this.DefaultInterpolation);
   }
 
-  static toJSON(track: KeyframeTrack): {
-    name: string;
-    times: number[];
-    values: number[];
-    interpolation?: InterpolationMode;
-    type: string;
-  } {
-    const json: {
-      name: string;
-      times: number[];
-      values: number[];
-      interpolation?: InterpolationMode;
-      type: string;
-    } = {
-      name: track.name,
-      times: AnimationUtils.convertArray(track.times, Array),
-      values: AnimationUtils.convertArray(track.values, Array),
-      interpolation: track.getInterpolation(),
-      type: track.ValueTypeName,
-    };
-    if (json.interpolation === track.DefaultInterpolation) delete json.interpolation;
-
-    return json;
-  }
-
   InterpolantFactoryMethodDiscrete(result: NumberArray) {
     return new DiscreteInterpolant(this.times, this.values, this.getValueSize(), result);
   }

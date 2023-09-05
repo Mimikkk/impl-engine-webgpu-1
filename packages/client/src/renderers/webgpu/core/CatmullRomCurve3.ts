@@ -158,44 +158,4 @@ export class CatmullRomCurve3 extends Curve<Vector3> {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.points = [];
-
-    for (let i = 0, l = this.points.length; i < l; i++) {
-      const point = this.points[i];
-      data.points.push(point.toArray());
-    }
-
-    data.closed = this.closed;
-    data.curveType = this.curveType;
-    data.tension = this.tension;
-
-    return data;
-  }
-
-  fromJSON(json: {
-    arcLengthDivisions: number;
-    points: [number, number, number][];
-    closed: boolean;
-    curveType: 'centripetal' | 'chordal' | 'catmullrom';
-    tension: number;
-  }): CatmullRomCurve3 {
-    super.fromJSON(json);
-
-    this.points = [];
-
-    for (let i = 0, l = json.points.length; i < l; i++) {
-      const point = json.points[i];
-      this.points.push(new Vector3().fromArray(point));
-    }
-
-    this.closed = json.closed;
-    this.curveType = json.curveType;
-    this.tension = json.tension;
-
-    return this;
-  }
 }

@@ -2,35 +2,21 @@ import { SphericalHarmonics3 } from '../SphericalHarmonics3.js';
 import { Light } from './Light.js';
 
 class LightProbe extends Light {
-  constructor(sh = new SphericalHarmonics3(), intensity = 1) {
+  isLightProbe: boolean = true;
+  sphericalHarmonics3: SphericalHarmonics3;
+
+  constructor(sphericalHarmonics3: SphericalHarmonics3 = new SphericalHarmonics3(), intensity: number = 1) {
     super(undefined, intensity);
 
     this.isLightProbe = true;
 
-    this.sh = sh;
+    this.sphericalHarmonics3 = sphericalHarmonics3;
   }
 
-  copy(source) {
+  copy(source: LightProbe): LightProbe {
     super.copy(source);
-
-    this.sh.copy(source.sh);
-
+    this.sphericalHarmonics3.copy(source.sphericalHarmonics3);
     return this;
-  }
-
-  fromJSON(json) {
-    this.intensity = json.intensity; // TODO: Move this bit to Light.fromJSON();
-    this.sh.fromArray(json.sh);
-
-    return this;
-  }
-
-  toJSON(meta) {
-    const data = super.toJSON(meta);
-
-    data.object.sh = this.sh.toArray();
-
-    return data;
   }
 }
 

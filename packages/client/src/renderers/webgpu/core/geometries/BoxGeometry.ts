@@ -172,22 +172,4 @@ export class BoxGeometry extends BufferGeometry {
 
     return this;
   }
-
-  static fromJSON(data: {
-    width: number;
-    height: number;
-    depth: number;
-    widthSegments: number;
-    heightSegments: number;
-    depthSegments: number;
-  }) {
-    return new BoxGeometry(
-      data.width,
-      data.height,
-      data.depth,
-      data.widthSegments,
-      data.heightSegments,
-      data.depthSegments,
-    );
-  }
 }

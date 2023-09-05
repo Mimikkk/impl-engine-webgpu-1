@@ -147,15 +147,4 @@ export class TorusKnotGeometry extends BufferGeometry {
 
     return this;
   }
-
-  static fromJSON(data: {
-    radius: number;
-    tube: number;
-    tubularSegments: number;
-    radialSegments: number;
-    p: number;
-    q: number;
-  }) {
-    return new TorusKnotGeometry(data.radius, data.tube, data.tubularSegments, data.radialSegments, data.p, data.q);
-  }
 }

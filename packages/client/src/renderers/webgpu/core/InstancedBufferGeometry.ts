@@ -14,13 +14,4 @@ export class InstancedBufferGeometry extends BufferGeometry {
     this.instanceCount = source.instanceCount;
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON() as any;
-
-    data.instanceCount = this.instanceCount;
-    data.isInstancedBufferGeometry = true;
-
-    return data;
-  }
 }

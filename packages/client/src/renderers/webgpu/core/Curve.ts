@@ -316,25 +316,4 @@ export class Curve<T extends Vector2 | Vector3> {
 
     return this;
   }
-
-  toJSON() {
-    const data = {
-      metadata: {
-        version: 4.6,
-        type: 'Curve',
-        generator: 'Curve.toJSON',
-      },
-    } as any;
-
-    data.arcLengthDivisions = this.arcLengthDivisions;
-    data.type = this.type;
-
-    return data;
-  }
-
-  fromJSON(json: { arcLengthDivisions: number }): Curve<T> {
-    this.arcLengthDivisions = json.arcLengthDivisions;
-
-    return this;
-  }
 }

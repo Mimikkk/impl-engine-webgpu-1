@@ -1,6 +1,5 @@
 import { PolyhedronGeometry } from './PolyhedronGeometry.js';
 
-//@ts-expect-error
 export class DodecahedronGeometry extends PolyhedronGeometry {
   constructor(radius: number = 1, detail: number = 0) {
     const t = (1 + Math.sqrt(5)) / 2;
@@ -91,9 +90,5 @@ export class DodecahedronGeometry extends PolyhedronGeometry {
       radius: radius,
       detail: detail,
     };
-  }
-
-  static fromJSON(data: { radius: number; detail: number }) {
-    return new DodecahedronGeometry(data.radius, data.detail);
   }
 }

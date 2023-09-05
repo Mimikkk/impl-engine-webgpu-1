@@ -1,6 +1,5 @@
 import { PolyhedronGeometry } from './PolyhedronGeometry.js';
 
-// @ts-expect-error
 export class OctahedronGeometry extends PolyhedronGeometry {
   constructor(radius: number = 1, detail: number = 0) {
     const vertices = [1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1];
@@ -15,9 +14,5 @@ export class OctahedronGeometry extends PolyhedronGeometry {
       radius: radius,
       detail: detail,
     };
-  }
-
-  static fromJSON(data: { radius: number; detail: number }) {
-    return new OctahedronGeometry(data.radius, data.detail);
   }
 }

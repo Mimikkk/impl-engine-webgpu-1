@@ -45,14 +45,4 @@ export class Scene extends Object3D {
 
     return this;
   }
-
-  toJSON(meta: any) {
-    const data = super.toJSON(meta);
-
-    if (this.fog !== null) data.object.fog = this.fog.toJSON();
-    if (this.backgroundBlurriness > 0) data.object.backgroundBlurriness = this.backgroundBlurriness;
-    if (this.backgroundIntensity !== 1) data.object.backgroundIntensity = this.backgroundIntensity;
-
-    return data;
-  }
 }

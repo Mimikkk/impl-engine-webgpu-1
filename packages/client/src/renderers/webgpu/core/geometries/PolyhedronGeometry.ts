@@ -243,8 +243,4 @@ export class PolyhedronGeometry extends BufferGeometry {
 
     return this;
   }
-
-  static fromJSON(data: { vertices: number[]; indices: number[]; radius: number; details: number }) {
-    return new PolyhedronGeometry(data.vertices, data.indices, data.radius, data.details);
-  }
 }

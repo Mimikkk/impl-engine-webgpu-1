@@ -48,30 +48,4 @@ export class SplineCurve extends Curve<Vector2> {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.points = [];
-
-    for (let i = 0, l = this.points.length; i < l; i++) {
-      const point = this.points[i];
-      data.points.push(point.toArray());
-    }
-
-    return data;
-  }
-
-  fromJSON(json: { arcLengthDivisions: number; points: number[][] }): SplineCurve {
-    super.fromJSON(json);
-
-    this.points = [];
-
-    for (let i = 0, l = json.points.length; i < l; i++) {
-      const point = json.points[i];
-      this.points.push(new Vector2().fromArray(point));
-    }
-
-    return this;
-  }
 }

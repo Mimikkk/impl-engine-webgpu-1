@@ -191,20 +191,4 @@ export class PerspectiveCamera extends Camera {
     this.projectionMatrix.makePerspective(left, left + width, top, top - height, near, this.far, this.coordinateSystem);
     this.projectionMatrixInverse.copy(this.projectionMatrix).invert();
   }
-
-  toJSON(meta: { geometries: any; materials: any; textures: any; images: any }) {
-    const data = super.toJSON(meta);
-
-    data.object.filmOffset = this.filmOffset;
-    data.object.filmGauge = this.filmGauge;
-    data.object.aspect = this.aspect;
-    data.object.focus = this.focus;
-    data.object.near = this.near;
-    data.object.zoom = this.zoom;
-    data.object.fov = this.fov;
-    data.object.far = this.far;
-    if (this.view) data.object.view = structuredClone(this.view);
-
-    return data;
-  }
 }

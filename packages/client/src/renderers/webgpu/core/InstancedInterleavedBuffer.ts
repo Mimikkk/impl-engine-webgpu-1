@@ -27,13 +27,4 @@ export class InstancedInterleavedBuffer extends InterleavedBuffer {
 
     return buffer;
   }
-
-  toJSON(data: InstancedInterleavedBuffer) {
-    const json = super.toJSON(data) as any;
-
-    json.isInstancedInterleavedBuffer = true;
-    json.meshPerAttribute = this.meshPerAttribute;
-
-    return json;
-  }
 }

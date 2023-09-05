@@ -53,12 +53,4 @@ export class DepthTexture extends Texture {
 
     return this;
   }
-
-  toJSON(meta: any) {
-    const data = super.toJSON(meta);
-
-    if (this.compareFunction !== null) data.compareFunction = this.compareFunction;
-
-    return data;
-  }
 }

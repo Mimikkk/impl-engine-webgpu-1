@@ -24,24 +24,4 @@ export class ConeGeometry extends CylinderGeometry {
       thetaLength: thetaLength,
     };
   }
-
-  static fromJSON(data: {
-    radius: number;
-    height: number;
-    radialSegments: number;
-    heightSegments: number;
-    openEnded: boolean;
-    thetaStart: number;
-    thetaLength: number;
-  }) {
-    return new ConeGeometry(
-      data.radius,
-      data.height,
-      data.radialSegments,
-      data.heightSegments,
-      data.openEnded,
-      data.thetaStart,
-      data.thetaLength,
-    );
-  }
 }
