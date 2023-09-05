@@ -1,4 +1,7 @@
-import { DirectionalLight, FileLoader, ImageBitmapLoader, Loader, PointLight, SpotLight, TextureLoader } from 'three';
+import { FileLoader, ImageBitmapLoader, Loader, TextureLoader } from 'three';
+import { DirectionalLight } from './lights/DirectionalLight.js';
+import { PointLight } from './lights/PointLight.js';
+import { SpotLight } from './lights/SpotLight.js';
 import { Texture } from './textures/Texture.js';
 import { InterleavedBuffer } from './InterleavedBuffer.js';
 import { InterleavedBufferAttribute } from './InterleavedBufferAttribute.js';
