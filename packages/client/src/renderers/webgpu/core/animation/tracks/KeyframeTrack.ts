@@ -1,44 +1,46 @@
 import { InterpolateDiscrete, InterpolateLinear, InterpolateSmooth } from '../../../common/Constants.js';
-import { CubicInterpolant } from '../../interpolants/CubicInterpolant.js';
-import { LinearInterpolant } from '../../interpolants/LinearInterpolant.js';
-import { DiscreteInterpolant } from '../../interpolants/DiscreteInterpolant.js';
-import * as AnimationUtils from '../AnimationUtils.js';
-import { NumberArray, NumberArrayConstructor, TypedArray } from '../../types.js';
+import { AnimationUtils } from '../AnimationUtils.js';
+import { NumberArray, NumberArrayConstructor } from '../../types.js';
 import { Interpolant } from '../../Interpolant.js';
+import { DiscreteInterpolant } from '../../interpolants/DiscreteInterpolant.js';
+import { LinearInterpolant } from '../../interpolants/LinearInterpolant.js';
+import { CubicInterpolant } from '../../interpolants/CubicInterpolant.js';
 
-type CreateInterpolateFn = (result: TypedArray) => Interpolant;
+export type InterpolationMode = typeof InterpolateDiscrete | typeof InterpolateLinear | typeof InterpolateSmooth;
+type CreateInterpolateFn = (result: NumberArray) => Interpolant;
 
-export class KeyframeTrack {
+class KeyframeTrack {
   declare ['constructor']: typeof KeyframeTrack;
-  name: string;
-  values: NumberArray;
-  times: NumberArray;
-  TimeBufferType: NumberArrayConstructor;
-  ValueBufferType: NumberArrayConstructor;
-  DefaultInterpolation: number;
-  createInterpolant: CreateInterpolateFn;
-  ValueTypeName: string;
+  declare TimeBufferType: NumberArrayConstructor;
+  declare ValueBufferType: NumberArrayConstructor;
+  declare DefaultInterpolation: InterpolationMode;
+  declare ValueTypeName: string;
+  createInterpolant: CreateInterpolateFn | null;
 
-  constructor(name: string, times: number[], values: number[], interpolation?: number) {
+  name: string;
+  times: NumberArray;
+  values: NumberArray;
+
+  constructor(name: string, times: NumberArray, values: NumberArray, interpolation?: InterpolationMode) {
     this.name = name;
     this.times = AnimationUtils.convertArray(times, this.TimeBufferType);
     this.values = AnimationUtils.convertArray(values, this.ValueBufferType);
 
-    this.createInterpolant = this.mapInterpolation(interpolation || this.DefaultInterpolation);
+    this.setInterpolation(interpolation || this.DefaultInterpolation);
   }
 
   static toJSON(track: KeyframeTrack): {
     name: string;
     times: number[];
     values: number[];
-    interpolation?: number;
+    interpolation?: InterpolationMode;
     type: string;
   } {
     const json: {
       name: string;
       times: number[];
       values: number[];
-      interpolation?: number;
+      interpolation?: InterpolationMode;
       type: string;
     } = {
       name: track.name,
@@ -52,24 +54,57 @@ export class KeyframeTrack {
     return json;
   }
 
-  InterpolantFactoryMethodDiscrete: CreateInterpolateFn | undefined = result =>
-    new DiscreteInterpolant(this.times, this.values, this.getValueSize(), result);
-  InterpolantFactoryMethodLinear: CreateInterpolateFn | undefined = result =>
-    new LinearInterpolant(this.times, this.values, this.getValueSize(), result);
-  InterpolantFactoryMethodSmooth: CreateInterpolateFn | undefined = result =>
-    new CubicInterpolant(this.times, this.values, this.getValueSize(), result);
+  InterpolantFactoryMethodDiscrete(result: NumberArray) {
+    return new DiscreteInterpolant(this.times, this.values, this.getValueSize(), result);
+  }
 
-  mapInterpolation(interpolation: number): CreateInterpolateFn {
+  InterpolantFactoryMethodLinear(result: NumberArray) {
+    return new LinearInterpolant(this.times, this.values, this.getValueSize(), result);
+  }
+
+  InterpolantFactoryMethodSmooth(result: NumberArray) {
+    return new CubicInterpolant(this.times, this.values, this.getValueSize(), result);
+  }
+
+  setInterpolation(interpolation: InterpolationMode) {
+    let factoryMethod;
+
     switch (interpolation) {
       case InterpolateDiscrete:
-        return this.InterpolantFactoryMethodDiscrete!;
+        factoryMethod = this.InterpolantFactoryMethodDiscrete;
+
+        break;
+
       case InterpolateLinear:
-        return this.InterpolantFactoryMethodLinear!;
+        factoryMethod = this.InterpolantFactoryMethodLinear;
+
+        break;
+
       case InterpolateSmooth:
-        return this.InterpolantFactoryMethodSmooth!;
-      default:
-        return this.mapInterpolation(this.DefaultInterpolation);
+        factoryMethod = this.InterpolantFactoryMethodSmooth;
+
+        break;
     }
+
+    if (factoryMethod === undefined) {
+      const message = 'unsupported interpolation for ' + this.ValueTypeName + ' keyframe track named ' + this.name;
+
+      if (this.createInterpolant === undefined) {
+        // fall back to default, unless the default itself is messed up
+        if (interpolation !== this.DefaultInterpolation) {
+          this.setInterpolation(this.DefaultInterpolation);
+        } else {
+          throw new Error(message); // fatal, in this case
+        }
+      }
+
+      console.warn('THREE.KeyframeTrack:', message);
+      return this;
+    }
+
+    this.createInterpolant = factoryMethod;
+
+    return this;
   }
 
   getInterpolation() {
@@ -138,7 +173,6 @@ export class KeyframeTrack {
     return this;
   }
 
-  // ensure we do not get a GarbageInGarbageOut situation, make sure tracks are at least minimally viable
   validate() {
     let valid = true;
 
@@ -194,8 +228,6 @@ export class KeyframeTrack {
     return valid;
   }
 
-  // removes equivalent sequential keys as common in morph target sequences
-  // (0,0,0,0,1,1,1,0,0,0,0,0,0,0) --> (0,0,1,1,0,0)
   optimize() {
     // times or values may be shared with other tracks, so overwriting is unsafe
     const times = AnimationUtils.arraySlice(this.times),
@@ -254,7 +286,6 @@ export class KeyframeTrack {
     }
 
     // flush last keyframe (compaction looks ahead)
-
     if (lastIndex > 0) {
       times[writeIndex] = times[lastIndex];
 
@@ -289,3 +320,5 @@ export class KeyframeTrack {
 KeyframeTrack.prototype.TimeBufferType = Float32Array;
 KeyframeTrack.prototype.ValueBufferType = Float32Array;
 KeyframeTrack.prototype.DefaultInterpolation = InterpolateLinear;
+
+export { KeyframeTrack };
