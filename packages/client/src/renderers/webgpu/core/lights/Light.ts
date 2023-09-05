@@ -6,6 +6,7 @@ export class Light extends Object3D {
   type: string = 'Light';
   color: Color;
   intensity: number;
+  target: Object3D = new Object3D();
 
   constructor(color: Color, intensity: number = 1) {
     super();
@@ -15,7 +16,7 @@ export class Light extends Object3D {
   }
 
   dispose() {}
-  copy(source: Light, recursive?: boolean) {
+  copy(source: Light, recursive?: boolean): Light {
     super.copy(source, recursive);
     this.color.copy(source.color);
     this.intensity = source.intensity;

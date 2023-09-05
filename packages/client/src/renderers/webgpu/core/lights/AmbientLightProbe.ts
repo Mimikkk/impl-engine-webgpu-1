@@ -1,7 +1,7 @@
 import { Color } from '../Color.js';
 import { LightProbe } from './LightProbe.js';
 
-class AmbientLightProbe extends LightProbe {
+export class AmbientLightProbe extends LightProbe {
   isAmbientLightProbe: boolean = true;
 
   constructor({ r, g, b }: Color, intensity: number = 1) {
@@ -10,5 +10,3 @@ class AmbientLightProbe extends LightProbe {
     this.sphericalHarmonics3.coefficients[0].set(r, g, b).multiplyScalar(2 * Math.sqrt(Math.PI));
   }
 }
-
-export { AmbientLightProbe };

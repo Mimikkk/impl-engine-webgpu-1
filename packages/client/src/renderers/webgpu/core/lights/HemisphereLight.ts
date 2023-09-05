@@ -2,13 +2,14 @@ import { Light } from './Light.js';
 import { Color } from '../Color.js';
 import { Object3D } from '../Object3D.js';
 
-class HemisphereLight extends Light {
-  constructor(skyColor, groundColor, intensity) {
+export class HemisphereLight extends Light {
+  isHemisphereLight: boolean = true;
+  type: string = 'HemisphereLight';
+
+  groundColor: Color;
+
+  constructor(skyColor: Color, groundColor: Color, intensity: number) {
     super(skyColor, intensity);
-
-    this.isHemisphereLight = true;
-
-    this.type = 'HemisphereLight';
 
     this.position.copy(Object3D.DEFAULT_UP);
     this.updateMatrix();
@@ -16,7 +17,7 @@ class HemisphereLight extends Light {
     this.groundColor = new Color(groundColor);
   }
 
-  copy(source, recursive) {
+  copy(source: HemisphereLight, recursive?: boolean): HemisphereLight {
     super.copy(source, recursive);
 
     this.groundColor.copy(source.groundColor);
@@ -24,5 +25,3 @@ class HemisphereLight extends Light {
     return this;
   }
 }
-
-export { HemisphereLight };

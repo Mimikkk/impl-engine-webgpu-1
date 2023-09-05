@@ -1,26 +1,27 @@
 import { Light } from './Light.js';
 import { SpotLightShadow } from './SpotLightShadow.js';
 import { Object3D } from '../Object3D.js';
+import { Color } from '../Color.js';
 
 class SpotLight extends Light {
-  constructor(color, intensity, distance = 0, angle = Math.PI / 3, penumbra = 0, decay = 2) {
+  isSpotLight: boolean = true;
+  type: string = 'SpotLight';
+  distance: number;
+  angle: number;
+  penumbra: number;
+  decay: number;
+  shadow: SpotLightShadow;
+
+  constructor(color: Color, intensity: number, distance = 0, angle = Math.PI / 3, penumbra = 0, decay = 2) {
     super(color, intensity);
-
-    this.isSpotLight = true;
-
-    this.type = 'SpotLight';
 
     this.position.copy(Object3D.DEFAULT_UP);
     this.updateMatrix();
-
-    this.target = new Object3D();
 
     this.distance = distance;
     this.angle = angle;
     this.penumbra = penumbra;
     this.decay = decay;
-
-    this.map = null;
 
     this.shadow = new SpotLightShadow();
   }
@@ -36,20 +37,14 @@ class SpotLight extends Light {
     this.intensity = power / Math.PI;
   }
 
-  dispose() {
-    this.shadow.dispose();
-  }
-
-  copy(source, recursive) {
+  copy(source: SpotLight, recursive?: boolean): SpotLight {
     super.copy(source, recursive);
 
     this.distance = source.distance;
     this.angle = source.angle;
     this.penumbra = source.penumbra;
     this.decay = source.decay;
-
     this.target = source.target.clone();
-
     this.shadow = source.shadow.clone();
 
     return this;

@@ -3,13 +3,29 @@ import { Vector2 } from '../Vector2.js';
 import { Vector3 } from '../Vector3.js';
 import { Vector4 } from '../Vector4.js';
 import { Frustum } from '../Frustum.js';
+import { Camera } from '../camera/Camera.js';
+import { Light } from './Light.js';
 
 const _projScreenMatrix = /*@__PURE__*/ new Matrix4();
 const _lightPositionWorld = /*@__PURE__*/ new Vector3();
 const _lookTarget = /*@__PURE__*/ new Vector3();
 
-class LightShadow {
-  constructor(camera) {
+export class LightShadow {
+  camera: Camera;
+  bias: number;
+  normalBias: number;
+  radius: number;
+  blurSamples: number;
+  mapSize: Vector2;
+  matrix: Matrix4;
+  needsUpdate: boolean;
+  autoUpdate: boolean;
+  _frustum: Frustum;
+  _frameExtents: Vector2;
+  _viewportCount: number;
+  _viewports: Vector4[];
+
+  constructor(camera: Camera) {
     this.camera = camera;
 
     this.bias = 0;
@@ -19,8 +35,6 @@ class LightShadow {
 
     this.mapSize = new Vector2(512, 512);
 
-    this.map = null;
-    this.mapPass = null;
     this.matrix = new Matrix4();
 
     this.autoUpdate = true;
@@ -42,7 +56,7 @@ class LightShadow {
     return this._frustum;
   }
 
-  updateMatrices(light) {
+  updateMatrices(light: Light) {
     const shadowCamera = this.camera;
     const shadowMatrix = this.matrix;
 
@@ -61,7 +75,7 @@ class LightShadow {
     shadowMatrix.multiply(_projScreenMatrix);
   }
 
-  getViewport(viewportIndex) {
+  getViewport(viewportIndex: number) {
     return this._viewports[viewportIndex];
   }
 
@@ -69,17 +83,7 @@ class LightShadow {
     return this._frameExtents;
   }
 
-  dispose() {
-    if (this.map) {
-      this.map.dispose();
-    }
-
-    if (this.mapPass) {
-      this.mapPass.dispose();
-    }
-  }
-
-  copy(source) {
+  copy(source: LightShadow): LightShadow {
     this.camera = source.camera.clone();
 
     this.bias = source.bias;
@@ -90,9 +94,7 @@ class LightShadow {
     return this;
   }
 
-  clone() {
-    return new this.constructor().copy(this);
+  clone(): LightShadow {
+    return new LightShadow(this.camera);
   }
 }
-
-export { LightShadow };

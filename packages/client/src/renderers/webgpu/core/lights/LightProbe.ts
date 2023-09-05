@@ -1,14 +1,13 @@
 import { SphericalHarmonics3 } from '../SphericalHarmonics3.js';
 import { Light } from './Light.js';
+import { Color } from '../Color.js';
 
-class LightProbe extends Light {
+export class LightProbe extends Light {
   isLightProbe: boolean = true;
   sphericalHarmonics3: SphericalHarmonics3;
 
   constructor(sphericalHarmonics3: SphericalHarmonics3 = new SphericalHarmonics3(), intensity: number = 1) {
-    super(undefined, intensity);
-
-    this.isLightProbe = true;
+    super(new Color(0, 0, 0), intensity);
 
     this.sphericalHarmonics3 = sphericalHarmonics3;
   }
@@ -19,5 +18,3 @@ class LightProbe extends Light {
     return this;
   }
 }
-
-export { LightProbe };
