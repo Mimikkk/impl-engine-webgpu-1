@@ -9,6 +9,9 @@ export const createResize = (renderer: Renderer, camera: PerspectiveCamera) => (
 };
 
 export const containRenderer = (renderer: Renderer) => {
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
   const container = document.createElement('div');
   document.body.appendChild(container);
   container.appendChild(renderer.domElement);

@@ -602,4 +602,4 @@ export class Renderer {
   }
 }
 
-export const createRenderer = (parameters: any) => new Renderer(parameters);
+export const createRenderer = (parameters: any = {}) => new Renderer(parameters);

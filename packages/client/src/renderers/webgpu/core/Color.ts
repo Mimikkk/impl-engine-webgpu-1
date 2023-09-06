@@ -168,11 +168,6 @@ const hue2rgb = (p: number, q: number, t: number) => {
   return p;
 };
 
-interface SetColor {
-  (r: number, g: number, b: number): Color;
-  (value: Color): Color;
-  (value: ColorName): Color;
-}
 interface HslColor {
   h: number;
   s: number;
@@ -187,11 +182,10 @@ export class Color {
   b: number = 1;
 
   constructor(r: Color | ColorName | number, g?: number, b?: number) {
-    //@ts-expect-error
     return this.set(r, g, b);
   }
 
-  set: SetColor = (r: Color | number | ColorName, g?: number, b?: number) => {
+  set(r: Color | number | ColorName, g?: number, b?: number) {
     if (g === undefined && b === undefined) {
       if (typeof r === 'number') this.setHex(r);
       else if (typeof r === 'string') this.setStyle(r);
@@ -199,7 +193,7 @@ export class Color {
     } else this.setRGB(r as number, g as number, b as number);
 
     return this;
-  };
+  }
 
   setScalar(scalar: number) {
     this.r = scalar;

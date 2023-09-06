@@ -51,8 +51,6 @@
   });
 
   const renderer = createRenderer();
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setAnimationLoop(() => {
     const delta = clock.getDelta();
     if (mixer) mixer.update(delta);

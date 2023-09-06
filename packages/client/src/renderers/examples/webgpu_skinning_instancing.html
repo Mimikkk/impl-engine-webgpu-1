@@ -11,129 +11,89 @@
 </div>
 <script type='module'>
 
-  import * as THREE from 'three';
   import { mix, range, color, oscSine, timerLocal, toneMapping, MeshStandardNodeMaterial } from 'three/nodes';
-
-  import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
   import { createRenderer } from '@/renderers/webgpu/createRenderer.ts';
   import { PerspectiveCamera } from '@/renderers/webgpu/core/camera/PerspectiveCamera.ts';
+  import { containRenderer, createResize } from '@/renderers/examples/patterns/patterns.ts';
+  import { AnimationMixer } from '@/renderers/webgpu/core/animation/AnimationMixer.ts';
+  import { Scene } from '@/renderers/webgpu/core/scenes/Scene.ts';
+  import { Clock } from '@/renderers/webgpu/core/Clock.ts';
+  import { GLTFLoader } from '@/renderers/webgpu/core/loaders/GLTFLoader.ts';
+  import { Object3D } from '@/renderers/webgpu/core/Object3D.ts';
+  import { InstancedBufferAttribute } from '@/renderers/webgpu/core/InstancedBufferAttribute.ts';
+  import { PointLight } from '@/renderers/webgpu/core/lights/PointLight.ts';
+  import { Color } from '@/renderers/webgpu/core/Color.ts';
+  import { LinearToneMapping } from '@/renderers/webgpu/common/Constants.ts';
+  import { PointLight as PL } from 'three';
 
-  let camera, scene, renderer;
 
-  let mixer, clock;
+  const camera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 100);
+  camera.position.set(1, 2, 3);
 
-  init();
+  const scene = new Scene();
+  camera.lookAt(0, 1, 0);
 
-  function init() {
+  const clock = new Clock();
 
+  const centerLight = new PL(new Color(0.5, 0, 0.2), 1, 100);
+  centerLight.position.y = 4.5;
+  centerLight.position.z = -2;
+  centerLight.power = 1700;
+  scene.add(centerLight);
 
-    camera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 100);
-    camera.position.set(1, 2, 3);
+  const cameraLight = new PL(new Color(0.1, 0, 0.3), 1, 100);
+  cameraLight.power = 1700;
+  camera.add(cameraLight);
+  scene.add(camera);
 
-    scene = new THREE.Scene();
-    camera.lookAt(0, 1, 0);
+  const loader = new GLTFLoader();
+  let mixer;
+  loader.load('models/gltf/Michelle.glb', (gltf) => {
+    const { scene: michelle, animations } = gltf;
 
-    clock = new THREE.Clock();
+    mixer = new AnimationMixer(michelle);
+    mixer.clipAction(animations[0]).play();
 
-    //lights
+    const instanceCount = 30;
+    const dummy = new Object3D();
 
-    const centerLight = new THREE.PointLight(0xff9900, 1, 100);
-    centerLight.position.y = 4.5;
-    centerLight.position.z = -2;
-    centerLight.power = 1700;
-    scene.add(centerLight);
+    michelle.traverse((child) => {
+      if (!child.isMesh) return;
 
-    const cameraLight = new THREE.PointLight(0x0099ff, 1, 100);
-    cameraLight.power = 1700;
-    camera.add(cameraLight);
-    scene.add(camera);
+      const oscNode = oscSine(timerLocal(.1));
+      const randomColors = range(new Color('white'), new Color('black'));
+      const randomMetalness = range(0, 1);
+      child.material = new MeshStandardNodeMaterial();
+      child.material.roughness = .1;
+      child.material.metalnessNode = mix(0.0, randomMetalness, oscNode);
+      child.material.colorNode = mix(new Color('white'), randomColors, oscNode);
+      child.isInstancedMesh = true;
+      child.instanceMatrix = new InstancedBufferAttribute(new Float32Array(instanceCount * 16), 16);
+      child.count = instanceCount;
 
-    const loader = new GLTFLoader();
-    loader.load('models/gltf/Michelle.glb', function(gltf) {
+      for (let i = 0; i < instanceCount; i++) {
+        dummy.position.x = -200 + ((i % 5) * 70);
+        dummy.position.y = Math.floor(i / 5) * Math.random() * -200;
+        dummy.updateMatrix();
 
-      const object = gltf.scene;
-
-      mixer = new THREE.AnimationMixer(object);
-
-      const action = mixer.clipAction(gltf.animations[0]);
-      action.play();
-
-      const instanceCount = 30;
-      const dummy = new THREE.Object3D();
-
-      object.traverse((child) => {
-
-        if (child.isMesh) {
-
-          const oscNode = oscSine(timerLocal(.1));
-
-          // random colors between instances from 0x000000 to 0xFFFFFF
-          const randomColors = range(new THREE.Color(0x000000), new THREE.Color(0xFFFFFF));
-
-          // random [ 0, 1 ] values between instances
-          const randomMetalness = range(0, 1);
-
-          child.material = new MeshStandardNodeMaterial();
-          child.material.roughness = .1;
-          child.material.metalnessNode = mix(0.0, randomMetalness, oscNode);
-          child.material.colorNode = mix(color(0xFFFFFF), randomColors, oscNode);
-
-          child.isInstancedMesh = true;
-          child.instanceMatrix = new THREE.InstancedBufferAttribute(new Float32Array(instanceCount * 16), 16);
-          child.count = instanceCount;
-
-          for (let i = 0; i < instanceCount; i++) {
-
-            dummy.position.x = -200 + ((i % 5) * 70);
-            dummy.position.y = Math.floor(i / 5) * -200;
-
-            dummy.updateMatrix();
-
-            dummy.matrix.toArray(child.instanceMatrix.array, i * 16);
-
-          }
-
-        }
-
-      });
-
-      scene.add(object);
-
+        dummy.matrix.toArray(child.instanceMatrix.array, i * 16);
+      }
     });
 
-    //renderer
+    scene.add(michelle);
+  });
 
-    renderer = createRenderer();
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setAnimationLoop(animate);
-    renderer.toneMappingNode = toneMapping(THREE.LinearToneMapping, .17);
-    document.body.appendChild(renderer.domElement);
-
-    window.addEventListener('resize', onWindowResize);
-
-  }
-
-  function onWindowResize() {
-
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-  }
-
-  function animate() {
-
+  const renderer = createRenderer();
+  renderer.toneMappingNode = toneMapping(LinearToneMapping, .8);
+  renderer.setAnimationLoop(() => {
     const delta = clock.getDelta();
-
     if (mixer) mixer.update(delta);
-
     renderer.render(scene, camera);
+  });
 
-  }
-
+  window.onresize = createResize(renderer, camera);
+  containRenderer(renderer);
 </script>
 </body>
 </html>
