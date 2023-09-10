@@ -26,6 +26,7 @@
   import { Color } from '@/renderers/webgpu/core/Color.ts';
   import { LinearToneMapping } from '@/renderers/webgpu/common/Constants.ts';
   import { PointLight as PL } from 'three';
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 
   const camera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 100);
@@ -47,6 +48,16 @@
   camera.add(cameraLight);
   scene.add(camera);
 
+  new Proxy(cameraLight, {
+    apply(target, thisArg, argArray) {
+      console.log('used');
+      return Reflect.apply(target, thisArg, argArray);
+    },
+    get(target, p, receiver) {
+      console.log('used');
+      return Reflect.get(target, p, receiver);
+    },
+  });
   const loader = new GLTFLoader();
   let mixer;
   loader.load('models/gltf/Michelle.glb', (gltf) => {
@@ -91,6 +102,9 @@
     if (mixer) mixer.update(delta);
     renderer.render(scene, camera);
   });
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
 
   window.onresize = createResize(renderer, camera);
   containRenderer(renderer);
