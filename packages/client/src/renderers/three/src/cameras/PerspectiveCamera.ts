@@ -1,5 +1,5 @@
 import { Camera } from './Camera.js';
-import * as MathUtils from '../math/MathUtils.js';
+import { MathUtils } from '../math/MathUtils.js';
 
 export class PerspectiveCamera extends Camera {
   constructor(fov = 50, aspect = 1, near = 0.1, far = 2000) {

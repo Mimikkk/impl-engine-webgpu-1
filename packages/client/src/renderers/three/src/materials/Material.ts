@@ -9,7 +9,7 @@ import {
   OneMinusSrcAlphaFactor,
   SrcAlphaFactor,
 } from '../constants.js';
-import * as MathUtils from '../math/MathUtils.js';
+import { MathUtils } from '../math/MathUtils.js';
 
 let materialId = 0;
 

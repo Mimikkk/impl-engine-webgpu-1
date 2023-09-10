@@ -1,5 +1,5 @@
 import { ImageUtils } from '../extras/ImageUtils.js';
-import * as MathUtils from '../math/MathUtils.js';
+import { MathUtils } from '../math/MathUtils.js';
 
 let sourceId = 0;
 

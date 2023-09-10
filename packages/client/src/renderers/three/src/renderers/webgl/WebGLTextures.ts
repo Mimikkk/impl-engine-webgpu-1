@@ -30,7 +30,7 @@ import {
   UnsignedIntType,
   UnsignedShortType,
 } from '../../constants.js';
-import * as MathUtils from '../../math/MathUtils.js';
+import { MathUtils } from '../../math/MathUtils.js';
 import { ImageUtils } from '../../extras/ImageUtils.js';
 import { createElementNS } from '../../utils.js';
 

@@ -1,5 +1,5 @@
 import { Camera } from './Camera.js';
-import * as MathUtils from '../MathUtils.js';
+import { MathUtils } from '../MathUtils.js';
 
 export class PerspectiveCamera extends Camera {
   isPerspectiveCamera = true;

@@ -1,14 +1,20 @@
 import { Quaternion } from './Quaternion.js';
-import { Matrix4 } from './Matrix4.js';
 import { clamp } from './MathUtils.js';
+import { Vector3 } from './Vector3.js';
+import { Matrix4 } from './Matrix4.js';
 
 const _matrix = /*@__PURE__*/ new Matrix4();
 const _quaternion = /*@__PURE__*/ new Quaternion();
 
-class Euler {
-  constructor(x = 0, y = 0, z = 0, order = Euler.DEFAULT_ORDER) {
-    this.isEuler = true;
+export class Euler {
+  static DEFAULT_ORDER: Euler.Order = 'XYZ';
+  declare isEuler: boolean;
+  _x: number;
+  _y: number;
+  _z: number;
+  _order: Euler.Order;
 
+  constructor(x: number = 0, y: number = 0, z: number = 0, order: Euler.Order = Euler.DEFAULT_ORDER) {
     this._x = x;
     this._y = y;
     this._z = z;
@@ -51,7 +57,7 @@ class Euler {
     this._onChangeCallback();
   }
 
-  set(x, y, z, order = this._order) {
+  set(x: number, y: number, z: number, order = this._order) {
     this._x = x;
     this._y = y;
     this._z = z;
@@ -63,10 +69,10 @@ class Euler {
   }
 
   clone() {
-    return new this.constructor(this._x, this._y, this._z, this._order);
+    return new Euler(this._x, this._y, this._z, this._order);
   }
 
-  copy(euler) {
+  copy(euler: Euler) {
     this._x = euler._x;
     this._y = euler._y;
     this._z = euler._z;
@@ -77,7 +83,7 @@ class Euler {
     return this;
   }
 
-  setFromRotationMatrix(m, order = this._order, update = true) {
+  setFromRotationMatrix(m: Matrix4, order: Euler.Order = this._order, update: boolean = true) {
     // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
 
     const te = m.elements;
@@ -181,17 +187,17 @@ class Euler {
     return this;
   }
 
-  setFromQuaternion(q, order, update) {
+  setFromQuaternion(q: Quaternion, order?: Euler.Order, update?: boolean) {
     _matrix.makeRotationFromQuaternion(q);
 
     return this.setFromRotationMatrix(_matrix, order, update);
   }
 
-  setFromVector3(v, order = this._order) {
+  setFromVector3(v: Vector3, order: Euler.Order = this._order) {
     return this.set(v.x, v.y, v.z, order);
   }
 
-  reorder(newOrder) {
+  reorder(newOrder: Euler.Order) {
     // WARNING: this discards revolution information -bhouston
 
     _quaternion.setFromEuler(this);
@@ -199,11 +205,11 @@ class Euler {
     return this.setFromQuaternion(_quaternion, newOrder);
   }
 
-  equals(euler) {
+  equals(euler: Euler) {
     return euler._x === this._x && euler._y === this._y && euler._z === this._z && euler._order === this._order;
   }
 
-  fromArray(array) {
+  fromArray(array: [number, number, number, Euler.Order]) {
     this._x = array[0];
     this._y = array[1];
     this._z = array[2];
@@ -214,7 +220,7 @@ class Euler {
     return this;
   }
 
-  toArray(array = [], offset = 0) {
+  toArray(array: (number | string)[] = [], offset: number = 0) {
     array[offset] = this._x;
     array[offset + 1] = this._y;
     array[offset + 2] = this._z;
@@ -223,7 +229,7 @@ class Euler {
     return array;
   }
 
-  _onChange(callback) {
+  _onChange(callback: (this: Euler) => void) {
     this._onChangeCallback = callback;
 
     return this;
@@ -239,6 +245,8 @@ class Euler {
   }
 }
 
-Euler.DEFAULT_ORDER = 'XYZ';
+Euler.prototype.isEuler = true;
 
-export { Euler };
+export namespace Euler {
+  export type Order = 'XYZ' | 'YXZ' | 'ZXY' | 'ZYX' | 'YZX' | 'XZY';
+}

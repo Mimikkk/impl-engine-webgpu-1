@@ -1,4 +1,4 @@
-import * as MathUtils from '../math/MathUtils.js';
+import { MathUtils } from '../math/MathUtils.js';
 import { StaticDrawUsage } from '../constants.js';
 
 export class InterleavedBuffer {

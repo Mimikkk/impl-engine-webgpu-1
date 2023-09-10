@@ -1,4 +1,8 @@
 import { Vector3 } from './Vector3.js';
+import { Sphere } from './Sphere.js';
+import { Plane } from './Plane.js';
+import { Box3 } from './Box3.js';
+import { Matrix4 } from './Matrix4.js';
 
 const _vector = /*@__PURE__*/ new Vector3();
 const _segCenter = /*@__PURE__*/ new Vector3();
@@ -9,43 +13,46 @@ const _edge1 = /*@__PURE__*/ new Vector3();
 const _edge2 = /*@__PURE__*/ new Vector3();
 const _normal = /*@__PURE__*/ new Vector3();
 
-class Ray {
-  constructor(origin = new Vector3(), direction = new Vector3(0, 0, -1)) {
+export class Ray {
+  origin: Vector3;
+  direction: Vector3;
+
+  constructor(origin: Vector3 = new Vector3(), direction: Vector3 = new Vector3(0, 0, -1)) {
     this.origin = origin;
     this.direction = direction;
   }
 
-  set(origin, direction) {
+  set(origin: Vector3, direction: Vector3) {
     this.origin.copy(origin);
     this.direction.copy(direction);
 
     return this;
   }
 
-  copy(ray) {
+  copy(ray: Ray) {
     this.origin.copy(ray.origin);
     this.direction.copy(ray.direction);
 
     return this;
   }
 
-  at(t, target) {
+  at(t: number, target: Vector3) {
     return target.copy(this.origin).addScaledVector(this.direction, t);
   }
 
-  lookAt(v) {
+  lookAt(v: Vector3) {
     this.direction.copy(v).sub(this.origin).normalize();
 
     return this;
   }
 
-  recast(t) {
+  recast(t: number) {
     this.origin.copy(this.at(t, _vector));
 
     return this;
   }
 
-  closestPointToPoint(point, target) {
+  closestPointToPoint(point: Vector3, target: Vector3) {
     target.subVectors(point, this.origin);
 
     const directionDistance = target.dot(this.direction);
@@ -57,11 +64,11 @@ class Ray {
     return target.copy(this.origin).addScaledVector(this.direction, directionDistance);
   }
 
-  distanceToPoint(point) {
+  distanceToPoint(point: Vector3): number {
     return Math.sqrt(this.distanceSqToPoint(point));
   }
 
-  distanceSqToPoint(point) {
+  distanceSqToPoint(point: Vector3): number {
     const directionDistance = _vector.subVectors(point, this.origin).dot(this.direction);
 
     // point behind the ray
@@ -75,7 +82,12 @@ class Ray {
     return _vector.distanceToSquared(point);
   }
 
-  distanceSqToSegment(v0, v1, optionalPointOnRay, optionalPointOnSegment) {
+  distanceSqToSegment(
+    v0: Vector3,
+    v1: Vector3,
+    optionalPointOnRay?: Vector3,
+    optionalPointOnSegment?: Vector3,
+  ): number {
     // from https://github.com/pmjoniak/GeometricTools/blob/master/GTEngine/Include/Mathematics/GteDistRaySegment.h
     // It returns the min distance between the ray and the segment
     // defined by v0 and v1
@@ -166,7 +178,7 @@ class Ray {
     return sqrDist;
   }
 
-  intersectSphere(sphere, target) {
+  intersectSphere(sphere: Sphere, target: Vector3) {
     _vector.subVectors(sphere.center, this.origin);
     const tca = _vector.dot(this.direction);
     const d2 = _vector.dot(_vector) - tca * tca;
@@ -194,11 +206,11 @@ class Ray {
     return this.at(t0, target);
   }
 
-  intersectsSphere(sphere) {
+  intersectsSphere(sphere: Sphere) {
     return this.distanceSqToPoint(sphere.center) <= sphere.radius * sphere.radius;
   }
 
-  distanceToPlane(plane) {
+  distanceToPlane(plane: Plane) {
     const denominator = plane.normal.dot(this.direction);
 
     if (denominator === 0) {
@@ -219,7 +231,7 @@ class Ray {
     return t >= 0 ? t : null;
   }
 
-  intersectPlane(plane, target) {
+  intersectPlane(plane: Plane, target: Vector3) {
     const t = this.distanceToPlane(plane);
 
     if (t === null) {
@@ -229,7 +241,7 @@ class Ray {
     return this.at(t, target);
   }
 
-  intersectsPlane(plane) {
+  intersectsPlane(plane: Plane) {
     // check if the ray lies on the plane first
 
     const distToPoint = plane.distanceToPoint(this.origin);
@@ -249,7 +261,7 @@ class Ray {
     return false;
   }
 
-  intersectBox(box, target) {
+  intersectBox(box: Box3, target: Vector3) {
     let tmin, tmax, tymin, tymax, tzmin, tzmax;
 
     const invdirx = 1 / this.direction.x,
@@ -301,11 +313,11 @@ class Ray {
     return this.at(tmin >= 0 ? tmin : tmax, target);
   }
 
-  intersectsBox(box) {
+  intersectsBox(box: Box3) {
     return this.intersectBox(box, _vector) !== null;
   }
 
-  intersectTriangle(a, b, c, backfaceCulling, target) {
+  intersectTriangle(a: Vector3, b: Vector3, c: Vector3, backfaceCulling: boolean, target: Vector3) {
     // Compute the offset origin, edges, and normal.
 
     // from https://github.com/pmjoniak/GeometricTools/blob/master/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
@@ -364,20 +376,18 @@ class Ray {
     return this.at(QdN / DdN, target);
   }
 
-  applyMatrix4(matrix4) {
+  applyMatrix4(matrix4: Matrix4) {
     this.origin.applyMatrix4(matrix4);
     this.direction.transformDirection(matrix4);
 
     return this;
   }
 
-  equals(ray) {
+  equals(ray: Ray) {
     return ray.origin.equals(this.origin) && ray.direction.equals(this.direction);
   }
 
   clone() {
-    return new this.constructor().copy(this);
+    return new Ray().copy(this);
   }
 }
-
-export { Ray };

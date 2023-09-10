@@ -13,7 +13,7 @@ import {
   UnsignedByteType,
   UVMapping,
 } from '../../common/Constants.js';
-import * as MathUtils from '../MathUtils.js';
+import { MathUtils } from '../MathUtils.js';
 import { Vector2 } from '../Vector2.js';
 import { Matrix3 } from '../Matrix3.js';
 import { Source } from './Source.js';

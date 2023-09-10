@@ -1,5 +1,5 @@
 import { Path } from './Path.js';
-import * as MathUtils from './MathUtils.js';
+import { MathUtils } from './MathUtils.js';
 import { Vector2 } from './Vector2.js';
 import { Curve } from './Curve.js';
 

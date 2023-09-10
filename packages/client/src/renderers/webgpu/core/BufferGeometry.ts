@@ -12,7 +12,7 @@ import { Sphere } from './Sphere.js';
 import { Object3D } from './Object3D.js';
 import { Matrix4 } from './Matrix4.js';
 import { Matrix3 } from './Matrix3.js';
-import * as MathUtils from './MathUtils.js';
+import { MathUtils } from './MathUtils.js';
 import { arrayNeedsUint32 } from './utils.js';
 import { Quaternion } from './Quaternion.js';
 import { InterleavedBufferAttribute } from './InterleavedBufferAttribute.js';
