@@ -12,8 +12,7 @@
   import * as THREE from 'three';
   import { texture, uv, userData, rangeFog, color, SpriteNodeMaterial } from 'three/nodes';
 
-  import WebGPU from 'three/addons/capabilities/WebGPU.js';
-  import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.js';
 
   let camera, scene, renderer;
 
@@ -26,14 +25,6 @@
   init();
 
   function init() {
-
-    if (WebGPU.isAvailable() === false) {
-
-      document.body.appendChild(WebGPU.getErrorMessage());
-
-      throw new Error('No WebGPU support');
-
-    }
 
     const width = window.innerWidth;
     const height = window.innerHeight;

@@ -12,14 +12,19 @@
   <br>Click on screen to process the audio using WebGPU.
 </div>
 <script type='module'>
-
-  import * as THREE from 'three';
-  import { ShaderNode, uniform, storage, instanceIndex, float, texture, viewportTopLeft, color } from 'three/nodes';
-
-  import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
-
-  import WebGPU from 'three/addons/capabilities/WebGPU.js';
-  import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
+  import * as THREE from '../src/Three.js';
+  import {
+    ShaderNode,
+    uniform,
+    storage,
+    instanceIndex,
+    float,
+    texture,
+    viewportTopLeft,
+    color,
+  } from '../src/nodes/Nodes.js';
+  import { GUI } from 'lil-gui';
+  import WebGPURenderer from '../src/WebGPURenderer.js';
 
   let camera, scene, renderer;
   let computeNode;
@@ -65,14 +70,6 @@
   }
 
   async function init() {
-
-    if (WebGPU.isAvailable() === false) {
-
-      document.body.appendChild(WebGPU.getErrorMessage());
-
-      throw new Error('No WebGPU support');
-
-    }
 
     document.onclick = () => {
 

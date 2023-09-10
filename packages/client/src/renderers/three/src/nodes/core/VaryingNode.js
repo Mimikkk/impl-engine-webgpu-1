@@ -3,67 +3,53 @@ import { NodeShaderStage } from './constants.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
 class VaryingNode extends Node {
+  constructor(node, name = null) {
+    super();
 
-	constructor( node, name = null ) {
+    this.node = node;
+    this.name = name;
+  }
 
-		super();
+  isGlobal() {
+    return true;
+  }
 
-		this.node = node;
-		this.name = name;
+  getHash(builder) {
+    return this.name || super.getHash(builder);
+  }
 
-	}
+  getNodeType(builder) {
+    // VaryingNode is auto type
 
-	isGlobal() {
+    return this.node.getNodeType(builder);
+  }
 
-		return true;
+  generate(builder) {
+    const { name, node } = this;
+    const type = this.getNodeType(builder);
 
-	}
+    const nodeVarying = builder.getVaryingFromNode(this, type);
 
-	getHash( builder ) {
+    // this property can be used to check if the varying can be optimized for a var
+    nodeVarying.needsInterpolation || (nodeVarying.needsInterpolation = builder.shaderStage === 'fragment');
 
-		return this.name || super.getHash( builder );
+    if (name !== null) {
+      nodeVarying.name = name;
+    }
 
-	}
+    const propertyName = builder.getPropertyName(nodeVarying, NodeShaderStage.VERTEX);
 
-	getNodeType( builder ) {
+    // force node run in vertex stage
+    builder.flowNodeFromShaderStage(NodeShaderStage.VERTEX, node, type, propertyName);
 
-		// VaryingNode is auto type
-
-		return this.node.getNodeType( builder );
-
-	}
-
-	generate( builder ) {
-
-		const { name, node } = this;
-		const type = this.getNodeType( builder );
-
-		const nodeVarying = builder.getVaryingFromNode( this, type );
-
-		// this property can be used to check if the varying can be optimized for a var
-		nodeVarying.needsInterpolation || ( nodeVarying.needsInterpolation = ( builder.shaderStage === 'fragment' ) );
-
-		if ( name !== null ) {
-
-			nodeVarying.name = name;
-
-		}
-
-		const propertyName = builder.getPropertyName( nodeVarying, NodeShaderStage.VERTEX );
-
-		// force node run in vertex stage
-		builder.flowNodeFromShaderStage( NodeShaderStage.VERTEX, node, type, propertyName );
-
-		return builder.getPropertyName( nodeVarying );
-
-	}
-
+    return builder.getPropertyName(nodeVarying);
+  }
 }
 
 export default VaryingNode;
 
-export const varying = nodeProxy( VaryingNode );
+export const varying = nodeProxy(VaryingNode);
 
-addNodeElement( 'varying', varying );
+addNodeElement('varying', varying);
 
-addNodeClass( VaryingNode );
+addNodeClass(VaryingNode);

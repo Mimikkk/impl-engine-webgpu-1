@@ -1,218 +1,170 @@
 import DataMap from './DataMap.js';
-import { Vector2, DepthTexture, DepthStencilFormat, UnsignedInt248Type } from 'three';
+import { DepthStencilFormat, DepthTexture, UnsignedInt248Type, Vector2 } from '../Three.js';
 
 const _size = new Vector2();
 
 class Textures extends DataMap {
+  constructor(backend, info) {
+    super();
 
-	constructor( backend, info ) {
+    this.backend = backend;
+    this.info = info;
+  }
 
-		super();
+  updateRenderTarget(renderTarget) {
+    const renderTargetData = this.get(renderTarget);
+    const sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
 
-		this.backend = backend;
-		this.info = info;
+    const texture = renderTarget.texture;
+    const size = this.getSize(texture);
 
-	}
+    let depthTexture = renderTarget.depthTexture || renderTargetData.depthTexture;
 
-	updateRenderTarget( renderTarget ) {
+    if (depthTexture === undefined) {
+      depthTexture = new DepthTexture();
+      depthTexture.format = DepthStencilFormat;
+      depthTexture.type = UnsignedInt248Type;
+      depthTexture.image.width = size.width;
+      depthTexture.image.height = size.height;
+    }
 
-		const renderTargetData = this.get( renderTarget );
-		const sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
+    if (renderTargetData.width !== size.width || size.height !== renderTargetData.height) {
+      texture.needsUpdate = true;
+      depthTexture.needsUpdate = true;
 
-		const texture = renderTarget.texture;
-		const size = this.getSize( texture );
+      depthTexture.image.width = size.width;
+      depthTexture.image.height = size.height;
+    }
 
-		let depthTexture = renderTarget.depthTexture || renderTargetData.depthTexture;
+    renderTargetData.width = size.width;
+    renderTargetData.height = size.height;
+    renderTargetData.texture = texture;
+    renderTargetData.depthTexture = depthTexture;
 
-		if ( depthTexture === undefined ) {
+    if (renderTargetData.sampleCount !== sampleCount) {
+      texture.needsUpdate = true;
+      depthTexture.needsUpdate = true;
 
-			depthTexture = new DepthTexture();
-			depthTexture.format = DepthStencilFormat;
-			depthTexture.type = UnsignedInt248Type;
-			depthTexture.image.width = size.width;
-			depthTexture.image.height = size.height;
+      renderTargetData.sampleCount = sampleCount;
+    }
 
-		}
+    const options = { sampleCount };
 
-		if ( renderTargetData.width !== size.width || size.height !== renderTargetData.height ) {
+    this.updateTexture(texture, options);
+    this.updateTexture(depthTexture, options);
 
-			texture.needsUpdate = true;
-			depthTexture.needsUpdate = true;
+    // dispose handler
 
-			depthTexture.image.width = size.width;
-			depthTexture.image.height = size.height;
+    if (renderTargetData.initialized !== true) {
+      renderTargetData.initialized = true;
 
-		}
+      // dispose
 
-		renderTargetData.width = size.width;
-		renderTargetData.height = size.height;
-		renderTargetData.texture = texture;
-		renderTargetData.depthTexture = depthTexture;
+      const onDispose = () => {
+        renderTarget.removeEventListener('dispose', onDispose);
 
-		if ( renderTargetData.sampleCount !== sampleCount ) {
+        this._destroyTexture(texture);
+        this._destroyTexture(depthTexture);
+      };
 
-			texture.needsUpdate = true;
-			depthTexture.needsUpdate = true;
+      renderTarget.addEventListener('dispose', onDispose);
+    }
+  }
 
-			renderTargetData.sampleCount = sampleCount;
+  updateTexture(texture, options = {}) {
+    const textureData = this.get(texture);
+    if (textureData.initialized === true && textureData.version === texture.version) return;
 
-		}
+    const isRenderTarget = texture.isRenderTargetTexture || texture.isDepthTexture || texture.isFramebufferTexture;
+    const backend = this.backend;
 
-		const options = { sampleCount };
+    if (isRenderTarget && textureData.initialized === true) {
+      // it's an update
 
-		this.updateTexture( texture, options );
-		this.updateTexture( depthTexture, options );
+      backend.destroySampler(texture);
+      backend.destroyTexture(texture);
+    }
 
-		// dispose handler
+    //
 
-		if ( renderTargetData.initialized !== true ) {
+    if (isRenderTarget) {
+      backend.createSampler(texture);
+      backend.createTexture(texture, options);
+    } else {
+      const needsCreate = textureData.initialized !== true;
 
-			renderTargetData.initialized = true;
+      if (needsCreate) backend.createSampler(texture);
 
-			// dispose
+      if (texture.version > 0) {
+        const image = texture.image;
 
-			const onDispose = () => {
+        if (image === undefined) {
+          console.warn('THREE.Renderer: Texture marked for update but image is undefined.');
+        } else if (image.complete === false) {
+          console.warn('THREE.Renderer: Texture marked for update but image is incomplete.');
+        } else {
+          if (textureData.isDefaultTexture === undefined || textureData.isDefaultTexture === true) {
+            backend.createTexture(texture, options);
 
-				renderTarget.removeEventListener( 'dispose', onDispose );
+            textureData.isDefaultTexture = false;
+          }
 
-				this._destroyTexture( texture );
-				this._destroyTexture( depthTexture );
+          backend.updateTexture(texture);
+        }
+      } else {
+        // async update
 
-			};
+        backend.createDefaultTexture(texture);
 
-			renderTarget.addEventListener( 'dispose', onDispose );
+        textureData.isDefaultTexture = true;
+      }
+    }
 
-		}
+    // dispose handler
 
-	}
+    if (textureData.initialized !== true) {
+      textureData.initialized = true;
 
-	updateTexture( texture, options = {} ) {
+      //
 
-		const textureData = this.get( texture );
-		if ( textureData.initialized === true && textureData.version === texture.version ) return;
+      this.info.memory.textures++;
 
-		const isRenderTarget = texture.isRenderTargetTexture || texture.isDepthTexture || texture.isFramebufferTexture;
-		const backend = this.backend;
+      // dispose
 
-		if ( isRenderTarget && textureData.initialized === true ) {
+      const onDispose = () => {
+        texture.removeEventListener('dispose', onDispose);
 
-			// it's an update
+        this._destroyTexture(texture);
 
-			backend.destroySampler( texture );
-			backend.destroyTexture( texture );
+        this.info.memory.textures--;
+      };
 
-		}
+      texture.addEventListener('dispose', onDispose);
+    }
 
-		//
+    //
 
-		if ( isRenderTarget ) {
+    textureData.version = texture.version;
+  }
 
-			backend.createSampler( texture );
-			backend.createTexture( texture, options );
+  getSize(texture, target = _size) {
+    if (texture.isCubeTexture) {
+      target.width = texture.image[0].width;
+      target.height = texture.image[0].height;
+    } else {
+      target.width = texture.image.width;
+      target.height = texture.image.height;
+    }
 
-		} else {
+    return target;
+  }
 
-			const needsCreate = textureData.initialized !== true;
+  _destroyTexture(texture) {
+    this.backend.destroySampler(texture);
+    this.backend.destroyTexture(texture);
 
-			if ( needsCreate ) backend.createSampler( texture );
-
-			if ( texture.version > 0 ) {
-
-				const image = texture.image;
-
-				if ( image === undefined ) {
-
-					console.warn( 'THREE.Renderer: Texture marked for update but image is undefined.' );
-
-				} else if ( image.complete === false ) {
-
-					console.warn( 'THREE.Renderer: Texture marked for update but image is incomplete.' );
-
-				} else {
-
-					if ( textureData.isDefaultTexture === undefined || textureData.isDefaultTexture === true ) {
-
-						backend.createTexture( texture, options );
-
-						textureData.isDefaultTexture = false;
-
-					}
-
-					backend.updateTexture( texture );
-
-				}
-
-			} else {
-
-				// async update
-
-				backend.createDefaultTexture( texture );
-
-				textureData.isDefaultTexture = true;
-
-			}
-
-		}
-
-		// dispose handler
-
-		if ( textureData.initialized !== true ) {
-
-			textureData.initialized = true;
-
-			//
-
-			this.info.memory.textures ++;
-
-			// dispose
-
-			const onDispose = () => {
-
-				texture.removeEventListener( 'dispose', onDispose );
-
-				this._destroyTexture( texture );
-
-				this.info.memory.textures --;
-
-			};
-
-			texture.addEventListener( 'dispose', onDispose );
-
-		}
-
-		//
-
-		textureData.version = texture.version;
-
-	}
-
-	getSize( texture, target = _size ) {
-
-		if ( texture.isCubeTexture ) {
-
-			target.width = texture.image[ 0 ].width;
-			target.height = texture.image[ 0 ].height;
-
-		} else {
-
-			target.width = texture.image.width;
-			target.height = texture.image.height;
-
-		}
-
-		return target;
-
-	}
-
-	_destroyTexture( texture ) {
-
-		this.backend.destroySampler( texture );
-		this.backend.destroyTexture( texture );
-
-		this.delete( texture );
-
-	}
-
+    this.delete(texture);
+  }
 }
 
 export default Textures;

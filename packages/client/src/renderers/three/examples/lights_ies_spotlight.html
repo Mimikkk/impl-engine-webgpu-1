@@ -12,10 +12,9 @@
 
   import * as THREE from 'three';
 
-  import WebGPU from 'three/addons/capabilities/WebGPU.js';
-  import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.js';
 
-  import IESSpotLight from 'three/addons/lights/IESSpotLight.js';
+  import IESSpotLight from '../src/lights/IESSpotLight.js';
 
   import { OrbitControls } from './jsm/controls/OrbitControls.js';
 
@@ -25,14 +24,6 @@
   let lights;
 
   async function init() {
-
-    if (WebGPU.isAvailable() === false) {
-
-      document.body.appendChild(WebGPU.getErrorMessage());
-
-      throw new Error('No WebGPU support');
-
-    }
 
     //
 

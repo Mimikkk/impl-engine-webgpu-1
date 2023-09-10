@@ -1,61 +1,54 @@
 import InputNode from './InputNode.js';
 import { addNodeClass } from './Node.js';
-import { nodeObject, getConstNodeType } from '../shadernode/ShaderNode.js';
+import { getConstNodeType, nodeObject } from '../shadernode/ShaderNode.js';
 
 class UniformNode extends InputNode {
+  constructor(value, nodeType = null) {
+    super(value, nodeType);
 
-	constructor( value, nodeType = null ) {
+    this.isUniformNode = true;
+  }
 
-		super( value, nodeType );
+  getUniformHash(builder) {
+    return this.getHash(builder);
+  }
 
-		this.isUniformNode = true;
+  generate(builder, output) {
+    const type = this.getNodeType(builder);
 
-	}
+    const hash = this.getUniformHash(builder);
 
-	getUniformHash( builder ) {
+    let sharedNode = builder.getNodeFromHash(hash);
 
-		return this.getHash( builder );
+    if (sharedNode === undefined) {
+      builder.setHashNode(this, hash);
 
-	}
+      sharedNode = this;
+    }
 
-	generate( builder, output ) {
+    const sharedNodeType = sharedNode.getInputType(builder);
 
-		const type = this.getNodeType( builder );
+    const nodeUniform = builder.getUniformFromNode(
+      sharedNode,
+      sharedNodeType,
+      builder.shaderStage,
+      builder.context.label,
+    );
+    const propertyName = builder.getPropertyName(nodeUniform);
 
-		const hash = this.getUniformHash( builder );
-
-		let sharedNode = builder.getNodeFromHash( hash );
-
-		if ( sharedNode === undefined ) {
-
-			builder.setHashNode( this, hash );
-
-			sharedNode = this;
-
-		}
-
-		const sharedNodeType = sharedNode.getInputType( builder );
-
-		const nodeUniform = builder.getUniformFromNode( sharedNode, sharedNodeType, builder.shaderStage, builder.context.label );
-		const propertyName = builder.getPropertyName( nodeUniform );
-
-		return builder.format( propertyName, type, output );
-
-	}
-
+    return builder.format(propertyName, type, output);
+  }
 }
 
 export default UniformNode;
 
-export const uniform = ( arg1, arg2 ) => {
+export const uniform = (arg1, arg2) => {
+  const nodeType = getConstNodeType(arg2 || arg1);
 
-	const nodeType = getConstNodeType( arg2 || arg1 );
+  // @TODO: get ConstNode from .traverse() in the future
+  const value = arg1 && arg1.isNode === true ? (arg1.node && arg1.node.value) || arg1.value : arg1;
 
-	// @TODO: get ConstNode from .traverse() in the future
-	const value = ( arg1 && arg1.isNode === true ) ? ( arg1.node && arg1.node.value ) || arg1.value : arg1;
-
-	return nodeObject( new UniformNode( value, nodeType ) );
-
+  return nodeObject(new UniformNode(value, nodeType));
 };
 
-addNodeClass( UniformNode );
+addNodeClass(UniformNode);

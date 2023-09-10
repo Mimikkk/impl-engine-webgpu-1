@@ -2,98 +2,78 @@ import { Cache } from './Cache.js';
 import { Loader } from './Loader.js';
 
 class ImageBitmapLoader extends Loader {
+  constructor(manager) {
+    super(manager);
 
-	constructor( manager ) {
+    this.isImageBitmapLoader = true;
 
-		super( manager );
+    if (typeof createImageBitmap === 'undefined') {
+      console.warn('THREE.ImageBitmapLoader: createImageBitmap() not supported.');
+    }
 
-		this.isImageBitmapLoader = true;
+    if (typeof fetch === 'undefined') {
+      console.warn('THREE.ImageBitmapLoader: fetch() not supported.');
+    }
 
-		if ( typeof createImageBitmap === 'undefined' ) {
+    this.options = { premultiplyAlpha: 'none' };
+  }
 
-			console.warn( 'THREE.ImageBitmapLoader: createImageBitmap() not supported.' );
+  setOptions(options) {
+    this.options = options;
 
-		}
+    return this;
+  }
 
-		if ( typeof fetch === 'undefined' ) {
+  load(url, onLoad, onProgress, onError) {
+    if (url === undefined) url = '';
 
-			console.warn( 'THREE.ImageBitmapLoader: fetch() not supported.' );
+    if (this.path !== undefined) url = this.path + url;
 
-		}
+    url = this.manager.resolveURL(url);
 
-		this.options = { premultiplyAlpha: 'none' };
+    const scope = this;
 
-	}
+    const cached = Cache.get(url);
 
-	setOptions( options ) {
+    if (cached !== undefined) {
+      scope.manager.itemStart(url);
 
-		this.options = options;
+      setTimeout(function () {
+        if (onLoad) onLoad(cached);
 
-		return this;
+        scope.manager.itemEnd(url);
+      }, 0);
 
-	}
+      return cached;
+    }
 
-	load( url, onLoad, onProgress, onError ) {
+    const fetchOptions = {};
+    fetchOptions.credentials = this.crossOrigin === 'anonymous' ? 'same-origin' : 'include';
+    fetchOptions.headers = this.requestHeader;
 
-		if ( url === undefined ) url = '';
+    fetch(url, fetchOptions)
+      .then(function (res) {
+        return res.blob();
+      })
+      .then(function (blob) {
+        return createImageBitmap(blob, Object.assign(scope.options, { colorSpaceConversion: 'none' }));
+      })
+      .then(function (imageBitmap) {
+        Cache.add(url, imageBitmap);
 
-		if ( this.path !== undefined ) url = this.path + url;
+        if (onLoad) onLoad(imageBitmap);
 
-		url = this.manager.resolveURL( url );
+        scope.manager.itemEnd(url);
+      })
+      .catch(function (e) {
+        if (onError) onError(e);
 
-		const scope = this;
+        scope.manager.itemError(url);
+        scope.manager.itemEnd(url);
+      });
 
-		const cached = Cache.get( url );
-
-		if ( cached !== undefined ) {
-
-			scope.manager.itemStart( url );
-
-			setTimeout( function () {
-
-				if ( onLoad ) onLoad( cached );
-
-				scope.manager.itemEnd( url );
-
-			}, 0 );
-
-			return cached;
-
-		}
-
-		const fetchOptions = {};
-		fetchOptions.credentials = ( this.crossOrigin === 'anonymous' ) ? 'same-origin' : 'include';
-		fetchOptions.headers = this.requestHeader;
-
-		fetch( url, fetchOptions ).then( function ( res ) {
-
-			return res.blob();
-
-		} ).then( function ( blob ) {
-
-			return createImageBitmap( blob, Object.assign( scope.options, { colorSpaceConversion: 'none' } ) );
-
-		} ).then( function ( imageBitmap ) {
-
-			Cache.add( url, imageBitmap );
-
-			if ( onLoad ) onLoad( imageBitmap );
-
-			scope.manager.itemEnd( url );
-
-		} ).catch( function ( e ) {
-
-			if ( onError ) onError( e );
-
-			scope.manager.itemError( url );
-			scope.manager.itemEnd( url );
-
-		} );
-
-		scope.manager.itemStart( url );
-
-	}
-
+    scope.manager.itemStart(url);
+  }
 }
 
 export { ImageBitmapLoader };

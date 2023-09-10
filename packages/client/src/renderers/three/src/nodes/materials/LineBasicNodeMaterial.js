@@ -5,24 +5,20 @@ import { LineBasicMaterial } from 'three';
 const defaultValues = new LineBasicMaterial();
 
 class LineBasicNodeMaterial extends NodeMaterial {
+  constructor(parameters) {
+    super();
 
-	constructor( parameters ) {
+    this.isLineBasicNodeMaterial = true;
 
-		super();
+    this.lights = false;
+    this.normals = false;
 
-		this.isLineBasicNodeMaterial = true;
+    this.setDefaultValues(defaultValues);
 
-		this.lights = false;
-		this.normals = false;
-
-		this.setDefaultValues( defaultValues );
-
-		this.setValues( parameters );
-
-	}
-
+    this.setValues(parameters);
+  }
 }
 
 export default LineBasicNodeMaterial;
 
-addNodeMaterial( LineBasicNodeMaterial );
+addNodeMaterial(LineBasicNodeMaterial);

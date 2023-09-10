@@ -9,60 +9,52 @@ import { addNodeClass } from '../core/Node.js';
 import { PointLight } from 'three';
 
 class PointLightNode extends AnalyticLightNode {
+  constructor(light = null) {
+    super(light);
 
-	constructor( light = null ) {
+    this.cutoffDistanceNode = uniform(0);
+    this.decayExponentNode = uniform(0);
+  }
 
-		super( light );
+  update(frame) {
+    const { light } = this;
 
-		this.cutoffDistanceNode = uniform( 0 );
-		this.decayExponentNode = uniform( 0 );
+    super.update(frame);
 
-	}
+    this.cutoffDistanceNode.value = light.distance;
+    this.decayExponentNode.value = light.decay;
+  }
 
-	update( frame ) {
+  construct(builder) {
+    const { colorNode, cutoffDistanceNode, decayExponentNode, light } = this;
 
-		const { light } = this;
+    const lightingModel = builder.context.lightingModel;
 
-		super.update( frame );
+    const lVector = objectViewPosition(light).sub(positionView); // @TODO: Add it into LightNode
 
-		this.cutoffDistanceNode.value = light.distance;
-		this.decayExponentNode.value = light.decay;
+    const lightDirection = lVector.normalize();
+    const lightDistance = lVector.length();
 
-	}
+    const lightAttenuation = getDistanceAttenuation({
+      lightDistance,
+      cutoffDistance: cutoffDistanceNode,
+      decayExponent: decayExponentNode,
+    });
 
-	construct( builder ) {
+    const lightColor = colorNode.mul(lightAttenuation);
 
-		const { colorNode, cutoffDistanceNode, decayExponentNode, light } = this;
+    const reflectedLight = builder.context.reflectedLight;
 
-		const lightingModel = builder.context.lightingModel;
-
-		const lVector = objectViewPosition( light ).sub( positionView ); // @TODO: Add it into LightNode
-
-		const lightDirection = lVector.normalize();
-		const lightDistance = lVector.length();
-
-		const lightAttenuation = getDistanceAttenuation( {
-			lightDistance,
-			cutoffDistance: cutoffDistanceNode,
-			decayExponent: decayExponentNode
-		} );
-
-		const lightColor = colorNode.mul( lightAttenuation );
-
-		const reflectedLight = builder.context.reflectedLight;
-
-		lightingModel.direct( {
-			lightDirection,
-			lightColor,
-			reflectedLight
-		} );
-
-	}
-
+    lightingModel.direct({
+      lightDirection,
+      lightColor,
+      reflectedLight,
+    });
+  }
 }
 
 export default PointLightNode;
 
-addLightNode( PointLight, PointLightNode );
+addLightNode(PointLight, PointLightNode);
 
-addNodeClass( PointLightNode );
+addNodeClass(PointLightNode);

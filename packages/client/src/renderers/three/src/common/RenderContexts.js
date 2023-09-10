@@ -2,48 +2,39 @@ import ChainMap from './ChainMap.js';
 import RenderContext from './RenderContext.js';
 
 class RenderContexts {
+  constructor() {
+    this.chainMaps = {};
+  }
 
-	constructor() {
+  get(scene, camera, renderTarget = null) {
+    const chainKey = [scene, camera];
+    const attachmentState =
+      renderTarget === null
+        ? 'default'
+        : `${renderTarget.texture.format}:${renderTarget.samples}:${renderTarget.depthBuffer}:${renderTarget.stencilBuffer}`;
 
-		this.chainMaps = {};
+    const chainMap = this.getChainMap(attachmentState);
 
-	}
+    let renderState = chainMap.get(chainKey);
 
-	get( scene, camera, renderTarget = null ) {
+    if (renderState === undefined) {
+      renderState = new RenderContext();
 
-		const chainKey = [ scene, camera ];
-		const attachmentState = renderTarget === null ? 'default' : `${renderTarget.texture.format}:${renderTarget.samples}:${renderTarget.depthBuffer}:${renderTarget.stencilBuffer}`;
+      chainMap.set(chainKey, renderState);
+    }
 
-		const chainMap = this.getChainMap( attachmentState );
+    if (renderTarget !== null) renderState.sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
 
-		let renderState = chainMap.get( chainKey );
+    return renderState;
+  }
 
-		if ( renderState === undefined ) {
+  getChainMap(attachmentState) {
+    return this.chainMaps[attachmentState] || (this.chainMaps[attachmentState] = new ChainMap());
+  }
 
-			renderState = new RenderContext();
-
-			chainMap.set( chainKey, renderState );
-
-		}
-
-		if ( renderTarget !== null ) renderState.sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
-
-		return renderState;
-
-	}
-
-	getChainMap( attachmentState ) {
-
-		return this.chainMaps[ attachmentState ] || ( this.chainMaps[ attachmentState ] = new ChainMap() );
-
-	}
-
-	dispose() {
-
-		this.chainMaps = {};
-
-	}
-
+  dispose() {
+    this.chainMaps = {};
+  }
 }
 
 export default RenderContexts;

@@ -1,4 +1,4 @@
-export const vertex = /* glsl */`
+export const vertex = /* glsl */ `
 uniform float size;
 uniform float scale;
 
@@ -48,7 +48,7 @@ void main() {
 }
 `;
 
-export const fragment = /* glsl */`
+export const fragment = /* glsl */ `
 uniform vec3 diffuse;
 uniform float opacity;
 

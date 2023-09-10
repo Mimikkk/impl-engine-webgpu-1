@@ -1,129 +1,106 @@
 let id = 0;
 
 export default class RenderObject {
+  constructor(nodes, geometries, renderer, object, material, scene, camera, lightsNode, renderContext) {
+    this._nodes = nodes;
+    this._geometries = geometries;
 
-	constructor( nodes, geometries, renderer, object, material, scene, camera, lightsNode, renderContext ) {
+    this.id = id++;
 
-		this._nodes = nodes;
-		this._geometries = geometries;
+    this.renderer = renderer;
+    this.object = object;
+    this.material = material;
+    this.scene = scene;
+    this.camera = camera;
+    this.lightsNode = lightsNode;
+    this.context = renderContext;
 
-		this.id = id ++;
+    this.geometry = object.geometry;
 
-		this.renderer = renderer;
-		this.object = object;
-		this.material = material;
-		this.scene = scene;
-		this.camera = camera;
-		this.lightsNode = lightsNode;
-		this.context = renderContext;
+    this.attributes = null;
+    this.pipeline = null;
+    this.vertexBuffers = null;
 
-		this.geometry = object.geometry;
+    this._materialVersion = -1;
+    this._materialCacheKey = '';
 
-		this.attributes = null;
-		this.pipeline = null;
-		this.vertexBuffers = null;
+    this.onDispose = null;
 
-		this._materialVersion = - 1;
-		this._materialCacheKey = '';
+    this.onMaterialDispose = () => {
+      this.dispose();
+    };
 
-		this.onDispose = null;
+    this.material.addEventListener('dispose', this.onMaterialDispose);
+  }
 
-		this.onMaterialDispose = () => {
+  getNodeBuilder() {
+    return this._nodes.getForRender(this);
+  }
 
-			this.dispose();
+  getBindings() {
+    return this.getNodeBuilder().getBindings();
+  }
 
-		};
+  getIndex() {
+    return this._geometries.getIndex(this);
+  }
 
-		this.material.addEventListener( 'dispose', this.onMaterialDispose );
+  getChainArray() {
+    return [this.object, this.material, this.context, this.lightsNode];
+  }
 
-	}
+  getAttributes() {
+    if (this.attributes !== null) return this.attributes;
 
-	getNodeBuilder() {
+    const nodeAttributes = this.getNodeBuilder().getAttributesArray();
+    const geometry = this.geometry;
 
-		return this._nodes.getForRender( this );
+    const attributes = [];
+    const vertexBuffers = new Set();
 
-	}
+    for (const nodeAttribute of nodeAttributes) {
+      const attribute =
+        nodeAttribute.node && nodeAttribute.node.attribute
+          ? nodeAttribute.node.attribute
+          : geometry.getAttribute(nodeAttribute.name);
 
-	getBindings() {
+      attributes.push(attribute);
 
-		return this.getNodeBuilder().getBindings();
+      const bufferAttribute = attribute.isInterleavedBufferAttribute ? attribute.data : attribute;
+      vertexBuffers.add(bufferAttribute);
+    }
 
-	}
+    this.attributes = attributes;
+    this.vertexBuffers = Array.from(vertexBuffers.values());
 
-	getIndex() {
+    return attributes;
+  }
 
-		return this._geometries.getIndex( this );
+  getVertexBuffers() {
+    if (this.vertexBuffers === null) this.getAttributes();
 
-	}
+    return this.vertexBuffers;
+  }
 
-	getChainArray() {
+  getCacheKey() {
+    const { material, scene, lightsNode } = this;
 
-		return [ this.object, this.material, this.context, this.lightsNode ];
+    if (material.version !== this._materialVersion) {
+      this._materialVersion = material.version;
+      this._materialCacheKey = material.customProgramCacheKey();
+    }
 
-	}
+    const cacheKey = [];
 
-	getAttributes() {
+    cacheKey.push('material:' + this._materialCacheKey);
+    cacheKey.push('nodes:' + this._nodes.getCacheKey(scene, lightsNode));
 
-		if ( this.attributes !== null ) return this.attributes;
+    return '{' + cacheKey.join(',') + '}';
+  }
 
-		const nodeAttributes = this.getNodeBuilder().getAttributesArray();
-		const geometry = this.geometry;
+  dispose() {
+    this.material.removeEventListener('dispose', this.onMaterialDispose);
 
-		const attributes = [];
-		const vertexBuffers = new Set();
-
-		for ( const nodeAttribute of nodeAttributes ) {
-
-			const attribute = nodeAttribute.node && nodeAttribute.node.attribute ? nodeAttribute.node.attribute : geometry.getAttribute( nodeAttribute.name );
-
-			attributes.push( attribute );
-
-			const bufferAttribute = attribute.isInterleavedBufferAttribute ? attribute.data : attribute;
-			vertexBuffers.add( bufferAttribute );
-
-		}
-
-		this.attributes = attributes;
-		this.vertexBuffers = Array.from( vertexBuffers.values() );
-
-		return attributes;
-
-	}
-
-	getVertexBuffers() {
-
-		if ( this.vertexBuffers === null ) this.getAttributes();
-
-		return this.vertexBuffers;
-
-	}
-
-	getCacheKey() {
-
-		const { material, scene, lightsNode } = this;
-
-		if ( material.version !== this._materialVersion ) {
-
-			this._materialVersion = material.version;
-			this._materialCacheKey = material.customProgramCacheKey();
-
-		}
-
-		const cacheKey = [];
-
-		cacheKey.push( 'material:' + this._materialCacheKey );
-		cacheKey.push( 'nodes:' + this._nodes.getCacheKey( scene, lightsNode ) );
-
-		return '{' + cacheKey.join( ',' ) + '}';
-
-	}
-
-	dispose() {
-
-		this.material.removeEventListener( 'dispose', this.onMaterialDispose );
-
-		this.onDispose();
-
-	}
-
+    this.onDispose();
+  }
 }

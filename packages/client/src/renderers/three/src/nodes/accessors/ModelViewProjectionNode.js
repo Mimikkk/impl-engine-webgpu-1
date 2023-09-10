@@ -5,25 +5,19 @@ import { positionLocal } from './PositionNode.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
 
 class ModelViewProjectionNode extends Node {
+  constructor(positionNode = positionLocal) {
+    super('vec4');
 
-	constructor( positionNode = positionLocal ) {
+    this.positionNode = positionNode;
+  }
 
-		super( 'vec4' );
-
-		this.positionNode = positionNode;
-
-	}
-
-	construct() {
-
-		return cameraProjectionMatrix.mul( modelViewMatrix ).mul( this.positionNode );
-
-	}
-
+  construct() {
+    return cameraProjectionMatrix.mul(modelViewMatrix).mul(this.positionNode);
+  }
 }
 
 export default ModelViewProjectionNode;
 
-export const modelViewProjection = nodeProxy( ModelViewProjectionNode );
+export const modelViewProjection = nodeProxy(ModelViewProjectionNode);
 
-addNodeClass( ModelViewProjectionNode );
+addNodeClass(ModelViewProjectionNode);

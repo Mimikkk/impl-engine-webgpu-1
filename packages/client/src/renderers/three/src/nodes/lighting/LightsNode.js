@@ -4,125 +4,94 @@ import { nodeObject, nodeProxy } from '../shadernode/ShaderNode.js';
 
 const LightNodes = new WeakMap();
 
-const sortLights = ( lights ) => {
-
-	return lights.sort( ( a, b ) => a.id - b.id );
-
+const sortLights = lights => {
+  return lights.sort((a, b) => a.id - b.id);
 };
 
 class LightsNode extends Node {
+  constructor(lightNodes = []) {
+    super('vec3');
 
-	constructor( lightNodes = [] ) {
+    this.lightNodes = lightNodes;
 
-		super( 'vec3' );
+    this._hash = null;
+  }
 
-		this.lightNodes = lightNodes;
+  get hasLight() {
+    return this.lightNodes.length > 0;
+  }
 
-		this._hash = null;
+  construct(builder) {
+    const lightNodes = this.lightNodes;
 
-	}
+    for (const lightNode of lightNodes) {
+      lightNode.build(builder);
+    }
+  }
 
-	get hasLight() {
+  getHash(builder) {
+    if (this._hash === null) {
+      let hash = '';
 
-		return this.lightNodes.length > 0;
+      const lightNodes = this.lightNodes;
 
-	}
+      for (const lightNode of lightNodes) {
+        hash += lightNode.getHash(builder) + ' ';
+      }
 
-	construct( builder ) {
+      this._hash = hash;
+    }
 
-		const lightNodes = this.lightNodes;
+    return this._hash;
+  }
 
-		for ( const lightNode of lightNodes ) {
+  getLightNodeByHash(hash) {
+    const lightNodes = this.lightNodes;
 
-			lightNode.build( builder );
+    for (const lightNode of lightNodes) {
+      if (lightNode.light.uuid === hash) {
+        return lightNode;
+      }
+    }
 
-		}
+    return null;
+  }
 
-	}
+  fromLights(lights = []) {
+    const lightNodes = [];
 
-	getHash( builder ) {
+    lights = sortLights(lights);
 
-		if ( this._hash === null ) {
+    for (const light of lights) {
+      let lightNode = this.getLightNodeByHash(light.uuid);
 
-			let hash = '';
+      if (lightNode === null) {
+        const lightClass = light.constructor;
+        const lightNodeClass = LightNodes.has(lightClass) ? LightNodes.get(lightClass) : AnalyticLightNode;
 
-			const lightNodes = this.lightNodes;
+        lightNode = nodeObject(new lightNodeClass(light));
+      }
 
-			for ( const lightNode of lightNodes ) {
+      lightNodes.push(lightNode);
+    }
 
-				hash += lightNode.getHash( builder ) + ' ';
+    this.lightNodes = lightNodes;
+    this._hash = null;
 
-			}
-
-			this._hash = hash;
-
-		}
-
-		return this._hash;
-
-	}
-
-	getLightNodeByHash( hash ) {
-
-		const lightNodes = this.lightNodes;
-
-		for ( const lightNode of lightNodes ) {
-
-			if ( lightNode.light.uuid === hash ) {
-
-				return lightNode;
-
-			}
-
-		}
-
-		return null;
-
-	}
-
-	fromLights( lights = [] ) {
-
-		const lightNodes = [];
-
-		lights = sortLights( lights );
-
-		for ( const light of lights ) {
-
-			let lightNode = this.getLightNodeByHash( light.uuid );
-
-			if ( lightNode === null ) {
-
-				const lightClass = light.constructor;
-				const lightNodeClass = LightNodes.has( lightClass ) ? LightNodes.get( lightClass ) : AnalyticLightNode;
-
-				lightNode = nodeObject( new lightNodeClass( light ) );
-
-			}
-
-			lightNodes.push( lightNode );
-
-		}
-
-		this.lightNodes = lightNodes;
-		this._hash = null;
-
-		return this;
-
-	}
-
+    return this;
+  }
 }
 
 export default LightsNode;
 
-export const lights = ( lights ) => nodeObject( new LightsNode().fromLights( lights ) );
-export const lightsWithoutWrap = nodeProxy( LightsNode );
+export const lights = lights => nodeObject(new LightsNode().fromLights(lights));
+export const lightsWithoutWrap = nodeProxy(LightsNode);
 
-export function addLightNode( lightClass, lightNodeClass ) {
+export function addLightNode(lightClass, lightNodeClass) {
+  if (LightNodes.has(lightClass)) throw new Error(`Redefinition of light node ${lightNodeClass.name}`);
+  if (typeof lightClass !== 'function' || !lightClass.name) throw new Error(`Light ${lightClass.name} is not a class`);
+  if (typeof lightNodeClass !== 'function' || !lightNodeClass.name)
+    throw new Error(`Light node ${lightNodeClass.name} is not a class`);
 
-	if ( LightNodes.has( lightClass ) ) throw new Error( `Redefinition of light node ${ lightNodeClass.name }` );
-	if ( typeof lightClass !== 'function' || ! lightClass.name ) throw new Error( `Light ${ lightClass.name } is not a class` );
-	if ( typeof lightNodeClass !== 'function' || ! lightNodeClass.name ) throw new Error( `Light node ${ lightNodeClass.name } is not a class` );
-
-	LightNodes.set( lightClass, lightNodeClass );
-
+  LightNodes.set(lightClass, lightNodeClass);
 }

@@ -2,86 +2,64 @@ import Node, { addNodeClass } from './Node.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
 class VarNode extends Node {
+  constructor(node, name = null) {
+    super();
 
-	constructor( node, name = null ) {
+    this.node = node;
+    this.name = name;
+  }
 
-		super();
+  assign(node) {
+    node.traverse((childNode, replaceNode) => {
+      if (replaceNode && childNode.uuid === this.uuid) {
+        replaceNode(this.node);
+      }
+    });
+    this.node = node;
+    return this;
+  }
 
-		this.node = node;
-		this.name = name;
+  isGlobal() {
+    return true;
+  }
 
-	}
+  getHash(builder) {
+    return this.name || super.getHash(builder);
+  }
 
-	assign( node ) {
+  getNodeType(builder) {
+    return this.node.getNodeType(builder);
+  }
 
-		node.traverse( ( childNode, replaceNode ) => {
+  generate(builder) {
+    const node = this.node;
+    const name = this.name;
 
-			if ( replaceNode && childNode.uuid === this.uuid ) {
+    if (name === null && node.isTempNode === true) {
+      return node.build(builder);
+    }
 
-				replaceNode( this.node );
+    const type = builder.getVectorType(this.getNodeType(builder));
 
-			}
+    const snippet = node.build(builder, type);
+    const nodeVar = builder.getVarFromNode(this, type);
 
-		} );
-		this.node = node;
-		return this;
+    if (name !== null) {
+      nodeVar.name = name;
+    }
 
-	}
+    const propertyName = builder.getPropertyName(nodeVar);
 
-	isGlobal() {
+    builder.addLineFlowCode(`${propertyName} = ${snippet}`);
 
-		return true;
-
-	}
-
-	getHash( builder ) {
-
-		return this.name || super.getHash( builder );
-
-	}
-
-	getNodeType( builder ) {
-
-		return this.node.getNodeType( builder );
-
-	}
-
-	generate( builder ) {
-
-		const node = this.node;
-		const name = this.name;
-
-		if ( name === null && node.isTempNode === true ) {
-
-			return node.build( builder );
-
-		}
-
-		const type = builder.getVectorType( this.getNodeType( builder ) );
-
-		const snippet = node.build( builder, type );
-		const nodeVar = builder.getVarFromNode( this, type );
-
-		if ( name !== null ) {
-
-			nodeVar.name = name;
-
-		}
-
-		const propertyName = builder.getPropertyName( nodeVar );
-
-		builder.addLineFlowCode( `${propertyName} = ${snippet}` );
-
-		return propertyName;
-
-	}
-
+    return propertyName;
+  }
 }
 
 export default VarNode;
 
-export const temp = nodeProxy( VarNode );
+export const temp = nodeProxy(VarNode);
 
-addNodeElement( 'temp', temp );
+addNodeElement('temp', temp);
 
-addNodeClass( VarNode );
+addNodeClass(VarNode);

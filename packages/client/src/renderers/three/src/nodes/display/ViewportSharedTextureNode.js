@@ -7,25 +7,19 @@ import { FramebufferTexture } from 'three';
 let sharedFramebuffer = null;
 
 class ViewportSharedTextureNode extends ViewportTextureNode {
+  constructor(uvNode = viewportTopLeft, levelNode = null) {
+    if (sharedFramebuffer === null) {
+      sharedFramebuffer = new FramebufferTexture();
+    }
 
-	constructor( uvNode = viewportTopLeft, levelNode = null ) {
-
-		if ( sharedFramebuffer === null ) {
-
-			sharedFramebuffer = new FramebufferTexture();
-
-		}
-
-		super( uvNode, levelNode, sharedFramebuffer );
-
-	}
-
+    super(uvNode, levelNode, sharedFramebuffer);
+  }
 }
 
 export default ViewportSharedTextureNode;
 
-export const viewportSharedTexture = nodeProxy( ViewportSharedTextureNode );
+export const viewportSharedTexture = nodeProxy(ViewportSharedTextureNode);
 
-addNodeElement( 'viewportSharedTexture', viewportSharedTexture );
+addNodeElement('viewportSharedTexture', viewportSharedTexture);
 
-addNodeClass( ViewportSharedTextureNode );
+addNodeClass(ViewportSharedTextureNode);

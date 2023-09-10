@@ -15,10 +15,9 @@
   import * as THREE from 'three';
   import { texture, equirectUV } from 'three/nodes';
 
-  import WebGPU from 'three/addons/capabilities/WebGPU.js';
-  import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.js';
 
-  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+  import { OrbitControls } from '../src/controls/OrbitControls.js';
 
   let camera, scene, renderer;
   let controls;
@@ -26,14 +25,6 @@
   init();
 
   function init() {
-
-    if (WebGPU.isAvailable() === false) {
-
-      document.body.appendChild(WebGPU.getErrorMessage());
-
-      throw new Error('No WebGPU support');
-
-    }
 
     const container = document.createElement('div');
     document.body.appendChild(container);

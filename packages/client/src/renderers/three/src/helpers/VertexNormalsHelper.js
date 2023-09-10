@@ -1,96 +1,77 @@
-import {
-	BufferGeometry,
-	Float32BufferAttribute,
-	LineSegments,
-	LineBasicMaterial,
-	Matrix3,
-	Vector3
-} from 'three';
+import { BufferGeometry, Float32BufferAttribute, LineBasicMaterial, LineSegments, Matrix3, Vector3 } from 'three';
 
 const _v1 = new Vector3();
 const _v2 = new Vector3();
 const _normalMatrix = new Matrix3();
 
 class VertexNormalsHelper extends LineSegments {
+  constructor(object, size = 1, color = 0xff0000) {
+    const geometry = new BufferGeometry();
 
-	constructor( object, size = 1, color = 0xff0000 ) {
+    const nNormals = object.geometry.attributes.normal.count;
+    const positions = new Float32BufferAttribute(nNormals * 2 * 3, 3);
 
-		const geometry = new BufferGeometry();
+    geometry.setAttribute('position', positions);
 
-		const nNormals = object.geometry.attributes.normal.count;
-		const positions = new Float32BufferAttribute( nNormals * 2 * 3, 3 );
+    super(geometry, new LineBasicMaterial({ color, toneMapped: false }));
 
-		geometry.setAttribute( 'position', positions );
+    this.object = object;
+    this.size = size;
+    this.type = 'VertexNormalsHelper';
 
-		super( geometry, new LineBasicMaterial( { color, toneMapped: false } ) );
+    //
 
-		this.object = object;
-		this.size = size;
-		this.type = 'VertexNormalsHelper';
+    this.matrixAutoUpdate = false;
 
-		//
+    this.update();
+  }
 
-		this.matrixAutoUpdate = false;
+  update() {
+    this.object.updateMatrixWorld(true);
 
-		this.update();
+    _normalMatrix.getNormalMatrix(this.object.matrixWorld);
 
-	}
+    const matrixWorld = this.object.matrixWorld;
 
-	update() {
+    const position = this.geometry.attributes.position;
 
-		this.object.updateMatrixWorld( true );
+    //
 
-		_normalMatrix.getNormalMatrix( this.object.matrixWorld );
+    const objGeometry = this.object.geometry;
 
-		const matrixWorld = this.object.matrixWorld;
+    if (objGeometry) {
+      const objPos = objGeometry.attributes.position;
 
-		const position = this.geometry.attributes.position;
+      const objNorm = objGeometry.attributes.normal;
 
-		//
+      let idx = 0;
 
-		const objGeometry = this.object.geometry;
+      // for simplicity, ignore index and drawcalls, and render every normal
 
-		if ( objGeometry ) {
+      for (let j = 0, jl = objPos.count; j < jl; j++) {
+        _v1.fromBufferAttribute(objPos, j).applyMatrix4(matrixWorld);
 
-			const objPos = objGeometry.attributes.position;
+        _v2.fromBufferAttribute(objNorm, j);
 
-			const objNorm = objGeometry.attributes.normal;
+        _v2.applyMatrix3(_normalMatrix).normalize().multiplyScalar(this.size).add(_v1);
 
-			let idx = 0;
+        position.setXYZ(idx, _v1.x, _v1.y, _v1.z);
 
-			// for simplicity, ignore index and drawcalls, and render every normal
+        idx = idx + 1;
 
-			for ( let j = 0, jl = objPos.count; j < jl; j ++ ) {
+        position.setXYZ(idx, _v2.x, _v2.y, _v2.z);
 
-				_v1.fromBufferAttribute( objPos, j ).applyMatrix4( matrixWorld );
+        idx = idx + 1;
+      }
+    }
 
-				_v2.fromBufferAttribute( objNorm, j );
+    position.needsUpdate = true;
+  }
 
-				_v2.applyMatrix3( _normalMatrix ).normalize().multiplyScalar( this.size ).add( _v1 );
-
-				position.setXYZ( idx, _v1.x, _v1.y, _v1.z );
-
-				idx = idx + 1;
-
-				position.setXYZ( idx, _v2.x, _v2.y, _v2.z );
-
-				idx = idx + 1;
-
-			}
-
-		}
-
-		position.needsUpdate = true;
-
-	}
-
-	dispose() {
-
-		this.geometry.dispose();
-		this.material.dispose();
-
-	}
-
+  dispose() {
+    this.geometry.dispose();
+    this.material.dispose();
+  }
 }
 
 export { VertexNormalsHelper };

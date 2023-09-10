@@ -40,12 +40,11 @@
     NodeObjectLoader,
   } from 'three/nodes';
 
-  import WebGPU from 'three/addons/capabilities/WebGPU.js';
-  import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.js';
 
-  import { TeapotGeometry } from 'three/addons/geometries/TeapotGeometry.js';
+  import { TeapotGeometry } from '../src/geometries/TeapotGeometry.js';
 
-  import Stats from 'three/addons/libs/stats.module.js';
+  import Stats from '../src/libs/stats.module.js';
 
   let stats;
 
@@ -56,14 +55,6 @@
   init();
 
   function init() {
-
-    if (WebGPU.isAvailable() === false) {
-
-      document.body.appendChild(WebGPU.getErrorMessage());
-
-      throw new Error('No WebGPU support');
-
-    }
 
     const container = document.createElement('div');
     document.body.appendChild(container);

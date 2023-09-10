@@ -11,7 +11,8 @@
     "react-spinners": "^0.13.8",
     "react-use": "^17.4.0",
     "tslib": "^2.6.0",
-    "zustand": "^4.3.9"
+    "zustand": "^4.3.9",
+    "lil-gui": "^0.18.2"
   },
   "description": "Prototype application with the usage of @zd/engine",
   "devDependencies": {

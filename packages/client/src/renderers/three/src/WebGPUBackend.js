@@ -4,10 +4,10 @@ import 'https://greggman.github.io/webgpu-avoid-redundant-state-setting/webgpu-c
 
 import {
   GPUFeatureName,
-  GPUTextureFormat,
+  GPUIndexFormat,
   GPULoadOp,
   GPUStoreOp,
-  GPUIndexFormat,
+  GPUTextureFormat,
   GPUTextureViewDimension,
 } from './utils/constants.js';
 
@@ -15,9 +15,9 @@ import WebGPUNodeBuilder from './nodes/WebGPUNodeBuilder.js';
 import Backend from './common/Backend.js';
 
 import {
-  DepthTexture,
   DepthFormat,
   DepthStencilFormat,
+  DepthTexture,
   UnsignedInt248Type,
   UnsignedIntType,
   WebGPUCoordinateSystem,
@@ -70,6 +70,10 @@ class WebGPUBackend extends Backend {
     this.textureUtils = createTexturer(this);
   }
 
+  get coordinateSystem() {
+    return WebGPUCoordinateSystem;
+  }
+
   async init(renderer) {
     await super.init(renderer);
 
@@ -113,10 +117,6 @@ class WebGPUBackend extends Backend {
     this.context = context;
 
     this.updateSize();
-  }
-
-  get coordinateSystem() {
-    return WebGPUCoordinateSystem;
   }
 
   async getArrayBufferAsync(attribute) {

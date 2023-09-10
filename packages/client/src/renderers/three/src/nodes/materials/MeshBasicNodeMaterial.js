@@ -5,23 +5,19 @@ import { MeshBasicMaterial } from 'three';
 const defaultValues = new MeshBasicMaterial();
 
 class MeshBasicNodeMaterial extends NodeMaterial {
+  constructor(parameters) {
+    super();
 
-	constructor( parameters ) {
+    this.isMeshBasicNodeMaterial = true;
 
-		super();
+    this.lights = false;
 
-		this.isMeshBasicNodeMaterial = true;
+    this.setDefaultValues(defaultValues);
 
-		this.lights = false;
-
-		this.setDefaultValues( defaultValues );
-
-		this.setValues( parameters );
-
-	}
-
+    this.setValues(parameters);
+  }
 }
 
 export default MeshBasicNodeMaterial;
 
-addNodeMaterial( MeshBasicNodeMaterial );
+addNodeMaterial(MeshBasicNodeMaterial);

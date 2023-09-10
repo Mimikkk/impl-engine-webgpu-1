@@ -1,4 +1,4 @@
-export default /* glsl */`
+export default /* glsl */ `
 
 vec4 LinearToLinear( in vec4 value ) {
 	return value;

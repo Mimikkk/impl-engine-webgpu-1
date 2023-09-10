@@ -1,17 +1,13 @@
 import Buffer from './Buffer.js';
 
 class StorageBuffer extends Buffer {
+  constructor(name, attribute) {
+    super(name, attribute.array);
 
-	constructor( name, attribute ) {
+    this.attribute = attribute;
 
-		super( name, attribute.array );
-
-		this.attribute = attribute;
-
-		this.isStorageBuffer = true;
-
-	}
-
+    this.isStorageBuffer = true;
+  }
 }
 
 export default StorageBuffer;

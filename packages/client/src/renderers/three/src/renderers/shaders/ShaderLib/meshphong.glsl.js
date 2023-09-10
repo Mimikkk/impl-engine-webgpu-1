@@ -1,4 +1,4 @@
-export const vertex = /* glsl */`
+export const vertex = /* glsl */ `
 #define PHONG
 
 varying vec3 vViewPosition;
@@ -47,7 +47,7 @@ void main() {
 }
 `;
 
-export const fragment = /* glsl */`
+export const fragment = /* glsl */ `
 #define PHONG
 
 uniform vec3 diffuse;

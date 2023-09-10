@@ -15,13 +15,12 @@
   import * as THREE from 'three';
   import { color, rangeFog, checker, uv, mix, texture, lights, normalMap, MeshPhongNodeMaterial } from 'three/nodes';
 
-  import Stats from 'three/addons/libs/stats.module.js';
+  import Stats from '../src/libs/stats.module.js';
 
-  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-  import { TeapotGeometry } from 'three/addons/geometries/TeapotGeometry.js';
+  import { OrbitControls } from '../src/controls/OrbitControls.js';
+  import { TeapotGeometry } from '../src/geometries/TeapotGeometry.js';
 
-  import WebGPU from 'three/addons/capabilities/WebGPU.js';
-  import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.js';
 
   let camera, scene, renderer,
     light1, light2, light3, light4,
@@ -30,14 +29,6 @@
   init();
 
   function init() {
-
-    if (WebGPU.isAvailable() === false) {
-
-      document.body.appendChild(WebGPU.getErrorMessage());
-
-      throw new Error('No WebGPU support');
-
-    }
 
     camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 100);
     camera.position.z = 7;

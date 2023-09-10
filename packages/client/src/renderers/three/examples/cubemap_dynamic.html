@@ -13,14 +13,13 @@
   import * as THREE from 'three';
   import * as Nodes from 'three/nodes';
 
-  import WebGPU from 'three/addons/capabilities/WebGPU.js';
-  import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.js';
 
-  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-  import { RGBMLoader } from 'three/addons/loaders/RGBMLoader.js';
+  import { OrbitControls } from '../src/controls/OrbitControls.js';
+  import { RGBMLoader } from '../src/loaders/RGBMLoader.js';
 
-  import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
-  import Stats from 'three/addons/libs/stats.module.js';
+  import { GUI } from 'lil-gui';
+  import Stats from '../src/libs/stats.module.js';
 
   let camera, scene, renderer, stats;
   let cube, sphere, torus, material;
@@ -32,14 +31,6 @@
   init();
 
   function init() {
-
-    if (WebGPU.isAvailable() === false) {
-
-      document.body.appendChild(WebGPU.getErrorMessage());
-
-      throw new Error('No WebGPU support');
-
-    }
 
     renderer = new WebGPURenderer( /*{ antialias: true }*/);
     renderer.setPixelRatio(window.devicePixelRatio);

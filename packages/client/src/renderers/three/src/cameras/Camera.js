@@ -3,71 +3,57 @@ import { Matrix4 } from '../math/Matrix4.js';
 import { Object3D } from '../core/Object3D.js';
 
 class Camera extends Object3D {
+  constructor() {
+    super();
 
-	constructor() {
+    this.isCamera = true;
 
-		super();
+    this.type = 'Camera';
 
-		this.isCamera = true;
+    this.matrixWorldInverse = new Matrix4();
 
-		this.type = 'Camera';
+    this.projectionMatrix = new Matrix4();
+    this.projectionMatrixInverse = new Matrix4();
 
-		this.matrixWorldInverse = new Matrix4();
+    this.coordinateSystem = WebGLCoordinateSystem;
+  }
 
-		this.projectionMatrix = new Matrix4();
-		this.projectionMatrixInverse = new Matrix4();
+  copy(source, recursive) {
+    super.copy(source, recursive);
 
-		this.coordinateSystem = WebGLCoordinateSystem;
+    this.matrixWorldInverse.copy(source.matrixWorldInverse);
 
-	}
+    this.projectionMatrix.copy(source.projectionMatrix);
+    this.projectionMatrixInverse.copy(source.projectionMatrixInverse);
 
-	copy( source, recursive ) {
+    this.coordinateSystem = source.coordinateSystem;
 
-		super.copy( source, recursive );
+    return this;
+  }
 
-		this.matrixWorldInverse.copy( source.matrixWorldInverse );
+  getWorldDirection(target) {
+    this.updateWorldMatrix(true, false);
 
-		this.projectionMatrix.copy( source.projectionMatrix );
-		this.projectionMatrixInverse.copy( source.projectionMatrixInverse );
+    const e = this.matrixWorld.elements;
 
-		this.coordinateSystem = source.coordinateSystem;
+    return target.set(-e[8], -e[9], -e[10]).normalize();
+  }
 
-		return this;
+  updateMatrixWorld(force) {
+    super.updateMatrixWorld(force);
 
-	}
+    this.matrixWorldInverse.copy(this.matrixWorld).invert();
+  }
 
-	getWorldDirection( target ) {
+  updateWorldMatrix(updateParents, updateChildren) {
+    super.updateWorldMatrix(updateParents, updateChildren);
 
-		this.updateWorldMatrix( true, false );
+    this.matrixWorldInverse.copy(this.matrixWorld).invert();
+  }
 
-		const e = this.matrixWorld.elements;
-
-		return target.set( - e[ 8 ], - e[ 9 ], - e[ 10 ] ).normalize();
-
-	}
-
-	updateMatrixWorld( force ) {
-
-		super.updateMatrixWorld( force );
-
-		this.matrixWorldInverse.copy( this.matrixWorld ).invert();
-
-	}
-
-	updateWorldMatrix( updateParents, updateChildren ) {
-
-		super.updateWorldMatrix( updateParents, updateChildren );
-
-		this.matrixWorldInverse.copy( this.matrixWorld ).invert();
-
-	}
-
-	clone() {
-
-		return new this.constructor().copy( this );
-
-	}
-
+  clone() {
+    return new this.constructor().copy(this);
+  }
 }
 
 export { Camera };

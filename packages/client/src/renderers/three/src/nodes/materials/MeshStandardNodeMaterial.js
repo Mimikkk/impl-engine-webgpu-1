@@ -1,7 +1,7 @@
 import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
 import { diffuseColor, metalness, roughness, specularColor } from '../core/PropertyNode.js';
 import { mix } from '../math/MathNode.js';
-import { materialRoughness, materialMetalness } from '../accessors/MaterialNode.js';
+import { materialMetalness, materialRoughness } from '../accessors/MaterialNode.js';
 import getRoughness from '../functions/material/getRoughness.js';
 import PhysicalLightingModel from '../functions/PhysicalLightingModel.js';
 import { float, vec3, vec4 } from '../shadernode/ShaderNode.js';
@@ -11,70 +11,60 @@ import { MeshStandardMaterial } from 'three';
 const defaultValues = new MeshStandardMaterial();
 
 class MeshStandardNodeMaterial extends NodeMaterial {
+  constructor(parameters) {
+    super();
 
-	constructor( parameters ) {
+    this.isMeshStandardNodeMaterial = true;
 
-		super();
+    this.emissiveNode = null;
 
-		this.isMeshStandardNodeMaterial = true;
+    this.metalnessNode = null;
+    this.roughnessNode = null;
 
-		this.emissiveNode = null;
+    this.setDefaultValues(defaultValues);
 
-		this.metalnessNode = null;
-		this.roughnessNode = null;
+    this.setValues(parameters);
+  }
 
-		this.setDefaultValues( defaultValues );
+  constructLightingModel(/*builder*/) {
+    return new PhysicalLightingModel(false, false); // ( clearcoat, sheen ) -> standard
+  }
 
-		this.setValues( parameters );
+  constructVariants({ stack }) {
+    // METALNESS
 
-	}
+    const metalnessNode = this.metalnessNode ? float(this.metalnessNode) : materialMetalness;
 
-	constructLightingModel( /*builder*/ ) {
+    stack.assign(metalness, metalnessNode);
 
-		return new PhysicalLightingModel( false, false ); // ( clearcoat, sheen ) -> standard
+    // ROUGHNESS
 
-	}
+    let roughnessNode = this.roughnessNode ? float(this.roughnessNode) : materialRoughness;
+    roughnessNode = getRoughness({ roughness: roughnessNode });
 
-	constructVariants( { stack } ) {
+    stack.assign(roughness, roughnessNode);
 
-		// METALNESS
+    // SPECULAR COLOR
 
-		const metalnessNode = this.metalnessNode ? float( this.metalnessNode ) : materialMetalness;
+    const specularColorNode = mix(vec3(0.04), diffuseColor.rgb, metalnessNode);
 
-		stack.assign( metalness, metalnessNode );
+    stack.assign(specularColor, specularColorNode);
 
-		// ROUGHNESS
+    // DIFFUSE COLOR
 
-		let roughnessNode = this.roughnessNode ? float( this.roughnessNode ) : materialRoughness;
-		roughnessNode = getRoughness( { roughness: roughnessNode } );
+    stack.assign(diffuseColor, vec4(diffuseColor.rgb.mul(metalnessNode.oneMinus()), diffuseColor.a));
+  }
 
-		stack.assign( roughness, roughnessNode );
+  copy(source) {
+    this.emissiveNode = source.emissiveNode;
 
-		// SPECULAR COLOR
+    this.metalnessNode = source.metalnessNode;
+    this.roughnessNode = source.roughnessNode;
 
-		const specularColorNode = mix( vec3( 0.04 ), diffuseColor.rgb, metalnessNode );
-
-		stack.assign( specularColor, specularColorNode );
-
-		// DIFFUSE COLOR
-
-		stack.assign( diffuseColor, vec4( diffuseColor.rgb.mul( metalnessNode.oneMinus() ), diffuseColor.a ) );
-
-	}
-
-	copy( source ) {
-
-		this.emissiveNode = source.emissiveNode;
-
-		this.metalnessNode = source.metalnessNode;
-		this.roughnessNode = source.roughnessNode;
-
-		return super.copy( source );
-
-	}
-
+    return super.copy(source);
+  }
 }
 
 export default MeshStandardNodeMaterial;
 
-addNodeMaterial( MeshStandardNodeMaterial );
+addNodeMaterial(MeshStandardNodeMaterial);

@@ -5,327 +5,257 @@ import { denormalize, normalize } from '../math/MathUtils.js';
 const _vector = /*@__PURE__*/ new Vector3();
 
 class InterleavedBufferAttribute {
+  constructor(interleavedBuffer, itemSize, offset, normalized = false) {
+    this.isInterleavedBufferAttribute = true;
 
-	constructor( interleavedBuffer, itemSize, offset, normalized = false ) {
+    this.name = '';
 
-		this.isInterleavedBufferAttribute = true;
+    this.data = interleavedBuffer;
+    this.itemSize = itemSize;
+    this.offset = offset;
 
-		this.name = '';
+    this.normalized = normalized;
+  }
 
-		this.data = interleavedBuffer;
-		this.itemSize = itemSize;
-		this.offset = offset;
+  get count() {
+    return this.data.count;
+  }
 
-		this.normalized = normalized;
+  get array() {
+    return this.data.array;
+  }
 
-	}
+  set needsUpdate(value) {
+    this.data.needsUpdate = value;
+  }
 
-	get count() {
+  applyMatrix4(m) {
+    for (let i = 0, l = this.data.count; i < l; i++) {
+      _vector.fromBufferAttribute(this, i);
 
-		return this.data.count;
+      _vector.applyMatrix4(m);
 
-	}
+      this.setXYZ(i, _vector.x, _vector.y, _vector.z);
+    }
 
-	get array() {
+    return this;
+  }
 
-		return this.data.array;
+  applyNormalMatrix(m) {
+    for (let i = 0, l = this.count; i < l; i++) {
+      _vector.fromBufferAttribute(this, i);
 
-	}
+      _vector.applyNormalMatrix(m);
 
-	set needsUpdate( value ) {
+      this.setXYZ(i, _vector.x, _vector.y, _vector.z);
+    }
 
-		this.data.needsUpdate = value;
+    return this;
+  }
 
-	}
+  transformDirection(m) {
+    for (let i = 0, l = this.count; i < l; i++) {
+      _vector.fromBufferAttribute(this, i);
 
-	applyMatrix4( m ) {
+      _vector.transformDirection(m);
 
-		for ( let i = 0, l = this.data.count; i < l; i ++ ) {
+      this.setXYZ(i, _vector.x, _vector.y, _vector.z);
+    }
 
-			_vector.fromBufferAttribute( this, i );
+    return this;
+  }
 
-			_vector.applyMatrix4( m );
+  setX(index, x) {
+    if (this.normalized) x = normalize(x, this.array);
 
-			this.setXYZ( i, _vector.x, _vector.y, _vector.z );
+    this.data.array[index * this.data.stride + this.offset] = x;
 
-		}
+    return this;
+  }
 
-		return this;
+  setY(index, y) {
+    if (this.normalized) y = normalize(y, this.array);
 
-	}
+    this.data.array[index * this.data.stride + this.offset + 1] = y;
 
-	applyNormalMatrix( m ) {
+    return this;
+  }
 
-		for ( let i = 0, l = this.count; i < l; i ++ ) {
+  setZ(index, z) {
+    if (this.normalized) z = normalize(z, this.array);
 
-			_vector.fromBufferAttribute( this, i );
+    this.data.array[index * this.data.stride + this.offset + 2] = z;
 
-			_vector.applyNormalMatrix( m );
+    return this;
+  }
 
-			this.setXYZ( i, _vector.x, _vector.y, _vector.z );
+  setW(index, w) {
+    if (this.normalized) w = normalize(w, this.array);
 
-		}
+    this.data.array[index * this.data.stride + this.offset + 3] = w;
 
-		return this;
+    return this;
+  }
 
-	}
+  getX(index) {
+    let x = this.data.array[index * this.data.stride + this.offset];
 
-	transformDirection( m ) {
+    if (this.normalized) x = denormalize(x, this.array);
 
-		for ( let i = 0, l = this.count; i < l; i ++ ) {
+    return x;
+  }
 
-			_vector.fromBufferAttribute( this, i );
+  getY(index) {
+    let y = this.data.array[index * this.data.stride + this.offset + 1];
 
-			_vector.transformDirection( m );
+    if (this.normalized) y = denormalize(y, this.array);
 
-			this.setXYZ( i, _vector.x, _vector.y, _vector.z );
+    return y;
+  }
 
-		}
+  getZ(index) {
+    let z = this.data.array[index * this.data.stride + this.offset + 2];
 
-		return this;
+    if (this.normalized) z = denormalize(z, this.array);
 
-	}
+    return z;
+  }
 
-	setX( index, x ) {
+  getW(index) {
+    let w = this.data.array[index * this.data.stride + this.offset + 3];
 
-		if ( this.normalized ) x = normalize( x, this.array );
+    if (this.normalized) w = denormalize(w, this.array);
 
-		this.data.array[ index * this.data.stride + this.offset ] = x;
+    return w;
+  }
 
-		return this;
+  setXY(index, x, y) {
+    index = index * this.data.stride + this.offset;
 
-	}
+    if (this.normalized) {
+      x = normalize(x, this.array);
+      y = normalize(y, this.array);
+    }
 
-	setY( index, y ) {
+    this.data.array[index + 0] = x;
+    this.data.array[index + 1] = y;
 
-		if ( this.normalized ) y = normalize( y, this.array );
+    return this;
+  }
+
+  setXYZ(index, x, y, z) {
+    index = index * this.data.stride + this.offset;
 
-		this.data.array[ index * this.data.stride + this.offset + 1 ] = y;
-
-		return this;
-
-	}
-
-	setZ( index, z ) {
-
-		if ( this.normalized ) z = normalize( z, this.array );
-
-		this.data.array[ index * this.data.stride + this.offset + 2 ] = z;
-
-		return this;
-
-	}
-
-	setW( index, w ) {
-
-		if ( this.normalized ) w = normalize( w, this.array );
-
-		this.data.array[ index * this.data.stride + this.offset + 3 ] = w;
-
-		return this;
-
-	}
-
-	getX( index ) {
-
-		let x = this.data.array[ index * this.data.stride + this.offset ];
-
-		if ( this.normalized ) x = denormalize( x, this.array );
-
-		return x;
-
-	}
-
-	getY( index ) {
-
-		let y = this.data.array[ index * this.data.stride + this.offset + 1 ];
-
-		if ( this.normalized ) y = denormalize( y, this.array );
-
-		return y;
-
-	}
-
-	getZ( index ) {
-
-		let z = this.data.array[ index * this.data.stride + this.offset + 2 ];
-
-		if ( this.normalized ) z = denormalize( z, this.array );
-
-		return z;
-
-	}
-
-	getW( index ) {
-
-		let w = this.data.array[ index * this.data.stride + this.offset + 3 ];
-
-		if ( this.normalized ) w = denormalize( w, this.array );
-
-		return w;
-
-	}
-
-	setXY( index, x, y ) {
-
-		index = index * this.data.stride + this.offset;
-
-		if ( this.normalized ) {
-
-			x = normalize( x, this.array );
-			y = normalize( y, this.array );
-
-		}
-
-		this.data.array[ index + 0 ] = x;
-		this.data.array[ index + 1 ] = y;
-
-		return this;
-
-	}
-
-	setXYZ( index, x, y, z ) {
-
-		index = index * this.data.stride + this.offset;
-
-		if ( this.normalized ) {
-
-			x = normalize( x, this.array );
-			y = normalize( y, this.array );
-			z = normalize( z, this.array );
-
-		}
-
-		this.data.array[ index + 0 ] = x;
-		this.data.array[ index + 1 ] = y;
-		this.data.array[ index + 2 ] = z;
-
-		return this;
-
-	}
-
-	setXYZW( index, x, y, z, w ) {
-
-		index = index * this.data.stride + this.offset;
-
-		if ( this.normalized ) {
-
-			x = normalize( x, this.array );
-			y = normalize( y, this.array );
-			z = normalize( z, this.array );
-			w = normalize( w, this.array );
-
-		}
-
-		this.data.array[ index + 0 ] = x;
-		this.data.array[ index + 1 ] = y;
-		this.data.array[ index + 2 ] = z;
-		this.data.array[ index + 3 ] = w;
-
-		return this;
-
-	}
-
-	clone( data ) {
-
-		if ( data === undefined ) {
-
-			console.log( 'THREE.InterleavedBufferAttribute.clone(): Cloning an interleaved buffer attribute will de-interleave buffer data.' );
-
-			const array = [];
-
-			for ( let i = 0; i < this.count; i ++ ) {
-
-				const index = i * this.data.stride + this.offset;
-
-				for ( let j = 0; j < this.itemSize; j ++ ) {
-
-					array.push( this.data.array[ index + j ] );
-
-				}
-
-			}
-
-			return new BufferAttribute( new this.array.constructor( array ), this.itemSize, this.normalized );
-
-		} else {
-
-			if ( data.interleavedBuffers === undefined ) {
-
-				data.interleavedBuffers = {};
-
-			}
-
-			if ( data.interleavedBuffers[ this.data.uuid ] === undefined ) {
-
-				data.interleavedBuffers[ this.data.uuid ] = this.data.clone( data );
-
-			}
-
-			return new InterleavedBufferAttribute( data.interleavedBuffers[ this.data.uuid ], this.itemSize, this.offset, this.normalized );
-
-		}
-
-	}
-
-	toJSON( data ) {
-
-		if ( data === undefined ) {
-
-			console.log( 'THREE.InterleavedBufferAttribute.toJSON(): Serializing an interleaved buffer attribute will de-interleave buffer data.' );
-
-			const array = [];
-
-			for ( let i = 0; i < this.count; i ++ ) {
-
-				const index = i * this.data.stride + this.offset;
-
-				for ( let j = 0; j < this.itemSize; j ++ ) {
-
-					array.push( this.data.array[ index + j ] );
-
-				}
-
-			}
-
-			// de-interleave data and save it as an ordinary buffer attribute for now
-
-			return {
-				itemSize: this.itemSize,
-				type: this.array.constructor.name,
-				array: array,
-				normalized: this.normalized
-			};
-
-		} else {
-
-			// save as true interleaved attribute
-
-			if ( data.interleavedBuffers === undefined ) {
-
-				data.interleavedBuffers = {};
-
-			}
-
-			if ( data.interleavedBuffers[ this.data.uuid ] === undefined ) {
-
-				data.interleavedBuffers[ this.data.uuid ] = this.data.toJSON( data );
-
-			}
-
-			return {
-				isInterleavedBufferAttribute: true,
-				itemSize: this.itemSize,
-				data: this.data.uuid,
-				offset: this.offset,
-				normalized: this.normalized
-			};
-
-		}
-
-	}
-
+    if (this.normalized) {
+      x = normalize(x, this.array);
+      y = normalize(y, this.array);
+      z = normalize(z, this.array);
+    }
+
+    this.data.array[index + 0] = x;
+    this.data.array[index + 1] = y;
+    this.data.array[index + 2] = z;
+
+    return this;
+  }
+
+  setXYZW(index, x, y, z, w) {
+    index = index * this.data.stride + this.offset;
+
+    if (this.normalized) {
+      x = normalize(x, this.array);
+      y = normalize(y, this.array);
+      z = normalize(z, this.array);
+      w = normalize(w, this.array);
+    }
+
+    this.data.array[index + 0] = x;
+    this.data.array[index + 1] = y;
+    this.data.array[index + 2] = z;
+    this.data.array[index + 3] = w;
+
+    return this;
+  }
+
+  clone(data) {
+    if (data === undefined) {
+      console.log(
+        'THREE.InterleavedBufferAttribute.clone(): Cloning an interleaved buffer attribute will de-interleave buffer data.',
+      );
+
+      const array = [];
+
+      for (let i = 0; i < this.count; i++) {
+        const index = i * this.data.stride + this.offset;
+
+        for (let j = 0; j < this.itemSize; j++) {
+          array.push(this.data.array[index + j]);
+        }
+      }
+
+      return new BufferAttribute(new this.array.constructor(array), this.itemSize, this.normalized);
+    } else {
+      if (data.interleavedBuffers === undefined) {
+        data.interleavedBuffers = {};
+      }
+
+      if (data.interleavedBuffers[this.data.uuid] === undefined) {
+        data.interleavedBuffers[this.data.uuid] = this.data.clone(data);
+      }
+
+      return new InterleavedBufferAttribute(
+        data.interleavedBuffers[this.data.uuid],
+        this.itemSize,
+        this.offset,
+        this.normalized,
+      );
+    }
+  }
+
+  toJSON(data) {
+    if (data === undefined) {
+      console.log(
+        'THREE.InterleavedBufferAttribute.toJSON(): Serializing an interleaved buffer attribute will de-interleave buffer data.',
+      );
+
+      const array = [];
+
+      for (let i = 0; i < this.count; i++) {
+        const index = i * this.data.stride + this.offset;
+
+        for (let j = 0; j < this.itemSize; j++) {
+          array.push(this.data.array[index + j]);
+        }
+      }
+
+      // de-interleave data and save it as an ordinary buffer attribute for now
+
+      return {
+        itemSize: this.itemSize,
+        type: this.array.constructor.name,
+        array: array,
+        normalized: this.normalized,
+      };
+    } else {
+      // save as true interleaved attribute
+
+      if (data.interleavedBuffers === undefined) {
+        data.interleavedBuffers = {};
+      }
+
+      if (data.interleavedBuffers[this.data.uuid] === undefined) {
+        data.interleavedBuffers[this.data.uuid] = this.data.toJSON(data);
+      }
+
+      return {
+        isInterleavedBufferAttribute: true,
+        itemSize: this.itemSize,
+        data: this.data.uuid,
+        offset: this.offset,
+        normalized: this.normalized,
+      };
+    }
+  }
 }
-
 
 export { InterleavedBufferAttribute };

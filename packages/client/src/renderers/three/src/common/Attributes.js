@@ -1,75 +1,51 @@
 import DataMap from './DataMap.js';
 import { AttributeType } from './Constants.js';
-import { DynamicDrawUsage } from 'three';
+import { DynamicDrawUsage } from '../Three.js';
 
 class Attributes extends DataMap {
+  constructor(backend) {
+    super();
 
-	constructor( backend ) {
+    this.backend = backend;
+  }
 
-		super();
+  delete(attribute) {
+    const attributeData = super.delete(attribute);
 
-		this.backend = backend;
+    if (attributeData !== undefined) {
+      this.backend.destroyAttribute(attribute);
+    }
+  }
 
-	}
+  update(attribute, type) {
+    const data = this.get(attribute);
 
-	delete( attribute ) {
+    if (data.version === undefined) {
+      if (type === AttributeType.VERTEX) {
+        this.backend.createAttribute(attribute);
+      } else if (type === AttributeType.INDEX) {
+        this.backend.createIndexAttribute(attribute);
+      } else if (type === AttributeType.STORAGE) {
+        this.backend.createStorageAttribute(attribute);
+      }
 
-		const attributeData = super.delete( attribute );
+      data.version = this._getBufferAttribute(attribute).version;
+    } else {
+      const bufferAttribute = this._getBufferAttribute(attribute);
 
-		if ( attributeData !== undefined ) {
+      if (data.version < bufferAttribute.version || bufferAttribute.usage === DynamicDrawUsage) {
+        this.backend.updateAttribute(attribute);
 
-			this.backend.destroyAttribute( attribute );
+        data.version = bufferAttribute.version;
+      }
+    }
+  }
 
-		}
+  _getBufferAttribute(attribute) {
+    if (attribute.isInterleavedBufferAttribute) attribute = attribute.data;
 
-	}
-
-	update( attribute, type ) {
-
-		const data = this.get( attribute );
-
-		if ( data.version === undefined ) {
-
-			if ( type === AttributeType.VERTEX ) {
-
-				this.backend.createAttribute( attribute );
-
-			} else if ( type === AttributeType.INDEX ) {
-
-				this.backend.createIndexAttribute( attribute );
-
-			} else if ( type === AttributeType.STORAGE ) {
-
-				this.backend.createStorageAttribute( attribute );
-
-			}
-
-			data.version = this._getBufferAttribute( attribute ).version;
-
-		} else {
-
-			const bufferAttribute = this._getBufferAttribute( attribute );
-
-			if ( data.version < bufferAttribute.version || bufferAttribute.usage === DynamicDrawUsage ) {
-
-				this.backend.updateAttribute( attribute );
-
-				data.version = bufferAttribute.version;
-
-			}
-
-		}
-
-	}
-
-	_getBufferAttribute( attribute ) {
-
-		if ( attribute.isInterleavedBufferAttribute ) attribute = attribute.data;
-
-		return attribute;
-
-	}
-
+    return attribute;
+  }
 }
 
 export default Attributes;

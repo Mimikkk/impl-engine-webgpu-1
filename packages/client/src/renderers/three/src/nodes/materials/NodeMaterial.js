@@ -1,9 +1,9 @@
-import { Material, ShaderMaterial, NoColorSpace, LinearSRGBColorSpace } from 'three';
-import { getNodeChildren, getCacheKey } from '../core/NodeUtils.js';
+import { LinearSRGBColorSpace, Material, NoColorSpace, ShaderMaterial } from 'three';
+import { getCacheKey, getNodeChildren } from '../core/NodeUtils.js';
 import { attribute } from '../core/AttributeNode.js';
-import { output, diffuseColor } from '../core/PropertyNode.js';
+import { diffuseColor, output } from '../core/PropertyNode.js';
 import { materialNormal } from '../accessors/ExtendedMaterialNode.js';
-import { materialAlphaTest, materialColor, materialOpacity, materialEmissive } from '../accessors/MaterialNode.js';
+import { materialAlphaTest, materialColor, materialEmissive, materialOpacity } from '../accessors/MaterialNode.js';
 import { modelViewProjection } from '../accessors/ModelViewProjectionNode.js';
 import { transformedNormalView } from '../accessors/NormalNode.js';
 import { instance } from '../accessors/InstanceNode.js';
@@ -13,7 +13,7 @@ import { morph } from '../accessors/MorphNode.js';
 import { texture } from '../accessors/TextureNode.js';
 import { cubeTexture } from '../accessors/CubeTextureNode.js';
 import { lightsWithoutWrap } from '../lighting/LightsNode.js';
-import { mix, dFdx, dFdy } from '../math/MathNode.js';
+import { dFdx, dFdy, mix } from '../math/MathNode.js';
 import { float, vec3, vec4 } from '../shadernode/ShaderNode.js';
 import AONode from '../lighting/AONode.js';
 import EnvironmentNode from '../lighting/EnvironmentNode.js';
@@ -21,516 +21,411 @@ import EnvironmentNode from '../lighting/EnvironmentNode.js';
 const NodeMaterials = new Map();
 
 class NodeMaterial extends ShaderMaterial {
+  constructor() {
+    super();
 
-	constructor() {
+    this.isNodeMaterial = true;
 
-		super();
+    this.type = this.constructor.name;
 
-		this.isNodeMaterial = true;
+    this.forceSinglePass = false;
 
-		this.type = this.constructor.name;
+    this.unlit = this.constructor === NodeMaterial.prototype.constructor; // Extended materials are not unlit by default
 
-		this.forceSinglePass = false;
+    this.fog = true;
+    this.lights = true;
+    this.normals = true;
+    this.colorSpace = true;
 
-		this.unlit = this.constructor === NodeMaterial.prototype.constructor; // Extended materials are not unlit by default
+    this.lightsNode = null;
+    this.envNode = null;
 
-		this.fog = true;
-		this.lights = true;
-		this.normals = true;
-		this.colorSpace = true;
+    this.colorNode = null;
+    this.normalNode = null;
+    this.opacityNode = null;
+    this.backdropNode = null;
+    this.backdropAlphaNode = null;
+    this.alphaTestNode = null;
 
-		this.lightsNode = null;
-		this.envNode = null;
+    this.positionNode = null;
 
-		this.colorNode = null;
-		this.normalNode = null;
-		this.opacityNode = null;
-		this.backdropNode = null;
-		this.backdropAlphaNode = null;
-		this.alphaTestNode = null;
+    this.outputNode = null; // @TODO: Rename to fragmentNode
+    this.vertexNode = null;
+  }
 
-		this.positionNode = null;
+  static fromMaterial(material) {
+    if (material.isNodeMaterial === true) {
+      // is already a node material
 
-		this.outputNode = null; // @TODO: Rename to fragmentNode
-		this.vertexNode = null;
+      return material;
+    }
 
-	}
+    const type = material.type.replace('Material', 'NodeMaterial');
 
-	customProgramCacheKey() {
+    const nodeMaterial = createNodeMaterialFromType(type);
 
-		return this.type + getCacheKey( this );
+    if (nodeMaterial === undefined) {
+      throw new Error(`NodeMaterial: Material "${material.type}" is not compatible.`);
+    }
 
-	}
+    for (const key in material) {
+      nodeMaterial[key] = material[key];
+    }
 
-	build( builder ) {
+    return nodeMaterial;
+  }
 
-		this.construct( builder );
+  customProgramCacheKey() {
+    return this.type + getCacheKey(this);
+  }
 
-	}
+  build(builder) {
+    this.construct(builder);
+  }
 
-	construct( builder ) {
+  construct(builder) {
+    // < VERTEX STAGE >
 
-		// < VERTEX STAGE >
+    builder.addStack();
 
-		builder.addStack();
+    builder.stack.outputNode = this.constructPosition(builder);
 
-		builder.stack.outputNode = this.constructPosition( builder );
+    builder.addFlow('vertex', builder.removeStack());
 
-		builder.addFlow( 'vertex', builder.removeStack() );
+    // < FRAGMENT STAGE >
 
-		// < FRAGMENT STAGE >
+    builder.addStack();
 
-		builder.addStack();
+    let outputNode;
 
-		let outputNode;
+    if (this.unlit === false) {
+      if (this.normals === true) this.constructNormal(builder);
 
-		if ( this.unlit === false ) {
+      this.constructDiffuseColor(builder);
+      this.constructVariants(builder);
 
-			if ( this.normals === true ) this.constructNormal( builder );
+      const outgoingLightNode = this.constructLighting(builder);
 
-			this.constructDiffuseColor( builder );
-			this.constructVariants( builder );
+      outputNode = this.constructOutput(builder, vec4(outgoingLightNode, diffuseColor.a));
 
-			const outgoingLightNode = this.constructLighting( builder );
+      // OUTPUT NODE
 
-			outputNode = this.constructOutput( builder, vec4( outgoingLightNode, diffuseColor.a ) );
+      builder.stack.assign(output, outputNode);
 
-			// OUTPUT NODE
+      //
 
-			builder.stack.assign( output, outputNode );
+      if (this.outputNode !== null) outputNode = this.outputNode;
+    } else {
+      outputNode = this.constructOutput(builder, this.outputNode || vec4(0, 0, 0, 1));
+    }
 
-			//
+    builder.stack.outputNode = outputNode;
 
-			if ( this.outputNode !== null ) outputNode = this.outputNode;
+    builder.addFlow('fragment', builder.removeStack());
+  }
 
-		} else {
+  constructPosition(builder) {
+    const object = builder.object;
+    const geometry = object.geometry;
 
-			outputNode = this.constructOutput( builder, this.outputNode || vec4( 0, 0, 0, 1 ) );
+    builder.addStack();
 
-		}
+    if (geometry.morphAttributes.position || geometry.morphAttributes.normal || geometry.morphAttributes.color) {
+      builder.stack.add(morph(object));
+    }
 
-		builder.stack.outputNode = outputNode;
+    if (object.isSkinnedMesh === true) {
+      builder.stack.add(skinning(object));
+    }
 
-		builder.addFlow( 'fragment', builder.removeStack() );
+    if (
+      object.instanceMatrix &&
+      object.instanceMatrix.isInstancedBufferAttribute === true &&
+      builder.isAvailable('instance') === true
+    ) {
+      builder.stack.add(instance(object));
+    }
 
-	}
+    if (this.positionNode !== null) {
+      builder.stack.assign(positionLocal, this.positionNode);
+    }
 
-	constructPosition( builder ) {
+    builder.context.vertex = builder.removeStack();
 
-		const object = builder.object;
-		const geometry = object.geometry;
+    return this.vertexNode || modelViewProjection();
+  }
 
-		builder.addStack();
+  constructDiffuseColor({ stack, geometry }) {
+    let colorNode = this.colorNode ? vec4(this.colorNode) : materialColor;
 
-		if ( geometry.morphAttributes.position || geometry.morphAttributes.normal || geometry.morphAttributes.color ) {
+    // VERTEX COLORS
 
-			builder.stack.add( morph( object ) );
+    if (this.vertexColors === true && geometry.hasAttribute('color')) {
+      colorNode = vec4(colorNode.xyz.mul(attribute('color')), colorNode.a);
+    }
 
-		}
+    // COLOR
 
-		if ( object.isSkinnedMesh === true ) {
+    stack.assign(diffuseColor, colorNode);
 
-			builder.stack.add( skinning( object ) );
+    // OPACITY
 
-		}
+    const opacityNode = this.opacityNode ? float(this.opacityNode) : materialOpacity;
+    stack.assign(diffuseColor.a, diffuseColor.a.mul(opacityNode));
 
-		if ( ( object.instanceMatrix && object.instanceMatrix.isInstancedBufferAttribute === true ) && builder.isAvailable( 'instance' ) === true ) {
+    // ALPHA TEST
 
-			builder.stack.add( instance( object ) );
+    if (this.alphaTestNode !== null || this.alphaTest > 0) {
+      const alphaTestNode = this.alphaTestNode !== null ? float(this.alphaTestNode) : materialAlphaTest;
 
-		}
+      stack.add(diffuseColor.a.lessThanEqual(alphaTestNode).discard());
+    }
+  }
 
-		if ( this.positionNode !== null ) {
+  constructVariants(/*builder*/) {
+    // Interface function.
+  }
 
-			builder.stack.assign( positionLocal, this.positionNode );
+  constructNormal({ stack }) {
+    // NORMAL VIEW
 
-		}
+    if (this.flatShading === true) {
+      const fdx = dFdx(positionView);
+      const fdy = dFdy(positionView.negate()); // use -positionView ?
+      const normalNode = fdx.cross(fdy).normalize();
 
-		builder.context.vertex = builder.removeStack();
+      stack.assign(transformedNormalView, normalNode);
+    } else {
+      const normalNode = this.normalNode ? vec3(this.normalNode) : materialNormal;
 
-		return this.vertexNode || modelViewProjection();
+      stack.assign(transformedNormalView, normalNode);
+    }
+  }
 
-	}
+  getEnvNode(builder) {
+    let node = null;
 
-	constructDiffuseColor( { stack, geometry } ) {
+    if (this.envNode) {
+      node = this.envNode;
+    } else if (this.envMap) {
+      node = this.envMap.isCubeTexture ? cubeTexture(this.envMap) : texture(this.envMap);
+    } else if (builder.environmentNode) {
+      node = builder.environmentNode;
+    }
 
-		let colorNode = this.colorNode ? vec4( this.colorNode ) : materialColor;
+    return node;
+  }
 
-		// VERTEX COLORS
+  constructLights(builder) {
+    const envNode = this.getEnvNode(builder);
 
-		if ( this.vertexColors === true && geometry.hasAttribute( 'color' ) ) {
+    //
 
-			colorNode = vec4( colorNode.xyz.mul( attribute( 'color' ) ), colorNode.a );
+    const materialLightsNode = [];
 
-		}
+    if (envNode) {
+      materialLightsNode.push(new EnvironmentNode(envNode));
+    }
 
-		// COLOR
+    if (builder.material.aoMap) {
+      materialLightsNode.push(new AONode(texture(builder.material.aoMap)));
+    }
 
-		stack.assign( diffuseColor, colorNode );
+    let lightsNode = this.lightsNode || builder.lightsNode;
 
-		// OPACITY
+    if (materialLightsNode.length > 0) {
+      lightsNode = lightsWithoutWrap([...lightsNode.lightNodes, ...materialLightsNode]);
+    }
 
-		const opacityNode = this.opacityNode ? float( this.opacityNode ) : materialOpacity;
-		stack.assign( diffuseColor.a, diffuseColor.a.mul( opacityNode ) );
+    return lightsNode;
+  }
 
-		// ALPHA TEST
+  constructLightingModel(/*builder*/) {
+    // Interface function.
+  }
 
-		if ( this.alphaTestNode !== null || this.alphaTest > 0 ) {
+  constructLighting(builder) {
+    const { material } = builder;
+    const { backdropNode, backdropAlphaNode, emissiveNode } = this;
 
-			const alphaTestNode = this.alphaTestNode !== null ? float( this.alphaTestNode ) : materialAlphaTest;
+    // OUTGOING LIGHT
 
-			stack.add( diffuseColor.a.lessThanEqual( alphaTestNode ).discard() );
+    const lights = this.lights === true || this.lightsNode !== null;
 
-		}
+    const lightsNode = lights ? this.constructLights(builder) : null;
 
-	}
+    let outgoingLightNode = diffuseColor.rgb;
 
-	constructVariants( /*builder*/ ) {
+    if (lightsNode && lightsNode.hasLight !== false) {
+      const lightingModelNode = this.constructLightingModel(builder);
 
-		// Interface function.
+      outgoingLightNode = lightsNode.lightingContext(lightingModelNode, backdropNode, backdropAlphaNode);
+    } else if (backdropNode !== null) {
+      outgoingLightNode = vec3(
+        backdropAlphaNode !== null ? mix(outgoingLightNode, backdropNode, backdropAlphaNode) : backdropNode,
+      );
+    }
 
-	}
+    // EMISSIVE
 
-	constructNormal( { stack } ) {
+    if ((emissiveNode && emissiveNode.isNode === true) || (material.emissive && material.emissive.isColor === true)) {
+      outgoingLightNode = outgoingLightNode.add(emissiveNode ? vec3(emissiveNode) : materialEmissive);
+    }
 
-		// NORMAL VIEW
+    return outgoingLightNode;
+  }
 
-		if ( this.flatShading === true ) {
+  constructOutput(builder, outputNode) {
+    const renderer = builder.renderer;
 
-			const fdx = dFdx( positionView );
-			const fdy = dFdy( positionView.negate() ); // use -positionView ?
-			const normalNode = fdx.cross( fdy ).normalize();
+    // TONE MAPPING
 
-			stack.assign( transformedNormalView, normalNode );
+    const toneMappingNode = builder.toneMappingNode;
 
-		} else {
+    if (toneMappingNode) {
+      outputNode = vec4(toneMappingNode.context({ color: outputNode.rgb }), outputNode.a);
+    }
 
-			const normalNode = this.normalNode ? vec3( this.normalNode ) : materialNormal;
+    // FOG
 
-			stack.assign( transformedNormalView, normalNode );
+    if (this.fog === true) {
+      const fogNode = builder.fogNode;
 
-		}
+      if (fogNode) outputNode = vec4(fogNode.mixAssign(outputNode.rgb), outputNode.a);
+    }
 
-	}
+    // ENCODING
 
-	getEnvNode( builder ) {
+    if (this.colorSpace === true) {
+      const renderTarget = renderer.getRenderTarget();
 
-		let node = null;
+      let outputColorSpace;
 
-		if ( this.envNode ) {
+      if (renderTarget !== null) {
+        outputColorSpace = renderTarget.texture.colorSpace;
+      } else {
+        outputColorSpace = renderer.outputColorSpace;
+      }
 
-			node = this.envNode;
+      if (outputColorSpace !== LinearSRGBColorSpace && outputColorSpace !== NoColorSpace) {
+        outputNode = outputNode.linearToColorSpace(outputColorSpace);
+      }
+    }
 
-		} else if ( this.envMap ) {
+    return outputNode;
+  }
 
-			node = this.envMap.isCubeTexture ? cubeTexture( this.envMap ) : texture( this.envMap );
+  setDefaultValues(material) {
+    // This approach is to reuse the native refreshUniforms*
+    // and turn available the use of features like transmission and environment in core
 
-		} else if ( builder.environmentNode ) {
+    for (const property in material) {
+      const value = material[property];
 
-			node = builder.environmentNode;
+      if (this[property] === undefined) {
+        this[property] = value;
 
-		}
+        if (value && value.clone) this[property] = value.clone();
+      }
+    }
 
-		return node;
+    Object.assign(this.defines, material.defines);
 
-	}
+    const descriptors = Object.getOwnPropertyDescriptors(material.constructor.prototype);
 
-	constructLights( builder ) {
+    for (const key in descriptors) {
+      if (
+        Object.getOwnPropertyDescriptor(this.constructor.prototype, key) === undefined &&
+        descriptors[key].get !== undefined
+      ) {
+        Object.defineProperty(this.constructor.prototype, key, descriptors[key]);
+      }
+    }
+  }
 
-		const envNode = this.getEnvNode( builder );
+  toJSON(meta) {
+    const isRoot = meta === undefined || typeof meta === 'string';
 
-		//
+    if (isRoot) {
+      meta = {
+        textures: {},
+        images: {},
+        nodes: {},
+      };
+    }
 
-		const materialLightsNode = [];
+    const data = Material.prototype.toJSON.call(this, meta);
+    const nodeChildren = getNodeChildren(this);
 
-		if ( envNode ) {
+    data.inputNodes = {};
 
-			materialLightsNode.push( new EnvironmentNode( envNode ) );
+    for (const { property, childNode } of nodeChildren) {
+      data.inputNodes[property] = childNode.toJSON(meta).uuid;
+    }
 
-		}
+    // TODO: Copied from Object3D.toJSON
 
-		if ( builder.material.aoMap ) {
+    function extractFromCache(cache) {
+      const values = [];
 
-			materialLightsNode.push( new AONode( texture( builder.material.aoMap ) ) );
+      for (const key in cache) {
+        const data = cache[key];
+        delete data.metadata;
+        values.push(data);
+      }
 
-		}
+      return values;
+    }
 
-		let lightsNode = this.lightsNode || builder.lightsNode;
+    if (isRoot) {
+      const textures = extractFromCache(meta.textures);
+      const images = extractFromCache(meta.images);
+      const nodes = extractFromCache(meta.nodes);
 
-		if ( materialLightsNode.length > 0 ) {
+      if (textures.length > 0) data.textures = textures;
+      if (images.length > 0) data.images = images;
+      if (nodes.length > 0) data.nodes = nodes;
+    }
 
-			lightsNode = lightsWithoutWrap( [ ...lightsNode.lightNodes, ...materialLightsNode ] );
+    return data;
+  }
 
-		}
+  copy(source) {
+    this.lightsNode = source.lightsNode;
+    this.envNode = source.envNode;
 
-		return lightsNode;
+    this.colorNode = source.colorNode;
+    this.normalNode = source.normalNode;
+    this.opacityNode = source.opacityNode;
+    this.backdropNode = source.backdropNode;
+    this.backdropAlphaNode = source.backdropAlphaNode;
+    this.alphaTestNode = source.alphaTestNode;
 
-	}
+    this.positionNode = source.positionNode;
 
-	constructLightingModel( /*builder*/ ) {
+    this.outputNode = source.outputNode;
+    this.vertexNode = source.vertexNode;
 
-		// Interface function.
-
-	}
-
-	constructLighting( builder ) {
-
-		const { material } = builder;
-		const { backdropNode, backdropAlphaNode, emissiveNode } = this;
-
-		// OUTGOING LIGHT
-
-		const lights = this.lights === true || this.lightsNode !== null;
-
-		const lightsNode = lights ? this.constructLights( builder ) : null;
-
-		let outgoingLightNode = diffuseColor.rgb;
-
-		if ( lightsNode && lightsNode.hasLight !== false ) {
-
-			const lightingModelNode = this.constructLightingModel( builder );
-
-			outgoingLightNode = lightsNode.lightingContext( lightingModelNode, backdropNode, backdropAlphaNode );
-
-		} else if ( backdropNode !== null ) {
-
-			outgoingLightNode = vec3( backdropAlphaNode !== null ? mix( outgoingLightNode, backdropNode, backdropAlphaNode ) : backdropNode );
-
-		}
-
-		// EMISSIVE
-
-		if ( ( emissiveNode && emissiveNode.isNode === true ) || ( material.emissive && material.emissive.isColor === true ) ) {
-
-			outgoingLightNode = outgoingLightNode.add( emissiveNode ? vec3( emissiveNode ) : materialEmissive );
-
-		}
-
-		return outgoingLightNode;
-
-	}
-
-	constructOutput( builder, outputNode ) {
-
-		const renderer = builder.renderer;
-
-		// TONE MAPPING
-
-		const toneMappingNode = builder.toneMappingNode;
-
-		if ( toneMappingNode ) {
-
-			outputNode = vec4( toneMappingNode.context( { color: outputNode.rgb } ), outputNode.a );
-
-		}
-
-		// FOG
-
-		if ( this.fog === true ) {
-
-			const fogNode = builder.fogNode;
-
-			if ( fogNode ) outputNode = vec4( fogNode.mixAssign( outputNode.rgb ), outputNode.a );
-
-		}
-
-		// ENCODING
-
-		if ( this.colorSpace === true ) {
-
-			const renderTarget = renderer.getRenderTarget();
-
-			let outputColorSpace;
-
-			if ( renderTarget !== null ) {
-
-				outputColorSpace = renderTarget.texture.colorSpace;
-
-			} else {
-
-				outputColorSpace = renderer.outputColorSpace;
-
-			}
-
-			if ( outputColorSpace !== LinearSRGBColorSpace && outputColorSpace !== NoColorSpace ) {
-
-				outputNode = outputNode.linearToColorSpace( outputColorSpace );
-
-			}
-
-		}
-
-		return outputNode;
-
-	}
-
-	setDefaultValues( material ) {
-
-		// This approach is to reuse the native refreshUniforms*
-		// and turn available the use of features like transmission and environment in core
-
-		for ( const property in material ) {
-
-			const value = material[ property ];
-
-			if ( this[ property ] === undefined ) {
-
-				this[ property ] = value;
-
-				if ( value && value.clone ) this[ property ] = value.clone();
-
-			}
-
-		}
-
-		Object.assign( this.defines, material.defines );
-
-		const descriptors = Object.getOwnPropertyDescriptors( material.constructor.prototype );
-
-		for ( const key in descriptors ) {
-
-			if ( Object.getOwnPropertyDescriptor( this.constructor.prototype, key ) === undefined &&
-			     descriptors[ key ].get !== undefined ) {
-
-				Object.defineProperty( this.constructor.prototype, key, descriptors[ key ] );
-
-			}
-
-		}
-
-	}
-
-	toJSON( meta ) {
-
-		const isRoot = ( meta === undefined || typeof meta === 'string' );
-
-		if ( isRoot ) {
-
-			meta = {
-				textures: {},
-				images: {},
-				nodes: {}
-			};
-
-		}
-
-		const data = Material.prototype.toJSON.call( this, meta );
-		const nodeChildren = getNodeChildren( this );
-
-		data.inputNodes = {};
-
-		for ( const { property, childNode } of nodeChildren ) {
-
-			data.inputNodes[ property ] = childNode.toJSON( meta ).uuid;
-
-		}
-
-		// TODO: Copied from Object3D.toJSON
-
-		function extractFromCache( cache ) {
-
-			const values = [];
-
-			for ( const key in cache ) {
-
-				const data = cache[ key ];
-				delete data.metadata;
-				values.push( data );
-
-			}
-
-			return values;
-
-		}
-
-		if ( isRoot ) {
-
-			const textures = extractFromCache( meta.textures );
-			const images = extractFromCache( meta.images );
-			const nodes = extractFromCache( meta.nodes );
-
-			if ( textures.length > 0 ) data.textures = textures;
-			if ( images.length > 0 ) data.images = images;
-			if ( nodes.length > 0 ) data.nodes = nodes;
-
-		}
-
-		return data;
-
-	}
-
-	copy( source ) {
-
-		this.lightsNode = source.lightsNode;
-		this.envNode = source.envNode;
-
-		this.colorNode = source.colorNode;
-		this.normalNode = source.normalNode;
-		this.opacityNode = source.opacityNode;
-		this.backdropNode = source.backdropNode;
-		this.backdropAlphaNode = source.backdropAlphaNode;
-		this.alphaTestNode = source.alphaTestNode;
-
-		this.positionNode = source.positionNode;
-
-		this.outputNode = source.outputNode;
-		this.vertexNode = source.vertexNode;
-
-		return super.copy( source );
-
-	}
-
-	static fromMaterial( material ) {
-
-		if ( material.isNodeMaterial === true ) { // is already a node material
-
-			return material;
-
-		}
-
-		const type = material.type.replace( 'Material', 'NodeMaterial' );
-
-		const nodeMaterial = createNodeMaterialFromType( type );
-
-		if ( nodeMaterial === undefined ) {
-
-			throw new Error( `NodeMaterial: Material "${ material.type }" is not compatible.` );
-
-		}
-
-		for ( const key in material ) {
-
-			nodeMaterial[ key ] = material[ key ];
-
-		}
-
-		return nodeMaterial;
-
-	}
-
+    return super.copy(source);
+  }
 }
 
 export default NodeMaterial;
 
-export function addNodeMaterial( nodeMaterial ) {
+export function addNodeMaterial(nodeMaterial) {
+  if (typeof nodeMaterial !== 'function' || !nodeMaterial.name)
+    throw new Error(`Node material ${nodeMaterial.name} is not a class`);
+  if (NodeMaterials.has(nodeMaterial.name)) throw new Error(`Redefinition of node material ${nodeMaterial.name}`);
 
-	if ( typeof nodeMaterial !== 'function' || ! nodeMaterial.name ) throw new Error( `Node material ${ nodeMaterial.name } is not a class` );
-	if ( NodeMaterials.has( nodeMaterial.name ) ) throw new Error( `Redefinition of node material ${ nodeMaterial.name }` );
-
-	NodeMaterials.set( nodeMaterial.name, nodeMaterial );
-
+  NodeMaterials.set(nodeMaterial.name, nodeMaterial);
 }
 
-export function createNodeMaterialFromType( type ) {
+export function createNodeMaterialFromType(type) {
+  const Material = NodeMaterials.get(type);
 
-	const Material = NodeMaterials.get( type );
-
-	if ( Material !== undefined ) {
-
-		return new Material();
-
-	}
-
+  if (Material !== undefined) {
+    return new Material();
+  }
 }
 
-addNodeMaterial( NodeMaterial );
+addNodeMaterial(NodeMaterial);

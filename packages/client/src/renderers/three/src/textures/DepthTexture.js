@@ -1,58 +1,47 @@
 import { Texture } from './Texture.js';
-import { NearestFilter, UnsignedIntType, UnsignedInt248Type, DepthFormat, DepthStencilFormat } from '../constants.js';
+import { DepthFormat, DepthStencilFormat, NearestFilter, UnsignedInt248Type, UnsignedIntType } from '../constants.js';
 
 class DepthTexture extends Texture {
+  constructor(width, height, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, format) {
+    format = format !== undefined ? format : DepthFormat;
 
-	constructor( width, height, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, format ) {
+    if (format !== DepthFormat && format !== DepthStencilFormat) {
+      throw new Error('DepthTexture format must be either THREE.DepthFormat or THREE.DepthStencilFormat');
+    }
 
-		format = format !== undefined ? format : DepthFormat;
+    if (type === undefined && format === DepthFormat) type = UnsignedIntType;
+    if (type === undefined && format === DepthStencilFormat) type = UnsignedInt248Type;
 
-		if ( format !== DepthFormat && format !== DepthStencilFormat ) {
+    super(null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
 
-			throw new Error( 'DepthTexture format must be either THREE.DepthFormat or THREE.DepthStencilFormat' );
+    this.isDepthTexture = true;
 
-		}
+    this.image = { width: width, height: height };
 
-		if ( type === undefined && format === DepthFormat ) type = UnsignedIntType;
-		if ( type === undefined && format === DepthStencilFormat ) type = UnsignedInt248Type;
+    this.magFilter = magFilter !== undefined ? magFilter : NearestFilter;
+    this.minFilter = minFilter !== undefined ? minFilter : NearestFilter;
 
-		super( null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy );
+    this.flipY = false;
+    this.generateMipmaps = false;
 
-		this.isDepthTexture = true;
+    this.compareFunction = null;
+  }
 
-		this.image = { width: width, height: height };
+  copy(source) {
+    super.copy(source);
 
-		this.magFilter = magFilter !== undefined ? magFilter : NearestFilter;
-		this.minFilter = minFilter !== undefined ? minFilter : NearestFilter;
+    this.compareFunction = source.compareFunction;
 
-		this.flipY = false;
-		this.generateMipmaps = false;
+    return this;
+  }
 
-		this.compareFunction = null;
+  toJSON(meta) {
+    const data = super.toJSON(meta);
 
-	}
+    if (this.compareFunction !== null) data.compareFunction = this.compareFunction;
 
-
-	copy( source ) {
-
-		super.copy( source );
-
-		this.compareFunction = source.compareFunction;
-
-		return this;
-
-	}
-
-	toJSON( meta ) {
-
-		const data = super.toJSON( meta );
-
-		if ( this.compareFunction !== null ) data.compareFunction = this.compareFunction;
-
-		return data;
-
-	}
-
+    return data;
+  }
 }
 
 export { DepthTexture };

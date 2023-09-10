@@ -14,7 +14,7 @@
   {
     "imports": {
       "three": "../build/three.module.js",
-      "three/addons/": "./jsm/"
+      "../src/": "./jsm/"
     }
   }
 </script>
@@ -23,28 +23,19 @@
 
   import * as THREE from 'three';
 
-  import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-  import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
-  import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+  import { GLTFLoader } from '../src/loaders/GLTFLoader.js';
+  import { KTX2Loader } from '../src/loaders/KTX2Loader.js';
+  import { MeshoptDecoder } from '../src/libs/meshopt_decoder.module.js';
 
-  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+  import { OrbitControls } from '../src/controls/OrbitControls.js';
 
-  import WebGPU from 'three/addons/capabilities/WebGPU.js';
-  import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.js';
 
   let camera, scene, renderer;
 
   init();
 
   async function init() {
-
-    if (WebGPU.isAvailable() === false) {
-
-      document.body.appendChild(WebGPU.getErrorMessage());
-
-      throw new Error('No WebGPU support');
-
-    }
 
     camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 20);
     camera.position.set(2, 2, 2);

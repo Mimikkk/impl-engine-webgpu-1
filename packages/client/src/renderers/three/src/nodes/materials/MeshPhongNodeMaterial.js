@@ -9,57 +9,47 @@ import { MeshPhongMaterial } from 'three';
 const defaultValues = new MeshPhongMaterial();
 
 class MeshPhongNodeMaterial extends NodeMaterial {
+  constructor(parameters) {
+    super();
 
-	constructor( parameters ) {
+    this.isMeshPhongNodeMaterial = true;
 
-		super();
+    this.lights = true;
 
-		this.isMeshPhongNodeMaterial = true;
+    this.shininessNode = null;
+    this.specularNode = null;
 
-		this.lights = true;
+    this.setDefaultValues(defaultValues);
 
-		this.shininessNode = null;
-		this.specularNode = null;
+    this.setValues(parameters);
+  }
 
-		this.setDefaultValues( defaultValues );
+  constructLightingModel(/*builder*/) {
+    return new PhongLightingModel();
+  }
 
-		this.setValues( parameters );
+  constructVariants({ stack }) {
+    // SHININESS
 
-	}
+    const shininessNode = (this.shininessNode ? float(this.shininessNode) : materialShininess).max(1e-4); // to prevent pow( 0.0, 0.0 )
 
-	constructLightingModel( /*builder*/ ) {
+    stack.assign(shininess, shininessNode);
 
-		return new PhongLightingModel();
+    // SPECULAR COLOR
 
-	}
+    const specularNode = this.specularNode || materialSpecularColor;
 
-	constructVariants( { stack } ) {
+    stack.assign(specularColor, specularNode);
+  }
 
-		// SHININESS
+  copy(source) {
+    this.shininessNode = source.shininessNode;
+    this.specularNode = source.specularNode;
 
-		const shininessNode = ( this.shininessNode ? float( this.shininessNode ) : materialShininess ).max( 1e-4 ); // to prevent pow( 0.0, 0.0 )
-
-		stack.assign( shininess, shininessNode );
-
-		// SPECULAR COLOR
-
-		const specularNode = this.specularNode || materialSpecularColor;
-
-		stack.assign( specularColor, specularNode );
-
-	}
-
-	copy( source ) {
-
-		this.shininessNode = source.shininessNode;
-		this.specularNode = source.specularNode;
-
-		return super.copy( source );
-
-	}
-
+    return super.copy(source);
+  }
 }
 
 export default MeshPhongNodeMaterial;
 
-addNodeMaterial( MeshPhongNodeMaterial );
+addNodeMaterial(MeshPhongNodeMaterial);

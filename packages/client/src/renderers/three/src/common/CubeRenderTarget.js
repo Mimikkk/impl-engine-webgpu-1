@@ -1,65 +1,69 @@
-import { WebGLCubeRenderTarget, Scene, CubeCamera, BoxGeometry, Mesh, BackSide, NoBlending, LinearFilter, LinearMipmapLinearFilter } from 'three';
-import { equirectUV } from '../../nodes/utils/EquirectUVNode.js';
-import { texture as TSL_Texture } from '../../nodes/accessors/TextureNode.js';
-import { positionWorldDirection } from '../../nodes/accessors/PositionNode.js';
-import { createNodeMaterialFromType } from '../../nodes/materials/NodeMaterial.js';
+import {
+  BackSide,
+  BoxGeometry,
+  CubeCamera,
+  LinearFilter,
+  LinearMipmapLinearFilter,
+  Mesh,
+  NoBlending,
+  Scene,
+  WebGLCubeRenderTarget,
+} from '../Three.js';
+import { equirectUV } from '../nodes/utils/EquirectUVNode.js';
+import { texture as TSL_Texture } from '../nodes/accessors/TextureNode.js';
+import { positionWorldDirection } from '../nodes/accessors/PositionNode.js';
+import { createNodeMaterialFromType } from '../nodes/materials/NodeMaterial.js';
 
 // @TODO: Consider rename WebGLCubeRenderTarget to just CubeRenderTarget
 
 class CubeRenderTarget extends WebGLCubeRenderTarget {
+  constructor(size = 1, options = {}) {
+    super(size, options);
 
-	constructor( size = 1, options = {} ) {
+    this.isCubeRenderTarget = true;
+  }
 
-		super( size, options );
+  fromEquirectangularTexture(renderer, texture) {
+    const currentMinFilter = texture.minFilter;
+    const currentGenerateMipmaps = texture.generateMipmaps;
 
-		this.isCubeRenderTarget = true;
+    texture.generateMipmaps = true;
 
-	}
+    this.texture.type = texture.type;
+    this.texture.colorSpace = texture.colorSpace;
 
-	fromEquirectangularTexture( renderer, texture ) {
+    this.texture.generateMipmaps = texture.generateMipmaps;
+    this.texture.minFilter = texture.minFilter;
+    this.texture.magFilter = texture.magFilter;
 
-		const currentMinFilter = texture.minFilter;
-		const currentGenerateMipmaps = texture.generateMipmaps;
+    const geometry = new BoxGeometry(5, 5, 5);
 
-		texture.generateMipmaps = true;
+    const uvNode = equirectUV(positionWorldDirection);
 
-		this.texture.type = texture.type;
-		this.texture.colorSpace = texture.colorSpace;
+    const material = createNodeMaterialFromType('MeshBasicNodeMaterial');
+    material.colorNode = TSL_Texture(texture, uvNode, 0);
+    material.side = BackSide;
+    material.blending = NoBlending;
 
-		this.texture.generateMipmaps = texture.generateMipmaps;
-		this.texture.minFilter = texture.minFilter;
-		this.texture.magFilter = texture.magFilter;
+    const mesh = new Mesh(geometry, material);
 
-		const geometry = new BoxGeometry( 5, 5, 5 );
+    const scene = new Scene();
+    scene.add(mesh);
 
-		const uvNode = equirectUV( positionWorldDirection );
+    // Avoid blurred poles
+    if (texture.minFilter === LinearMipmapLinearFilter) texture.minFilter = LinearFilter;
 
-		const material = createNodeMaterialFromType( 'MeshBasicNodeMaterial' );
-		material.colorNode = TSL_Texture( texture, uvNode, 0 );
-		material.side = BackSide;
-		material.blending = NoBlending;
+    const camera = new CubeCamera(1, 10, this);
+    camera.update(renderer, scene);
 
-		const mesh = new Mesh( geometry, material );
+    texture.minFilter = currentMinFilter;
+    texture.currentGenerateMipmaps = currentGenerateMipmaps;
 
-		const scene = new Scene();
-		scene.add( mesh );
+    mesh.geometry.dispose();
+    mesh.material.dispose();
 
-		// Avoid blurred poles
-		if ( texture.minFilter === LinearMipmapLinearFilter ) texture.minFilter = LinearFilter;
-
-		const camera = new CubeCamera( 1, 10, this );
-		camera.update( renderer, scene );
-
-		texture.minFilter = currentMinFilter;
-		texture.currentGenerateMipmaps = currentGenerateMipmaps;
-
-		mesh.geometry.dispose();
-		mesh.material.dispose();
-
-		return this;
-
-	}
-
+    return this;
+  }
 }
 
 export default CubeRenderTarget;

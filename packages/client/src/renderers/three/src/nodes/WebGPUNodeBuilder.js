@@ -1,25 +1,25 @@
-import { RenderTarget, NoColorSpace } from 'three';
+import { NoColorSpace, RenderTarget } from 'three';
 
 import UniformsGroup from '../common/UniformsGroup.js';
 import {
+  ColorNodeUniform,
   FloatNodeUniform,
+  Matrix3NodeUniform,
+  Matrix4NodeUniform,
   Vector2NodeUniform,
   Vector3NodeUniform,
   Vector4NodeUniform,
-  ColorNodeUniform,
-  Matrix3NodeUniform,
-  Matrix4NodeUniform,
 } from '../common/nodes/NodeUniform.js';
 import NodeSampler from '../common/nodes/NodeSampler.js';
-import { NodeSampledTexture, NodeSampledCubeTexture } from '../common/nodes/NodeSampledTexture.js';
+import { NodeSampledCubeTexture, NodeSampledTexture } from '../common/nodes/NodeSampledTexture.js';
 
 import UniformBuffer from '../common/UniformBuffer.js';
 import StorageBuffer from '../common/StorageBuffer.js';
-import { getVectorLength, getStrideLength } from '../common/BufferUtils.js';
+import { getStrideLength, getVectorLength } from '../common/BufferUtils.js';
 
 import CubeRenderTarget from '../common/CubeRenderTarget.js';
 
-import { NodeBuilder, CodeNode, NodeMaterial } from '../../../nodes/Nodes.js';
+import { CodeNode, NodeBuilder, NodeMaterial } from './Nodes.js';
 
 import WebGPUNodeParser from './WebGPUNodeParser.js';
 

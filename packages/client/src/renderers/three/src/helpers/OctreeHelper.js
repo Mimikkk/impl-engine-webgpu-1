@@ -1,73 +1,68 @@
-import {
-	LineSegments,
-	BufferGeometry,
-	Float32BufferAttribute,
-	LineBasicMaterial
-} from 'three';
+import { BufferGeometry, Float32BufferAttribute, LineBasicMaterial, LineSegments } from 'three';
 
 class OctreeHelper extends LineSegments {
+  constructor(octree, color = 0xffff00) {
+    super(new BufferGeometry(), new LineBasicMaterial({ color: color, toneMapped: false }));
 
-	constructor( octree, color = 0xffff00 ) {
+    this.octree = octree;
+    this.color = color;
 
-		super( new BufferGeometry(), new LineBasicMaterial( { color: color, toneMapped: false } ) );
+    this.type = 'OctreeHelper';
 
-		this.octree = octree;
-		this.color = color;
+    this.update();
+  }
 
-		this.type = 'OctreeHelper';
+  update() {
+    const vertices = [];
 
-		this.update();
+    function traverse(tree) {
+      for (let i = 0; i < tree.length; i++) {
+        const min = tree[i].box.min;
+        const max = tree[i].box.max;
 
-	}
+        vertices.push(max.x, max.y, max.z);
+        vertices.push(min.x, max.y, max.z); // 0, 1
+        vertices.push(min.x, max.y, max.z);
+        vertices.push(min.x, min.y, max.z); // 1, 2
+        vertices.push(min.x, min.y, max.z);
+        vertices.push(max.x, min.y, max.z); // 2, 3
+        vertices.push(max.x, min.y, max.z);
+        vertices.push(max.x, max.y, max.z); // 3, 0
 
-	update() {
+        vertices.push(max.x, max.y, min.z);
+        vertices.push(min.x, max.y, min.z); // 4, 5
+        vertices.push(min.x, max.y, min.z);
+        vertices.push(min.x, min.y, min.z); // 5, 6
+        vertices.push(min.x, min.y, min.z);
+        vertices.push(max.x, min.y, min.z); // 6, 7
+        vertices.push(max.x, min.y, min.z);
+        vertices.push(max.x, max.y, min.z); // 7, 4
 
-		const vertices = [];
+        vertices.push(max.x, max.y, max.z);
+        vertices.push(max.x, max.y, min.z); // 0, 4
+        vertices.push(min.x, max.y, max.z);
+        vertices.push(min.x, max.y, min.z); // 1, 5
+        vertices.push(min.x, min.y, max.z);
+        vertices.push(min.x, min.y, min.z); // 2, 6
+        vertices.push(max.x, min.y, max.z);
+        vertices.push(max.x, min.y, min.z); // 3, 7
 
-		function traverse( tree ) {
+        traverse(tree[i].subTrees);
+      }
+    }
 
-			for ( let i = 0; i < tree.length; i ++ ) {
+    traverse(this.octree.subTrees);
 
-				const min = tree[ i ].box.min;
-				const max = tree[ i ].box.max;
+    this.geometry.dispose();
 
-				vertices.push( max.x, max.y, max.z ); vertices.push( min.x, max.y, max.z ); // 0, 1
-				vertices.push( min.x, max.y, max.z ); vertices.push( min.x, min.y, max.z ); // 1, 2
-				vertices.push( min.x, min.y, max.z ); vertices.push( max.x, min.y, max.z ); // 2, 3
-				vertices.push( max.x, min.y, max.z ); vertices.push( max.x, max.y, max.z ); // 3, 0
+    this.geometry = new BufferGeometry();
+    this.geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3));
+  }
 
-				vertices.push( max.x, max.y, min.z ); vertices.push( min.x, max.y, min.z ); // 4, 5
-				vertices.push( min.x, max.y, min.z ); vertices.push( min.x, min.y, min.z ); // 5, 6
-				vertices.push( min.x, min.y, min.z ); vertices.push( max.x, min.y, min.z ); // 6, 7
-				vertices.push( max.x, min.y, min.z ); vertices.push( max.x, max.y, min.z ); // 7, 4
-
-				vertices.push( max.x, max.y, max.z ); vertices.push( max.x, max.y, min.z ); // 0, 4
-				vertices.push( min.x, max.y, max.z ); vertices.push( min.x, max.y, min.z ); // 1, 5
-				vertices.push( min.x, min.y, max.z ); vertices.push( min.x, min.y, min.z ); // 2, 6
-				vertices.push( max.x, min.y, max.z ); vertices.push( max.x, min.y, min.z ); // 3, 7
-
-				traverse( tree[ i ].subTrees );
-
-			}
-
-		}
-
-		traverse( this.octree.subTrees );
-
-		this.geometry.dispose();
-
-		this.geometry = new BufferGeometry();
-		this.geometry.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-
-	}
-
-	dispose() {
-
-		this.geometry.dispose();
-		this.material.dispose();
-
-	}
-
+  dispose() {
+    this.geometry.dispose();
+    this.material.dispose();
+  }
 }
 
 export { OctreeHelper };

@@ -1,4 +1,4 @@
-export const vertex = /* glsl */`
+export const vertex = /* glsl */ `
 #include <common>
 #include <uv_pars_vertex>
 #include <envmap_pars_vertex>
@@ -39,7 +39,7 @@ void main() {
 }
 `;
 
-export const fragment = /* glsl */`
+export const fragment = /* glsl */ `
 uniform vec3 diffuse;
 uniform float opacity;
 

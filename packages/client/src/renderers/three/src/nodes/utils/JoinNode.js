@@ -2,50 +2,40 @@ import { addNodeClass } from '../core/Node.js';
 import TempNode from '../core/TempNode.js';
 
 class JoinNode extends TempNode {
+  constructor(nodes = [], nodeType = null) {
+    super(nodeType);
 
-	constructor( nodes = [], nodeType = null ) {
+    this.nodes = nodes;
+  }
 
-		super( nodeType );
+  getNodeType(builder) {
+    if (this.nodeType !== null) {
+      return builder.getVectorType(this.nodeType);
+    }
 
-		this.nodes = nodes;
+    return builder.getTypeFromLength(
+      this.nodes.reduce((count, cur) => count + builder.getTypeLength(cur.getNodeType(builder)), 0),
+    );
+  }
 
-	}
+  generate(builder, output) {
+    const type = this.getNodeType(builder);
+    const nodes = this.nodes;
 
-	getNodeType( builder ) {
+    const snippetValues = [];
 
-		if ( this.nodeType !== null ) {
+    for (const input of nodes) {
+      const inputSnippet = input.build(builder);
 
-			return builder.getVectorType( this.nodeType );
+      snippetValues.push(inputSnippet);
+    }
 
-		}
+    const snippet = `${builder.getType(type)}( ${snippetValues.join(', ')} )`;
 
-		return builder.getTypeFromLength( this.nodes.reduce( ( count, cur ) => count + builder.getTypeLength( cur.getNodeType( builder ) ), 0 ) );
-
-	}
-
-	generate( builder, output ) {
-
-		const type = this.getNodeType( builder );
-		const nodes = this.nodes;
-
-		const snippetValues = [];
-
-		for ( const input of nodes ) {
-
-			const inputSnippet = input.build( builder );
-
-			snippetValues.push( inputSnippet );
-
-		}
-
-		const snippet = `${ builder.getType( type ) }( ${ snippetValues.join( ', ' ) } )`;
-
-		return builder.format( snippet, type, output );
-
-	}
-
+    return builder.format(snippet, type, output);
+  }
 }
 
 export default JoinNode;
 
-addNodeClass( JoinNode );
+addNodeClass(JoinNode);

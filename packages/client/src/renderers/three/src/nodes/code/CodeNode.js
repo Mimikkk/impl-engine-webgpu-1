@@ -2,77 +2,61 @@ import Node, { addNodeClass } from '../core/Node.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
 
 class CodeNode extends Node {
+  constructor(code = '', includes = [], language = '') {
+    super('code');
 
-	constructor( code = '', includes = [], language = '' ) {
+    this.isCodeNode = true;
 
-		super( 'code' );
+    this.code = code;
+    this.language = language;
 
-		this.isCodeNode = true;
+    this._includes = includes;
+  }
 
-		this.code = code;
-		this.language = language;
+  setIncludes(includes) {
+    this._includes = includes;
 
-		this._includes = includes;
+    return this;
+  }
 
-	}
+  getIncludes(/*builder*/) {
+    return this._includes;
+  }
 
-	setIncludes( includes ) {
+  generate(builder) {
+    const includes = this.getIncludes(builder);
 
-		this._includes = includes;
+    for (const include of includes) {
+      include.build(builder);
+    }
 
-		return this;
+    const nodeCode = builder.getCodeFromNode(this, this.getNodeType(builder));
+    nodeCode.code = this.code;
 
-	}
+    return nodeCode.code;
+  }
 
-	getIncludes( /*builder*/ ) {
+  serialize(data) {
+    super.serialize(data);
 
-		return this._includes;
+    data.code = this.code;
+    data.language = this.language;
+  }
 
-	}
+  deserialize(data) {
+    super.deserialize(data);
 
-	generate( builder ) {
-
-		const includes = this.getIncludes( builder );
-
-		for ( const include of includes ) {
-
-			include.build( builder );
-
-		}
-
-		const nodeCode = builder.getCodeFromNode( this, this.getNodeType( builder ) );
-		nodeCode.code = this.code;
-
-		return nodeCode.code;
-
-	}
-
-	serialize( data ) {
-
-		super.serialize( data );
-
-		data.code = this.code;
-		data.language = this.language;
-
-	}
-
-	deserialize( data ) {
-
-		super.deserialize( data );
-
-		this.code = data.code;
-		this.language = data.language;
-
-	}
-
+    this.code = data.code;
+    this.language = data.language;
+  }
 }
 
 export default CodeNode;
 
-export const code = nodeProxy( CodeNode );
+export const code = nodeProxy(CodeNode);
 
-export const js = ( src, includes ) => code( src, includes, 'js' );
-export const wgsl = ( src, includes ) => code( src, includes, 'wgsl' );
-export const glsl = ( src, includes ) => code( src, includes, 'glsl' );
+export const js = (src, includes) => code(src, includes, 'js');
+export const wgsl = (src, includes) => code(src, includes, 'wgsl');
+export const glsl = (src, includes) => code(src, includes, 'glsl');
 
-addNodeClass( CodeNode );
+addNodeClass(CodeNode);

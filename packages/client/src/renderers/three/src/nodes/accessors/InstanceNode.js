@@ -2,70 +2,63 @@ import Node, { addNodeClass } from '../core/Node.js';
 import { instancedBufferAttribute, instancedDynamicBufferAttribute } from './BufferAttributeNode.js';
 import { normalLocal } from './NormalNode.js';
 import { positionLocal } from './PositionNode.js';
-import { nodeProxy, vec3, mat3, mat4 } from '../shadernode/ShaderNode.js';
+import { mat3, mat4, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
 import { DynamicDrawUsage, InstancedInterleavedBuffer } from 'three';
 
 class InstanceNode extends Node {
+  constructor(instanceMesh) {
+    super('void');
 
-	constructor( instanceMesh ) {
+    this.instanceMesh = instanceMesh;
 
-		super( 'void' );
+    this.instanceMatrixNode = null;
+  }
 
-		this.instanceMesh = instanceMesh;
+  construct(builder) {
+    let instanceMatrixNode = this.instanceMatrixNode;
 
-		this.instanceMatrixNode = null;
+    if (instanceMatrixNode === null) {
+      const instanceMesh = this.instanceMesh;
+      const instanceAttribute = instanceMesh.instanceMatrix;
+      const buffer = new InstancedInterleavedBuffer(instanceAttribute.array, 16, 1);
 
-	}
+      const bufferFn =
+        instanceAttribute.usage === DynamicDrawUsage ? instancedDynamicBufferAttribute : instancedBufferAttribute;
 
-	construct( builder ) {
+      const instanceBuffers = [
+        // F.Signature -> bufferAttribute( array, type, stride, offset )
+        bufferFn(buffer, 'vec4', 16, 0),
+        bufferFn(buffer, 'vec4', 16, 4),
+        bufferFn(buffer, 'vec4', 16, 8),
+        bufferFn(buffer, 'vec4', 16, 12),
+      ];
 
-		let instanceMatrixNode = this.instanceMatrixNode;
+      instanceMatrixNode = mat4(...instanceBuffers);
 
-		if ( instanceMatrixNode === null ) {
+      this.instanceMatrixNode = instanceMatrixNode;
+    }
 
-			const instanceMesh = this.instanceMesh;
-			const instanceAttribute = instanceMesh.instanceMatrix;
-			const buffer = new InstancedInterleavedBuffer( instanceAttribute.array, 16, 1 );
+    // POSITION
 
-			const bufferFn = instanceAttribute.usage === DynamicDrawUsage ? instancedDynamicBufferAttribute : instancedBufferAttribute;
+    const instancePosition = instanceMatrixNode.mul(positionLocal).xyz;
 
-			const instanceBuffers = [
-				// F.Signature -> bufferAttribute( array, type, stride, offset )
-				bufferFn( buffer, 'vec4', 16, 0 ),
-				bufferFn( buffer, 'vec4', 16, 4 ),
-				bufferFn( buffer, 'vec4', 16, 8 ),
-				bufferFn( buffer, 'vec4', 16, 12 )
-			];
+    // NORMAL
 
-			instanceMatrixNode = mat4( ...instanceBuffers );
+    const m = mat3(instanceMatrixNode[0].xyz, instanceMatrixNode[1].xyz, instanceMatrixNode[2].xyz);
 
-			this.instanceMatrixNode = instanceMatrixNode;
+    const transformedNormal = normalLocal.div(vec3(m[0].dot(m[0]), m[1].dot(m[1]), m[2].dot(m[2])));
 
-		}
+    const instanceNormal = m.mul(transformedNormal).xyz;
 
-		// POSITION
+    // ASSIGNS
 
-		const instancePosition = instanceMatrixNode.mul( positionLocal ).xyz;
-
-		// NORMAL
-
-		const m = mat3( instanceMatrixNode[ 0 ].xyz, instanceMatrixNode[ 1 ].xyz, instanceMatrixNode[ 2 ].xyz );
-
-		const transformedNormal = normalLocal.div( vec3( m[ 0 ].dot( m[ 0 ] ), m[ 1 ].dot( m[ 1 ] ), m[ 2 ].dot( m[ 2 ] ) ) );
-
-		const instanceNormal = m.mul( transformedNormal ).xyz;
-
-		// ASSIGNS
-
-		builder.stack.assign( positionLocal, instancePosition );
-		builder.stack.assign( normalLocal, instanceNormal );
-
-	}
-
+    builder.stack.assign(positionLocal, instancePosition);
+    builder.stack.assign(normalLocal, instanceNormal);
+  }
 }
 
 export default InstanceNode;
 
-export const instance = nodeProxy( InstanceNode );
+export const instance = nodeProxy(InstanceNode);
 
-addNodeClass( InstanceNode );
+addNodeClass(InstanceNode);

@@ -1,25 +1,19 @@
 import { SpotLight } from 'three';
 
 class IESSpotLight extends SpotLight {
+  constructor(color, intensity, distance, angle, penumbra, decay) {
+    super(color, intensity, distance, angle, penumbra, decay);
 
-	constructor( color, intensity, distance, angle, penumbra, decay ) {
+    this.iesMap = null;
+  }
 
-		super( color, intensity, distance, angle, penumbra, decay );
+  copy(source, recursive) {
+    super.copy(source, recursive);
 
-		this.iesMap = null;
+    this.iesMap = source.iesMap;
 
-	}
-
-	copy( source, recursive ) {
-
-		super.copy( source, recursive );
-
-		this.iesMap = source.iesMap;
-
-		return this;
-
-	}
-
+    return this;
+  }
 }
 
 export default IESSpotLight;

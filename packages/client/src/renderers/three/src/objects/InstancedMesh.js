@@ -15,200 +15,156 @@ const _mesh = /*@__PURE__*/ new Mesh();
 const _sphere = /*@__PURE__*/ new Sphere();
 
 class InstancedMesh extends Mesh {
+  constructor(geometry, material, count) {
+    super(geometry, material);
 
-	constructor( geometry, material, count ) {
+    this.isInstancedMesh = true;
 
-		super( geometry, material );
+    this.instanceMatrix = new InstancedBufferAttribute(new Float32Array(count * 16), 16);
+    this.instanceColor = null;
 
-		this.isInstancedMesh = true;
+    this.count = count;
 
-		this.instanceMatrix = new InstancedBufferAttribute( new Float32Array( count * 16 ), 16 );
-		this.instanceColor = null;
+    this.boundingBox = null;
+    this.boundingSphere = null;
 
-		this.count = count;
+    for (let i = 0; i < count; i++) {
+      this.setMatrixAt(i, _identity);
+    }
+  }
 
-		this.boundingBox = null;
-		this.boundingSphere = null;
+  computeBoundingBox() {
+    const geometry = this.geometry;
+    const count = this.count;
 
-		for ( let i = 0; i < count; i ++ ) {
+    if (this.boundingBox === null) {
+      this.boundingBox = new Box3();
+    }
 
-			this.setMatrixAt( i, _identity );
+    if (geometry.boundingBox === null) {
+      geometry.computeBoundingBox();
+    }
 
-		}
+    this.boundingBox.makeEmpty();
 
-	}
+    for (let i = 0; i < count; i++) {
+      this.getMatrixAt(i, _instanceLocalMatrix);
 
-	computeBoundingBox() {
+      _box3.copy(geometry.boundingBox).applyMatrix4(_instanceLocalMatrix);
 
-		const geometry = this.geometry;
-		const count = this.count;
+      this.boundingBox.union(_box3);
+    }
+  }
 
-		if ( this.boundingBox === null ) {
+  computeBoundingSphere() {
+    const geometry = this.geometry;
+    const count = this.count;
 
-			this.boundingBox = new Box3();
+    if (this.boundingSphere === null) {
+      this.boundingSphere = new Sphere();
+    }
 
-		}
+    if (geometry.boundingSphere === null) {
+      geometry.computeBoundingSphere();
+    }
 
-		if ( geometry.boundingBox === null ) {
+    this.boundingSphere.makeEmpty();
 
-			geometry.computeBoundingBox();
+    for (let i = 0; i < count; i++) {
+      this.getMatrixAt(i, _instanceLocalMatrix);
 
-		}
+      _sphere.copy(geometry.boundingSphere).applyMatrix4(_instanceLocalMatrix);
 
-		this.boundingBox.makeEmpty();
+      this.boundingSphere.union(_sphere);
+    }
+  }
 
-		for ( let i = 0; i < count; i ++ ) {
+  copy(source, recursive) {
+    super.copy(source, recursive);
 
-			this.getMatrixAt( i, _instanceLocalMatrix );
+    this.instanceMatrix.copy(source.instanceMatrix);
 
-			_box3.copy( geometry.boundingBox ).applyMatrix4( _instanceLocalMatrix );
+    if (source.instanceColor !== null) this.instanceColor = source.instanceColor.clone();
 
-			this.boundingBox.union( _box3 );
+    this.count = source.count;
 
-		}
+    if (source.boundingBox !== null) this.boundingBox = source.boundingBox.clone();
+    if (source.boundingSphere !== null) this.boundingSphere = source.boundingSphere.clone();
 
-	}
+    return this;
+  }
 
-	computeBoundingSphere() {
+  getColorAt(index, color) {
+    color.fromArray(this.instanceColor.array, index * 3);
+  }
 
-		const geometry = this.geometry;
-		const count = this.count;
+  getMatrixAt(index, matrix) {
+    matrix.fromArray(this.instanceMatrix.array, index * 16);
+  }
 
-		if ( this.boundingSphere === null ) {
+  raycast(raycaster, intersects) {
+    const matrixWorld = this.matrixWorld;
+    const raycastTimes = this.count;
 
-			this.boundingSphere = new Sphere();
+    _mesh.geometry = this.geometry;
+    _mesh.material = this.material;
 
-		}
+    if (_mesh.material === undefined) return;
 
-		if ( geometry.boundingSphere === null ) {
+    // test with bounding sphere first
 
-			geometry.computeBoundingSphere();
+    if (this.boundingSphere === null) this.computeBoundingSphere();
 
-		}
+    _sphere.copy(this.boundingSphere);
+    _sphere.applyMatrix4(matrixWorld);
 
-		this.boundingSphere.makeEmpty();
+    if (raycaster.ray.intersectsSphere(_sphere) === false) return;
 
-		for ( let i = 0; i < count; i ++ ) {
+    // now test each instance
 
-			this.getMatrixAt( i, _instanceLocalMatrix );
+    for (let instanceId = 0; instanceId < raycastTimes; instanceId++) {
+      // calculate the world matrix for each instance
 
-			_sphere.copy( geometry.boundingSphere ).applyMatrix4( _instanceLocalMatrix );
+      this.getMatrixAt(instanceId, _instanceLocalMatrix);
 
-			this.boundingSphere.union( _sphere );
+      _instanceWorldMatrix.multiplyMatrices(matrixWorld, _instanceLocalMatrix);
 
-		}
+      // the mesh represents this single instance
 
-	}
+      _mesh.matrixWorld = _instanceWorldMatrix;
 
-	copy( source, recursive ) {
+      _mesh.raycast(raycaster, _instanceIntersects);
 
-		super.copy( source, recursive );
+      // process the result of raycast
 
-		this.instanceMatrix.copy( source.instanceMatrix );
+      for (let i = 0, l = _instanceIntersects.length; i < l; i++) {
+        const intersect = _instanceIntersects[i];
+        intersect.instanceId = instanceId;
+        intersect.object = this;
+        intersects.push(intersect);
+      }
 
-		if ( source.instanceColor !== null ) this.instanceColor = source.instanceColor.clone();
+      _instanceIntersects.length = 0;
+    }
+  }
 
-		this.count = source.count;
+  setColorAt(index, color) {
+    if (this.instanceColor === null) {
+      this.instanceColor = new InstancedBufferAttribute(new Float32Array(this.instanceMatrix.count * 3), 3);
+    }
 
-		if ( source.boundingBox !== null ) this.boundingBox = source.boundingBox.clone();
-		if ( source.boundingSphere !== null ) this.boundingSphere = source.boundingSphere.clone();
+    color.toArray(this.instanceColor.array, index * 3);
+  }
 
-		return this;
+  setMatrixAt(index, matrix) {
+    matrix.toArray(this.instanceMatrix.array, index * 16);
+  }
 
-	}
+  updateMorphTargets() {}
 
-	getColorAt( index, color ) {
-
-		color.fromArray( this.instanceColor.array, index * 3 );
-
-	}
-
-	getMatrixAt( index, matrix ) {
-
-		matrix.fromArray( this.instanceMatrix.array, index * 16 );
-
-	}
-
-	raycast( raycaster, intersects ) {
-
-		const matrixWorld = this.matrixWorld;
-		const raycastTimes = this.count;
-
-		_mesh.geometry = this.geometry;
-		_mesh.material = this.material;
-
-		if ( _mesh.material === undefined ) return;
-
-		// test with bounding sphere first
-
-		if ( this.boundingSphere === null ) this.computeBoundingSphere();
-
-		_sphere.copy( this.boundingSphere );
-		_sphere.applyMatrix4( matrixWorld );
-
-		if ( raycaster.ray.intersectsSphere( _sphere ) === false ) return;
-
-		// now test each instance
-
-		for ( let instanceId = 0; instanceId < raycastTimes; instanceId ++ ) {
-
-			// calculate the world matrix for each instance
-
-			this.getMatrixAt( instanceId, _instanceLocalMatrix );
-
-			_instanceWorldMatrix.multiplyMatrices( matrixWorld, _instanceLocalMatrix );
-
-			// the mesh represents this single instance
-
-			_mesh.matrixWorld = _instanceWorldMatrix;
-
-			_mesh.raycast( raycaster, _instanceIntersects );
-
-			// process the result of raycast
-
-			for ( let i = 0, l = _instanceIntersects.length; i < l; i ++ ) {
-
-				const intersect = _instanceIntersects[ i ];
-				intersect.instanceId = instanceId;
-				intersect.object = this;
-				intersects.push( intersect );
-
-			}
-
-			_instanceIntersects.length = 0;
-
-		}
-
-	}
-
-	setColorAt( index, color ) {
-
-		if ( this.instanceColor === null ) {
-
-			this.instanceColor = new InstancedBufferAttribute( new Float32Array( this.instanceMatrix.count * 3 ), 3 );
-
-		}
-
-		color.toArray( this.instanceColor.array, index * 3 );
-
-	}
-
-	setMatrixAt( index, matrix ) {
-
-		matrix.toArray( this.instanceMatrix.array, index * 16 );
-
-	}
-
-	updateMorphTargets() {
-
-	}
-
-	dispose() {
-
-		this.dispatchEvent( { type: 'dispose' } );
-
-	}
-
+  dispose() {
+    this.dispatchEvent({ type: 'dispose' });
+  }
 }
 
 export { InstancedMesh };

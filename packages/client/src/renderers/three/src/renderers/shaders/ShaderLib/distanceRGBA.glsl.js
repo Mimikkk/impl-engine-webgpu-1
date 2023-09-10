@@ -1,4 +1,4 @@
-export const vertex = /* glsl */`
+export const vertex = /* glsl */ `
 #define DISTANCE
 
 varying vec3 vWorldPosition;
@@ -37,7 +37,7 @@ void main() {
 }
 `;
 
-export const fragment = /* glsl */`
+export const fragment = /* glsl */ `
 #define DISTANCE
 
 uniform vec3 referencePosition;

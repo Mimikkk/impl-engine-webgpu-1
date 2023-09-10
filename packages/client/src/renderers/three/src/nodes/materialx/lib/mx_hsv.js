@@ -3,7 +3,7 @@ import { glslFn } from '../../code/FunctionNode.js';
 // Original shader code from:
 // https://github.com/AcademySoftwareFoundation/MaterialX/blob/main/libraries/stdlib/genglsl/lib/mx_hsv.glsl
 
-export const mx_hsvtorgb = glslFn( `vec3 mx_hsvtorgb(vec3 hsv)
+export const mx_hsvtorgb = glslFn(`vec3 mx_hsvtorgb(vec3 hsv)
 {
     // Reference for this technique: Foley & van Dam
     float h = hsv.x; float s = hsv.y; float v = hsv.z;
@@ -28,9 +28,9 @@ export const mx_hsvtorgb = glslFn( `vec3 mx_hsvtorgb(vec3 hsv)
             return vec3 (t, p, v);
         return vec3 (v, p, q);
     }
-}` );
+}`);
 
-export const mx_rgbtohsv = glslFn( `vec3 mx_rgbtohsv(vec3 c)
+export const mx_rgbtohsv = glslFn(`vec3 mx_rgbtohsv(vec3 c)
 {
     // See Foley & van Dam
     float r = c.x; float g = c.y; float b = c.z;
@@ -53,4 +53,4 @@ export const mx_rgbtohsv = glslFn( `vec3 mx_rgbtohsv(vec3 c)
             h += 1.0f;
     }
     return vec3(h, s, v);
-}` );
+}`);

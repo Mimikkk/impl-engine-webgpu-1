@@ -2,164 +2,124 @@ import DataMap from './DataMap.js';
 import { AttributeType } from './Constants.js';
 
 class Bindings extends DataMap {
+  constructor(backend, nodes, textures, attributes, pipelines, info) {
+    super();
 
-	constructor( backend, nodes, textures, attributes, pipelines, info ) {
+    this.backend = backend;
+    this.textures = textures;
+    this.pipelines = pipelines;
+    this.attributes = attributes;
+    this.nodes = nodes;
+    this.info = info;
 
-		super();
+    this.pipelines.bindings = this; // assign bindings to pipelines
 
-		this.backend = backend;
-		this.textures = textures;
-		this.pipelines = pipelines;
-		this.attributes = attributes;
-		this.nodes = nodes;
-		this.info = info;
+    this.updateMap = new WeakMap();
+  }
 
-		this.pipelines.bindings = this; // assign bindings to pipelines
+  getForRender(renderObject) {
+    const bindings = renderObject.getBindings();
 
-		this.updateMap = new WeakMap();
+    const data = this.get(renderObject);
 
-	}
+    if (data.bindings !== bindings) {
+      // each object defines an array of bindings (ubos, textures, samplers etc.)
 
-	getForRender( renderObject ) {
+      data.bindings = bindings;
 
-		const bindings = renderObject.getBindings();
+      this._init(bindings);
 
-		const data = this.get( renderObject );
+      this.backend.createBindings(bindings);
+    }
 
-		if ( data.bindings !== bindings ) {
+    return data.bindings;
+  }
 
-			// each object defines an array of bindings (ubos, textures, samplers etc.)
+  getForCompute(computeNode) {
+    const data = this.get(computeNode);
 
-			data.bindings = bindings;
+    if (data.bindings === undefined) {
+      const nodeBuilder = this.nodes.getForCompute(computeNode);
 
-			this._init( bindings );
+      const bindings = nodeBuilder.getBindings();
 
-			this.backend.createBindings( bindings );
+      data.bindings = bindings;
 
-		}
+      this._init(bindings);
 
-		return data.bindings;
+      this.backend.createBindings(bindings);
+    }
 
-	}
+    return data.bindings;
+  }
 
-	getForCompute( computeNode ) {
+  updateForCompute(computeNode) {
+    this._update(computeNode, this.getForCompute(computeNode));
+  }
 
-		const data = this.get( computeNode );
+  updateForRender(renderObject) {
+    this._update(renderObject, this.getForRender(renderObject));
+  }
 
-		if ( data.bindings === undefined ) {
+  _init(bindings) {
+    for (const binding of bindings) {
+      if (binding.isSampler || binding.isSampledTexture) {
+        this.textures.updateTexture(binding.texture);
+      } else if (binding.isStorageBuffer) {
+        const attribute = binding.attribute;
 
-			const nodeBuilder = this.nodes.getForCompute( computeNode );
+        this.attributes.update(attribute, AttributeType.STORAGE);
+      }
+    }
+  }
 
-			const bindings = nodeBuilder.getBindings();
+  _update(object, bindings) {
+    const { backend } = this;
 
-			data.bindings = bindings;
+    const updateMap = this.updateMap;
+    const frame = this.info.render.frame;
 
-			this._init( bindings );
+    let needsBindingsUpdate = false;
 
-			this.backend.createBindings( bindings );
+    // iterate over all bindings and check if buffer updates or a new binding group is required
 
-		}
+    for (const binding of bindings) {
+      const isShared = binding.isShared;
+      const isUpdated = updateMap.get(binding) === frame;
 
-		return data.bindings;
+      if (isShared && isUpdated) continue;
 
-	}
+      if (binding.isUniformBuffer) {
+        const needsUpdate = binding.update();
 
-	updateForCompute( computeNode ) {
+        if (needsUpdate) {
+          backend.updateBinding(binding);
+        }
+      } else if (binding.isSampledTexture) {
+        if (binding.needsBindingsUpdate) needsBindingsUpdate = true;
 
-		this._update( computeNode, this.getForCompute( computeNode ) );
+        const needsUpdate = binding.update();
 
-	}
+        if (needsUpdate) {
+          this.textures.updateTexture(binding.texture);
+        }
+      }
 
-	updateForRender( renderObject ) {
+      updateMap.set(binding, frame);
+    }
 
-		this._update( renderObject, this.getForRender( renderObject ) );
+    if (needsBindingsUpdate === true) {
+      const pipeline = this.pipelines.getForRender(object);
 
-	}
+      this.backend.updateBindings(bindings, pipeline);
+    }
+  }
 
-	_init( bindings ) {
+  dispose() {
+    super.dispose();
 
-		for ( const binding of bindings ) {
-
-			if ( binding.isSampler || binding.isSampledTexture ) {
-
-				this.textures.updateTexture( binding.texture );
-
-			} else if ( binding.isStorageBuffer ) {
-
-				const attribute = binding.attribute;
-
-				this.attributes.update( attribute, AttributeType.STORAGE );
-
-			}
-
-		}
-
-	}
-
-	_update( object, bindings ) {
-
-		const { backend } = this;
-
-		const updateMap = this.updateMap;
-		const frame = this.info.render.frame;
-
-		let needsBindingsUpdate = false;
-
-		// iterate over all bindings and check if buffer updates or a new binding group is required
-
-		for ( const binding of bindings ) {
-
-			const isShared = binding.isShared;
-			const isUpdated = updateMap.get( binding ) === frame;
-
-			if ( isShared && isUpdated ) continue;
-
-			if ( binding.isUniformBuffer ) {
-
-				const needsUpdate = binding.update();
-
-				if ( needsUpdate ) {
-
-					backend.updateBinding( binding );
-
-				}
-
-			} else if ( binding.isSampledTexture ) {
-
-				if ( binding.needsBindingsUpdate ) needsBindingsUpdate = true;
-
-				const needsUpdate = binding.update();
-
-				if ( needsUpdate ) {
-
-					this.textures.updateTexture( binding.texture );
-
-				}
-
-			}
-
-			updateMap.set( binding, frame );
-
-		}
-
-		if ( needsBindingsUpdate === true ) {
-
-			const pipeline = this.pipelines.getForRender( object );
-
-			this.backend.updateBindings( bindings, pipeline );
-
-		}
-
-	}
-
-	dispose() {
-
-		super.dispose();
-
-		this.updateMap = new WeakMap();
-
-	}
-
+    this.updateMap = new WeakMap();
+  }
 }
 
 export default Bindings;

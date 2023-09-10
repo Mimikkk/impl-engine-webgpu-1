@@ -3,59 +3,53 @@ import { Material } from './Material.js';
 import { Vector2 } from '../math/Vector2.js';
 
 class MeshNormalMaterial extends Material {
+  constructor(parameters) {
+    super();
 
-	constructor( parameters ) {
+    this.isMeshNormalMaterial = true;
 
-		super();
+    this.type = 'MeshNormalMaterial';
 
-		this.isMeshNormalMaterial = true;
+    this.bumpMap = null;
+    this.bumpScale = 1;
 
-		this.type = 'MeshNormalMaterial';
+    this.normalMap = null;
+    this.normalMapType = TangentSpaceNormalMap;
+    this.normalScale = new Vector2(1, 1);
 
-		this.bumpMap = null;
-		this.bumpScale = 1;
+    this.displacementMap = null;
+    this.displacementScale = 1;
+    this.displacementBias = 0;
 
-		this.normalMap = null;
-		this.normalMapType = TangentSpaceNormalMap;
-		this.normalScale = new Vector2( 1, 1 );
+    this.wireframe = false;
+    this.wireframeLinewidth = 1;
 
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
+    this.flatShading = false;
 
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
+    this.setValues(parameters);
+  }
 
-		this.flatShading = false;
+  copy(source) {
+    super.copy(source);
 
-		this.setValues( parameters );
+    this.bumpMap = source.bumpMap;
+    this.bumpScale = source.bumpScale;
 
-	}
+    this.normalMap = source.normalMap;
+    this.normalMapType = source.normalMapType;
+    this.normalScale.copy(source.normalScale);
 
-	copy( source ) {
+    this.displacementMap = source.displacementMap;
+    this.displacementScale = source.displacementScale;
+    this.displacementBias = source.displacementBias;
 
-		super.copy( source );
+    this.wireframe = source.wireframe;
+    this.wireframeLinewidth = source.wireframeLinewidth;
 
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
+    this.flatShading = source.flatShading;
 
-		this.normalMap = source.normalMap;
-		this.normalMapType = source.normalMapType;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		this.flatShading = source.flatShading;
-
-		return this;
-
-	}
-
+    return this;
+  }
 }
 
 export { MeshNormalMaterial };

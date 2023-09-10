@@ -1,4 +1,4 @@
-export const vertex = /* glsl */`
+export const vertex = /* glsl */ `
 #include <common>
 #include <fog_pars_vertex>
 #include <morphtarget_pars_vertex>
@@ -27,7 +27,7 @@ void main() {
 }
 `;
 
-export const fragment = /* glsl */`
+export const fragment = /* glsl */ `
 uniform vec3 color;
 uniform float opacity;
 

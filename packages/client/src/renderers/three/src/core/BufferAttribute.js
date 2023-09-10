@@ -1,630 +1,481 @@
 import { Vector3 } from '../math/Vector3.js';
 import { Vector2 } from '../math/Vector2.js';
 import { denormalize, normalize } from '../math/MathUtils.js';
-import { StaticDrawUsage, FloatType } from '../constants.js';
+import { FloatType, StaticDrawUsage } from '../constants.js';
 import { fromHalfFloat, toHalfFloat } from '../extras/DataUtils.js';
 
 const _vector = /*@__PURE__*/ new Vector3();
 const _vector2 = /*@__PURE__*/ new Vector2();
 
 class BufferAttribute {
+  constructor(array, itemSize, normalized = false) {
+    if (Array.isArray(array)) {
+      throw new TypeError('THREE.BufferAttribute: array should be a Typed Array.');
+    }
 
-	constructor( array, itemSize, normalized = false ) {
+    this.isBufferAttribute = true;
 
-		if ( Array.isArray( array ) ) {
+    this.name = '';
 
-			throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+    this.array = array;
+    this.itemSize = itemSize;
+    this.count = array !== undefined ? array.length / itemSize : 0;
+    this.normalized = normalized;
 
-		}
+    this.usage = StaticDrawUsage;
+    this.updateRange = { offset: 0, count: -1 };
+    this.gpuType = FloatType;
 
-		this.isBufferAttribute = true;
+    this.version = 0;
+  }
 
-		this.name = '';
+  set needsUpdate(value) {
+    if (value === true) this.version++;
+  }
 
-		this.array = array;
-		this.itemSize = itemSize;
-		this.count = array !== undefined ? array.length / itemSize : 0;
-		this.normalized = normalized;
+  onUploadCallback() {}
 
-		this.usage = StaticDrawUsage;
-		this.updateRange = { offset: 0, count: - 1 };
-		this.gpuType = FloatType;
+  setUsage(value) {
+    this.usage = value;
 
-		this.version = 0;
+    return this;
+  }
 
-	}
+  copy(source) {
+    this.name = source.name;
+    this.array = new source.array.constructor(source.array);
+    this.itemSize = source.itemSize;
+    this.count = source.count;
+    this.normalized = source.normalized;
 
-	onUploadCallback() {}
+    this.usage = source.usage;
+    this.gpuType = source.gpuType;
 
-	set needsUpdate( value ) {
+    return this;
+  }
 
-		if ( value === true ) this.version ++;
+  copyAt(index1, attribute, index2) {
+    index1 *= this.itemSize;
+    index2 *= attribute.itemSize;
 
-	}
+    for (let i = 0, l = this.itemSize; i < l; i++) {
+      this.array[index1 + i] = attribute.array[index2 + i];
+    }
 
-	setUsage( value ) {
+    return this;
+  }
 
-		this.usage = value;
+  copyArray(array) {
+    this.array.set(array);
 
-		return this;
+    return this;
+  }
 
-	}
+  applyMatrix3(m) {
+    if (this.itemSize === 2) {
+      for (let i = 0, l = this.count; i < l; i++) {
+        _vector2.fromBufferAttribute(this, i);
+        _vector2.applyMatrix3(m);
 
-	copy( source ) {
+        this.setXY(i, _vector2.x, _vector2.y);
+      }
+    } else if (this.itemSize === 3) {
+      for (let i = 0, l = this.count; i < l; i++) {
+        _vector.fromBufferAttribute(this, i);
+        _vector.applyMatrix3(m);
 
-		this.name = source.name;
-		this.array = new source.array.constructor( source.array );
-		this.itemSize = source.itemSize;
-		this.count = source.count;
-		this.normalized = source.normalized;
+        this.setXYZ(i, _vector.x, _vector.y, _vector.z);
+      }
+    }
 
-		this.usage = source.usage;
-		this.gpuType = source.gpuType;
+    return this;
+  }
 
-		return this;
+  applyMatrix4(m) {
+    for (let i = 0, l = this.count; i < l; i++) {
+      _vector.fromBufferAttribute(this, i);
 
-	}
+      _vector.applyMatrix4(m);
 
-	copyAt( index1, attribute, index2 ) {
+      this.setXYZ(i, _vector.x, _vector.y, _vector.z);
+    }
 
-		index1 *= this.itemSize;
-		index2 *= attribute.itemSize;
+    return this;
+  }
 
-		for ( let i = 0, l = this.itemSize; i < l; i ++ ) {
+  applyNormalMatrix(m) {
+    for (let i = 0, l = this.count; i < l; i++) {
+      _vector.fromBufferAttribute(this, i);
 
-			this.array[ index1 + i ] = attribute.array[ index2 + i ];
+      _vector.applyNormalMatrix(m);
 
-		}
+      this.setXYZ(i, _vector.x, _vector.y, _vector.z);
+    }
 
-		return this;
+    return this;
+  }
 
-	}
+  transformDirection(m) {
+    for (let i = 0, l = this.count; i < l; i++) {
+      _vector.fromBufferAttribute(this, i);
 
-	copyArray( array ) {
+      _vector.transformDirection(m);
 
-		this.array.set( array );
+      this.setXYZ(i, _vector.x, _vector.y, _vector.z);
+    }
 
-		return this;
+    return this;
+  }
 
-	}
+  set(value, offset = 0) {
+    // Matching BufferAttribute constructor, do not normalize the array.
+    this.array.set(value, offset);
 
-	applyMatrix3( m ) {
+    return this;
+  }
 
-		if ( this.itemSize === 2 ) {
+  getComponent(index, component) {
+    let value = this.array[index * this.itemSize + component];
 
-			for ( let i = 0, l = this.count; i < l; i ++ ) {
+    if (this.normalized) value = denormalize(value, this.array);
 
-				_vector2.fromBufferAttribute( this, i );
-				_vector2.applyMatrix3( m );
+    return value;
+  }
 
-				this.setXY( i, _vector2.x, _vector2.y );
+  setComponent(index, component, value) {
+    if (this.normalized) value = normalize(value, this.array);
 
-			}
+    this.array[index * this.itemSize + component] = value;
 
-		} else if ( this.itemSize === 3 ) {
+    return this;
+  }
 
-			for ( let i = 0, l = this.count; i < l; i ++ ) {
+  getX(index) {
+    let x = this.array[index * this.itemSize];
 
-				_vector.fromBufferAttribute( this, i );
-				_vector.applyMatrix3( m );
+    if (this.normalized) x = denormalize(x, this.array);
 
-				this.setXYZ( i, _vector.x, _vector.y, _vector.z );
+    return x;
+  }
 
-			}
+  setX(index, x) {
+    if (this.normalized) x = normalize(x, this.array);
 
-		}
+    this.array[index * this.itemSize] = x;
 
-		return this;
+    return this;
+  }
 
-	}
+  getY(index) {
+    let y = this.array[index * this.itemSize + 1];
 
-	applyMatrix4( m ) {
+    if (this.normalized) y = denormalize(y, this.array);
 
-		for ( let i = 0, l = this.count; i < l; i ++ ) {
+    return y;
+  }
 
-			_vector.fromBufferAttribute( this, i );
+  setY(index, y) {
+    if (this.normalized) y = normalize(y, this.array);
 
-			_vector.applyMatrix4( m );
+    this.array[index * this.itemSize + 1] = y;
 
-			this.setXYZ( i, _vector.x, _vector.y, _vector.z );
+    return this;
+  }
 
-		}
+  getZ(index) {
+    let z = this.array[index * this.itemSize + 2];
 
-		return this;
+    if (this.normalized) z = denormalize(z, this.array);
 
-	}
+    return z;
+  }
 
-	applyNormalMatrix( m ) {
+  setZ(index, z) {
+    if (this.normalized) z = normalize(z, this.array);
 
-		for ( let i = 0, l = this.count; i < l; i ++ ) {
+    this.array[index * this.itemSize + 2] = z;
 
-			_vector.fromBufferAttribute( this, i );
+    return this;
+  }
 
-			_vector.applyNormalMatrix( m );
+  getW(index) {
+    let w = this.array[index * this.itemSize + 3];
 
-			this.setXYZ( i, _vector.x, _vector.y, _vector.z );
+    if (this.normalized) w = denormalize(w, this.array);
 
-		}
+    return w;
+  }
 
-		return this;
+  setW(index, w) {
+    if (this.normalized) w = normalize(w, this.array);
 
-	}
+    this.array[index * this.itemSize + 3] = w;
 
-	transformDirection( m ) {
+    return this;
+  }
 
-		for ( let i = 0, l = this.count; i < l; i ++ ) {
+  setXY(index, x, y) {
+    index *= this.itemSize;
 
-			_vector.fromBufferAttribute( this, i );
+    if (this.normalized) {
+      x = normalize(x, this.array);
+      y = normalize(y, this.array);
+    }
 
-			_vector.transformDirection( m );
+    this.array[index + 0] = x;
+    this.array[index + 1] = y;
 
-			this.setXYZ( i, _vector.x, _vector.y, _vector.z );
+    return this;
+  }
 
-		}
+  setXYZ(index, x, y, z) {
+    index *= this.itemSize;
 
-		return this;
+    if (this.normalized) {
+      x = normalize(x, this.array);
+      y = normalize(y, this.array);
+      z = normalize(z, this.array);
+    }
 
-	}
+    this.array[index + 0] = x;
+    this.array[index + 1] = y;
+    this.array[index + 2] = z;
 
-	set( value, offset = 0 ) {
+    return this;
+  }
 
-		// Matching BufferAttribute constructor, do not normalize the array.
-		this.array.set( value, offset );
+  setXYZW(index, x, y, z, w) {
+    index *= this.itemSize;
 
-		return this;
+    if (this.normalized) {
+      x = normalize(x, this.array);
+      y = normalize(y, this.array);
+      z = normalize(z, this.array);
+      w = normalize(w, this.array);
+    }
 
-	}
+    this.array[index + 0] = x;
+    this.array[index + 1] = y;
+    this.array[index + 2] = z;
+    this.array[index + 3] = w;
 
-	getComponent( index, component ) {
+    return this;
+  }
 
-		let value = this.array[ index * this.itemSize + component ];
+  onUpload(callback) {
+    this.onUploadCallback = callback;
 
-		if ( this.normalized ) value = denormalize( value, this.array );
+    return this;
+  }
 
-		return value;
+  clone() {
+    return new this.constructor(this.array, this.itemSize).copy(this);
+  }
 
-	}
+  toJSON() {
+    const data = {
+      itemSize: this.itemSize,
+      type: this.array.constructor.name,
+      array: Array.from(this.array),
+      normalized: this.normalized,
+    };
 
-	setComponent( index, component, value ) {
+    if (this.name !== '') data.name = this.name;
+    if (this.usage !== StaticDrawUsage) data.usage = this.usage;
+    if (this.updateRange.offset !== 0 || this.updateRange.count !== -1) data.updateRange = this.updateRange;
 
-		if ( this.normalized ) value = normalize( value, this.array );
-
-		this.array[ index * this.itemSize + component ] = value;
-
-		return this;
-
-	}
-
-	getX( index ) {
-
-		let x = this.array[ index * this.itemSize ];
-
-		if ( this.normalized ) x = denormalize( x, this.array );
-
-		return x;
-
-	}
-
-	setX( index, x ) {
-
-		if ( this.normalized ) x = normalize( x, this.array );
-
-		this.array[ index * this.itemSize ] = x;
-
-		return this;
-
-	}
-
-	getY( index ) {
-
-		let y = this.array[ index * this.itemSize + 1 ];
-
-		if ( this.normalized ) y = denormalize( y, this.array );
-
-		return y;
-
-	}
-
-	setY( index, y ) {
-
-		if ( this.normalized ) y = normalize( y, this.array );
-
-		this.array[ index * this.itemSize + 1 ] = y;
-
-		return this;
-
-	}
-
-	getZ( index ) {
-
-		let z = this.array[ index * this.itemSize + 2 ];
-
-		if ( this.normalized ) z = denormalize( z, this.array );
-
-		return z;
-
-	}
-
-	setZ( index, z ) {
-
-		if ( this.normalized ) z = normalize( z, this.array );
-
-		this.array[ index * this.itemSize + 2 ] = z;
-
-		return this;
-
-	}
-
-	getW( index ) {
-
-		let w = this.array[ index * this.itemSize + 3 ];
-
-		if ( this.normalized ) w = denormalize( w, this.array );
-
-		return w;
-
-	}
-
-	setW( index, w ) {
-
-		if ( this.normalized ) w = normalize( w, this.array );
-
-		this.array[ index * this.itemSize + 3 ] = w;
-
-		return this;
-
-	}
-
-	setXY( index, x, y ) {
-
-		index *= this.itemSize;
-
-		if ( this.normalized ) {
-
-			x = normalize( x, this.array );
-			y = normalize( y, this.array );
-
-		}
-
-		this.array[ index + 0 ] = x;
-		this.array[ index + 1 ] = y;
-
-		return this;
-
-	}
-
-	setXYZ( index, x, y, z ) {
-
-		index *= this.itemSize;
-
-		if ( this.normalized ) {
-
-			x = normalize( x, this.array );
-			y = normalize( y, this.array );
-			z = normalize( z, this.array );
-
-		}
-
-		this.array[ index + 0 ] = x;
-		this.array[ index + 1 ] = y;
-		this.array[ index + 2 ] = z;
-
-		return this;
-
-	}
-
-	setXYZW( index, x, y, z, w ) {
-
-		index *= this.itemSize;
-
-		if ( this.normalized ) {
-
-			x = normalize( x, this.array );
-			y = normalize( y, this.array );
-			z = normalize( z, this.array );
-			w = normalize( w, this.array );
-
-		}
-
-		this.array[ index + 0 ] = x;
-		this.array[ index + 1 ] = y;
-		this.array[ index + 2 ] = z;
-		this.array[ index + 3 ] = w;
-
-		return this;
-
-	}
-
-	onUpload( callback ) {
-
-		this.onUploadCallback = callback;
-
-		return this;
-
-	}
-
-	clone() {
-
-		return new this.constructor( this.array, this.itemSize ).copy( this );
-
-	}
-
-	toJSON() {
-
-		const data = {
-			itemSize: this.itemSize,
-			type: this.array.constructor.name,
-			array: Array.from( this.array ),
-			normalized: this.normalized
-		};
-
-		if ( this.name !== '' ) data.name = this.name;
-		if ( this.usage !== StaticDrawUsage ) data.usage = this.usage;
-		if ( this.updateRange.offset !== 0 || this.updateRange.count !== - 1 ) data.updateRange = this.updateRange;
-
-		return data;
-
-	}
-
+    return data;
+  }
 }
 
 //
 
 class Int8BufferAttribute extends BufferAttribute {
-
-	constructor( array, itemSize, normalized ) {
-
-		super( new Int8Array( array ), itemSize, normalized );
-
-	}
-
+  constructor(array, itemSize, normalized) {
+    super(new Int8Array(array), itemSize, normalized);
+  }
 }
 
 class Uint8BufferAttribute extends BufferAttribute {
-
-	constructor( array, itemSize, normalized ) {
-
-		super( new Uint8Array( array ), itemSize, normalized );
-
-	}
-
+  constructor(array, itemSize, normalized) {
+    super(new Uint8Array(array), itemSize, normalized);
+  }
 }
 
 class Uint8ClampedBufferAttribute extends BufferAttribute {
-
-	constructor( array, itemSize, normalized ) {
-
-		super( new Uint8ClampedArray( array ), itemSize, normalized );
-
-	}
-
+  constructor(array, itemSize, normalized) {
+    super(new Uint8ClampedArray(array), itemSize, normalized);
+  }
 }
 
 class Int16BufferAttribute extends BufferAttribute {
-
-	constructor( array, itemSize, normalized ) {
-
-		super( new Int16Array( array ), itemSize, normalized );
-
-	}
-
+  constructor(array, itemSize, normalized) {
+    super(new Int16Array(array), itemSize, normalized);
+  }
 }
 
 class Uint16BufferAttribute extends BufferAttribute {
-
-	constructor( array, itemSize, normalized ) {
-
-		super( new Uint16Array( array ), itemSize, normalized );
-
-	}
-
+  constructor(array, itemSize, normalized) {
+    super(new Uint16Array(array), itemSize, normalized);
+  }
 }
 
 class Int32BufferAttribute extends BufferAttribute {
-
-	constructor( array, itemSize, normalized ) {
-
-		super( new Int32Array( array ), itemSize, normalized );
-
-	}
-
+  constructor(array, itemSize, normalized) {
+    super(new Int32Array(array), itemSize, normalized);
+  }
 }
 
 class Uint32BufferAttribute extends BufferAttribute {
-
-	constructor( array, itemSize, normalized ) {
-
-		super( new Uint32Array( array ), itemSize, normalized );
-
-	}
-
+  constructor(array, itemSize, normalized) {
+    super(new Uint32Array(array), itemSize, normalized);
+  }
 }
 
 class Float16BufferAttribute extends BufferAttribute {
+  constructor(array, itemSize, normalized) {
+    super(new Uint16Array(array), itemSize, normalized);
 
-	constructor( array, itemSize, normalized ) {
+    this.isFloat16BufferAttribute = true;
+  }
 
-		super( new Uint16Array( array ), itemSize, normalized );
+  getX(index) {
+    let x = fromHalfFloat(this.array[index * this.itemSize]);
 
-		this.isFloat16BufferAttribute = true;
+    if (this.normalized) x = denormalize(x, this.array);
 
-	}
+    return x;
+  }
 
-	getX( index ) {
+  setX(index, x) {
+    if (this.normalized) x = normalize(x, this.array);
 
-		let x = fromHalfFloat( this.array[ index * this.itemSize ] );
+    this.array[index * this.itemSize] = toHalfFloat(x);
 
-		if ( this.normalized ) x = denormalize( x, this.array );
+    return this;
+  }
 
-		return x;
+  getY(index) {
+    let y = fromHalfFloat(this.array[index * this.itemSize + 1]);
 
-	}
+    if (this.normalized) y = denormalize(y, this.array);
 
-	setX( index, x ) {
+    return y;
+  }
 
-		if ( this.normalized ) x = normalize( x, this.array );
+  setY(index, y) {
+    if (this.normalized) y = normalize(y, this.array);
 
-		this.array[ index * this.itemSize ] = toHalfFloat( x );
+    this.array[index * this.itemSize + 1] = toHalfFloat(y);
 
-		return this;
+    return this;
+  }
 
-	}
+  getZ(index) {
+    let z = fromHalfFloat(this.array[index * this.itemSize + 2]);
 
-	getY( index ) {
+    if (this.normalized) z = denormalize(z, this.array);
 
-		let y = fromHalfFloat( this.array[ index * this.itemSize + 1 ] );
+    return z;
+  }
 
-		if ( this.normalized ) y = denormalize( y, this.array );
+  setZ(index, z) {
+    if (this.normalized) z = normalize(z, this.array);
 
-		return y;
+    this.array[index * this.itemSize + 2] = toHalfFloat(z);
 
-	}
+    return this;
+  }
 
-	setY( index, y ) {
+  getW(index) {
+    let w = fromHalfFloat(this.array[index * this.itemSize + 3]);
 
-		if ( this.normalized ) y = normalize( y, this.array );
+    if (this.normalized) w = denormalize(w, this.array);
 
-		this.array[ index * this.itemSize + 1 ] = toHalfFloat( y );
+    return w;
+  }
 
-		return this;
+  setW(index, w) {
+    if (this.normalized) w = normalize(w, this.array);
 
-	}
+    this.array[index * this.itemSize + 3] = toHalfFloat(w);
 
-	getZ( index ) {
+    return this;
+  }
 
-		let z = fromHalfFloat( this.array[ index * this.itemSize + 2 ] );
+  setXY(index, x, y) {
+    index *= this.itemSize;
 
-		if ( this.normalized ) z = denormalize( z, this.array );
+    if (this.normalized) {
+      x = normalize(x, this.array);
+      y = normalize(y, this.array);
+    }
 
-		return z;
+    this.array[index + 0] = toHalfFloat(x);
+    this.array[index + 1] = toHalfFloat(y);
 
-	}
+    return this;
+  }
 
-	setZ( index, z ) {
+  setXYZ(index, x, y, z) {
+    index *= this.itemSize;
 
-		if ( this.normalized ) z = normalize( z, this.array );
+    if (this.normalized) {
+      x = normalize(x, this.array);
+      y = normalize(y, this.array);
+      z = normalize(z, this.array);
+    }
 
-		this.array[ index * this.itemSize + 2 ] = toHalfFloat( z );
+    this.array[index + 0] = toHalfFloat(x);
+    this.array[index + 1] = toHalfFloat(y);
+    this.array[index + 2] = toHalfFloat(z);
 
-		return this;
+    return this;
+  }
 
-	}
-
-	getW( index ) {
-
-		let w = fromHalfFloat( this.array[ index * this.itemSize + 3 ] );
-
-		if ( this.normalized ) w = denormalize( w, this.array );
-
-		return w;
-
-	}
-
-	setW( index, w ) {
-
-		if ( this.normalized ) w = normalize( w, this.array );
-
-		this.array[ index * this.itemSize + 3 ] = toHalfFloat( w );
-
-		return this;
-
-	}
-
-	setXY( index, x, y ) {
-
-		index *= this.itemSize;
-
-		if ( this.normalized ) {
-
-			x = normalize( x, this.array );
-			y = normalize( y, this.array );
-
-		}
-
-		this.array[ index + 0 ] = toHalfFloat( x );
-		this.array[ index + 1 ] = toHalfFloat( y );
-
-		return this;
-
-	}
-
-	setXYZ( index, x, y, z ) {
-
-		index *= this.itemSize;
-
-		if ( this.normalized ) {
-
-			x = normalize( x, this.array );
-			y = normalize( y, this.array );
-			z = normalize( z, this.array );
-
-		}
-
-		this.array[ index + 0 ] = toHalfFloat( x );
-		this.array[ index + 1 ] = toHalfFloat( y );
-		this.array[ index + 2 ] = toHalfFloat( z );
-
-		return this;
-
-	}
-
-	setXYZW( index, x, y, z, w ) {
-
-		index *= this.itemSize;
-
-		if ( this.normalized ) {
-
-			x = normalize( x, this.array );
-			y = normalize( y, this.array );
-			z = normalize( z, this.array );
-			w = normalize( w, this.array );
-
-		}
-
-		this.array[ index + 0 ] = toHalfFloat( x );
-		this.array[ index + 1 ] = toHalfFloat( y );
-		this.array[ index + 2 ] = toHalfFloat( z );
-		this.array[ index + 3 ] = toHalfFloat( w );
-
-		return this;
-
-	}
-
+  setXYZW(index, x, y, z, w) {
+    index *= this.itemSize;
+
+    if (this.normalized) {
+      x = normalize(x, this.array);
+      y = normalize(y, this.array);
+      z = normalize(z, this.array);
+      w = normalize(w, this.array);
+    }
+
+    this.array[index + 0] = toHalfFloat(x);
+    this.array[index + 1] = toHalfFloat(y);
+    this.array[index + 2] = toHalfFloat(z);
+    this.array[index + 3] = toHalfFloat(w);
+
+    return this;
+  }
 }
 
-
 class Float32BufferAttribute extends BufferAttribute {
-
-	constructor( array, itemSize, normalized ) {
-
-		super( new Float32Array( array ), itemSize, normalized );
-
-	}
-
+  constructor(array, itemSize, normalized) {
+    super(new Float32Array(array), itemSize, normalized);
+  }
 }
 
 class Float64BufferAttribute extends BufferAttribute {
-
-	constructor( array, itemSize, normalized ) {
-
-		super( new Float64Array( array ), itemSize, normalized );
-
-	}
-
+  constructor(array, itemSize, normalized) {
+    super(new Float64Array(array), itemSize, normalized);
+  }
 }
 
 //
 
 export {
-	Float64BufferAttribute,
-	Float32BufferAttribute,
-	Float16BufferAttribute,
-	Uint32BufferAttribute,
-	Int32BufferAttribute,
-	Uint16BufferAttribute,
-	Int16BufferAttribute,
-	Uint8ClampedBufferAttribute,
-	Uint8BufferAttribute,
-	Int8BufferAttribute,
-	BufferAttribute
+  Float64BufferAttribute,
+  Float32BufferAttribute,
+  Float16BufferAttribute,
+  Uint32BufferAttribute,
+  Int32BufferAttribute,
+  Uint16BufferAttribute,
+  Int16BufferAttribute,
+  Uint8ClampedBufferAttribute,
+  Uint8BufferAttribute,
+  Int8BufferAttribute,
+  BufferAttribute,
 };

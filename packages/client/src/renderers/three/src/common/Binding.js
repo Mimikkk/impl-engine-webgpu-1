@@ -1,19 +1,13 @@
 class Binding {
+  constructor(name = '') {
+    this.name = name;
 
-	constructor( name = '' ) {
+    this.visibility = 0;
+  }
 
-		this.name = name;
-
-		this.visibility = 0;
-
-	}
-
-	setVisibility( visibility ) {
-
-		this.visibility |= visibility;
-
-	}
-
+  setVisibility(visibility) {
+    this.visibility |= visibility;
+  }
 }
 
 export default Binding;

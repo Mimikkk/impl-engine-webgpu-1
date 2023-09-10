@@ -5,45 +5,39 @@ import { PointsMaterial } from 'three';
 const defaultValues = new PointsMaterial();
 
 class PointsNodeMaterial extends NodeMaterial {
+  constructor(parameters) {
+    super();
 
-	constructor( parameters ) {
+    this.isPointsNodeMaterial = true;
 
-		super();
+    this.lights = false;
+    this.normals = false;
 
-		this.isPointsNodeMaterial = true;
+    this.transparent = true;
 
-		this.lights = false;
-		this.normals = false;
+    this.colorNode = null;
+    this.opacityNode = null;
 
-		this.transparent = true;
+    this.alphaTestNode = null;
 
-		this.colorNode = null;
-		this.opacityNode = null;
+    this.lightNode = null;
 
-		this.alphaTestNode = null;
+    this.sizeNode = null;
 
-		this.lightNode = null;
+    this.positionNode = null;
 
-		this.sizeNode = null;
+    this.setDefaultValues(defaultValues);
 
-		this.positionNode = null;
+    this.setValues(parameters);
+  }
 
-		this.setDefaultValues( defaultValues );
+  copy(source) {
+    this.sizeNode = source.sizeNode;
 
-		this.setValues( parameters );
-
-	}
-
-	copy( source ) {
-
-		this.sizeNode = source.sizeNode;
-
-		return super.copy( source );
-
-	}
-
+    return super.copy(source);
+  }
 }
 
 export default PointsNodeMaterial;
 
-addNodeMaterial( PointsNodeMaterial );
+addNodeMaterial(PointsNodeMaterial);

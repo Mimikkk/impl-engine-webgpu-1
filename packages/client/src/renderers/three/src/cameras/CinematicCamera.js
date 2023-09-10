@@ -1,208 +1,195 @@
 import {
-	Mesh,
-	OrthographicCamera,
-	PerspectiveCamera,
-	PlaneGeometry,
-	Scene,
-	ShaderMaterial,
-	UniformsUtils,
-	WebGLRenderTarget
+  Mesh,
+  OrthographicCamera,
+  PerspectiveCamera,
+  PlaneGeometry,
+  Scene,
+  ShaderMaterial,
+  UniformsUtils,
+  WebGLRenderTarget,
 } from 'three';
 
-import { BokehShader, BokehDepthShader } from '../shaders/BokehShader2.js';
+import { BokehDepthShader, BokehShader } from '../shaders/BokehShader2.js';
 
 class CinematicCamera extends PerspectiveCamera {
+  constructor(fov, aspect, near, far) {
+    super(fov, aspect, near, far);
 
-	constructor( fov, aspect, near, far ) {
+    this.type = 'CinematicCamera';
 
-		super( fov, aspect, near, far );
+    this.postprocessing = { enabled: true };
+    this.shaderSettings = {
+      rings: 3,
+      samples: 4,
+    };
 
-		this.type = 'CinematicCamera';
+    const depthShader = BokehDepthShader;
 
-		this.postprocessing = { enabled: true };
-		this.shaderSettings = {
-			rings: 3,
-			samples: 4
-		};
+    this.materialDepth = new ShaderMaterial({
+      uniforms: depthShader.uniforms,
+      vertexShader: depthShader.vertexShader,
+      fragmentShader: depthShader.fragmentShader,
+    });
 
-		const depthShader = BokehDepthShader;
+    this.materialDepth.uniforms['mNear'].value = near;
+    this.materialDepth.uniforms['mFar'].value = far;
 
-		this.materialDepth = new ShaderMaterial( {
-			uniforms: depthShader.uniforms,
-			vertexShader: depthShader.vertexShader,
-			fragmentShader: depthShader.fragmentShader
-		} );
+    // In case of cinematicCamera, having a default lens set is important
+    this.setLens();
 
-		this.materialDepth.uniforms[ 'mNear' ].value = near;
-		this.materialDepth.uniforms[ 'mFar' ].value = far;
+    this.initPostProcessing();
+  }
 
-		// In case of cinematicCamera, having a default lens set is important
-		this.setLens();
+  // providing fnumber and coc(Circle of Confusion) as extra arguments
+  // In case of cinematicCamera, having a default lens set is important
+  // if fnumber and coc are not provided, cinematicCamera tries to act as a basic PerspectiveCamera
+  setLens(focalLength = 35, filmGauge = 35, fNumber = 8, coc = 0.019) {
+    this.filmGauge = filmGauge;
 
-		this.initPostProcessing();
+    this.setFocalLength(focalLength);
 
-	}
+    this.fNumber = fNumber;
+    this.coc = coc;
 
-	// providing fnumber and coc(Circle of Confusion) as extra arguments
-	// In case of cinematicCamera, having a default lens set is important
-	// if fnumber and coc are not provided, cinematicCamera tries to act as a basic PerspectiveCamera
-	setLens( focalLength = 35, filmGauge = 35, fNumber = 8, coc = 0.019 ) {
+    // fNumber is focalLength by aperture
+    this.aperture = focalLength / this.fNumber;
 
-		this.filmGauge = filmGauge;
+    // hyperFocal is required to calculate depthOfField when a lens tries to focus at a distance with given fNumber and focalLength
+    this.hyperFocal = (focalLength * focalLength) / (this.aperture * this.coc);
+  }
 
-		this.setFocalLength( focalLength );
+  linearize(depth) {
+    const zfar = this.far;
+    const znear = this.near;
+    return (-zfar * znear) / (depth * (zfar - znear) - zfar);
+  }
 
-		this.fNumber = fNumber;
-		this.coc = coc;
+  smoothstep(near, far, depth) {
+    const x = this.saturate((depth - near) / (far - near));
+    return x * x * (3 - 2 * x);
+  }
 
-		// fNumber is focalLength by aperture
-		this.aperture = focalLength / this.fNumber;
+  saturate(x) {
+    return Math.max(0, Math.min(1, x));
+  }
 
-		// hyperFocal is required to calculate depthOfField when a lens tries to focus at a distance with given fNumber and focalLength
-		this.hyperFocal = ( focalLength * focalLength ) / ( this.aperture * this.coc );
+  // function for focusing at a distance from the camera
+  focusAt(focusDistance = 20) {
+    const focalLength = this.getFocalLength();
 
-	}
+    // distance from the camera (normal to frustrum) to focus on
+    this.focus = focusDistance;
 
-	linearize( depth ) {
+    // the nearest point from the camera which is in focus (unused)
+    this.nearPoint = (this.hyperFocal * this.focus) / (this.hyperFocal + (this.focus - focalLength));
 
-		const zfar = this.far;
-		const znear = this.near;
-		return - zfar * znear / ( depth * ( zfar - znear ) - zfar );
+    // the farthest point from the camera which is in focus (unused)
+    this.farPoint = (this.hyperFocal * this.focus) / (this.hyperFocal - (this.focus - focalLength));
 
-	}
+    // the gap or width of the space in which is everything is in focus (unused)
+    this.depthOfField = this.farPoint - this.nearPoint;
 
-	smoothstep( near, far, depth ) {
+    // Considering minimum distance of focus for a standard lens (unused)
+    if (this.depthOfField < 0) this.depthOfField = 0;
 
-		const x = this.saturate( ( depth - near ) / ( far - near ) );
-		return x * x * ( 3 - 2 * x );
+    this.sdistance = this.smoothstep(this.near, this.far, this.focus);
 
-	}
+    this.ldistance = this.linearize(1 - this.sdistance);
 
-	saturate( x ) {
+    this.postprocessing.bokeh_uniforms['focalDepth'].value = this.ldistance;
+  }
 
-		return Math.max( 0, Math.min( 1, x ) );
+  initPostProcessing() {
+    if (this.postprocessing.enabled) {
+      this.postprocessing.scene = new Scene();
 
-	}
+      this.postprocessing.camera = new OrthographicCamera(
+        window.innerWidth / -2,
+        window.innerWidth / 2,
+        window.innerHeight / 2,
+        window.innerHeight / -2,
+        -10000,
+        10000,
+      );
 
-	// function for focusing at a distance from the camera
-	focusAt( focusDistance = 20 ) {
+      this.postprocessing.scene.add(this.postprocessing.camera);
 
-		const focalLength = this.getFocalLength();
+      this.postprocessing.rtTextureDepth = new WebGLRenderTarget(window.innerWidth, window.innerHeight);
+      this.postprocessing.rtTextureColor = new WebGLRenderTarget(window.innerWidth, window.innerHeight);
 
-		// distance from the camera (normal to frustrum) to focus on
-		this.focus = focusDistance;
+      const bokeh_shader = BokehShader;
 
-		// the nearest point from the camera which is in focus (unused)
-		this.nearPoint = ( this.hyperFocal * this.focus ) / ( this.hyperFocal + ( this.focus - focalLength ) );
+      this.postprocessing.bokeh_uniforms = UniformsUtils.clone(bokeh_shader.uniforms);
 
-		// the farthest point from the camera which is in focus (unused)
-		this.farPoint = ( this.hyperFocal * this.focus ) / ( this.hyperFocal - ( this.focus - focalLength ) );
+      this.postprocessing.bokeh_uniforms['tColor'].value = this.postprocessing.rtTextureColor.texture;
+      this.postprocessing.bokeh_uniforms['tDepth'].value = this.postprocessing.rtTextureDepth.texture;
 
-		// the gap or width of the space in which is everything is in focus (unused)
-		this.depthOfField = this.farPoint - this.nearPoint;
+      this.postprocessing.bokeh_uniforms['manualdof'].value = 0;
+      this.postprocessing.bokeh_uniforms['shaderFocus'].value = 0;
 
-		// Considering minimum distance of focus for a standard lens (unused)
-		if ( this.depthOfField < 0 ) this.depthOfField = 0;
+      this.postprocessing.bokeh_uniforms['fstop'].value = 2.8;
 
-		this.sdistance = this.smoothstep( this.near, this.far, this.focus );
+      this.postprocessing.bokeh_uniforms['showFocus'].value = 1;
 
-		this.ldistance = this.linearize( 1 -	this.sdistance );
+      this.postprocessing.bokeh_uniforms['focalDepth'].value = 0.1;
 
-		this.postprocessing.bokeh_uniforms[ 'focalDepth' ].value = this.ldistance;
+      //console.log( this.postprocessing.bokeh_uniforms[ "focalDepth" ].value );
 
-	}
+      this.postprocessing.bokeh_uniforms['znear'].value = this.near;
+      this.postprocessing.bokeh_uniforms['zfar'].value = this.near;
 
-	initPostProcessing() {
+      this.postprocessing.bokeh_uniforms['textureWidth'].value = window.innerWidth;
 
-		if ( this.postprocessing.enabled ) {
+      this.postprocessing.bokeh_uniforms['textureHeight'].value = window.innerHeight;
 
-			this.postprocessing.scene = new Scene();
+      this.postprocessing.materialBokeh = new ShaderMaterial({
+        uniforms: this.postprocessing.bokeh_uniforms,
+        vertexShader: bokeh_shader.vertexShader,
+        fragmentShader: bokeh_shader.fragmentShader,
+        defines: {
+          RINGS: this.shaderSettings.rings,
+          SAMPLES: this.shaderSettings.samples,
+          DEPTH_PACKING: 1,
+        },
+      });
 
-			this.postprocessing.camera = new OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2,	window.innerHeight / 2, window.innerHeight / - 2, - 10000, 10000 );
+      this.postprocessing.quad = new Mesh(
+        new PlaneGeometry(window.innerWidth, window.innerHeight),
+        this.postprocessing.materialBokeh,
+      );
+      this.postprocessing.quad.position.z = -500;
+      this.postprocessing.scene.add(this.postprocessing.quad);
+    }
+  }
 
-			this.postprocessing.scene.add( this.postprocessing.camera );
+  renderCinematic(scene, renderer) {
+    if (this.postprocessing.enabled) {
+      const currentRenderTarget = renderer.getRenderTarget();
 
-			this.postprocessing.rtTextureDepth = new WebGLRenderTarget( window.innerWidth, window.innerHeight );
-			this.postprocessing.rtTextureColor = new WebGLRenderTarget( window.innerWidth, window.innerHeight );
+      renderer.clear();
 
-			const bokeh_shader = BokehShader;
+      // Render scene into texture
 
-			this.postprocessing.bokeh_uniforms = UniformsUtils.clone( bokeh_shader.uniforms );
+      scene.overrideMaterial = null;
+      renderer.setRenderTarget(this.postprocessing.rtTextureColor);
+      renderer.clear();
+      renderer.render(scene, this);
 
-			this.postprocessing.bokeh_uniforms[ 'tColor' ].value = this.postprocessing.rtTextureColor.texture;
-			this.postprocessing.bokeh_uniforms[ 'tDepth' ].value = this.postprocessing.rtTextureDepth.texture;
+      // Render depth into texture
 
-			this.postprocessing.bokeh_uniforms[ 'manualdof' ].value = 0;
-			this.postprocessing.bokeh_uniforms[ 'shaderFocus' ].value = 0;
+      scene.overrideMaterial = this.materialDepth;
+      renderer.setRenderTarget(this.postprocessing.rtTextureDepth);
+      renderer.clear();
+      renderer.render(scene, this);
 
-			this.postprocessing.bokeh_uniforms[ 'fstop' ].value = 2.8;
+      // Render bokeh composite
 
-			this.postprocessing.bokeh_uniforms[ 'showFocus' ].value = 1;
+      renderer.setRenderTarget(null);
+      renderer.render(this.postprocessing.scene, this.postprocessing.camera);
 
-			this.postprocessing.bokeh_uniforms[ 'focalDepth' ].value = 0.1;
-
-			//console.log( this.postprocessing.bokeh_uniforms[ "focalDepth" ].value );
-
-			this.postprocessing.bokeh_uniforms[ 'znear' ].value = this.near;
-			this.postprocessing.bokeh_uniforms[ 'zfar' ].value = this.near;
-
-
-			this.postprocessing.bokeh_uniforms[ 'textureWidth' ].value = window.innerWidth;
-
-			this.postprocessing.bokeh_uniforms[ 'textureHeight' ].value = window.innerHeight;
-
-			this.postprocessing.materialBokeh = new ShaderMaterial( {
-				uniforms: this.postprocessing.bokeh_uniforms,
-				vertexShader: bokeh_shader.vertexShader,
-				fragmentShader: bokeh_shader.fragmentShader,
-				defines: {
-					RINGS: this.shaderSettings.rings,
-					SAMPLES: this.shaderSettings.samples,
-					DEPTH_PACKING: 1
-				}
-			} );
-
-			this.postprocessing.quad = new Mesh( new PlaneGeometry( window.innerWidth, window.innerHeight ), this.postprocessing.materialBokeh );
-			this.postprocessing.quad.position.z = - 500;
-			this.postprocessing.scene.add( this.postprocessing.quad );
-
-		}
-
-	}
-
-	renderCinematic( scene, renderer ) {
-
-		if ( this.postprocessing.enabled ) {
-
-			const currentRenderTarget = renderer.getRenderTarget();
-
-			renderer.clear();
-
-			// Render scene into texture
-
-			scene.overrideMaterial = null;
-			renderer.setRenderTarget( this.postprocessing.rtTextureColor );
-			renderer.clear();
-			renderer.render( scene, this );
-
-			// Render depth into texture
-
-			scene.overrideMaterial = this.materialDepth;
-			renderer.setRenderTarget( this.postprocessing.rtTextureDepth );
-			renderer.clear();
-			renderer.render( scene, this );
-
-			// Render bokeh composite
-
-			renderer.setRenderTarget( null );
-			renderer.render( this.postprocessing.scene, this.postprocessing.camera );
-
-			renderer.setRenderTarget( currentRenderTarget );
-
-		}
-
-	}
-
+      renderer.setRenderTarget(currentRenderTarget);
+    }
+  }
 }
 
 export { CinematicCamera };

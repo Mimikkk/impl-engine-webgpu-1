@@ -3,78 +3,56 @@ import Binding from './Binding.js';
 let id = 0;
 
 class SampledTexture extends Binding {
+  constructor(name, texture) {
+    super(name);
 
-	constructor( name, texture ) {
+    this.id = id++;
 
-		super( name );
+    this.texture = texture;
+    this.version = texture.version;
 
-		this.id = id ++;
+    this.isSampledTexture = true;
+  }
 
-		this.texture = texture;
-		this.version = texture.version;
+  get needsBindingsUpdate() {
+    const { texture, version } = this;
 
-		this.isSampledTexture = true;
+    return texture.isVideoTexture ? true : version !== texture.version; // @TODO: version === 0 && texture.version > 0 ( add it just to External Textures like PNG,JPG )
+  }
 
-	}
+  update() {
+    if (this.version !== this.texture.version) {
+      this.version = this.texture.version;
 
-	get needsBindingsUpdate() {
+      return true;
+    }
 
-		const { texture, version } = this;
-
-		return texture.isVideoTexture ? true : version !== texture.version; // @TODO: version === 0 && texture.version > 0 ( add it just to External Textures like PNG,JPG )
-
-	}
-
-	update() {
-
-		if ( this.version !== this.texture.version ) {
-
-			this.version = this.texture.version;
-
-			return true;
-
-		}
-
-		return false;
-
-	}
-
+    return false;
+  }
 }
 
 class SampledArrayTexture extends SampledTexture {
+  constructor(name, texture) {
+    super(name, texture);
 
-	constructor( name, texture ) {
-
-		super( name, texture );
-
-		this.isSampledArrayTexture = true;
-
-	}
-
+    this.isSampledArrayTexture = true;
+  }
 }
 
 class Sampled3DTexture extends SampledTexture {
+  constructor(name, texture) {
+    super(name, texture);
 
-	constructor( name, texture ) {
-
-		super( name, texture );
-
-		this.isSampled3DTexture = true;
-
-	}
-
+    this.isSampled3DTexture = true;
+  }
 }
 
 class SampledCubeTexture extends SampledTexture {
+  constructor(name, texture) {
+    super(name, texture);
 
-	constructor( name, texture ) {
-
-		super( name, texture );
-
-		this.isSampledCubeTexture = true;
-
-	}
-
+    this.isSampledCubeTexture = true;
+  }
 }
 
 export { SampledTexture, SampledArrayTexture, Sampled3DTexture, SampledCubeTexture };

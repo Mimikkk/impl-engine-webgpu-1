@@ -3,68 +3,52 @@ import NodeMaterialLoader from './NodeMaterialLoader.js';
 import { ObjectLoader } from 'three';
 
 class NodeObjectLoader extends ObjectLoader {
+  constructor(manager) {
+    super(manager);
 
-	constructor( manager ) {
+    this._nodesJSON = null;
+  }
 
-		super( manager );
+  parse(json, onLoad) {
+    this._nodesJSON = json.nodes;
 
-		this._nodesJSON = null;
+    const data = super.parse(json, onLoad);
 
-	}
+    this._nodesJSON = null; // dispose
 
-	parse( json, onLoad ) {
+    return data;
+  }
 
-		this._nodesJSON = json.nodes;
+  parseNodes(json, textures) {
+    if (json !== undefined) {
+      const loader = new NodeLoader();
+      loader.setTextures(textures);
 
-		const data = super.parse( json, onLoad );
+      return loader.parseNodes(json);
+    }
 
-		this._nodesJSON = null; // dispose
+    return {};
+  }
 
-		return data;
+  parseMaterials(json, textures) {
+    const materials = {};
 
-	}
+    if (json !== undefined) {
+      const nodes = this.parseNodes(this._nodesJSON, textures);
 
-	parseNodes( json, textures ) {
+      const loader = new NodeMaterialLoader();
+      loader.setTextures(textures);
+      loader.setNodes(nodes);
 
-		if ( json !== undefined ) {
+      for (let i = 0, l = json.length; i < l; i++) {
+        const data = json[i];
 
-			const loader = new NodeLoader();
-			loader.setTextures( textures );
+        materials[data.uuid] = loader.parse(data);
+      }
+    }
 
-			return loader.parseNodes( json );
-
-		}
-
-		return {};
-
-	}
-
-	parseMaterials( json, textures ) {
-
-		const materials = {};
-
-		if ( json !== undefined ) {
-
-			const nodes = this.parseNodes( this._nodesJSON, textures );
-
-			const loader = new NodeMaterialLoader();
-			loader.setTextures( textures );
-			loader.setNodes( nodes );
-
-			for ( let i = 0, l = json.length; i < l; i ++ ) {
-
-				const data = json[ i ];
-
-				materials[ data.uuid ] = loader.parse( data );
-
-			}
-
-		}
-
-		return materials;
-
-	}
-
+    return materials;
+  }
 }
 
 export default NodeObjectLoader;

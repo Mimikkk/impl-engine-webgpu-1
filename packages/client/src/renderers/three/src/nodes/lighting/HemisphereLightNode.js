@@ -9,47 +9,39 @@ import { addNodeClass } from '../core/Node.js';
 import { Color, HemisphereLight } from 'three';
 
 class HemisphereLightNode extends AnalyticLightNode {
+  constructor(light = null) {
+    super(light);
 
-	constructor( light = null ) {
+    this.lightPositionNode = objectPosition(light);
+    this.lightDirectionNode = this.lightPositionNode.normalize();
 
-		super( light );
+    this.groundColorNode = uniform(new Color());
+  }
 
-		this.lightPositionNode = objectPosition( light );
-		this.lightDirectionNode = this.lightPositionNode.normalize();
+  update(frame) {
+    const { light } = this;
 
-		this.groundColorNode = uniform( new Color() );
+    super.update(frame);
 
-	}
+    this.lightPositionNode.object3d = light;
 
-	update( frame ) {
+    this.groundColorNode.value.copy(light.groundColor).multiplyScalar(light.intensity);
+  }
 
-		const { light } = this;
+  construct(builder) {
+    const { colorNode, groundColorNode, lightDirectionNode } = this;
 
-		super.update( frame );
+    const dotNL = normalView.dot(lightDirectionNode);
+    const hemiDiffuseWeight = dotNL.mul(0.5).add(0.5);
 
-		this.lightPositionNode.object3d = light;
+    const irradiance = mix(groundColorNode, colorNode, hemiDiffuseWeight);
 
-		this.groundColorNode.value.copy( light.groundColor ).multiplyScalar( light.intensity );
-
-	}
-
-	construct( builder ) {
-
-		const { colorNode, groundColorNode, lightDirectionNode } = this;
-
-		const dotNL = normalView.dot( lightDirectionNode );
-		const hemiDiffuseWeight = dotNL.mul( 0.5 ).add( 0.5 );
-
-		const irradiance = mix( groundColorNode, colorNode, hemiDiffuseWeight );
-
-		builder.context.irradiance.addAssign( irradiance );
-
-	}
-
+    builder.context.irradiance.addAssign(irradiance);
+  }
 }
 
 export default HemisphereLightNode;
 
-addLightNode( HemisphereLight, HemisphereLightNode );
+addLightNode(HemisphereLight, HemisphereLightNode);
 
-addNodeClass( HemisphereLightNode );
+addNodeClass(HemisphereLightNode);

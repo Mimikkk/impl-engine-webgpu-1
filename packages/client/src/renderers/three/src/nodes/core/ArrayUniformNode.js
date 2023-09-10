@@ -2,25 +2,19 @@ import UniformNode from './UniformNode.js';
 import { addNodeClass } from './Node.js';
 
 class ArrayUniformNode extends UniformNode {
+  constructor(nodes = []) {
+    super();
 
-	constructor( nodes = [] ) {
+    this.isArrayUniformNode = true;
 
-		super();
+    this.nodes = nodes;
+  }
 
-		this.isArrayUniformNode = true;
-
-		this.nodes = nodes;
-
-	}
-
-	getNodeType( builder ) {
-
-		return this.nodes[ 0 ].getNodeType( builder );
-
-	}
-
+  getNodeType(builder) {
+    return this.nodes[0].getNodeType(builder);
+  }
 }
 
 export default ArrayUniformNode;
 
-addNodeClass( ArrayUniformNode );
+addNodeClass(ArrayUniformNode);

@@ -1,4 +1,4 @@
-export const vertex = /* glsl */`
+export const vertex = /* glsl */ `
 #define LAMBERT
 
 varying vec3 vViewPosition;
@@ -47,7 +47,7 @@ void main() {
 }
 `;
 
-export const fragment = /* glsl */`
+export const fragment = /* glsl */ `
 #define LAMBERT
 
 uniform vec3 diffuse;

@@ -2,185 +2,149 @@ import Node, { addNodeClass } from '../core/Node.js';
 import { expression } from '../code/ExpressionNode.js';
 import { bypass } from '../core/BypassNode.js';
 import { context as contextNode } from '../core/ContextNode.js';
-import { addNodeElement, nodeObject, nodeArray } from '../shadernode/ShaderNode.js';
+import { addNodeElement, nodeArray, nodeObject } from '../shadernode/ShaderNode.js';
 
 class LoopNode extends Node {
+  constructor(params = []) {
+    super();
 
-	constructor( params = [] ) {
+    this.params = params;
+  }
 
-		super();
+  getVarName(index) {
+    return String.fromCharCode('i'.charCodeAt() + index);
+  }
 
-		this.params = params;
+  getProperties(builder) {
+    const properties = builder.getNodeProperties(this);
 
-	}
+    if (properties.stackNode !== undefined) return properties;
 
-	getVarName( index ) {
+    //
 
-		return String.fromCharCode( 'i'.charCodeAt() + index );
+    const inputs = {};
 
-	}
+    for (let i = 0, l = this.params.length - 1; i < l; i++) {
+      const prop = this.getVarName(i);
 
-	getProperties( builder ) {
+      inputs[prop] = expression(prop, 'int');
+    }
 
-		const properties = builder.getNodeProperties( this );
+    properties.returnsNode = this.params[this.params.length - 1](inputs, builder.addStack(), builder);
+    properties.stackNode = builder.removeStack();
 
-		if ( properties.stackNode !== undefined ) return properties;
+    return properties;
+  }
 
-		//
+  getNodeType(builder) {
+    const { returnsNode } = this.getProperties(builder);
 
-		const inputs = {};
+    return returnsNode ? returnsNode.getNodeType(builder) : 'void';
+  }
 
-		for ( let i = 0, l = this.params.length - 1; i < l; i ++ ) {
+  construct(builder) {
+    // construct properties
 
-			const prop = this.getVarName( i );
+    this.getProperties(builder);
+  }
 
-			inputs[ prop ] = expression( prop, 'int' );
+  generate(builder) {
+    const properties = this.getProperties(builder);
 
-		}
+    const context = { tempWrite: false };
 
-		properties.returnsNode = this.params[ this.params.length - 1 ]( inputs, builder.addStack(), builder );
-		properties.stackNode = builder.removeStack();
+    const params = this.params;
+    const stackNode = properties.stackNode;
 
-		return properties;
+    const returnsSnippet = properties.returnsNode ? properties.returnsNode.build(builder) : '';
 
-	}
+    for (let i = 0, l = params.length - 1; i < l; i++) {
+      const param = params[i];
+      const property = this.getVarName(i);
 
-	getNodeType( builder ) {
+      let start = null,
+        end = null,
+        direction = null;
 
-		const { returnsNode } = this.getProperties( builder );
+      if (param.isNode) {
+        start = '0';
+        end = param.generate(builder, 'int');
+        direction = 'forward';
+      } else {
+        start = param.start;
+        end = param.end;
+        direction = param.direction;
 
-		return returnsNode ? returnsNode.getNodeType( builder ) : 'void';
+        if (typeof start === 'number') start = start.toString();
+        else if (start && start.isNode) start = start.generate(builder, 'int');
 
-	}
+        if (typeof end === 'number') end = end.toString();
+        else if (end && end.isNode) end = end.generate(builder, 'int');
 
-	construct( builder ) {
+        if (start !== undefined && end === undefined) {
+          start = start + ' - 1';
+          end = '0';
+          direction = 'backwards';
+        } else if (end !== undefined && start === undefined) {
+          start = '0';
+          direction = 'forward';
+        }
 
-		// construct properties
+        if (direction === undefined) {
+          if (Number(start) > Number(end)) {
+            direction = 'backwards';
+          } else {
+            direction = 'forward';
+          }
+        }
+      }
 
-		this.getProperties( builder );
+      const internalParam = { start, end, direction };
 
-	}
+      //
 
-	generate( builder ) {
+      const startSnippet = internalParam.start;
+      const endSnippet = internalParam.end;
 
-		const properties = this.getProperties( builder );
+      let declarationSnippet = '';
+      let conditionalSnippet = '';
+      let updateSnippet = '';
 
-		const context = { tempWrite: false };
+      declarationSnippet += builder.getVar('int', property) + ' = ' + startSnippet;
 
-		const params = this.params;
-		const stackNode = properties.stackNode;
+      if (internalParam.direction === 'backwards') {
+        conditionalSnippet += property + ' >= ' + endSnippet;
+        updateSnippet += property + ' --';
+      } else {
+        // forward
 
-		const returnsSnippet = properties.returnsNode ? properties.returnsNode.build( builder ) : '';
+        conditionalSnippet += property + ' < ' + endSnippet;
+        updateSnippet += property + ' ++';
+      }
 
-		for ( let i = 0, l = params.length - 1; i < l; i ++ ) {
+      const forSnippet = `for ( ${declarationSnippet}; ${conditionalSnippet}; ${updateSnippet} )`;
 
-			const param = params[ i ];
-			const property = this.getVarName( i );
+      builder.addFlowCode((i === 0 ? '\n' : '') + builder.tab + forSnippet + ' {\n\n').addFlowTab();
+    }
 
-			let start = null, end = null, direction = null;
+    const stackSnippet = contextNode(stackNode, context).build(builder, 'void');
 
-			if ( param.isNode ) {
+    builder.removeFlowTab().addFlowCode('\n' + builder.tab + stackSnippet);
 
-				start = '0';
-				end = param.generate( builder, 'int' );
-				direction = 'forward';
+    for (let i = 0, l = this.params.length - 1; i < l; i++) {
+      builder.addFlowCode((i === 0 ? '' : builder.tab) + '}\n\n').removeFlowTab();
+    }
 
-			} else {
+    builder.addFlowTab();
 
-				start = param.start;
-				end = param.end;
-				direction = param.direction;
-
-				if ( typeof start === 'number' ) start = start.toString();
-				else if ( start && start.isNode ) start = start.generate( builder, 'int' );
-
-				if ( typeof end === 'number' ) end = end.toString();
-				else if ( end && end.isNode ) end = end.generate( builder, 'int' );
-
-				if ( start !== undefined && end === undefined ) {
-
-					start = start + ' - 1';
-					end = '0';
-					direction = 'backwards';
-
-				} else if ( end !== undefined && start === undefined ) {
-
-					start = '0';
-					direction = 'forward';
-
-				}
-
-				if ( direction === undefined ) {
-
-					if ( Number( start ) > Number( end ) ) {
-
-						direction = 'backwards';
-
-					} else {
-
-						direction = 'forward';
-
-					}
-
-				}
-
-			}
-
-			const internalParam = { start, end, direction };
-
-			//
-
-			const startSnippet = internalParam.start;
-			const endSnippet = internalParam.end;
-
-			let declarationSnippet = '';
-			let conditionalSnippet = '';
-			let updateSnippet = '';
-
-			declarationSnippet += builder.getVar( 'int', property ) + ' = ' + startSnippet;
-
-			if ( internalParam.direction === 'backwards' ) {
-
-				conditionalSnippet += property + ' >= ' + endSnippet;
-				updateSnippet += property + ' --';
-
-			} else {
-
-				// forward
-
-				conditionalSnippet += property + ' < ' + endSnippet;
-				updateSnippet += property + ' ++';
-
-			}
-
-			const forSnippet = `for ( ${ declarationSnippet }; ${ conditionalSnippet }; ${ updateSnippet } )`;
-
-			builder.addFlowCode( ( i === 0 ? '\n' : '' ) + builder.tab + forSnippet + ' {\n\n' ).addFlowTab();
-
-		}
-
-		const stackSnippet = contextNode( stackNode, context ).build( builder, 'void' );
-
-		builder.removeFlowTab().addFlowCode( '\n' + builder.tab + stackSnippet );
-
-		for ( let i = 0, l = this.params.length - 1; i < l; i ++ ) {
-
-			builder.addFlowCode( ( i === 0 ? '' : builder.tab ) + '}\n\n' ).removeFlowTab();
-
-		}
-
-		builder.addFlowTab();
-
-		return returnsSnippet;
-
-	}
-
+    return returnsSnippet;
+  }
 }
 
 export default LoopNode;
 
-export const loop = ( ...params ) => nodeObject( new LoopNode( nodeArray( params, 'int' ) ) );
+export const loop = (...params) => nodeObject(new LoopNode(nodeArray(params, 'int')));
 
-addNodeElement( 'loop', ( returns, ...params ) => bypass( returns, loop( ...params ) ) );
+addNodeElement('loop', (returns, ...params) => bypass(returns, loop(...params)));
 
-addNodeClass( LoopNode );
+addNodeClass(LoopNode);

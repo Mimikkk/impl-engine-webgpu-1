@@ -1,24 +1,18 @@
-import {
-	WireframeGeometry
-} from 'three';
+import { WireframeGeometry } from 'three';
 import { LineSegmentsGeometry } from '../lines/LineSegmentsGeometry.js';
 
 class WireframeGeometry2 extends LineSegmentsGeometry {
+  constructor(geometry) {
+    super();
 
-	constructor( geometry ) {
+    this.isWireframeGeometry2 = true;
 
-		super();
+    this.type = 'WireframeGeometry2';
 
-		this.isWireframeGeometry2 = true;
+    this.fromWireframeGeometry(new WireframeGeometry(geometry));
 
-		this.type = 'WireframeGeometry2';
-
-		this.fromWireframeGeometry( new WireframeGeometry( geometry ) );
-
-		// set colors, maybe
-
-	}
-
+    // set colors, maybe
+  }
 }
 
 export { WireframeGeometry2 };

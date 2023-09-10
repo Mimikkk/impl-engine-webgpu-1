@@ -5,68 +5,52 @@ import { texture } from './TextureNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 
 class ReferenceNode extends Node {
+  constructor(property, uniformType, object = null) {
+    super();
 
-	constructor( property, uniformType, object = null ) {
+    this.property = property;
 
-		super();
+    this.uniformType = uniformType;
 
-		this.property = property;
+    this.object = object;
 
-		this.uniformType = uniformType;
+    this.node = null;
 
-		this.object = object;
+    this.updateType = NodeUpdateType.OBJECT;
 
-		this.node = null;
+    this.setNodeType(uniformType);
+  }
 
-		this.updateType = NodeUpdateType.OBJECT;
+  setNodeType(uniformType) {
+    let node = null;
 
-		this.setNodeType( uniformType );
+    if (uniformType === 'texture') {
+      node = texture(null);
+    } else {
+      node = uniform(uniformType);
+    }
 
-	}
+    this.node = node;
+  }
 
-	setNodeType( uniformType ) {
+  getNodeType(builder) {
+    return this.node.getNodeType(builder);
+  }
 
-		let node = null;
+  update(frame) {
+    const object = this.object !== null ? this.object : frame.object;
+    const property = this.property;
 
-		if ( uniformType === 'texture' ) {
+    this.node.value = object[property];
+  }
 
-			node = texture( null );
-
-		} else {
-
-			node = uniform( uniformType );
-
-		}
-
-		this.node = node;
-
-	}
-
-	getNodeType( builder ) {
-
-		return this.node.getNodeType( builder );
-
-	}
-
-	update( frame ) {
-
-		const object = this.object !== null ? this.object : frame.object;
-		const property = this.property;
-
-		this.node.value = object[ property ];
-
-	}
-
-	construct( /*builder*/ ) {
-
-		return this.node;
-
-	}
-
+  construct(/*builder*/) {
+    return this.node;
+  }
 }
 
 export default ReferenceNode;
 
-export const reference = ( name, type, object ) => nodeObject( new ReferenceNode( name, type, object ) );
+export const reference = (name, type, object) => nodeObject(new ReferenceNode(name, type, object));
 
-addNodeClass( ReferenceNode );
+addNodeClass(ReferenceNode);

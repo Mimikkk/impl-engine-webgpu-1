@@ -6,35 +6,29 @@ import { addNodeClass } from '../core/Node.js';
 import { DirectionalLight } from 'three';
 
 class DirectionalLightNode extends AnalyticLightNode {
+  constructor(light = null) {
+    super(light);
+  }
 
-	constructor( light = null ) {
+  construct(builder) {
+    super.construct(builder);
 
-		super( light );
+    const lightingModel = builder.context.lightingModel;
 
-	}
+    const lightColor = this.colorNode;
+    const lightDirection = lightTargetDirection(this.light);
+    const reflectedLight = builder.context.reflectedLight;
 
-	construct( builder ) {
-
-		super.construct( builder );
-
-		const lightingModel = builder.context.lightingModel;
-
-		const lightColor = this.colorNode;
-		const lightDirection = lightTargetDirection( this.light );
-		const reflectedLight = builder.context.reflectedLight;
-
-		lightingModel.direct( {
-			lightDirection,
-			lightColor,
-			reflectedLight
-		} );
-
-	}
-
+    lightingModel.direct({
+      lightDirection,
+      lightColor,
+      reflectedLight,
+    });
+  }
 }
 
 export default DirectionalLightNode;
 
-addLightNode( DirectionalLight, DirectionalLightNode );
+addLightNode(DirectionalLight, DirectionalLightNode);
 
-addNodeClass( DirectionalLightNode );
+addNodeClass(DirectionalLightNode);

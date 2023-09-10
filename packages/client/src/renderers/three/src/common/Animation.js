@@ -1,58 +1,44 @@
 class Animation {
+  constructor() {
+    this.nodes = null;
 
-	constructor() {
+    this.animationLoop = null;
+    this.requestId = null;
 
-		this.nodes = null;
+    this.isAnimating = false;
 
-		this.animationLoop = null;
-		this.requestId = null;
+    this.context = self;
+  }
 
-		this.isAnimating = false;
+  start() {
+    if (this.isAnimating === true || this.animationLoop === null || this.nodes === null) return;
 
-		this.context = self;
+    this.isAnimating = true;
 
-	}
+    const update = (time, frame) => {
+      this.requestId = self.requestAnimationFrame(update);
 
-	start() {
+      this.nodes.nodeFrame.update();
 
-		if ( this.isAnimating === true || this.animationLoop === null || this.nodes === null ) return;
+      this.animationLoop(time, frame);
+    };
 
-		this.isAnimating = true;
+    this.requestId = self.requestAnimationFrame(update);
+  }
 
-		const update = ( time, frame ) => {
+  stop() {
+    self.cancelAnimationFrame(this.requestId);
 
-			this.requestId = self.requestAnimationFrame( update );
+    this.isAnimating = false;
+  }
 
-			this.nodes.nodeFrame.update();
+  setAnimationLoop(callback) {
+    this.animationLoop = callback;
+  }
 
-			this.animationLoop( time, frame );
-
-		};
-
-		this.requestId = self.requestAnimationFrame( update );
-
-	}
-
-	stop() {
-
-		self.cancelAnimationFrame( this.requestId );
-
-		this.isAnimating = false;
-
-	}
-
-	setAnimationLoop( callback ) {
-
-		this.animationLoop = callback;
-
-	}
-
-	setNodes( nodes ) {
-
-		this.nodes = nodes;
-
-	}
-
+  setNodes(nodes) {
+    this.nodes = nodes;
+  }
 }
 
 export default Animation;

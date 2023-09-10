@@ -7,93 +7,71 @@ import { loop } from '../utils/LoopNode.js';
 import { nodeProxy, shader } from '../shadernode/ShaderNode.js';
 
 class StackNode extends Node {
+  constructor(parent = null) {
+    super();
 
-	constructor( parent = null ) {
+    this.nodes = [];
+    this.outputNode = null;
 
-		super();
+    this.parent = parent;
 
-		this.nodes = [];
-		this.outputNode = null;
+    this._currentCond = null;
 
-		this.parent = parent;
+    this.isStackNode = true;
+  }
 
-		this._currentCond = null;
+  getNodeType(builder) {
+    return this.outputNode ? this.outputNode.getNodeType(builder) : 'void';
+  }
 
-		this.isStackNode = true;
+  add(node) {
+    this.nodes.push(bypass(expression(), node));
 
-	}
+    return this;
+  }
 
-	getNodeType( builder ) {
+  if(boolNode, method) {
+    const methodNode = shader(method);
+    this._currentCond = cond(boolNode, methodNode);
 
-		return this.outputNode ? this.outputNode.getNodeType( builder ) : 'void';
+    return this.add(this._currentCond);
+  }
 
-	}
+  elseif(boolNode, method) {
+    const methodNode = shader(method);
+    const ifNode = cond(boolNode, methodNode);
 
-	add( node ) {
+    this._currentCond.elseNode = ifNode;
+    this._currentCond = ifNode;
 
-		this.nodes.push( bypass( expression(), node ) );
+    return this;
+  }
 
-		return this;
+  else(method) {
+    this._currentCond.elseNode = shader(method);
 
-	}
+    return this;
+  }
 
-	if( boolNode, method ) {
+  assign(targetNode, sourceValue) {
+    return this.add(assign(targetNode, sourceValue));
+  }
 
-		const methodNode = shader( method );
-		this._currentCond = cond( boolNode, methodNode );
+  loop(...params) {
+    return this.add(loop(...params));
+  }
 
-		return this.add( this._currentCond );
+  build(builder, ...params) {
+    for (const node of this.nodes) {
+      node.build(builder, 'void');
+    }
 
-	}
-
-	elseif( boolNode, method ) {
-
-		const methodNode = shader( method );
-		const ifNode = cond( boolNode, methodNode );
-
-		this._currentCond.elseNode = ifNode;
-		this._currentCond = ifNode;
-
-		return this;
-
-	}
-
-	else( method ) {
-
-		this._currentCond.elseNode = shader( method );
-
-		return this;
-
-	}
-
-	assign( targetNode, sourceValue ) {
-
-		return this.add( assign( targetNode, sourceValue ) );
-
-	}
-
-	loop( ...params ) {
-
-		return this.add( loop( ...params ) );
-
-	}
-
-	build( builder, ...params ) {
-
-		for ( const node of this.nodes ) {
-
-			node.build( builder, 'void' );
-
-		}
-
-		return this.outputNode ? this.outputNode.build( builder, ...params ) : super.build( builder, ...params );
-
-	}
-
+    return this.outputNode ? this.outputNode.build(builder, ...params) : super.build(builder, ...params);
+  }
 }
 
 export default StackNode;
 
-export const stack = nodeProxy( StackNode );
+export const stack = nodeProxy(StackNode);
 
-addNodeClass( StackNode );
+addNodeClass(StackNode);

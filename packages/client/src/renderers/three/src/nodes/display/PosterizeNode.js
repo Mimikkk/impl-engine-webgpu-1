@@ -3,30 +3,24 @@ import { addNodeClass } from '../core/Node.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
 class PosterizeNode extends TempNode {
+  constructor(sourceNode, stepsNode) {
+    super();
 
-	constructor( sourceNode, stepsNode ) {
+    this.sourceNode = sourceNode;
+    this.stepsNode = stepsNode;
+  }
 
-		super();
+  construct() {
+    const { sourceNode, stepsNode } = this;
 
-		this.sourceNode = sourceNode;
-		this.stepsNode = stepsNode;
-
-	}
-
-	construct() {
-
-		const { sourceNode, stepsNode } = this;
-
-		return sourceNode.mul( stepsNode ).floor().div( stepsNode );
-
-	}
-
+    return sourceNode.mul(stepsNode).floor().div(stepsNode);
+  }
 }
 
 export default PosterizeNode;
 
-export const posterize = nodeProxy( PosterizeNode );
+export const posterize = nodeProxy(PosterizeNode);
 
-addNodeElement( 'posterize', posterize );
+addNodeElement('posterize', posterize);
 
-addNodeClass( PosterizeNode );
+addNodeClass(PosterizeNode);

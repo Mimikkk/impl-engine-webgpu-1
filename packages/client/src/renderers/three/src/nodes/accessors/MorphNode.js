@@ -7,64 +7,48 @@ import { bufferAttribute } from './BufferAttributeNode.js';
 import { positionLocal } from './PositionNode.js';
 
 class MorphNode extends Node {
+  constructor(mesh) {
+    super('void');
 
-	constructor( mesh ) {
+    this.mesh = mesh;
+    this.morphBaseInfluence = uniform(1);
 
-		super( 'void' );
+    this.updateType = NodeUpdateType.OBJECT;
+  }
 
-		this.mesh = mesh;
-		this.morphBaseInfluence = uniform( 1 );
+  constructAttribute(builder, name, assignNode = positionLocal) {
+    const mesh = this.mesh;
+    const attributes = mesh.geometry.morphAttributes[name];
 
-		this.updateType = NodeUpdateType.OBJECT;
+    builder.stack.assign(assignNode, assignNode.mul(this.morphBaseInfluence));
 
-	}
+    for (let i = 0; i < attributes.length; i++) {
+      const attribute = attributes[i];
 
-	constructAttribute( builder, name, assignNode = positionLocal ) {
+      const bufferAttrib = bufferAttribute(attribute.array, 'vec3');
+      const influence = reference(i, 'float', mesh.morphTargetInfluences);
 
-		const mesh = this.mesh;
-		const attributes = mesh.geometry.morphAttributes[ name ];
+      builder.stack.assign(assignNode, assignNode.add(bufferAttrib.mul(influence)));
+    }
+  }
 
-		builder.stack.assign( assignNode, assignNode.mul( this.morphBaseInfluence ) );
+  construct(builder) {
+    this.constructAttribute(builder, 'position');
+  }
 
-		for ( let i = 0; i < attributes.length; i ++ ) {
+  update() {
+    const morphBaseInfluence = this.morphBaseInfluence;
 
-			const attribute = attributes[ i ];
-
-			const bufferAttrib = bufferAttribute( attribute.array, 'vec3' );
-			const influence = reference( i, 'float', mesh.morphTargetInfluences );
-
-			builder.stack.assign( assignNode, assignNode.add( bufferAttrib.mul( influence ) ) );
-
-		}
-
-	}
-
-	construct( builder ) {
-
-		this.constructAttribute( builder, 'position' );
-
-	}
-
-	update() {
-
-		const morphBaseInfluence = this.morphBaseInfluence;
-
-		if ( this.mesh.geometry.morphTargetsRelative ) {
-
-			morphBaseInfluence.value = 1;
-
-		} else {
-
-			morphBaseInfluence.value = 1 - this.mesh.morphTargetInfluences.reduce( ( a, b ) => a + b, 0 );
-
-		}
-
-	}
-
+    if (this.mesh.geometry.morphTargetsRelative) {
+      morphBaseInfluence.value = 1;
+    } else {
+      morphBaseInfluence.value = 1 - this.mesh.morphTargetInfluences.reduce((a, b) => a + b, 0);
+    }
+  }
 }
 
 export default MorphNode;
 
-export const morph = nodeProxy( MorphNode );
+export const morph = nodeProxy(MorphNode);
 
-addNodeClass( MorphNode );
+addNodeClass(MorphNode);

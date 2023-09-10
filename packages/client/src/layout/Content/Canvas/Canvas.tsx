@@ -22,5 +22,5 @@ export const Canvas = () => {
 
   useEvent('resize', resize);
 
-  return <object ref={setRef} type="text/html" data={`src/renderers/examples/webgpu_${Example[example]}.html`} />;
+  return <object ref={setRef} type="text/html" data={`src/renderers/three/examples/${Example[example]}.html`} />;
 };

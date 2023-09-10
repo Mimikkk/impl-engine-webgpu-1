@@ -10,19 +10,15 @@ import { OrbitControls } from './OrbitControls.js';
 //    Pan - left mouse, or arrow keys / touch: one-finger move
 
 class MapControls extends OrbitControls {
+  constructor(object, domElement) {
+    super(object, domElement);
 
-	constructor( object, domElement ) {
+    this.screenSpacePanning = false; // pan orthogonal to world-space direction camera.up
 
-		super( object, domElement );
+    this.mouseButtons = { LEFT: MOUSE.PAN, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.ROTATE };
 
-		this.screenSpacePanning = false; // pan orthogonal to world-space direction camera.up
-
-		this.mouseButtons = { LEFT: MOUSE.PAN, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.ROTATE };
-
-		this.touches = { ONE: TOUCH.PAN, TWO: TOUCH.DOLLY_ROTATE };
-
-	}
-
+    this.touches = { ONE: TOUCH.PAN, TWO: TOUCH.DOLLY_ROTATE };
+  }
 }
 
 export { MapControls };

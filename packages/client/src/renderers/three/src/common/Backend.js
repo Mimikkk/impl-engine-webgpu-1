@@ -1,162 +1,139 @@
 let vector2 = null;
 let vector4 = null;
 
-import { Vector2, Vector4 } from 'three';
+import { Vector2, Vector4 } from '../Three.js';
 
 class Backend {
+  constructor(parameters = {}) {
+    this.parameters = Object.assign({}, parameters);
+    this.data = new WeakMap();
+    this.renderer = null;
+    this.domElement = null;
+  }
 
-	constructor( parameters = {} ) {
+  async init(renderer) {
+    this.renderer = renderer;
+  }
 
-		this.parameters = Object.assign( {}, parameters );
-		this.data = new WeakMap();
-		this.renderer = null;
-		this.domElement = null;
+  // render context
 
-	}
+  begin(renderContext) {}
 
-	async init( renderer ) {
+  finish(renderContext) {}
 
-		this.renderer = renderer;
+  // render object
 
-	}
+  draw(renderObject, info) {}
 
-	// render context
+  // program
 
-	begin( renderContext ) { }
+  createProgram(program) {}
 
-	finish( renderContext ) { }
+  destroyProgram(program) {}
 
-	// render object
+  // bindings
 
-	draw( renderObject, info ) { }
+  createBindings(renderObject) {}
 
-	// program
+  updateBindings(renderObject) {}
 
-	createProgram( program ) { }
+  // pipeline
 
-	destroyProgram( program ) { }
+  createRenderPipeline(renderObject) {}
 
-	// bindings
+  createComputePipeline(computeNode, pipeline) {}
 
-	createBindings( renderObject ) { }
+  destroyPipeline(pipeline) {}
 
-	updateBindings( renderObject ) { }
+  // cache key
 
-	// pipeline
+  needsUpdate(renderObject) {} // return Boolean ( fast test )
 
-	createRenderPipeline( renderObject ) { }
+  getCacheKey(renderObject) {} // return String
 
-	createComputePipeline( computeNode, pipeline ) { }
+  // node builder
 
-	destroyPipeline( pipeline ) { }
+  createNodeBuilder(renderObject) {} // return NodeBuilder (ADD IT)
 
-	// cache key
+  // textures
 
-	needsUpdate( renderObject ) { } // return Boolean ( fast test )
+  createSampler(texture) {}
 
-	getCacheKey( renderObject ) { } // return String
+  createDefaultTexture(texture) {}
 
-	// node builder
+  createTexture(texture) {}
 
-	createNodeBuilder( renderObject ) { } // return NodeBuilder (ADD IT)
+  copyTextureToBuffer(texture, x, y, width, height) {}
 
-	// textures
+  // attributes
 
-	createSampler( texture ) { }
+  createAttribute(attribute) {}
 
-	createDefaultTexture( texture ) { }
+  createIndexAttribute(attribute) {}
 
-	createTexture( texture ) { }
+  updateAttribute(attribute) {}
 
-	copyTextureToBuffer( texture, x, y, width, height ) {}
+  destroyAttribute(attribute) {}
 
-	// attributes
+  // canvas
 
-	createAttribute( attribute ) { }
+  updateSize() {}
 
-	createIndexAttribute( attribute ) { }
+  // utils
 
-	updateAttribute( attribute ) { }
+  hasFeature(name) {} // return Boolean
 
-	destroyAttribute( attribute ) { }
+  getInstanceCount(renderObject) {
+    const { object, geometry } = renderObject;
 
-	// canvas
+    return geometry.isInstancedBufferGeometry ? geometry.instanceCount : object.isInstancedMesh ? object.count : 1;
+  }
 
-	updateSize() { }
+  getDrawingBufferSize() {
+    vector2 = vector2 || new Vector2();
 
-	// utils
+    return this.renderer.getDrawingBufferSize(vector2);
+  }
 
-	hasFeature( name ) { } // return Boolean
+  getScissor() {
+    vector4 = vector4 || new Vector4();
 
-	getInstanceCount( renderObject ) {
+    return this.renderer.getScissor(vector4);
+  }
 
-		const { object, geometry } = renderObject;
+  getDomElement() {
+    let domElement = this.domElement;
 
-		return geometry.isInstancedBufferGeometry ? geometry.instanceCount : ( object.isInstancedMesh ? object.count : 1 );
-
-	}
-
-	getDrawingBufferSize() {
-
-		vector2 = vector2 || new Vector2();
-
-		return this.renderer.getDrawingBufferSize( vector2 );
-
-	}
-
-	getScissor() {
-
-		vector4 = vector4 || new Vector4();
-
-		return this.renderer.getScissor( vector4 );
-
-	}
-
-	getDomElement() {
-
-		let domElement = this.domElement;
-
-		if ( domElement === null ) {
-
-			this.domElement = domElement = ( this.parameters.canvas !== undefined ) ? this.parameters.canvas : this.createCanvasElement();
-
-		}
-
-		return domElement;
-
-	}
-
-	createCanvasElement() {
-
-		const canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
-		canvas.style.display = 'block';
-		return canvas;
-
-	}
-
-	// resource properties
-
-	get( object ) {
-
-		let map = this.data.get( object );
-
-		if ( map === undefined ) {
-
-			map = {};
-			this.data.set( object, map );
-
-		}
-
-		return map;
-
-	}
-
-	delete( object ) {
-
-		this.data.delete( object );
-
-	}
-
+    if (domElement === null) {
+      this.domElement = domElement =
+        this.parameters.canvas !== undefined ? this.parameters.canvas : this.createCanvasElement();
+    }
+
+    return domElement;
+  }
+
+  createCanvasElement() {
+    const canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
+    canvas.style.display = 'block';
+    return canvas;
+  }
+
+  // resource properties
+
+  get(object) {
+    let map = this.data.get(object);
+
+    if (map === undefined) {
+      map = {};
+      this.data.set(object, map);
+    }
+
+    return map;
+  }
+
+  delete(object) {
+    this.data.delete(object);
+  }
 }
 
 export default Backend;

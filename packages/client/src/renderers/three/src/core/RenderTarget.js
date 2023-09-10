@@ -11,112 +11,107 @@ import { warnOnce } from '../utils.js';
  * depthBuffer/stencilBuffer: Booleans to indicate if we should generate these buffers
 */
 class RenderTarget extends EventDispatcher {
+  constructor(width = 1, height = 1, options = {}) {
+    super();
 
-	constructor( width = 1, height = 1, options = {} ) {
+    this.isRenderTarget = true;
 
-		super();
+    this.width = width;
+    this.height = height;
+    this.depth = 1;
 
-		this.isRenderTarget = true;
+    this.scissor = new Vector4(0, 0, width, height);
+    this.scissorTest = false;
 
-		this.width = width;
-		this.height = height;
-		this.depth = 1;
+    this.viewport = new Vector4(0, 0, width, height);
 
-		this.scissor = new Vector4( 0, 0, width, height );
-		this.scissorTest = false;
+    const image = { width: width, height: height, depth: 1 };
 
-		this.viewport = new Vector4( 0, 0, width, height );
+    if (options.encoding !== undefined) {
+      // @deprecated, r152
+      warnOnce('THREE.WebGLRenderTarget: option.encoding has been replaced by option.colorSpace.');
+      options.colorSpace = options.encoding === sRGBEncoding ? SRGBColorSpace : NoColorSpace;
+    }
 
-		const image = { width: width, height: height, depth: 1 };
+    this.texture = new Texture(
+      image,
+      options.mapping,
+      options.wrapS,
+      options.wrapT,
+      options.magFilter,
+      options.minFilter,
+      options.format,
+      options.type,
+      options.anisotropy,
+      options.colorSpace,
+    );
+    this.texture.isRenderTargetTexture = true;
 
-		if ( options.encoding !== undefined ) {
+    this.texture.flipY = false;
+    this.texture.generateMipmaps = options.generateMipmaps !== undefined ? options.generateMipmaps : false;
+    this.texture.internalFormat = options.internalFormat !== undefined ? options.internalFormat : null;
+    this.texture.minFilter = options.minFilter !== undefined ? options.minFilter : LinearFilter;
 
-			// @deprecated, r152
-			warnOnce( 'THREE.WebGLRenderTarget: option.encoding has been replaced by option.colorSpace.' );
-			options.colorSpace = options.encoding === sRGBEncoding ? SRGBColorSpace : NoColorSpace;
+    this.depthBuffer = options.depthBuffer !== undefined ? options.depthBuffer : true;
+    this.stencilBuffer = options.stencilBuffer !== undefined ? options.stencilBuffer : false;
 
-		}
+    this.depthTexture = options.depthTexture !== undefined ? options.depthTexture : null;
 
-		this.texture = new Texture( image, options.mapping, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.colorSpace );
-		this.texture.isRenderTargetTexture = true;
+    this.samples = options.samples !== undefined ? options.samples : 0;
+  }
 
-		this.texture.flipY = false;
-		this.texture.generateMipmaps = options.generateMipmaps !== undefined ? options.generateMipmaps : false;
-		this.texture.internalFormat = options.internalFormat !== undefined ? options.internalFormat : null;
-		this.texture.minFilter = options.minFilter !== undefined ? options.minFilter : LinearFilter;
+  setSize(width, height, depth = 1) {
+    if (this.width !== width || this.height !== height || this.depth !== depth) {
+      this.width = width;
+      this.height = height;
+      this.depth = depth;
 
-		this.depthBuffer = options.depthBuffer !== undefined ? options.depthBuffer : true;
-		this.stencilBuffer = options.stencilBuffer !== undefined ? options.stencilBuffer : false;
+      this.texture.image.width = width;
+      this.texture.image.height = height;
+      this.texture.image.depth = depth;
 
-		this.depthTexture = options.depthTexture !== undefined ? options.depthTexture : null;
+      this.dispose();
+    }
 
-		this.samples = options.samples !== undefined ? options.samples : 0;
+    this.viewport.set(0, 0, width, height);
+    this.scissor.set(0, 0, width, height);
+  }
 
-	}
+  clone() {
+    return new this.constructor().copy(this);
+  }
 
-	setSize( width, height, depth = 1 ) {
+  copy(source) {
+    this.width = source.width;
+    this.height = source.height;
+    this.depth = source.depth;
 
-		if ( this.width !== width || this.height !== height || this.depth !== depth ) {
+    this.scissor.copy(source.scissor);
+    this.scissorTest = source.scissorTest;
 
-			this.width = width;
-			this.height = height;
-			this.depth = depth;
+    this.viewport.copy(source.viewport);
 
-			this.texture.image.width = width;
-			this.texture.image.height = height;
-			this.texture.image.depth = depth;
+    this.texture = source.texture.clone();
+    this.texture.isRenderTargetTexture = true;
 
-			this.dispose();
+    // ensure image object is not shared, see #20328
 
-		}
+    const image = Object.assign({}, source.texture.image);
+    this.texture.source = new Source(image);
 
-		this.viewport.set( 0, 0, width, height );
-		this.scissor.set( 0, 0, width, height );
+    this.depthBuffer = source.depthBuffer;
+    this.stencilBuffer = source.stencilBuffer;
 
-	}
+    if (source.depthTexture !== null) this.depthTexture = source.depthTexture.clone();
 
-	clone() {
+    this.samples = source.samples;
 
-		return new this.constructor().copy( this );
+    return this;
+  }
 
-	}
-
-	copy( source ) {
-
-		this.width = source.width;
-		this.height = source.height;
-		this.depth = source.depth;
-
-		this.scissor.copy( source.scissor );
-		this.scissorTest = source.scissorTest;
-
-		this.viewport.copy( source.viewport );
-
-		this.texture = source.texture.clone();
-		this.texture.isRenderTargetTexture = true;
-
-		// ensure image object is not shared, see #20328
-
-		const image = Object.assign( {}, source.texture.image );
-		this.texture.source = new Source( image );
-
-		this.depthBuffer = source.depthBuffer;
-		this.stencilBuffer = source.stencilBuffer;
-
-		if ( source.depthTexture !== null ) this.depthTexture = source.depthTexture.clone();
-
-		this.samples = source.samples;
-
-		return this;
-
-	}
-
-	dispose() {
-
-		this.dispatchEvent( { type: 'dispose' } );
-
-	}
-
+  dispose() {
+    this.dispatchEvent({ type: 'dispose' });
+  }
 }
 
 export { RenderTarget };

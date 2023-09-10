@@ -4,32 +4,26 @@ import { addNodeClass } from '../core/Node.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
 class FogExp2Node extends FogNode {
+  constructor(colorNode, densityNode) {
+    super(colorNode);
 
-	constructor( colorNode, densityNode ) {
+    this.isFogExp2Node = true;
 
-		super( colorNode );
+    this.densityNode = densityNode;
+  }
 
-		this.isFogExp2Node = true;
+  construct() {
+    const depthNode = positionView.z.negate();
+    const densityNode = this.densityNode;
 
-		this.densityNode = densityNode;
-
-	}
-
-	construct() {
-
-		const depthNode = positionView.z.negate();
-		const densityNode = this.densityNode;
-
-		return densityNode.mul( densityNode, depthNode, depthNode ).negate().exp().oneMinus();
-
-	}
-
+    return densityNode.mul(densityNode, depthNode, depthNode).negate().exp().oneMinus();
+  }
 }
 
 export default FogExp2Node;
 
-export const densityFog = nodeProxy( FogExp2Node );
+export const densityFog = nodeProxy(FogExp2Node);
 
-addNodeElement( 'densityFog', densityFog );
+addNodeElement('densityFog', densityFog);
 
-addNodeClass( FogExp2Node );
+addNodeClass(FogExp2Node);

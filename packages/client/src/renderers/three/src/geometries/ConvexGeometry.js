@@ -1,53 +1,42 @@
-import {
-	BufferGeometry,
-	Float32BufferAttribute
-} from 'three';
+import { BufferGeometry, Float32BufferAttribute } from 'three';
 import { ConvexHull } from '../math/ConvexHull.js';
 
 class ConvexGeometry extends BufferGeometry {
+  constructor(points = []) {
+    super();
 
-	constructor( points = [] ) {
+    // buffers
 
-		super();
+    const vertices = [];
+    const normals = [];
 
-		// buffers
+    const convexHull = new ConvexHull().setFromPoints(points);
 
-		const vertices = [];
-		const normals = [];
+    // generate vertices and normals
 
-		const convexHull = new ConvexHull().setFromPoints( points );
+    const faces = convexHull.faces;
 
-		// generate vertices and normals
+    for (let i = 0; i < faces.length; i++) {
+      const face = faces[i];
+      let edge = face.edge;
 
-		const faces = convexHull.faces;
+      // we move along a doubly-connected edge list to access all face points (see HalfEdge docs)
 
-		for ( let i = 0; i < faces.length; i ++ ) {
+      do {
+        const point = edge.head().point;
 
-			const face = faces[ i ];
-			let edge = face.edge;
+        vertices.push(point.x, point.y, point.z);
+        normals.push(face.normal.x, face.normal.y, face.normal.z);
 
-			// we move along a doubly-connected edge list to access all face points (see HalfEdge docs)
+        edge = edge.next;
+      } while (edge !== face.edge);
+    }
 
-			do {
+    // build geometry
 
-				const point = edge.head().point;
-
-				vertices.push( point.x, point.y, point.z );
-				normals.push( face.normal.x, face.normal.y, face.normal.z );
-
-				edge = edge.next;
-
-			} while ( edge !== face.edge );
-
-		}
-
-		// build geometry
-
-		this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-		this.setAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
-
-	}
-
+    this.setAttribute('position', new Float32BufferAttribute(vertices, 3));
+    this.setAttribute('normal', new Float32BufferAttribute(normals, 3));
+  }
 }
 
 export { ConvexGeometry };

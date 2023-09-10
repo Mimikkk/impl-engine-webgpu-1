@@ -3,44 +3,36 @@ import NodeCache from './NodeCache.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
 class CacheNode extends Node {
+  constructor(node, cache = new NodeCache()) {
+    super();
 
-	constructor( node, cache = new NodeCache() ) {
+    this.isCacheNode = true;
 
-		super();
+    this.node = node;
+    this.cache = cache;
+  }
 
-		this.isCacheNode = true;
+  getNodeType(builder) {
+    return this.node.getNodeType(builder);
+  }
 
-		this.node = node;
-		this.cache = cache;
+  build(builder, ...params) {
+    const previousCache = builder.getCache();
 
-	}
+    builder.setCache(this.cache);
 
-	getNodeType( builder ) {
+    const data = this.node.build(builder, ...params);
 
-		return this.node.getNodeType( builder );
+    builder.setCache(previousCache);
 
-	}
-
-	build( builder, ...params ) {
-
-		const previousCache = builder.getCache();
-
-		builder.setCache( this.cache );
-
-		const data = this.node.build( builder, ...params );
-
-		builder.setCache( previousCache );
-
-		return data;
-
-	}
-
+    return data;
+  }
 }
 
 export default CacheNode;
 
-export const cache = nodeProxy( CacheNode );
+export const cache = nodeProxy(CacheNode);
 
-addNodeElement( 'cache', cache );
+addNodeElement('cache', cache);
 
-addNodeClass( CacheNode );
+addNodeClass(CacheNode);

@@ -1,215 +1,163 @@
 import DataMap from './DataMap.js';
 import { AttributeType } from './Constants.js';
-import { Uint32BufferAttribute, Uint16BufferAttribute } from 'three';
+import { Uint16BufferAttribute, Uint32BufferAttribute } from '../Three.js';
 
-function arrayNeedsUint32( array ) {
+function arrayNeedsUint32(array) {
+  // assumes larger values usually on last
 
-	// assumes larger values usually on last
+  for (let i = array.length - 1; i >= 0; --i) {
+    if (array[i] >= 65535) return true; // account for PRIMITIVE_RESTART_FIXED_INDEX, #24565
+  }
 
-	for ( let i = array.length - 1; i >= 0; -- i ) {
-
-		if ( array[ i ] >= 65535 ) return true; // account for PRIMITIVE_RESTART_FIXED_INDEX, #24565
-
-	}
-
-	return false;
-
+  return false;
 }
 
-function getWireframeVersion( geometry ) {
-
-	return ( geometry.index !== null ) ? geometry.index.version : geometry.attributes.position.version;
-
+function getWireframeVersion(geometry) {
+  return geometry.index !== null ? geometry.index.version : geometry.attributes.position.version;
 }
 
-function getWireframeIndex( geometry ) {
+function getWireframeIndex(geometry) {
+  const indices = [];
 
-	const indices = [];
+  const geometryIndex = geometry.index;
+  const geometryPosition = geometry.attributes.position;
 
-	const geometryIndex = geometry.index;
-	const geometryPosition = geometry.attributes.position;
+  if (geometryIndex !== null) {
+    const array = geometryIndex.array;
 
-	if ( geometryIndex !== null ) {
+    for (let i = 0, l = array.length; i < l; i += 3) {
+      const a = array[i + 0];
+      const b = array[i + 1];
+      const c = array[i + 2];
 
-		const array = geometryIndex.array;
+      indices.push(a, b, b, c, c, a);
+    }
+  } else {
+    const array = geometryPosition.array;
 
-		for ( let i = 0, l = array.length; i < l; i += 3 ) {
+    for (let i = 0, l = array.length / 3 - 1; i < l; i += 3) {
+      const a = i + 0;
+      const b = i + 1;
+      const c = i + 2;
 
-			const a = array[ i + 0 ];
-			const b = array[ i + 1 ];
-			const c = array[ i + 2 ];
+      indices.push(a, b, b, c, c, a);
+    }
+  }
 
-			indices.push( a, b, b, c, c, a );
+  const attribute = new (arrayNeedsUint32(indices) ? Uint32BufferAttribute : Uint16BufferAttribute)(indices, 1);
+  attribute.version = getWireframeVersion(geometry);
 
-		}
-
-	} else {
-
-		const array = geometryPosition.array;
-
-		for ( let i = 0, l = ( array.length / 3 ) - 1; i < l; i += 3 ) {
-
-			const a = i + 0;
-			const b = i + 1;
-			const c = i + 2;
-
-			indices.push( a, b, b, c, c, a );
-
-		}
-
-	}
-
-	const attribute = new ( arrayNeedsUint32( indices ) ? Uint32BufferAttribute : Uint16BufferAttribute )( indices, 1 );
-	attribute.version = getWireframeVersion( geometry );
-
-	return attribute;
-
+  return attribute;
 }
 
 class Geometries extends DataMap {
+  constructor(attributes, info) {
+    super();
 
-	constructor( attributes, info ) {
+    this.attributes = attributes;
+    this.info = info;
 
-		super();
+    this.wireframes = new WeakMap();
+    this.attributeFrame = new WeakMap();
+  }
 
-		this.attributes = attributes;
-		this.info = info;
+  has(renderObject) {
+    const geometry = renderObject.geometry;
 
-		this.wireframes = new WeakMap();
-		this.attributeFrame = new WeakMap();
+    return super.has(geometry) && this.get(geometry).initialized === true;
+  }
 
-	}
+  updateForRender(renderObject) {
+    if (this.has(renderObject) === false) this.initGeometry(renderObject);
 
-	has( renderObject ) {
+    this.updateAttributes(renderObject);
+  }
 
-		const geometry = renderObject.geometry;
+  initGeometry(renderObject) {
+    const geometry = renderObject.geometry;
+    const geometryData = this.get(geometry);
 
-		return super.has( geometry ) && this.get( geometry ).initialized === true;
+    geometryData.initialized = true;
 
-	}
+    this.info.memory.geometries++;
 
-	updateForRender( renderObject ) {
+    const onDispose = () => {
+      this.info.memory.geometries--;
 
-		if ( this.has( renderObject ) === false ) this.initGeometry( renderObject );
+      const index = geometry.index;
+      const geometryAttributes = renderObject.getAttributes();
 
-		this.updateAttributes( renderObject );
+      if (index !== null) {
+        this.attributes.delete(index);
+      }
 
-	}
+      for (const geometryAttribute of geometryAttributes) {
+        this.attributes.delete(geometryAttribute);
+      }
 
-	initGeometry( renderObject ) {
+      const wireframeAttribute = this.wireframes.get(geometry);
 
-		const geometry = renderObject.geometry;
-		const geometryData = this.get( geometry );
+      if (wireframeAttribute !== undefined) {
+        this.attributes.delete(wireframeAttribute);
+      }
 
-		geometryData.initialized = true;
+      geometry.removeEventListener('dispose', onDispose);
+    };
 
-		this.info.memory.geometries ++;
+    geometry.addEventListener('dispose', onDispose);
+  }
 
-		const onDispose = () => {
+  updateAttributes(renderObject) {
+    const attributes = renderObject.getAttributes();
 
-			this.info.memory.geometries --;
+    for (const attribute of attributes) {
+      this.updateAttribute(attribute, AttributeType.VERTEX);
+    }
 
-			const index = geometry.index;
-			const geometryAttributes = renderObject.getAttributes();
+    const index = this.getIndex(renderObject);
 
-			if ( index !== null ) {
+    if (index !== null) {
+      this.updateAttribute(index, AttributeType.INDEX);
+    }
+  }
 
-				this.attributes.delete( index );
+  updateAttribute(attribute, type) {
+    const frame = this.info.render.frame;
 
-			}
+    if (this.attributeFrame.get(attribute) !== frame) {
+      this.attributes.update(attribute, type);
 
-			for ( const geometryAttribute of geometryAttributes ) {
+      this.attributeFrame.set(attribute, frame);
+    }
+  }
 
-				this.attributes.delete( geometryAttribute );
+  getIndex(renderObject) {
+    const { geometry, material } = renderObject;
 
-			}
+    let index = geometry.index;
 
-			const wireframeAttribute = this.wireframes.get( geometry );
+    if (material.wireframe === true) {
+      const wireframes = this.wireframes;
 
-			if ( wireframeAttribute !== undefined ) {
+      let wireframeAttribute = wireframes.get(geometry);
 
-				this.attributes.delete( wireframeAttribute );
+      if (wireframeAttribute === undefined) {
+        wireframeAttribute = getWireframeIndex(geometry);
 
-			}
+        wireframes.set(geometry, wireframeAttribute);
+      } else if (wireframeAttribute.version !== getWireframeVersion(geometry)) {
+        this.attributes.delete(wireframeAttribute);
 
-			geometry.removeEventListener( 'dispose', onDispose );
+        wireframeAttribute = getWireframeIndex(geometry);
 
-		};
+        wireframes.set(geometry, wireframeAttribute);
+      }
 
-		geometry.addEventListener( 'dispose', onDispose );
+      index = wireframeAttribute;
+    }
 
-	}
-
-	updateAttributes( renderObject ) {
-
-		const attributes = renderObject.getAttributes();
-
-		for ( const attribute of attributes ) {
-
-			this.updateAttribute( attribute, AttributeType.VERTEX );
-
-		}
-
-		const index = this.getIndex( renderObject );
-
-		if ( index !== null ) {
-
-			this.updateAttribute( index, AttributeType.INDEX );
-
-		}
-
-	}
-
-	updateAttribute( attribute, type ) {
-
-		const frame = this.info.render.frame;
-
-		if ( this.attributeFrame.get( attribute ) !== frame ) {
-
-			this.attributes.update( attribute, type );
-
-			this.attributeFrame.set( attribute, frame );
-
-		}
-
-	}
-
-	getIndex( renderObject ) {
-
-		const { geometry, material } = renderObject;
-
-		let index = geometry.index;
-
-		if ( material.wireframe === true ) {
-
-			const wireframes = this.wireframes;
-
-			let wireframeAttribute = wireframes.get( geometry );
-
-			if ( wireframeAttribute === undefined ) {
-
-				wireframeAttribute = getWireframeIndex( geometry );
-
-				wireframes.set( geometry, wireframeAttribute );
-
-			} else if ( wireframeAttribute.version !== getWireframeVersion( geometry ) ) {
-
-				this.attributes.delete( wireframeAttribute );
-
-				wireframeAttribute = getWireframeIndex( geometry );
-
-				wireframes.set( geometry, wireframeAttribute );
-
-			}
-
-			index = wireframeAttribute;
-
-		}
-
-		return index;
-
-	}
-
+    return index;
+  }
 }
 
 export default Geometries;

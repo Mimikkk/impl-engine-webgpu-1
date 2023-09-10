@@ -3,73 +3,61 @@ import { NodeUpdateType } from '../core/constants.js';
 import { addNodeClass } from '../core/Node.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 import { viewportTopLeft } from './ViewportNode.js';
-import { Vector2, FramebufferTexture, LinearMipmapLinearFilter } from 'three';
+import { FramebufferTexture, LinearMipmapLinearFilter, Vector2 } from 'three';
 
 const _size = new Vector2();
 
 class ViewportTextureNode extends TextureNode {
+  constructor(uvNode = viewportTopLeft, levelNode = null, framebufferTexture = null) {
+    if (framebufferTexture === null) {
+      framebufferTexture = new FramebufferTexture();
+      framebufferTexture.minFilter = LinearMipmapLinearFilter;
+    }
 
-	constructor( uvNode = viewportTopLeft, levelNode = null, framebufferTexture = null ) {
+    super(framebufferTexture, uvNode, levelNode);
 
-		if ( framebufferTexture === null ) {
+    this.generateMipmaps = false;
 
-			framebufferTexture = new FramebufferTexture();
-			framebufferTexture.minFilter = LinearMipmapLinearFilter;
+    this.isOutputTextureNode = true;
 
-		}
+    this.updateBeforeType = NodeUpdateType.FRAME;
+  }
 
-		super( framebufferTexture, uvNode, levelNode );
+  updateBefore(frame) {
+    const renderer = frame.renderer;
+    renderer.getDrawingBufferSize(_size);
 
-		this.generateMipmaps = false;
+    //
 
-		this.isOutputTextureNode = true;
+    const framebufferTexture = this.value;
 
-		this.updateBeforeType = NodeUpdateType.FRAME;
+    if (framebufferTexture.image.width !== _size.width || framebufferTexture.image.height !== _size.height) {
+      framebufferTexture.image.width = _size.width;
+      framebufferTexture.image.height = _size.height;
+      framebufferTexture.needsUpdate = true;
+    }
 
-	}
+    //
 
-	updateBefore( frame ) {
+    const currentGenerateMipmaps = framebufferTexture.generateMipmaps;
+    framebufferTexture.generateMipmaps = this.generateMipmaps;
 
-		const renderer = frame.renderer;
-		renderer.getDrawingBufferSize( _size );
+    renderer.copyFramebufferToTexture(framebufferTexture);
 
-		//
+    framebufferTexture.generateMipmaps = currentGenerateMipmaps;
+  }
 
-		const framebufferTexture = this.value;
-
-		if ( framebufferTexture.image.width !== _size.width || framebufferTexture.image.height !== _size.height ) {
-
-			framebufferTexture.image.width = _size.width;
-			framebufferTexture.image.height = _size.height;
-			framebufferTexture.needsUpdate = true;
-
-		}
-
-		//
-
-		const currentGenerateMipmaps = framebufferTexture.generateMipmaps;
-		framebufferTexture.generateMipmaps = this.generateMipmaps;
-
-		renderer.copyFramebufferToTexture( framebufferTexture );
-
-		framebufferTexture.generateMipmaps = currentGenerateMipmaps;
-
-	}
-
-	clone() {
-
-		return new this.constructor( this.uvNode, this.levelNode, this.value );
-
-	}
-
+  clone() {
+    return new this.constructor(this.uvNode, this.levelNode, this.value);
+  }
 }
 
 export default ViewportTextureNode;
 
-export const viewportTexture = nodeProxy( ViewportTextureNode );
-export const viewportMipTexture = nodeProxy( ViewportTextureNode, null, null, { generateMipmaps: true } );
+export const viewportTexture = nodeProxy(ViewportTextureNode);
+export const viewportMipTexture = nodeProxy(ViewportTextureNode, null, null, { generateMipmaps: true });
 
-addNodeElement( 'viewportTexture', viewportTexture );
-addNodeElement( 'viewportMipTexture', viewportMipTexture );
+addNodeElement('viewportTexture', viewportTexture);
+addNodeElement('viewportMipTexture', viewportMipTexture);
 
-addNodeClass( ViewportTextureNode );
+addNodeClass(ViewportTextureNode);

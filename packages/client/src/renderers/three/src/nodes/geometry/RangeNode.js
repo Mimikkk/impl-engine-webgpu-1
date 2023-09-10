@@ -3,102 +3,86 @@ import { getValueType } from '../core/NodeUtils.js';
 import { buffer } from '../accessors/BufferNode.js';
 //import { bufferAttribute } from '../accessors/BufferAttributeNode.js';
 import { instanceIndex } from '../core/IndexNode.js';
-import { nodeProxy, float } from '../shadernode/ShaderNode.js';
+import { float, nodeProxy } from '../shadernode/ShaderNode.js';
 
-import { Vector4, MathUtils } from 'three';
+import { MathUtils, Vector4 } from 'three';
 
 let min = null;
 let max = null;
 
 class RangeNode extends Node {
+  constructor(minNode = float(), maxNode = float()) {
+    super();
 
-	constructor( minNode = float(), maxNode = float() ) {
+    this.minNode = minNode;
+    this.maxNode = maxNode;
+  }
 
-		super();
+  getVectorLength(builder) {
+    const minLength = builder.getTypeLength(getValueType(this.minNode.value));
+    const maxLength = builder.getTypeLength(getValueType(this.maxNode.value));
 
-		this.minNode = minNode;
-		this.maxNode = maxNode;
+    return minLength > maxLength ? minLength : maxLength;
+  }
 
-	}
+  getNodeType(builder) {
+    return builder.object.isInstancedMesh === true ? builder.getTypeFromLength(this.getVectorLength(builder)) : 'float';
+  }
 
-	getVectorLength( builder ) {
+  construct(builder) {
+    const object = builder.object;
 
-		const minLength = builder.getTypeLength( getValueType( this.minNode.value ) );
-		const maxLength = builder.getTypeLength( getValueType( this.maxNode.value ) );
+    let output = null;
 
-		return minLength > maxLength ? minLength : maxLength;
+    if (object.isInstancedMesh === true) {
+      const minValue = this.minNode.value;
+      const maxValue = this.maxNode.value;
 
-	}
+      const minLength = builder.getTypeLength(getValueType(minValue));
+      const maxLength = builder.getTypeLength(getValueType(maxValue));
 
-	getNodeType( builder ) {
+      min = min || new Vector4();
+      max = max || new Vector4();
 
-		return builder.object.isInstancedMesh === true ? builder.getTypeFromLength( this.getVectorLength( builder ) ) : 'float';
+      min.setScalar(0);
+      max.setScalar(0);
 
-	}
+      if (minLength === 1) min.setScalar(minValue);
+      else if (minValue.isColor) min.set(minValue.r, minValue.g, minValue.b);
+      else min.set(minValue.x, minValue.y, minValue.z || 0, minValue.w || 0);
 
-	construct( builder ) {
+      if (maxLength === 1) max.setScalar(maxValue);
+      else if (maxValue.isColor) max.set(maxValue.r, maxValue.g, maxValue.b);
+      else max.set(maxValue.x, maxValue.y, maxValue.z || 0, maxValue.w || 0);
 
-		const object = builder.object;
+      const stride = 4;
 
-		let output = null;
+      const length = stride * object.count;
+      const array = new Float32Array(length);
 
-		if ( object.isInstancedMesh === true ) {
+      for (let i = 0; i < length; i++) {
+        const index = i % stride;
 
-			const minValue = this.minNode.value;
-			const maxValue = this.maxNode.value;
+        const minElementValue = min.getComponent(index);
+        const maxElementValue = max.getComponent(index);
 
-			const minLength = builder.getTypeLength( getValueType( minValue ) );
-			const maxLength = builder.getTypeLength( getValueType( maxValue ) );
+        array[i] = MathUtils.lerp(minElementValue, maxElementValue, Math.random());
+      }
 
-			min = min || new Vector4();
-			max = max || new Vector4();
+      const nodeType = this.getNodeType(builder);
 
-			min.setScalar( 0 );
-			max.setScalar( 0 );
+      output = buffer(array, 'vec4', object.count).element(instanceIndex).convert(nodeType);
+      //output = bufferAttribute( array, 'vec4', 4, 0 ).convert( nodeType );
+    } else {
+      output = float(0);
+    }
 
-			if ( minLength === 1 ) min.setScalar( minValue );
-			else if ( minValue.isColor ) min.set( minValue.r, minValue.g, minValue.b );
-			else min.set( minValue.x, minValue.y, minValue.z || 0, minValue.w || 0 );
-
-			if ( maxLength === 1 ) max.setScalar( maxValue );
-			else if ( maxValue.isColor ) max.set( maxValue.r, maxValue.g, maxValue.b );
-			else max.set( maxValue.x, maxValue.y, maxValue.z || 0, maxValue.w || 0 );
-
-			const stride = 4;
-
-			const length = stride * object.count;
-			const array = new Float32Array( length );
-
-			for ( let i = 0; i < length; i ++ ) {
-
-				const index = i % stride;
-
-				const minElementValue = min.getComponent( index );
-				const maxElementValue = max.getComponent( index );
-
-				array[ i ] = MathUtils.lerp( minElementValue, maxElementValue, Math.random() );
-
-			}
-
-			const nodeType = this.getNodeType( builder );
-
-			output = buffer( array, 'vec4', object.count ).element( instanceIndex ).convert( nodeType );
-			//output = bufferAttribute( array, 'vec4', 4, 0 ).convert( nodeType );
-
-		} else {
-
-			output = float( 0 );
-
-		}
-
-		return output;
-
-	}
-
+    return output;
+  }
 }
 
 export default RangeNode;
 
-export const range = nodeProxy( RangeNode );
+export const range = nodeProxy(RangeNode);
 
-addNodeClass( RangeNode );
+addNodeClass(RangeNode);
