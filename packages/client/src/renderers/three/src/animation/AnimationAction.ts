@@ -230,8 +230,8 @@ class AnimationAction {
       this._timeScaleInterpolant = interpolant;
     }
 
-    const times = interpolant.parameterPositions,
-      values = interpolant.sampleValues;
+    const times = interpolant.positions,
+      values = interpolant.sampels;
 
     times[0] = now;
     times[1] = now + duration;
@@ -338,7 +338,7 @@ class AnimationAction {
 
         weight *= interpolantValue;
 
-        if (time > interpolant.parameterPositions[1]) {
+        if (time > interpolant.positions[1]) {
           this.stopFading();
 
           if (interpolantValue === 0) {
@@ -366,7 +366,7 @@ class AnimationAction {
 
         timeScale *= interpolantValue;
 
-        if (time > interpolant.parameterPositions[1]) {
+        if (time > interpolant.positions[1]) {
           this.stopWarping();
 
           if (timeScale === 0) {
@@ -542,8 +542,8 @@ class AnimationAction {
       this._weightInterpolant = interpolant;
     }
 
-    const times = interpolant.parameterPositions,
-      values = interpolant.sampleValues;
+    const times = interpolant.positions,
+      values = interpolant.samples;
 
     times[0] = now;
     values[0] = weightNow;

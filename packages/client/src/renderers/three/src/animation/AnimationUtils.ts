@@ -228,7 +228,7 @@ function makeClipAdditive(targetClip, referenceFrame = 0, referenceClip = target
       const startIndex = referenceOffset;
       const endIndex = referenceValueSize - referenceOffset;
       interpolant.evaluate(referenceTime);
-      referenceValue = arraySlice(interpolant.resultBuffer, startIndex, endIndex);
+      referenceValue = arraySlice(interpolant.result, startIndex, endIndex);
     }
 
     // Conjugate the quaternion

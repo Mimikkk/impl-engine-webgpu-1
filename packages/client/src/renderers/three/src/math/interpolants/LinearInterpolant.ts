@@ -1,25 +1,22 @@
-import { Interpolant } from '../Interpolant.js';
+import { Interpolant } from './Interpolant.js';
 
-class LinearInterpolant extends Interpolant {
-  constructor(parameterPositions, sampleValues, sampleSize, resultBuffer) {
-    super(parameterPositions, sampleValues, sampleSize, resultBuffer);
-  }
+export namespace LinearInterpolant {
+  export interface Options extends Interpolant.Parameters {}
 
-  interpolate_(i1, t0, t, t1) {
-    const result = this.resultBuffer,
-      values = this.sampleValues,
-      stride = this.valueSize,
-      offset1 = i1 * stride,
-      offset0 = offset1 - stride,
-      weight1 = (t - t0) / (t1 - t0),
-      weight0 = 1 - weight1;
+  export const create = (options: Options) => {
+    const interpolateOptions = options as Interpolant.Options;
+    interpolateOptions.interpolate = ({ result, samples, stride }, i1, t0, t, t1) => {
+      const offsetNext = i1 * stride;
+      const offsetPrevious = offsetNext - stride;
+      const weightNext = (t - t0) / (t1 - t0);
+      const weightPrevious = 1 - weightNext;
 
-    for (let i = 0; i !== stride; ++i) {
-      result[i] = values[offset0 + i] * weight0 + values[offset1 + i] * weight1;
-    }
+      for (let i = 0; i !== stride; ++i)
+        result[i] = samples[offsetPrevious + i] * weightPrevious + samples[offsetNext + i] * weightNext;
 
-    return result;
-  }
+      return result;
+    };
+
+    return Interpolant.create(interpolateOptions);
+  };
 }
-
-export { LinearInterpolant };

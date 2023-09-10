@@ -1,29 +1,21 @@
-import { Interpolant } from '../Interpolant.js';
+import { Interpolant } from './Interpolant.js';
 import { Quaternion } from '../Quaternion.js';
 
-/**
- * Spherical linear unit quaternion interpolant.
- */
+export namespace QuaternionLinearInterpolant {
+  export const create = (options: Interpolant.Parameters) => {
+    const interpolantOptions = options as Interpolant.Options;
+    interpolantOptions.interpolate = ({ result, samples, stride }, i1, t0, t, t1) => {
+      const alpha = (t - t0) / (t1 - t0);
 
-class QuaternionLinearInterpolant extends Interpolant {
-  constructor(parameterPositions, sampleValues, sampleSize, resultBuffer) {
-    super(parameterPositions, sampleValues, sampleSize, resultBuffer);
-  }
+      let offset = i1 * stride;
 
-  interpolate_(i1, t0, t, t1) {
-    const result = this.resultBuffer,
-      values = this.sampleValues,
-      stride = this.valueSize,
-      alpha = (t - t0) / (t1 - t0);
+      for (let end = offset + stride; offset !== end; offset += 4) {
+        Quaternion.slerpFlat(result, 0, samples, offset - stride, samples, offset, alpha);
+      }
 
-    let offset = i1 * stride;
+      return result;
+    };
 
-    for (let end = offset + stride; offset !== end; offset += 4) {
-      Quaternion.slerpFlat(result, 0, values, offset - stride, values, offset, alpha);
-    }
-
-    return result;
-  }
+    return Interpolant.create(interpolantOptions);
+  };
 }
-
-export { QuaternionLinearInterpolant };

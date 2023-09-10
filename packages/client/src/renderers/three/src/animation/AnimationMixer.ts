@@ -5,6 +5,7 @@ import { PropertyBinding } from './PropertyBinding.js';
 import { PropertyMixer } from './PropertyMixer.js';
 import { AnimationClip } from './AnimationClip.js';
 import { NormalAnimationBlendMode } from '../constants.js';
+import { Interpolants } from '../math/interpolants/interpolants.js';
 
 const _controlInterpolantsResultBuffer = new Float32Array(1);
 
@@ -72,7 +73,7 @@ class AnimationMixer extends EventDispatcher {
         bindings[i] = binding;
       }
 
-      interpolants[i].resultBuffer = binding.buffer;
+      interpolants[i].result = binding.buffer;
     }
   }
 
@@ -372,14 +373,13 @@ class AnimationMixer extends EventDispatcher {
     let interpolant = interpolants[lastActiveIndex];
 
     if (interpolant === undefined) {
-      interpolant = new LinearInterpolant(
-        new Float32Array(2),
-        new Float32Array(2),
-        1,
-        _controlInterpolantsResultBuffer,
-      );
-
-      interpolant.__cacheIndex = lastActiveIndex;
+      interpolant = Interpolants.linear({
+        samples: new Float32Array(2),
+        positions: new Float32Array(2),
+        stride: 1,
+        result: _controlInterpolantsResultBuffer,
+        index: lastActiveIndex,
+      });
       interpolants[lastActiveIndex] = interpolant;
     }
 

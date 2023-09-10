@@ -642,7 +642,7 @@ class MMDAnimationHelper {
     for (let i = 0, il = propertyMixers.length; i < il; i++) {
       const propertyMixer = propertyMixers[i];
       const buffer = propertyMixer.buffer;
-      const stride = propertyMixer.valueSize;
+      const stride = propertyMixer.stride;
       const offset = (accuIndex + 1) * stride;
 
       propertyMixer.binding.getValue(buffer, offset);

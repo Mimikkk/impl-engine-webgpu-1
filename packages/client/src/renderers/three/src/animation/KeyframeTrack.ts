@@ -1,39 +1,46 @@
 import { InterpolateDiscrete, InterpolateLinear, InterpolateSmooth } from '../constants.js';
-import { CubicInterpolant } from '../math/interpolants/CubicInterpolant.js';
-import { LinearInterpolant } from '../math/interpolants/LinearInterpolant.js';
-import { DiscreteInterpolant } from '../math/interpolants/DiscreteInterpolant.js';
-import * as AnimationUtils from './AnimationUtils.js';
+import { AnimationUtils } from './AnimationUtils.js';
+import { NumberArray, NumberArrayConstructor } from '../types.js';
+import { Interpolant } from '../math/interpolants/Interpolant.js';
+import { Interpolants } from '../math/interpolants/interpolants.js';
+
+export type InterpolationMode = typeof InterpolateDiscrete | typeof InterpolateLinear | typeof InterpolateSmooth;
 
 export class KeyframeTrack {
-  constructor(name, times, values, interpolation) {
-    if (name === undefined) throw new Error('THREE.KeyframeTrack: track name is undefined');
-    if (times === undefined || times.length === 0)
-      throw new Error('THREE.KeyframeTrack: no keyframes in track named ' + name);
+  declare ValueTypeName: string;
+  declare TimeBufferType: NumberArrayConstructor;
+  declare ValueBufferType: NumberArrayConstructor;
+  declare DefaultInterpolation: InterpolationMode;
 
+  name: string;
+  times: NumberArray;
+  values: NumberArray;
+
+  constructor(name: string, times: ArrayLike<number>, values: ArrayLike<any>, interpolation: InterpolationMode) {
     this.name = name;
-
-    this.times = AnimationUtils.convertArray(times, this.TimeBufferType);
-    this.values = AnimationUtils.convertArray(values, this.ValueBufferType);
+    this.times = AnimationUtils.convertArray(times, this.TimeBufferType, undefined);
+    this.values = AnimationUtils.convertArray(values, this.ValueBufferType, undefined);
 
     this.setInterpolation(interpolation || this.DefaultInterpolation);
   }
 
-  // Serialization (in static context, because of constructor invocation
-  // and automatic invocation of .toJSON):
-
-  InterpolantFactoryMethodDiscrete(result) {
-    return new DiscreteInterpolant(this.times, this.values, this.getValueSize(), result);
+  get stride() {
+    return this.getValueSize();
   }
 
-  InterpolantFactoryMethodLinear(result) {
-    return new LinearInterpolant(this.times, this.values, this.getValueSize(), result);
+  InterpolantFactoryMethodDiscrete(result?: NumberArray): Interpolant {
+    return Interpolants.discrete({ positions: this.times, samples: this.values, stride: this.stride, result });
   }
 
-  InterpolantFactoryMethodSmooth(result) {
-    return new CubicInterpolant(this.times, this.values, this.getValueSize(), result);
+  InterpolantFactoryMethodLinear(result?: NumberArray): Interpolant {
+    return Interpolants.linear({ positions: this.times, samples: this.values, stride: this.stride, result });
   }
 
-  setInterpolation(interpolation) {
+  InterpolantFactoryMethodSmooth(result?: NumberArray): Interpolant {
+    return Interpolants.cubic({ positions: this.times, samples: this.values, stride: this.stride, result });
+  }
+
+  setInterpolation(interpolation: InterpolationMode) {
     let factoryMethod;
 
     switch (interpolation) {

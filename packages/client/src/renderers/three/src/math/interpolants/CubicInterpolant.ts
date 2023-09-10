@@ -1,120 +1,95 @@
 import { WrapAroundEnding, ZeroCurvatureEnding, ZeroSlopeEnding } from '../../constants.js';
-import { Interpolant } from '../Interpolant.js';
+import { Interpolant } from './Interpolant.js';
 
-/**
- * Fast and simple cubic spline interpolant.
- *
- * It was derived from a Hermitian construction setting the first derivative
- * at each sample position to the linear slope between neighboring positions
- * over their parameter interval.
- */
+export namespace CubicInterpolant {
+  export type Ending = typeof ZeroCurvatureEnding | typeof ZeroSlopeEnding | typeof WrapAroundEnding;
 
-class CubicInterpolant extends Interpolant {
-  constructor(parameterPositions, sampleValues, sampleSize, resultBuffer) {
-    super(parameterPositions, sampleValues, sampleSize, resultBuffer);
-
-    this._weightPrev = -0;
-    this._offsetPrev = -0;
-    this._weightNext = -0;
-    this._offsetNext = -0;
-
-    this.DefaultSettings_ = {
-      endingStart: ZeroCurvatureEnding,
-      endingEnd: ZeroCurvatureEnding,
-    };
+  interface Options extends Interpolant.Parameters {
+    ending?: { start?: Ending; end?: Ending };
   }
 
-  intervalChanged_(i1, t0, t1) {
-    const pp = this.parameterPositions;
-    let iPrev = i1 - 2,
-      iNext = i1 + 1,
-      tPrev = pp[iPrev],
-      tNext = pp[iNext];
+  export const create = ({ ending = {}, samples, stride, result, positions, index }: Options) => {
+    ending.start ??= ZeroCurvatureEnding;
+    ending.end ??= ZeroCurvatureEnding;
 
-    if (tPrev === undefined) {
-      switch (this.getSettings_().endingStart) {
-        case ZeroSlopeEnding:
-          // f'(t0) = 0
-          iPrev = i1;
-          tPrev = 2 * t0 - t1;
+    let weightPrevious: number = 0;
+    let weightNext: number = 0;
+    let offsetPrevious: number = 0;
+    let offsetNext: number = 0;
 
-          break;
+    return Interpolant.create({
+      positions,
+      samples,
+      stride,
+      result,
+      index,
+      interpolate: ({ result, samples, stride }, i1, t0, t, t1) => {
+        const o1 = i1 * stride;
+        const o0 = o1 - stride;
+        const oP = offsetPrevious;
+        const oN = offsetNext;
+        const wP = weightPrevious;
+        const wN = weightNext;
+        const p = (t - t0) / (t1 - t0);
+        const pp = p * p;
+        const ppp = pp * p;
 
-        case WrapAroundEnding:
-          // use the other end of the curve
-          iPrev = pp.length - 2;
-          tPrev = t0 + pp[iPrev] - pp[iPrev + 1];
+        const sP = -wP * ppp + 2 * wP * pp - wP * p;
+        const s0 = (1 + wP) * ppp + (-1.5 - 2 * wP) * pp + (-0.5 + wP) * p + 1;
+        const s1 = (-1 - wN) * ppp + (1.5 + wN) * pp + 0.5 * p;
+        const sN = wN * ppp - wN * pp;
 
-          break;
+        for (let i = 0; i !== stride; ++i)
+          result[i] = sP * samples[oP + i] + s0 * samples[o0 + i] + s1 * samples[o1 + i] + sN * samples[oN + i];
 
-        default: // ZeroCurvatureEnding
-          // f''(t0) = 0 a.k.a. Natural Spline
-          iPrev = i1;
-          tPrev = t1;
-      }
-    }
+        return result;
+      },
+      validate: ({ positions, stride }, i1, t0, t1) => {
+        let previousIndex = i1 - 2;
+        let nextIndex = i1 + 1;
+        let previous = positions[previousIndex];
+        let next = positions[nextIndex];
 
-    if (tNext === undefined) {
-      switch (this.getSettings_().endingEnd) {
-        case ZeroSlopeEnding:
-          // f'(tN) = 0
-          iNext = i1;
-          tNext = 2 * t1 - t0;
+        if (previous === undefined) {
+          switch (ending.start) {
+            case ZeroSlopeEnding:
+              previousIndex = i1;
+              previous = 2 * t0 - t1;
+              break;
+            case WrapAroundEnding:
+              previousIndex = positions.length - 2;
+              previous = t0 + positions[previousIndex] - positions[previousIndex + 1];
+              break;
+            case ZeroCurvatureEnding:
+              previousIndex = i1;
+              previous = t1;
+              break;
+          }
+        }
+        if (next === undefined) {
+          switch (ending.end) {
+            case ZeroSlopeEnding:
+              nextIndex = i1;
+              next = 2 * t1 - t0;
+              break;
+            case WrapAroundEnding:
+              nextIndex = 1;
+              next = t1 + positions[1] - positions[0];
+              break;
+            case ZeroCurvatureEnding:
+              nextIndex = i1 - 1;
+              next = t0;
+              break;
+          }
+        }
 
-          break;
+        const halfDt = (t1 - t0) * 0.5;
 
-        case WrapAroundEnding:
-          // use the other end of the curve
-          iNext = 1;
-          tNext = t1 + pp[1] - pp[0];
-
-          break;
-
-        default: // ZeroCurvatureEnding
-          // f''(tN) = 0, a.k.a. Natural Spline
-          iNext = i1 - 1;
-          tNext = t0;
-      }
-    }
-
-    const halfDt = (t1 - t0) * 0.5,
-      stride = this.valueSize;
-
-    this._weightPrev = halfDt / (t0 - tPrev);
-    this._weightNext = halfDt / (tNext - t1);
-    this._offsetPrev = iPrev * stride;
-    this._offsetNext = iNext * stride;
-  }
-
-  interpolate_(i1, t0, t, t1) {
-    const result = this.resultBuffer,
-      values = this.sampleValues,
-      stride = this.valueSize,
-      o1 = i1 * stride,
-      o0 = o1 - stride,
-      oP = this._offsetPrev,
-      oN = this._offsetNext,
-      wP = this._weightPrev,
-      wN = this._weightNext,
-      p = (t - t0) / (t1 - t0),
-      pp = p * p,
-      ppp = pp * p;
-
-    // evaluate polynomials
-
-    const sP = -wP * ppp + 2 * wP * pp - wP * p;
-    const s0 = (1 + wP) * ppp + (-1.5 - 2 * wP) * pp + (-0.5 + wP) * p + 1;
-    const s1 = (-1 - wN) * ppp + (1.5 + wN) * pp + 0.5 * p;
-    const sN = wN * ppp - wN * pp;
-
-    // combine data linearly
-
-    for (let i = 0; i !== stride; ++i) {
-      result[i] = sP * values[oP + i] + s0 * values[o0 + i] + s1 * values[o1 + i] + sN * values[oN + i];
-    }
-
-    return result;
-  }
+        weightPrevious = halfDt / (t0 - previous);
+        offsetPrevious = previousIndex * stride;
+        weightNext = halfDt / (next - t1);
+        offsetNext = nextIndex * stride;
+      },
+    });
+  };
 }
-
-export { CubicInterpolant };
