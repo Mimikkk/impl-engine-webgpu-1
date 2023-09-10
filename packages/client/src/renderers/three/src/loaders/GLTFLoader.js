@@ -19,12 +19,12 @@ import {
   InterpolateDiscrete,
   InterpolateLinear,
   Line,
-  LinearFilter,
-  LinearMipmapLinearFilter,
-  LinearMipmapNearestFilter,
   LineBasicMaterial,
   LineLoop,
   LineSegments,
+  LinearFilter,
+  LinearMipmapLinearFilter,
+  LinearMipmapNearestFilter,
   Loader,
   LoaderUtils,
   Material,
@@ -53,7 +53,6 @@ import {
   SkinnedMesh,
   Sphere,
   SpotLight,
-  SRGBColorSpace,
   Texture,
   TextureLoader,
   TriangleFanDrawMode,
@@ -61,6 +60,7 @@ import {
   Vector2,
   Vector3,
   VectorKeyframeTrack,
+  SRGBColorSpace,
 } from '../Three.js';
 import { toTrianglesDrawMode } from '../utils/BufferGeometryUtils.js';
 
