@@ -10,13 +10,13 @@
 </div>
 <script type='module'>
 
-  import * as THREE from '../src/Three.js';
-  import { mix, range, normalWorld, oscSine, timerLocal } from '../src/nodes/Nodes.js';
+  import * as THREE from '../src/Three.ts';
+  import { mix, range, normalWorld, oscSine, timerLocal } from '../src/nodes/Nodes.ts';
 
-  import Stats from '../src/libs/stats.module.js';
+  import Stats from '../src/libs/stats.module.ts';
   import { GUI } from 'lil-gui';
 
-  import WebGPURenderer from '../src/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.ts';
 
   let camera, scene, renderer, stats;
 

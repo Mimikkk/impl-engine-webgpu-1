@@ -10,8 +10,8 @@
 </div>
 <script type='module'>
 
-  import * as THREE from '../src/Three.js';
-  import * as Nodes from '../src/nodes/Nodes.js';
+  import * as THREE from '../src/Three.ts';
+  import * as Nodes from '../src/nodes/Nodes.ts';
 
   import {
     tslFn,
@@ -38,13 +38,13 @@
     loop,
     MeshBasicNodeMaterial,
     NodeObjectLoader,
-  } from '../src/nodes/Nodes.js';
+  } from '../src/nodes/Nodes.ts';
 
-  import WebGPURenderer from '../src/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.ts';
 
-  import { TeapotGeometry } from '../src/geometries/TeapotGeometry.js';
+  import { TeapotGeometry } from '../src/geometries/TeapotGeometry.ts';
 
-  import Stats from '../src/libs/stats.module.js';
+  import Stats from '../src/libs/stats.module.ts';
 
   let stats;
 

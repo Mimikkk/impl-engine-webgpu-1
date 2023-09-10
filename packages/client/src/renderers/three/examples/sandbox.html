@@ -9,7 +9,7 @@
 </div>
 <script type='module'>
 
-  import * as THREE from '../src/Three.js';
+  import * as THREE from '../src/Three.ts';
   import {
     timerLocal,
     vec2,
@@ -25,11 +25,11 @@
     MeshBasicNodeMaterial,
     PointsNodeMaterial,
     LineBasicNodeMaterial,
-  } from '../src/nodes/Nodes.js';
+  } from '../src/nodes/Nodes.ts';
 
-  import { KTX2Loader } from '../src/loaders/KTX2Loader.js';
+  import { KTX2Loader } from '../src/loaders/KTX2Loader.ts';
 
-  import WebGPURenderer from '../src/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.ts';
 
   let camera, scene, renderer;
 

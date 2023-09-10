@@ -10,7 +10,7 @@
 </div>
 <script type='module'>
 
-  import * as THREE from '../src/Three.js';
+  import * as THREE from '../src/Three.ts';
   import {
     MeshStandardNodeMaterial,
     NodeUpdateType,
@@ -19,15 +19,15 @@
     uniform,
     attribute,
     cubeTexture,
-  } from '../src/nodes/Nodes.js';
+  } from '../src/nodes/Nodes.ts';
 
-  import WebGPURenderer from '../src/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.ts';
 
-  import { OrbitControls } from '../src/controls/OrbitControls.js';
+  import { OrbitControls } from '../src/controls/OrbitControls.ts';
 
-  import { TeapotGeometry } from '../src/geometries/TeapotGeometry.js';
+  import { TeapotGeometry } from '../src/geometries/TeapotGeometry.ts';
 
-  import Stats from '../src/libs/stats.module.js';
+  import Stats from '../src/libs/stats.module.ts';
 
   class InstanceUniformNode extends Node {
 

@@ -12,7 +12,7 @@
   <br>Click on screen to process the audio using WebGPU.
 </div>
 <script type='module'>
-  import * as THREE from '../src/Three.js';
+  import * as THREE from '../src/Three.ts';
   import {
     ShaderNode,
     uniform,
@@ -22,9 +22,9 @@
     texture,
     viewportTopLeft,
     color,
-  } from '../src/nodes/Nodes.js';
+  } from '../src/nodes/Nodes.ts';
   import { GUI } from 'lil-gui';
-  import WebGPURenderer from '../src/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.ts';
 
   let camera, scene, renderer;
   let computeNode;

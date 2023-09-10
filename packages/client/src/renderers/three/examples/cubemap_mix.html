@@ -13,15 +13,15 @@
 </div>
 <script type='module'>
 
-  import * as THREE from '../src/Three.js';
-  import { mix, oscSine, timerLocal, cubeTexture, float, toneMapping } from '../src/nodes/Nodes.js';
+  import * as THREE from '../src/Three.ts';
+  import { mix, oscSine, timerLocal, cubeTexture, float, toneMapping } from '../src/nodes/Nodes.ts';
 
-  import WebGPURenderer from '../src/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.ts';
 
-  import { RGBMLoader } from '../src/loaders/RGBMLoader.js';
+  import { RGBMLoader } from '../src/loaders/RGBMLoader.ts';
 
-  import { OrbitControls } from '../src/controls/OrbitControls.js';
-  import { GLTFLoader } from '../src/loaders/GLTFLoader.js';
+  import { OrbitControls } from '../src/controls/OrbitControls.ts';
+  import { GLTFLoader } from '../src/loaders/GLTFLoader.ts';
 
   let camera, scene, renderer;
 

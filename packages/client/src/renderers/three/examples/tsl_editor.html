@@ -32,15 +32,15 @@
 <div id='source'></div>
 <div id='result'></div>
 <div id='renderer'></div>
-<script src='https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.min.ts'></script>
 <script type='module'>
 
-  import * as THREE from '../src/Three.js';
-  import * as Nodes from '../src/nodes/Nodes.js';
+  import * as THREE from '../src/Three.ts';
+  import * as Nodes from '../src/nodes/Nodes.ts';
 
-  import WebGPURenderer from '../src/WebGPURenderer.js';
-  import WGSLNodeBuilder from '../src/renderers/webgpu/nodes/WGSLNodeBuilder.js';
-  import GLSLNodeBuilder from '../src/renderers/webgl/nodes/GLSLNodeBuilder.js';
+  import WebGPURenderer from '../src/WebGPURenderer.ts';
+  import WGSLNodeBuilder from '../src/renderers/webgpu/nodes/WGSLNodeBuilder.ts';
+  import GLSLNodeBuilder from '../src/renderers/webgl/nodes/GLSLNodeBuilder.ts';
 
   import { GUI } from 'lil-gui';
 

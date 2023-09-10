@@ -9,12 +9,12 @@
 </div>
 <script type='module'>
 
-  import * as THREE from '../src/Three.js';
-  import { color, lights, toneMapping, MeshStandardNodeMaterial, PointsNodeMaterial, LightingModel } from '../src/nodes/Nodes.js';
+  import * as THREE from '../src/Three.ts';
+  import { color, lights, toneMapping, MeshStandardNodeMaterial, PointsNodeMaterial, LightingModel } from '../src/nodes/Nodes.ts';
 
-  import WebGPURenderer from '../src/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.ts';
 
-  import { OrbitControls } from '../src/controls/OrbitControls.js';
+  import { OrbitControls } from '../src/controls/OrbitControls.ts';
 
   class CustomLightingModel extends LightingModel {
 

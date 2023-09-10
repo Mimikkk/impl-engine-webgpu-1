@@ -12,17 +12,17 @@
 </div>
 <script type='module'>
 
-  import * as THREE from '../src/Three.js';
-  import { rangeFog, color, lights, texture, normalMap, MeshStandardNodeMaterial } from '../src/nodes/Nodes.js';
+  import * as THREE from '../src/Three.ts';
+  import { rangeFog, color, lights, texture, normalMap, MeshStandardNodeMaterial } from '../src/nodes/Nodes.ts';
 
-  import Stats from '../src/libs/stats.module.js';
+  import Stats from '../src/libs/stats.module.ts';
 
   import { GUI } from 'lil-gui';
 
-  import { OrbitControls } from '../src/controls/OrbitControls.js';
-  import { TeapotGeometry } from '../src/geometries/TeapotGeometry.js';
+  import { OrbitControls } from '../src/controls/OrbitControls.ts';
+  import { TeapotGeometry } from '../src/geometries/TeapotGeometry.ts';
 
-  import WebGPURenderer from '../src/WebGPURenderer.js';
+  import WebGPURenderer from '../src/WebGPURenderer.ts';
 
   let camera, scene, renderer,
     light1, light2, light3, light4,
