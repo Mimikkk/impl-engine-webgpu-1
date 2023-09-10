@@ -114,18 +114,6 @@ class MathNode extends TempNode {
       return builder.format(`${builder.getMethod(method)}( ${params.join(', ')} )`, type, output);
     }
   }
-
-  serialize(data) {
-    super.serialize(data);
-
-    data.method = this.method;
-  }
-
-  deserialize(data) {
-    super.deserialize(data);
-
-    this.method = data.method;
-  }
 }
 
 // 1 input

@@ -28,7 +28,7 @@ import { Vector3 } from '../math/Vector3.js';
 import { Shape } from '../extras/core/Shape.js';
 import { ShapeUtils } from '../extras/ShapeUtils.js';
 
-class ExtrudeGeometry extends BufferGeometry {
+export class ExtrudeGeometry extends BufferGeometry {
   constructor(
     shapes = new Shape([
       new Vector2(0.5, 0.5),
@@ -584,15 +584,6 @@ class ExtrudeGeometry extends BufferGeometry {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    const shapes = this.parameters.shapes;
-    const options = this.parameters.options;
-
-    return toJSON(shapes, options, data);
-  }
 }
 
 const WorldUVGenerator = {
@@ -638,25 +629,3 @@ const WorldUVGenerator = {
     }
   },
 };
-
-function toJSON(shapes, options, data) {
-  data.shapes = [];
-
-  if (Array.isArray(shapes)) {
-    for (let i = 0, l = shapes.length; i < l; i++) {
-      const shape = shapes[i];
-
-      data.shapes.push(shape.uuid);
-    }
-  } else {
-    data.shapes.push(shapes.uuid);
-  }
-
-  data.options = Object.assign({}, options);
-
-  if (options.extrudePath !== undefined) data.options.extrudePath = options.extrudePath.toJSON();
-
-  return data;
-}
-
-export { ExtrudeGeometry };

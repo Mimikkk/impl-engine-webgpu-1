@@ -1,6 +1,6 @@
 import { BufferGeometry } from './BufferGeometry.js';
 
-class InstancedBufferGeometry extends BufferGeometry {
+export class InstancedBufferGeometry extends BufferGeometry {
   constructor() {
     super();
 
@@ -17,16 +17,4 @@ class InstancedBufferGeometry extends BufferGeometry {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.instanceCount = this.instanceCount;
-
-    data.isInstancedBufferGeometry = true;
-
-    return data;
-  }
 }
-
-export { InstancedBufferGeometry };

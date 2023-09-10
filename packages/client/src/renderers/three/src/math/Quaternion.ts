@@ -1,6 +1,6 @@
 import * as MathUtils from './MathUtils.js';
 
-class Quaternion {
+export class Quaternion {
   constructor(x = 0, y = 0, z = 0, w = 1) {
     this.isQuaternion = true;
 
@@ -553,10 +553,6 @@ class Quaternion {
     return this;
   }
 
-  toJSON() {
-    return this.toArray();
-  }
-
   _onChange(callback) {
     this._onChangeCallback = callback;
 
@@ -572,5 +568,3 @@ class Quaternion {
     yield this._w;
   }
 }
-
-export { Quaternion };

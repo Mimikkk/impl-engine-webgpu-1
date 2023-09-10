@@ -9,7 +9,7 @@ import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js';
 import * as MathUtils from '../math/MathUtils.js';
 import { NormalAnimationBlendMode } from '../constants.js';
 
-class AnimationClip {
+export class AnimationClip {
   constructor(name, duration = -1, tracks, blendMode = NormalAnimationBlendMode) {
     this.name = name;
     this.tracks = tracks;
@@ -37,25 +37,6 @@ class AnimationClip {
     clip.uuid = json.uuid;
 
     return clip;
-  }
-
-  static toJSON(clip) {
-    const tracks = [],
-      clipTracks = clip.tracks;
-
-    const json = {
-      name: clip.name,
-      duration: clip.duration,
-      tracks: tracks,
-      uuid: clip.uuid,
-      blendMode: clip.blendMode,
-    };
-
-    for (let i = 0, n = clipTracks.length; i !== n; ++i) {
-      tracks.push(KeyframeTrack.toJSON(clipTracks[i]));
-    }
-
-    return json;
   }
 
   static CreateFromMorphTargetSequence(name, morphTargetSequence, fps, noLoop) {
@@ -287,10 +268,6 @@ class AnimationClip {
 
     return new this.constructor(this.name, this.duration, tracks, this.blendMode);
   }
-
-  toJSON() {
-    return this.constructor.toJSON(this);
-  }
 }
 
 function getTrackTypeForValueTypeName(typeName) {
@@ -350,5 +327,3 @@ function parseKeyframeTrack(json) {
     return new trackType(json.name, json.times, json.values, json.interpolation);
   }
 }
-
-export { AnimationClip };

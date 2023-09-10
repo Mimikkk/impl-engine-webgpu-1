@@ -75,7 +75,13 @@ class Composite {
 // prototype version of these methods with one that represents
 // the bound state. When the property is not found, the methods
 // become no-ops.
-class PropertyBinding {
+export class PropertyBinding {
+  static Composite = Composite;
+  declare BindingType: any;
+  declare Versioning: any;
+  declare GetterByBindingType: any;
+  declare SetterByBindingTypeAndVersioning: any;
+
   constructor(rootNode, path, parsedPath) {
     this.path = path;
     this.parsedPath = parsedPath || PropertyBinding.parseTrackName(path);
@@ -520,8 +526,6 @@ class PropertyBinding {
   }
 }
 
-PropertyBinding.Composite = Composite;
-
 PropertyBinding.prototype.BindingType = {
   Direct: 0,
   EntireArray: 1,
@@ -569,5 +573,3 @@ PropertyBinding.prototype.SetterByBindingTypeAndVersioning = [
     PropertyBinding.prototype._setValue_fromArray_setMatrixWorldNeedsUpdate,
   ],
 ];
-
-export { PropertyBinding };

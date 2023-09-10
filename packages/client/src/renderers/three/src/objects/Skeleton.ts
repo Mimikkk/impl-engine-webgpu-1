@@ -7,7 +7,7 @@ import * as MathUtils from '../math/MathUtils.js';
 const _offsetMatrix = /*@__PURE__*/ new Matrix4();
 const _identityMatrix = /*@__PURE__*/ new Matrix4();
 
-class Skeleton {
+export class Skeleton {
   constructor(bones = [], boneInverses = []) {
     this.uuid = MathUtils.generateUUID();
 
@@ -159,54 +159,4 @@ class Skeleton {
       this.boneTexture = null;
     }
   }
-
-  fromJSON(json, bones) {
-    this.uuid = json.uuid;
-
-    for (let i = 0, l = json.bones.length; i < l; i++) {
-      const uuid = json.bones[i];
-      let bone = bones[uuid];
-
-      if (bone === undefined) {
-        console.warn('THREE.Skeleton: No bone found with UUID:', uuid);
-        bone = new Bone();
-      }
-
-      this.bones.push(bone);
-      this.boneInverses.push(new Matrix4().fromArray(json.boneInverses[i]));
-    }
-
-    this.init();
-
-    return this;
-  }
-
-  toJSON() {
-    const data = {
-      metadata: {
-        version: 4.6,
-        type: 'Skeleton',
-        generator: 'Skeleton.toJSON',
-      },
-      bones: [],
-      boneInverses: [],
-    };
-
-    data.uuid = this.uuid;
-
-    const bones = this.bones;
-    const boneInverses = this.boneInverses;
-
-    for (let i = 0, l = bones.length; i < l; i++) {
-      const bone = bones[i];
-      data.bones.push(bone.uuid);
-
-      const boneInverse = boneInverses[i];
-      data.boneInverses.push(boneInverse.toArray());
-    }
-
-    return data;
-  }
 }
-
-export { Skeleton };

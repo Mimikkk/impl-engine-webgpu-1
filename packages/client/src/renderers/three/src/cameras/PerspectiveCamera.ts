@@ -1,7 +1,7 @@
 import { Camera } from './Camera.js';
 import * as MathUtils from '../math/MathUtils.js';
 
-class PerspectiveCamera extends Camera {
+export class PerspectiveCamera extends Camera {
   constructor(fov = 50, aspect = 1, near = 0.1, far = 2000) {
     super();
 
@@ -177,26 +177,4 @@ class PerspectiveCamera extends Camera {
 
     this.projectionMatrixInverse.copy(this.projectionMatrix).invert();
   }
-
-  toJSON(meta) {
-    const data = super.toJSON(meta);
-
-    data.object.fov = this.fov;
-    data.object.zoom = this.zoom;
-
-    data.object.near = this.near;
-    data.object.far = this.far;
-    data.object.focus = this.focus;
-
-    data.object.aspect = this.aspect;
-
-    if (this.view !== null) data.object.view = Object.assign({}, this.view);
-
-    data.object.filmGauge = this.filmGauge;
-    data.object.filmOffset = this.filmOffset;
-
-    return data;
-  }
 }
-
-export { PerspectiveCamera };

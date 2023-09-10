@@ -1,7 +1,7 @@
 import { Curve } from '../core/Curve.js';
 import { Vector2 } from '../../math/Vector2.js';
 
-class EllipseCurve extends Curve {
+export class EllipseCurve extends Curve {
   constructor(
     aX = 0,
     aY = 0,
@@ -96,44 +96,4 @@ class EllipseCurve extends Curve {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.aX = this.aX;
-    data.aY = this.aY;
-
-    data.xRadius = this.xRadius;
-    data.yRadius = this.yRadius;
-
-    data.aStartAngle = this.aStartAngle;
-    data.aEndAngle = this.aEndAngle;
-
-    data.aClockwise = this.aClockwise;
-
-    data.aRotation = this.aRotation;
-
-    return data;
-  }
-
-  fromJSON(json) {
-    super.fromJSON(json);
-
-    this.aX = json.aX;
-    this.aY = json.aY;
-
-    this.xRadius = json.xRadius;
-    this.yRadius = json.yRadius;
-
-    this.aStartAngle = json.aStartAngle;
-    this.aEndAngle = json.aEndAngle;
-
-    this.aClockwise = json.aClockwise;
-
-    this.aRotation = json.aRotation;
-
-    return this;
-  }
 }
-
-export { EllipseCurve };

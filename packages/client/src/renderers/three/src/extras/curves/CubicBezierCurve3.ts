@@ -2,7 +2,7 @@ import { Curve } from '../core/Curve.js';
 import { CubicBezier } from '../core/Interpolations.js';
 import { Vector3 } from '../../math/Vector3.js';
 
-class CubicBezierCurve3 extends Curve {
+export class CubicBezierCurve3 extends Curve {
   constructor(v0 = new Vector3(), v1 = new Vector3(), v2 = new Vector3(), v3 = new Vector3()) {
     super();
 
@@ -44,17 +44,6 @@ class CubicBezierCurve3 extends Curve {
     return this;
   }
 
-  toJSON() {
-    const data = super.toJSON();
-
-    data.v0 = this.v0.toArray();
-    data.v1 = this.v1.toArray();
-    data.v2 = this.v2.toArray();
-    data.v3 = this.v3.toArray();
-
-    return data;
-  }
-
   fromJSON(json) {
     super.fromJSON(json);
 
@@ -66,5 +55,3 @@ class CubicBezierCurve3 extends Curve {
     return this;
   }
 }
-
-export { CubicBezierCurve3 };

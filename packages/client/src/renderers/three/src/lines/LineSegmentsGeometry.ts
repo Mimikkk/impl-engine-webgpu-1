@@ -12,7 +12,7 @@ import {
 const _box = new Box3();
 const _vector = new Vector3();
 
-class LineSegmentsGeometry extends InstancedBufferGeometry {
+export class LineSegmentsGeometry extends InstancedBufferGeometry {
   constructor() {
     super();
 
@@ -176,15 +176,9 @@ class LineSegmentsGeometry extends InstancedBufferGeometry {
     }
   }
 
-  toJSON() {
-    // todo
-  }
-
   applyMatrix(matrix) {
     console.warn('THREE.LineSegmentsGeometry: applyMatrix() has been renamed to applyMatrix4().');
 
     return this.applyMatrix4(matrix);
   }
 }
-
-export { LineSegmentsGeometry };

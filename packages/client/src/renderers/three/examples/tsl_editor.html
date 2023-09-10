@@ -29,18 +29,16 @@
         z-index: 100;
     }
 </style>
+<script src='https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.min.js'></script>
 <div id='source'></div>
 <div id='result'></div>
 <div id='renderer'></div>
-<script src='https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.min.ts'></script>
 <script type='module'>
-
   import * as THREE from '../src/Three.ts';
   import * as Nodes from '../src/nodes/Nodes.ts';
 
   import WebGPURenderer from '../src/WebGPURenderer.ts';
-  import WGSLNodeBuilder from '../src/renderers/webgpu/nodes/WGSLNodeBuilder.ts';
-  import GLSLNodeBuilder from '../src/renderers/webgl/nodes/GLSLNodeBuilder.ts';
+  import WGSLNodeBuilder from '../src/nodes/WebGPUNodeBuilder.ts';
 
   import { GUI } from 'lil-gui';
 
@@ -82,7 +80,7 @@
 
     // editor
 
-    window.require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs' } });
+    require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs' } });
 
     require(['vs/editor/editor.main'], () => {
 
@@ -156,7 +154,7 @@ output = vec4( finalColor, opacity );
           mesh.material.outputNode = nodes.output;
           mesh.material.needsUpdate = true;
 
-          const NodeBuilder = options.output === 'WGSL' ? WGSLNodeBuilder : GLSLNodeBuilder;
+          const NodeBuilder = WGSLNodeBuilder;
 
           nodeBuilder = new NodeBuilder(mesh, renderer);
           nodeBuilder.build();

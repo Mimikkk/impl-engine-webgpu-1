@@ -1,6 +1,6 @@
 import { BufferAttribute } from './BufferAttribute.js';
 
-class InstancedBufferAttribute extends BufferAttribute {
+export class InstancedBufferAttribute extends BufferAttribute {
   constructor(array, itemSize, normalized, meshPerAttribute = 1) {
     super(array, itemSize, normalized);
 
@@ -16,16 +16,4 @@ class InstancedBufferAttribute extends BufferAttribute {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.meshPerAttribute = this.meshPerAttribute;
-
-    data.isInstancedBufferAttribute = true;
-
-    return data;
-  }
 }
-
-export { InstancedBufferAttribute };

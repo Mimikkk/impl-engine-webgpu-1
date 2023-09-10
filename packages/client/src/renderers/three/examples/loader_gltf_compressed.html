@@ -8,17 +8,6 @@
 <div id='info'>
   WebGPU - GLTFLoader + compression extensions
 </div>
-
-
-<script type='importmap'>
-  {
-    "imports": {
-      "three": "../build/three.module.js",
-      "../src/": "./jsm/"
-    }
-  }
-</script>
-
 <script type='module'>
 
   import * as THREE from '../src/Three.ts';
@@ -66,7 +55,7 @@
     controls.update();
 
     const ktx2Loader = new KTX2Loader()
-      .setTranscoderPath('jsm/libs/basis/')
+      .setTranscoderPath('../src/libs/basis/')
       .detectSupport(renderer);
 
     const loader = new GLTFLoader();

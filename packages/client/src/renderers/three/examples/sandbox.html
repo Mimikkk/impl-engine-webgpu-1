@@ -28,7 +28,6 @@
   } from '../src/nodes/Nodes.ts';
 
   import { KTX2Loader } from '../src/loaders/KTX2Loader.ts';
-
   import WebGPURenderer from '../src/WebGPURenderer.ts';
 
   let camera, scene, renderer;
@@ -67,7 +66,7 @@
     textureDisplace.wrapT = THREE.RepeatWrapping;
 
     const ktxLoader = new KTX2Loader()
-      .setTranscoderPath('jsm/libs/basis/')
+      .setTranscoderPath('../src/libs/basis/')
       .detectSupport(renderer);
 
     const ktxTexture = await ktxLoader.loadAsync('./textures/compressed/sample_uastc_zstd.ktx2');

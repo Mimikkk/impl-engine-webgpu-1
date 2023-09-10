@@ -12,18 +12,18 @@
  */
 
 import {
-  CompressedTexture,
   CompressedArrayTexture,
   CompressedCubeTexture,
+  CompressedTexture,
   Data3DTexture,
   DataTexture,
   FileLoader,
   FloatType,
   HalfFloatType,
-  NoColorSpace,
   LinearFilter,
   LinearMipmapLinearFilter,
   Loader,
+  NoColorSpace,
   RedFormat,
   RGB_ETC1_Format,
   RGB_ETC2_Format,
@@ -41,12 +41,11 @@ import {
 } from '../Three.js';
 import { WorkerPool } from '../utils/WorkerPool.js';
 import {
-  read,
   KHR_DF_FLAG_ALPHA_PREMULTIPLIED,
   KHR_DF_TRANSFER_SRGB,
   KHR_SUPERCOMPRESSION_NONE,
   KHR_SUPERCOMPRESSION_ZSTD,
-  VK_FORMAT_UNDEFINED,
+  read,
   VK_FORMAT_R16_SFLOAT,
   VK_FORMAT_R16G16_SFLOAT,
   VK_FORMAT_R16G16B16A16_SFLOAT,
@@ -59,8 +58,9 @@ import {
   VK_FORMAT_R8G8_UNORM,
   VK_FORMAT_R8G8B8A8_SRGB,
   VK_FORMAT_R8G8B8A8_UNORM,
-} from '../libs/ktx-parse.module.js';
-import { ZSTDDecoder } from '../libs/zstddec.module.js';
+  VK_FORMAT_UNDEFINED,
+} from 'ktx-parse';
+import { ZSTDDecoder } from 'zstddec';
 
 const _taskCache = new WeakMap();
 

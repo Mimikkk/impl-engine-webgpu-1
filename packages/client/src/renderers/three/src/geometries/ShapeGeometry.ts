@@ -4,7 +4,7 @@ import { Shape } from '../extras/core/Shape.js';
 import { ShapeUtils } from '../extras/ShapeUtils.js';
 import { Vector2 } from '../math/Vector2.js';
 
-class ShapeGeometry extends BufferGeometry {
+export class ShapeGeometry extends BufferGeometry {
   constructor(
     shapes = new Shape([new Vector2(0, 0.5), new Vector2(-0.5, -0.5), new Vector2(0.5, -0.5)]),
     curveSegments = 12,
@@ -128,30 +128,4 @@ class ShapeGeometry extends BufferGeometry {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    const shapes = this.parameters.shapes;
-
-    return toJSON(shapes, data);
-  }
 }
-
-function toJSON(shapes, data) {
-  data.shapes = [];
-
-  if (Array.isArray(shapes)) {
-    for (let i = 0, l = shapes.length; i < l; i++) {
-      const shape = shapes[i];
-
-      data.shapes.push(shape.uuid);
-    }
-  } else {
-    data.shapes.push(shapes.uuid);
-  }
-
-  return data;
-}
-
-export { ShapeGeometry };

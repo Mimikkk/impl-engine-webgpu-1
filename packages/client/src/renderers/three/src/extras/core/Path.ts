@@ -6,7 +6,7 @@ import { CubicBezierCurve } from '../curves/CubicBezierCurve.js';
 import { QuadraticBezierCurve } from '../curves/QuadraticBezierCurve.js';
 import { LineCurve } from '../curves/LineCurve.js';
 
-class Path extends CurvePath {
+export class Path extends CurvePath {
   constructor(points) {
     super();
 
@@ -131,22 +131,4 @@ class Path extends CurvePath {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.currentPoint = this.currentPoint.toArray();
-
-    return data;
-  }
-
-  fromJSON(json) {
-    super.fromJSON(json);
-
-    this.currentPoint.fromArray(json.currentPoint);
-
-    return this;
-  }
 }
-
-export { Path };

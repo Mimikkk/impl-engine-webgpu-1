@@ -1,6 +1,6 @@
 import { Camera } from './Camera.js';
 
-class OrthographicCamera extends Camera {
+export class OrthographicCamera extends Camera {
   constructor(left = -1, right = 1, top = 1, bottom = -1, near = 0.1, far = 2000) {
     super();
 
@@ -95,22 +95,4 @@ class OrthographicCamera extends Camera {
 
     this.projectionMatrixInverse.copy(this.projectionMatrix).invert();
   }
-
-  toJSON(meta) {
-    const data = super.toJSON(meta);
-
-    data.object.zoom = this.zoom;
-    data.object.left = this.left;
-    data.object.right = this.right;
-    data.object.top = this.top;
-    data.object.bottom = this.bottom;
-    data.object.near = this.near;
-    data.object.far = this.far;
-
-    if (this.view !== null) data.object.view = Object.assign({}, this.view);
-
-    return data;
-  }
 }
-
-export { OrthographicCamera };

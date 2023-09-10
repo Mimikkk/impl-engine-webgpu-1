@@ -4,7 +4,7 @@ import * as Curves from '../extras/curves/Curves.js';
 import { Vector2 } from '../math/Vector2.js';
 import { Vector3 } from '../math/Vector3.js';
 
-class TubeGeometry extends BufferGeometry {
+export class TubeGeometry extends BufferGeometry {
   constructor(
     path = new Curves['QuadraticBezierCurve3'](new Vector3(-1, -1, 0), new Vector3(-1, 1, 0), new Vector3(1, 1, 0)),
     tubularSegments = 64,
@@ -165,14 +165,4 @@ class TubeGeometry extends BufferGeometry {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.path = this.parameters.path.toJSON();
-
-    return data;
-  }
 }
-
-export { TubeGeometry };

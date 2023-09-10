@@ -21,7 +21,7 @@ import { warnOnce } from '../utils.js';
 
 let textureId = 0;
 
-class Texture extends EventDispatcher {
+export class Texture extends EventDispatcher {
   constructor(
     image = Texture.DEFAULT_IMAGE,
     mapping = Texture.DEFAULT_MAPPING,
@@ -180,60 +180,6 @@ class Texture extends EventDispatcher {
     return this;
   }
 
-  toJSON(meta) {
-    const isRootObject = meta === undefined || typeof meta === 'string';
-
-    if (!isRootObject && meta.textures[this.uuid] !== undefined) {
-      return meta.textures[this.uuid];
-    }
-
-    const output = {
-      metadata: {
-        version: 4.6,
-        type: 'Texture',
-        generator: 'Texture.toJSON',
-      },
-
-      uuid: this.uuid,
-      name: this.name,
-
-      image: this.source.toJSON(meta).uuid,
-
-      mapping: this.mapping,
-      channel: this.channel,
-
-      repeat: [this.repeat.x, this.repeat.y],
-      offset: [this.offset.x, this.offset.y],
-      center: [this.center.x, this.center.y],
-      rotation: this.rotation,
-
-      wrap: [this.wrapS, this.wrapT],
-
-      format: this.format,
-      internalFormat: this.internalFormat,
-      type: this.type,
-      colorSpace: this.colorSpace,
-
-      minFilter: this.minFilter,
-      magFilter: this.magFilter,
-      anisotropy: this.anisotropy,
-
-      flipY: this.flipY,
-
-      generateMipmaps: this.generateMipmaps,
-      premultiplyAlpha: this.premultiplyAlpha,
-      unpackAlignment: this.unpackAlignment,
-    };
-
-    if (Object.keys(this.userData).length > 0) output.userData = this.userData;
-
-    if (!isRootObject) {
-      meta.textures[this.uuid] = output;
-    }
-
-    return output;
-  }
-
   dispose() {
     this.dispatchEvent({ type: 'dispose' });
   }
@@ -296,5 +242,3 @@ class Texture extends EventDispatcher {
 Texture.DEFAULT_IMAGE = null;
 Texture.DEFAULT_MAPPING = UVMapping;
 Texture.DEFAULT_ANISOTROPY = 1;
-
-export { Texture };

@@ -8,7 +8,7 @@ const _projScreenMatrix = /*@__PURE__*/ new Matrix4();
 const _lightPositionWorld = /*@__PURE__*/ new Vector3();
 const _lookTarget = /*@__PURE__*/ new Vector3();
 
-class LightShadow {
+export class LightShadow {
   constructor(camera) {
     this.camera = camera;
 
@@ -93,20 +93,4 @@ class LightShadow {
   clone() {
     return new this.constructor().copy(this);
   }
-
-  toJSON() {
-    const object = {};
-
-    if (this.bias !== 0) object.bias = this.bias;
-    if (this.normalBias !== 0) object.normalBias = this.normalBias;
-    if (this.radius !== 1) object.radius = this.radius;
-    if (this.mapSize.x !== 512 || this.mapSize.y !== 512) object.mapSize = this.mapSize.toArray();
-
-    object.camera = this.camera.toJSON(false).object;
-    delete object.camera.matrix;
-
-    return object;
-  }
 }
-
-export { LightShadow };

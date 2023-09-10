@@ -1,7 +1,7 @@
 import { Path } from './Path.js';
 import * as MathUtils from '../../math/MathUtils.js';
 
-class Shape extends Path {
+export class Shape extends Path {
   constructor(points) {
     super(points);
 
@@ -44,34 +44,4 @@ class Shape extends Path {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.uuid = this.uuid;
-    data.holes = [];
-
-    for (let i = 0, l = this.holes.length; i < l; i++) {
-      const hole = this.holes[i];
-      data.holes.push(hole.toJSON());
-    }
-
-    return data;
-  }
-
-  fromJSON(json) {
-    super.fromJSON(json);
-
-    this.uuid = json.uuid;
-    this.holes = [];
-
-    for (let i = 0, l = json.holes.length; i < l; i++) {
-      const hole = json.holes[i];
-      this.holes.push(new Path().fromJSON(hole));
-    }
-
-    return this;
-  }
 }
-
-export { Shape };

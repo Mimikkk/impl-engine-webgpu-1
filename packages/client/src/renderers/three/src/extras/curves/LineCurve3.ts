@@ -1,7 +1,7 @@
 import { Vector3 } from '../../math/Vector3.js';
 import { Curve } from '../core/Curve.js';
 
-class LineCurve3 extends Curve {
+export class LineCurve3 extends Curve {
   constructor(v1 = new Vector3(), v2 = new Vector3()) {
     super();
 
@@ -47,24 +47,4 @@ class LineCurve3 extends Curve {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.v1 = this.v1.toArray();
-    data.v2 = this.v2.toArray();
-
-    return data;
-  }
-
-  fromJSON(json) {
-    super.fromJSON(json);
-
-    this.v1.fromArray(json.v1);
-    this.v2.fromArray(json.v2);
-
-    return this;
-  }
 }
-
-export { LineCurve3 };

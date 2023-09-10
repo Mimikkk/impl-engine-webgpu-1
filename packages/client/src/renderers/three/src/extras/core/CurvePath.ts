@@ -6,7 +6,7 @@ import * as Curves from '../curves/Curves.js';
  *  curves, but retains the api of a curve
  **************************************************************/
 
-class CurvePath extends Curve {
+export class CurvePath extends Curve {
   constructor() {
     super();
 
@@ -169,34 +169,4 @@ class CurvePath extends Curve {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.autoClose = this.autoClose;
-    data.curves = [];
-
-    for (let i = 0, l = this.curves.length; i < l; i++) {
-      const curve = this.curves[i];
-      data.curves.push(curve.toJSON());
-    }
-
-    return data;
-  }
-
-  fromJSON(json) {
-    super.fromJSON(json);
-
-    this.autoClose = json.autoClose;
-    this.curves = [];
-
-    for (let i = 0, l = json.curves.length; i < l; i++) {
-      const curve = json.curves[i];
-      this.curves.push(new Curves[curve.type]().fromJSON(curve));
-    }
-
-    return this;
-  }
 }
-
-export { CurvePath };

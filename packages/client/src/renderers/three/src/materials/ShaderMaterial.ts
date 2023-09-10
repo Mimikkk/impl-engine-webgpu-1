@@ -4,7 +4,7 @@ import { cloneUniforms, cloneUniformsGroups } from '../renderers/shaders/Uniform
 import default_vertex from '../renderers/shaders/ShaderChunk/default_vertex.glsl.js';
 import default_fragment from '../renderers/shaders/ShaderChunk/default_fragment.glsl.js';
 
-class ShaderMaterial extends Material {
+export class ShaderMaterial extends Material {
   constructor(parameters) {
     super();
 
@@ -79,79 +79,4 @@ class ShaderMaterial extends Material {
 
     return this;
   }
-
-  toJSON(meta) {
-    const data = super.toJSON(meta);
-
-    data.glslVersion = this.glslVersion;
-    data.uniforms = {};
-
-    for (const name in this.uniforms) {
-      const uniform = this.uniforms[name];
-      const value = uniform.value;
-
-      if (value && value.isTexture) {
-        data.uniforms[name] = {
-          type: 't',
-          value: value.toJSON(meta).uuid,
-        };
-      } else if (value && value.isColor) {
-        data.uniforms[name] = {
-          type: 'c',
-          value: value.getHex(),
-        };
-      } else if (value && value.isVector2) {
-        data.uniforms[name] = {
-          type: 'v2',
-          value: value.toArray(),
-        };
-      } else if (value && value.isVector3) {
-        data.uniforms[name] = {
-          type: 'v3',
-          value: value.toArray(),
-        };
-      } else if (value && value.isVector4) {
-        data.uniforms[name] = {
-          type: 'v4',
-          value: value.toArray(),
-        };
-      } else if (value && value.isMatrix3) {
-        data.uniforms[name] = {
-          type: 'm3',
-          value: value.toArray(),
-        };
-      } else if (value && value.isMatrix4) {
-        data.uniforms[name] = {
-          type: 'm4',
-          value: value.toArray(),
-        };
-      } else {
-        data.uniforms[name] = {
-          value: value,
-        };
-
-        // note: the array variants v2v, v3v, v4v, m4v and tv are not supported so far
-      }
-    }
-
-    if (Object.keys(this.defines).length > 0) data.defines = this.defines;
-
-    data.vertexShader = this.vertexShader;
-    data.fragmentShader = this.fragmentShader;
-
-    data.lights = this.lights;
-    data.clipping = this.clipping;
-
-    const extensions = {};
-
-    for (const key in this.extensions) {
-      if (this.extensions[key] === true) extensions[key] = true;
-    }
-
-    if (Object.keys(extensions).length > 0) data.extensions = extensions;
-
-    return data;
-  }
 }
-
-export { ShaderMaterial };

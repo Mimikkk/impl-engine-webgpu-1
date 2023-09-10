@@ -1,7 +1,7 @@
 import { Texture } from './Texture.js';
 import { DepthFormat, DepthStencilFormat, NearestFilter, UnsignedInt248Type, UnsignedIntType } from '../constants.js';
 
-class DepthTexture extends Texture {
+export class DepthTexture extends Texture {
   constructor(width, height, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, format) {
     format = format !== undefined ? format : DepthFormat;
 
@@ -34,14 +34,4 @@ class DepthTexture extends Texture {
 
     return this;
   }
-
-  toJSON(meta) {
-    const data = super.toJSON(meta);
-
-    if (this.compareFunction !== null) data.compareFunction = this.compareFunction;
-
-    return data;
-  }
 }
-
-export { DepthTexture };

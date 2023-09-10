@@ -2,7 +2,7 @@ import { Curve } from '../core/Curve.js';
 import { QuadraticBezier } from '../core/Interpolations.js';
 import { Vector2 } from '../../math/Vector2.js';
 
-class QuadraticBezierCurve extends Curve {
+export class QuadraticBezierCurve extends Curve {
   constructor(v0 = new Vector2(), v1 = new Vector2(), v2 = new Vector2()) {
     super();
 
@@ -36,26 +36,4 @@ class QuadraticBezierCurve extends Curve {
 
     return this;
   }
-
-  toJSON() {
-    const data = super.toJSON();
-
-    data.v0 = this.v0.toArray();
-    data.v1 = this.v1.toArray();
-    data.v2 = this.v2.toArray();
-
-    return data;
-  }
-
-  fromJSON(json) {
-    super.fromJSON(json);
-
-    this.v0.fromArray(json.v0);
-    this.v1.fromArray(json.v1);
-    this.v2.fromArray(json.v2);
-
-    return this;
-  }
 }
-
-export { QuadraticBezierCurve };

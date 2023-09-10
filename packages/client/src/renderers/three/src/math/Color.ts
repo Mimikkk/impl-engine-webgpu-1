@@ -165,7 +165,7 @@ function hue2rgb(p, q, t) {
   return p;
 }
 
-class Color {
+export class Color {
   constructor(r, g, b) {
     this.isColor = true;
 
@@ -625,10 +625,6 @@ class Color {
     return this;
   }
 
-  toJSON() {
-    return this.getHex();
-  }
-
   *[Symbol.iterator]() {
     yield this.r;
     yield this.g;
@@ -639,5 +635,3 @@ class Color {
 const _color = /*@__PURE__*/ new Color();
 
 Color.NAMES = _colorKeywords;
-
-export { Color };

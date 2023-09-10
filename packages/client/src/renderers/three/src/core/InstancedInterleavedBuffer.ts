@@ -1,6 +1,6 @@
 import { InterleavedBuffer } from './InterleavedBuffer.js';
 
-class InstancedInterleavedBuffer extends InterleavedBuffer {
+export class InstancedInterleavedBuffer extends InterleavedBuffer {
   constructor(array, stride, meshPerAttribute = 1) {
     super(array, stride);
 
@@ -24,15 +24,4 @@ class InstancedInterleavedBuffer extends InterleavedBuffer {
 
     return ib;
   }
-
-  toJSON(data) {
-    const json = super.toJSON(data);
-
-    json.isInstancedInterleavedBuffer = true;
-    json.meshPerAttribute = this.meshPerAttribute;
-
-    return json;
-  }
 }
-
-export { InstancedInterleavedBuffer };

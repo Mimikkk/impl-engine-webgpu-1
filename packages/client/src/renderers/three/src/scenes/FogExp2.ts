@@ -1,6 +1,6 @@
 import { Color } from '../math/Color.js';
 
-class FogExp2 {
+export class FogExp2 {
   constructor(color, density = 0.00025) {
     this.isFogExp2 = true;
 
@@ -13,14 +13,4 @@ class FogExp2 {
   clone() {
     return new FogExp2(this.color, this.density);
   }
-
-  toJSON(/* meta */) {
-    return {
-      type: 'FogExp2',
-      color: this.color.getHex(),
-      density: this.density,
-    };
-  }
 }
-
-export { FogExp2 };

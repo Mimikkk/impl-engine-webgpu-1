@@ -138,18 +138,6 @@ class OperatorNode extends TempNode {
       return builder.format(`${a} ${this.op} ${b}`, type, output);
     }
   }
-
-  serialize(data) {
-    super.serialize(data);
-
-    data.op = this.op;
-  }
-
-  deserialize(data) {
-    super.deserialize(data);
-
-    this.op = data.op;
-  }
 }
 
 export default OperatorNode;

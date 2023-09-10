@@ -4,7 +4,7 @@ import { Object3D } from '../core/Object3D.js';
 const _v1 = /*@__PURE__*/ new Vector3();
 const _v2 = /*@__PURE__*/ new Vector3();
 
-class LOD extends Object3D {
+export class LOD extends Object3D {
   constructor() {
     super();
 
@@ -136,28 +136,4 @@ class LOD extends Object3D {
       }
     }
   }
-
-  toJSON(meta) {
-    const data = super.toJSON(meta);
-
-    if (this.autoUpdate === false) data.object.autoUpdate = false;
-
-    data.object.levels = [];
-
-    const levels = this.levels;
-
-    for (let i = 0, l = levels.length; i < l; i++) {
-      const level = levels[i];
-
-      data.object.levels.push({
-        object: level.object.uuid,
-        distance: level.distance,
-        hysteresis: level.hysteresis,
-      });
-    }
-
-    return data;
-  }
 }
-
-export { LOD };

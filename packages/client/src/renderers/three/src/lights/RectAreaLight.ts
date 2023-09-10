@@ -1,6 +1,6 @@
 import { Light } from './Light.js';
 
-class RectAreaLight extends Light {
+export class RectAreaLight extends Light {
   constructor(color, intensity, width = 10, height = 10) {
     super(color, intensity);
 
@@ -30,15 +30,4 @@ class RectAreaLight extends Light {
 
     return this;
   }
-
-  toJSON(meta) {
-    const data = super.toJSON(meta);
-
-    data.object.width = this.width;
-    data.object.height = this.height;
-
-    return data;
-  }
 }
-
-export { RectAreaLight };

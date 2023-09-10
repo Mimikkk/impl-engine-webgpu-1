@@ -12,7 +12,10 @@
     "react-use": "^17.4.0",
     "tslib": "^2.6.0",
     "zustand": "^4.3.9",
-    "lil-gui": "^0.18.2"
+    "lil-gui": "^0.18.2",
+    "opentype.js": "^1.3.4",
+    "zstddec": "^0.0.2",
+    "ktx-parse": "^0.6.0"
   },
   "description": "Prototype application with the usage of @zd/engine",
   "devDependencies": {
@@ -22,6 +25,7 @@
     "@types/react-dom": "^18.2.7",
     "@types/three": "^0.155.0",
     "@vitejs/plugin-react": "^4.0.3",
+    "@types/opentype.js": "^1.3.5",
     "@webgpu/types": "^0.1.34",
     "autoprefixer": "^10.4.14",
     "concurrently": "^8.2.0",

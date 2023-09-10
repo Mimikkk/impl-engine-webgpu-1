@@ -1,7 +1,7 @@
 import * as MathUtils from '../math/MathUtils.js';
 import { StaticDrawUsage } from '../constants.js';
 
-class InterleavedBuffer {
+export class InterleavedBuffer {
   constructor(array, stride) {
     this.isInterleavedBuffer = true;
 
@@ -81,31 +81,4 @@ class InterleavedBuffer {
 
     return this;
   }
-
-  toJSON(data) {
-    if (data.arrayBuffers === undefined) {
-      data.arrayBuffers = {};
-    }
-
-    // generate UUID for array buffer if necessary
-
-    if (this.array.buffer._uuid === undefined) {
-      this.array.buffer._uuid = MathUtils.generateUUID();
-    }
-
-    if (data.arrayBuffers[this.array.buffer._uuid] === undefined) {
-      data.arrayBuffers[this.array.buffer._uuid] = Array.from(new Uint32Array(this.array.buffer));
-    }
-
-    //
-
-    return {
-      uuid: this.uuid,
-      buffer: this.array.buffer._uuid,
-      type: this.array.constructor.name,
-      stride: this.stride,
-    };
-  }
 }
-
-export { InterleavedBuffer };

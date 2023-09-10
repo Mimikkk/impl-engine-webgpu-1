@@ -33,7 +33,7 @@ import { Matrix4 } from '../../math/Matrix4.js';
  *
  **/
 
-class Curve {
+export class Curve {
   constructor() {
     this.type = 'Curve';
 
@@ -315,27 +315,4 @@ class Curve {
 
     return this;
   }
-
-  toJSON() {
-    const data = {
-      metadata: {
-        version: 4.6,
-        type: 'Curve',
-        generator: 'Curve.toJSON',
-      },
-    };
-
-    data.arcLengthDivisions = this.arcLengthDivisions;
-    data.type = this.type;
-
-    return data;
-  }
-
-  fromJSON(json) {
-    this.arcLengthDivisions = json.arcLengthDivisions;
-
-    return this;
-  }
 }
-
-export { Curve };
