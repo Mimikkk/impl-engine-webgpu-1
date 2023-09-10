@@ -1,10 +1,10 @@
 body {
-  margin: 0;
   background-color: #000;
   color: #fff;
   font-family: Monospace;
   font-size: 13px;
   line-height: 24px;
+  margin: 0;
   overscroll-behavior: none;
 }
 a {
@@ -22,17 +22,17 @@ button {
 }
 
 #info {
-  position: absolute;
-  top: 0px;
-  width: 100%;
-  padding: 10px;
   box-sizing: border-box;
-  text-align: center;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  padding: 10px;
   pointer-events: none;
+  position: absolute;
+  text-align: center;
+  top: 0px;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  width: 100%;
   z-index: 1; /* TODO Solve this in HTML */
 }
 
@@ -49,28 +49,28 @@ select {
 
 @media all and (max-width: 640px) {
   .lil-gui.root {
-    right: auto;
-    top: auto;
-    max-height: 50%;
-    max-width: 80%;
     bottom: 0;
     left: 0;
+    max-height: 50%;
+    max-width: 80%;
+    right: auto;
+    top: auto;
   }
 }
 
 #overlay {
-  position: absolute;
-  font-size: 16px;
-  z-index: 2;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  flex-direction: column;
   background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 2;
 }
 
 #overlay button {
@@ -79,15 +79,15 @@ select {
   border: 1px solid rgb(255, 255, 255);
   border-radius: 4px;
   color: #ffffff;
+  cursor: pointer;
   padding: 12px 18px;
   text-transform: uppercase;
-  cursor: pointer;
 }
 
 #notSupported {
-  width: 50%;
-  margin: auto;
   background-color: #f00;
+  margin: auto;
   margin-top: 20px;
   padding: 10px;
+  width: 50%;
 }
