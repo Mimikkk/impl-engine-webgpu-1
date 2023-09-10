@@ -6,7 +6,7 @@ import { objectViewPosition } from '../accessors/Object3DNode.js';
 import { positionView } from '../accessors/PositionNode.js';
 import { addNodeClass } from '../core/Node.js';
 
-import { PointLight } from 'three';
+import { PointLight } from '../../Three.js';
 
 class PointLightNode extends AnalyticLightNode {
   constructor(light = null) {

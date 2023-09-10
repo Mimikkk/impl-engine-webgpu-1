@@ -1,4 +1,4 @@
-import { BufferAttribute, BufferGeometry, Line, LineBasicMaterial, MathUtils } from 'three';
+import { BufferAttribute, BufferGeometry, Line, LineBasicMaterial, MathUtils } from '../Three.js';
 
 class PositionalAudioHelper extends Line {
   constructor(audio, range = 1, divisionsInnerAngle = 16, divisionsOuterAngle = 2) {

@@ -61,7 +61,7 @@ import {
   Vector2,
   Vector3,
   VectorKeyframeTrack,
-} from 'three';
+} from '../Three.js';
 import { toTrianglesDrawMode } from '../utils/BufferGeometryUtils.js';
 
 class GLTFLoader extends Loader {

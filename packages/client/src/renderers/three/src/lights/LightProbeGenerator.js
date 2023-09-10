@@ -6,7 +6,7 @@ import {
   SphericalHarmonics3,
   SRGBColorSpace,
   Vector3,
-} from 'three';
+} from '../Three.js';
 
 class LightProbeGenerator {
   // https://www.ppsloan.org/publications/StupidSH36.pdf

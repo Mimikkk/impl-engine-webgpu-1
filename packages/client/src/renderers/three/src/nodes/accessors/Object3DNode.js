@@ -3,7 +3,7 @@ import { NodeUpdateType } from '../core/constants.js';
 import { uniform } from '../core/UniformNode.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
 
-import { Vector3 } from 'three';
+import { Vector3 } from '../../Three.js';
 
 class Object3DNode extends Node {
   constructor(scope = Object3DNode.VIEW_MATRIX, object3d = null) {

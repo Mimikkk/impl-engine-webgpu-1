@@ -52,7 +52,7 @@ import {
   UnsignedInt248Type,
   UnsignedIntType,
   UnsignedShortType,
-} from 'three';
+} from '../Three.js';
 
 import { createMipMapper } from './createMipMapper.js';
 

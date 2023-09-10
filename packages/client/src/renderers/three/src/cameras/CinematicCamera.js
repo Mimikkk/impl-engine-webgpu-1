@@ -7,7 +7,7 @@ import {
   ShaderMaterial,
   UniformsUtils,
   WebGLRenderTarget,
-} from 'three';
+} from '../Three.js';
 
 import { BokehDepthShader, BokehShader } from '../shaders/BokehShader2.js';
 

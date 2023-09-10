@@ -1,4 +1,4 @@
-import { EventDispatcher, Quaternion, Vector3 } from 'three';
+import { EventDispatcher, Quaternion, Vector3 } from '../Three.js';
 
 const _changeEvent = { type: 'change' };
 

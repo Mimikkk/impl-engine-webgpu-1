@@ -11,7 +11,7 @@
  * }
  */
 
-import { ShaderLib, ShaderMaterial, UniformsLib, UniformsUtils, Vector2 } from 'three';
+import { ShaderLib, ShaderMaterial, UniformsLib, UniformsUtils, Vector2 } from '../Three.js';
 
 UniformsLib.line = {
   worldUnits: { value: 1 },

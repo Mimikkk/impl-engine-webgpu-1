@@ -1,4 +1,4 @@
-import { SpotLight } from 'three';
+import { SpotLight } from '../Three.js';
 
 class IESSpotLight extends SpotLight {
   constructor(color, intensity, distance, angle, penumbra, decay) {

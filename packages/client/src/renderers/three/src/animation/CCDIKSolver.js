@@ -11,7 +11,7 @@ import {
   Quaternion,
   SphereGeometry,
   Vector3,
-} from 'three';
+} from '../Three.js';
 
 const _q = new Quaternion();
 const _targetPos = new Vector3();

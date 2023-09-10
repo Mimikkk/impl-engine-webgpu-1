@@ -10,7 +10,7 @@ import {
   ShaderMaterial,
   StereoCamera,
   WebGLRenderTarget,
-} from 'three';
+} from '../Three.js';
 
 class AnaglyphEffect {
   constructor(renderer, width = 512, height = 512) {

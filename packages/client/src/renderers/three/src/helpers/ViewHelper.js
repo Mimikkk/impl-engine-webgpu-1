@@ -14,7 +14,7 @@ import {
   Vector2,
   Vector3,
   Vector4,
-} from 'three';
+} from '../Three.js';
 
 class ViewHelper extends Object3D {
   constructor(camera, domElement) {

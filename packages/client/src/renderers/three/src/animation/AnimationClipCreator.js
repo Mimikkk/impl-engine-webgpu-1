@@ -5,7 +5,7 @@ import {
   NumberKeyframeTrack,
   Vector3,
   VectorKeyframeTrack,
-} from 'three';
+} from '../Three.js';
 
 class AnimationClipCreator {
   static CreateRotationAnimation(period, axis = 'x') {

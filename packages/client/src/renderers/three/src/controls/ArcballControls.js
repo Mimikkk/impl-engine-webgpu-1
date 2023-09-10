@@ -1,20 +1,20 @@
 import {
-	Box3,
-	BufferGeometry,
-	EllipseCurve,
-	EventDispatcher,
-	GridHelper,
-	Group,
-	Line,
-	LineBasicMaterial,
-	MathUtils,
-	Matrix4,
-	Quaternion,
-	Raycaster,
-	Sphere,
-	Vector2,
-	Vector3,
-} from 'three';
+  Box3,
+  BufferGeometry,
+  EllipseCurve,
+  EventDispatcher,
+  GridHelper,
+  Group,
+  Line,
+  LineBasicMaterial,
+  MathUtils,
+  Matrix4,
+  Quaternion,
+  Raycaster,
+  Sphere,
+  Vector2,
+  Vector3,
+} from '../Three.js';
 
 //trackball state
 const STATE = {

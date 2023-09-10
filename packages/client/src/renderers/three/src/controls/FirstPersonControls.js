@@ -1,4 +1,4 @@
-import { MathUtils, Spherical, Vector3 } from 'three';
+import { MathUtils, Spherical, Vector3 } from '../Three.js';
 
 const _lookDirection = new Vector3();
 const _spherical = new Spherical();

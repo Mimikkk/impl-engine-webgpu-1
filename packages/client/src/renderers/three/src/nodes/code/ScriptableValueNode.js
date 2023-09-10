@@ -1,7 +1,7 @@
 import Node, { addNodeClass } from '../core/Node.js';
 import { arrayBufferToBase64, base64ToArrayBuffer } from '../core/NodeUtils.js';
 import { addNodeElement, float, nodeProxy } from '../shadernode/ShaderNode.js';
-import { EventDispatcher } from 'three';
+import { EventDispatcher } from '../../Three.js';
 
 class ScriptableValueNode extends Node {
   constructor(value = null) {

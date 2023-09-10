@@ -1,4 +1,4 @@
-import { EventDispatcher, MathUtils, MOUSE, Quaternion, Vector2, Vector3 } from 'three';
+import { EventDispatcher, MathUtils, MOUSE, Quaternion, Vector2, Vector3 } from '../Three.js';
 
 const _changeEvent = { type: 'change' };
 const _startEvent = { type: 'start' };
@@ -373,7 +373,6 @@ class TrackballControls extends EventDispatcher {
       window.removeEventListener('keydown', keydown);
 
       if (_keyState !== STATE.NONE) {
-
       } else if (event.code === scope.keys[STATE.ROTATE] && !scope.noRotate) {
         _keyState = STATE.ROTATE;
       } else if (event.code === scope.keys[STATE.ZOOM] && !scope.noZoom) {

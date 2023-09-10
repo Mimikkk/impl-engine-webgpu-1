@@ -5,7 +5,7 @@ import { buffer } from '../accessors/BufferNode.js';
 import { instanceIndex } from '../core/IndexNode.js';
 import { float, nodeProxy } from '../shadernode/ShaderNode.js';
 
-import { MathUtils, Vector4 } from 'three';
+import { MathUtils, Vector4 } from '../../Three.js';
 
 let min = null;
 let max = null;

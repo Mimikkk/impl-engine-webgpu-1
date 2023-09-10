@@ -1,4 +1,4 @@
-import { MaterialLoader } from 'three';
+import { MaterialLoader } from '../../Three.js';
 import { createNodeMaterialFromType } from '../materials/Materials.js';
 
 const superFromTypeFunction = MaterialLoader.createMaterialFromType;

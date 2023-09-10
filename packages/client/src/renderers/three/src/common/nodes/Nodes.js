@@ -11,7 +11,7 @@ import {
   texture,
   toneMapping,
   viewportBottomLeft,
-} from '../nodes/Nodes.js';
+} from '../../nodes/Nodes.js';
 
 class Nodes extends DataMap {
   constructor(renderer, backend) {

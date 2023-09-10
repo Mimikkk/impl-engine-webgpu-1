@@ -21,7 +21,7 @@ import {
   UnsignedInt248Type,
   UnsignedIntType,
   WebGPUCoordinateSystem,
-} from 'three';
+} from './Three.js';
 
 import { createUtilities } from './utils/createUtilities.js';
 import { createAttributer } from './utils/createAttributer.js';

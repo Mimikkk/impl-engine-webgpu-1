@@ -1,4 +1,4 @@
-import { LinearSRGBColorSpace, Material, NoColorSpace, ShaderMaterial } from 'three';
+import { LinearSRGBColorSpace, Material, NoColorSpace, ShaderMaterial } from '../../Three.js';
 import { getCacheKey, getNodeChildren } from '../core/NodeUtils.js';
 import { attribute } from '../core/AttributeNode.js';
 import { diffuseColor, output } from '../core/PropertyNode.js';

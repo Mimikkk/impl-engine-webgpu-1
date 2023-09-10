@@ -19,7 +19,7 @@ import {
   Vector2,
   Vector3,
   Vector4,
-} from 'three';
+} from '../../Three.js';
 
 import { stack } from './StackNode.js';
 import { maxMipLevel } from '../utils/MaxMipLevelNode.js';

@@ -1,17 +1,17 @@
 import {
-	Bone,
-	BoxGeometry,
-	CapsuleGeometry,
-	Color,
-	Euler,
-	Matrix4,
-	Mesh,
-	MeshBasicMaterial,
-	Object3D,
-	Quaternion,
-	SphereGeometry,
-	Vector3,
-} from 'three';
+  Bone,
+  BoxGeometry,
+  CapsuleGeometry,
+  Color,
+  Euler,
+  Matrix4,
+  Mesh,
+  MeshBasicMaterial,
+  Object3D,
+  Quaternion,
+  SphereGeometry,
+  Vector3,
+} from '../Three.js';
 
 /**
  * Dependencies

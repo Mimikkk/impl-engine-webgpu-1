@@ -1,4 +1,4 @@
-import { EventDispatcher, Matrix4, Plane, Raycaster, Vector2, Vector3 } from 'three';
+import { EventDispatcher, Matrix4, Plane, Raycaster, Vector2, Vector3 } from '../Three.js';
 
 const _plane = new Plane();
 const _raycaster = new Raycaster();

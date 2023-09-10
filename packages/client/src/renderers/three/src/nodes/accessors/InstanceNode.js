@@ -3,7 +3,7 @@ import { instancedBufferAttribute, instancedDynamicBufferAttribute } from './Buf
 import { normalLocal } from './NormalNode.js';
 import { positionLocal } from './PositionNode.js';
 import { mat3, mat4, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
-import { DynamicDrawUsage, InstancedInterleavedBuffer } from 'three';
+import { DynamicDrawUsage, InstancedInterleavedBuffer } from '../../Three.js';
 
 class InstanceNode extends Node {
   constructor(instanceMesh) {

@@ -1,4 +1,4 @@
-import { BufferGeometry, Float32BufferAttribute, LineBasicMaterial, LineSegments } from 'three';
+import { BufferGeometry, Float32BufferAttribute, LineBasicMaterial, LineSegments } from '../Three.js';
 
 class OctreeHelper extends LineSegments {
   constructor(octree, color = 0xffff00) {

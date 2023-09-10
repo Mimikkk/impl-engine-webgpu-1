@@ -60,7 +60,7 @@ import {
   SubtractiveBlending,
   ZeroFactor,
   ZeroStencilOp,
-} from 'three';
+} from '../Three.js';
 
 const findColorWriteMask = ({ colorWrite }) => (colorWrite ? GPUColorWriteFlags.All : GPUColorWriteFlags.None);
 const findDepthCompare = ({ depthFunc, depthTest }) => {

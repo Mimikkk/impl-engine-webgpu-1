@@ -15,7 +15,7 @@
  * }
  */
 
-import { ExtrudeGeometry } from 'three';
+import { ExtrudeGeometry } from '../Three.js';
 
 class TextGeometry extends ExtrudeGeometry {
   constructor(text, parameters = {}) {

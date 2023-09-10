@@ -1,4 +1,4 @@
-import { NoColorSpace, RenderTarget } from 'three';
+import { NoColorSpace, RenderTarget } from '../Three.js';
 
 import UniformsGroup from '../common/UniformsGroup.js';
 import {

@@ -1,4 +1,4 @@
-import { Float16BufferAttribute } from 'three';
+import { Float16BufferAttribute } from '../Three.js';
 import { GPUInputStepMode } from './constants.js';
 
 const typedArraysToVertexFormatPrefix = new Map([

@@ -1,4 +1,4 @@
-import { WireframeGeometry } from 'three';
+import { WireframeGeometry } from '../Three.js';
 import { LineSegmentsGeometry } from '../lines/LineSegmentsGeometry.js';
 
 class WireframeGeometry2 extends LineSegmentsGeometry {

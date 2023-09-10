@@ -8,7 +8,7 @@ import { texture } from '../accessors/TextureNode.js';
 import { positionWorld } from '../accessors/PositionNode.js';
 import { normalWorld } from '../accessors/NormalNode.js';
 //import { add } from '../math/OperatorNode.js';
-import { Color, DepthTexture, LessCompare, NearestFilter } from 'three';
+import { Color, DepthTexture, LessCompare, NearestFilter } from '../../Three.js';
 
 let depthMaterial = null;
 

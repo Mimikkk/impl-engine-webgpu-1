@@ -1,4 +1,4 @@
-import { EventDispatcher, MathUtils } from 'three';
+import { EventDispatcher, MathUtils } from '../../Three.js';
 import { NodeUpdateType } from './constants.js';
 import { getCacheKey, getNodeChildren } from './NodeUtils.js';
 
