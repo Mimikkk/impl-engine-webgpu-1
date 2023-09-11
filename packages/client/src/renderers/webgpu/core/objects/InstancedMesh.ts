@@ -6,15 +6,15 @@ import { Material } from '../materials/Material.js';
 import { InstancedBufferAttribute } from '../InstancedBufferAttribute.js';
 import { BufferGeometry } from '../BufferGeometry.js';
 
-const _instanceLocalMatrix = /*@__PURE__*/ new Matrix4();
-const _instanceWorldMatrix = /*@__PURE__*/ new Matrix4();
+const _instanceLocalMatrix = new Matrix4();
+const _instanceWorldMatrix = new Matrix4();
 
 const _instanceIntersects: any[] = [];
 
-const _box3 = /*@__PURE__*/ new Box3();
-const _identity = /*@__PURE__*/ new Matrix4();
-const _mesh = /*@__PURE__*/ new Mesh();
-const _sphere = /*@__PURE__*/ new Sphere();
+const _box3 = new Box3();
+const _identity = new Matrix4();
+const _mesh = new Mesh();
+const _sphere = new Sphere();
 
 class InstancedMesh extends Mesh {
   isInstancedMesh: boolean;

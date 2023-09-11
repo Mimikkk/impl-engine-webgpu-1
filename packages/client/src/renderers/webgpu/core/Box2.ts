@@ -1,6 +1,6 @@
 import { Vector2 } from './Vector2.js';
 
-const _vector = /*@__PURE__*/ new Vector2();
+const _vector = new Vector2();
 
 export class Box2 {
   isBox2: boolean = true;

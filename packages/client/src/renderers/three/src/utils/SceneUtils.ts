@@ -2,8 +2,8 @@ import { BufferAttribute, BufferGeometry, Color, Group, Matrix4, Mesh, Vector3 }
 
 import { mergeGroups, deepCloneAttribute } from './BufferGeometryUtils.js';
 
-const _color = /*@__PURE__*/ new Color();
-const _matrix = /*@__PURE__*/ new Matrix4();
+const _color = new Color();
+const _matrix = new Matrix4();
 
 function createMeshesFromInstancedMesh(instancedMesh) {
   const group = new Group();

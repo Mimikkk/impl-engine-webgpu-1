@@ -4,16 +4,18 @@ import { Plane } from './Plane.js';
 import { Box3 } from './Box3.js';
 import { Matrix4 } from './Matrix4.js';
 
-const _vector = /*@__PURE__*/ new Vector3();
-const _segCenter = /*@__PURE__*/ new Vector3();
-const _segDir = /*@__PURE__*/ new Vector3();
-const _diff = /*@__PURE__*/ new Vector3();
+const _vector = new Vector3();
+const _segCenter = new Vector3();
+const _segDir = new Vector3();
+const _diff = new Vector3();
 
-const _edge1 = /*@__PURE__*/ new Vector3();
-const _edge2 = /*@__PURE__*/ new Vector3();
-const _normal = /*@__PURE__*/ new Vector3();
+const _edge1 = new Vector3();
+const _edge2 = new Vector3();
+const _normal = new Vector3();
 
 export class Ray {
+  declare ['constructor']: typeof Ray;
+  declare isRay: boolean;
   origin: Vector3;
   direction: Vector3;
 
@@ -391,3 +393,4 @@ export class Ray {
     return new Ray().copy(this);
   }
 }
+Ray.prototype.isRay = true;

@@ -1,6 +1,10 @@
 import { clamp, euclideanModulo, lerp } from './MathUtils.js';
 import { ColorManagement, LinearToSRGB, SRGBToLinear } from './ColorManagement.js';
 import { SRGBColorSpace } from '../constants.js';
+import { ColorSpace } from './types.js';
+import { Vector3 } from './Vector3.js';
+import { Matrix3 } from './Matrix3.js';
+import { BufferAttribute } from '../core/BufferAttribute.js';
 
 const _colorKeywords = {
   aliceblue: 0xf0f8ff,
@@ -152,11 +156,16 @@ const _colorKeywords = {
   yellow: 0xffff00,
   yellowgreen: 0x9acd32,
 };
+export type ColorName = keyof typeof _colorKeywords;
+export type ColorRepresentation = Color | ColorName | number;
 
 const _hslA = { h: 0, s: 0, l: 0 };
 const _hslB = { h: 0, s: 0, l: 0 };
 
-function hue2rgb(p, q, t) {
+type Hsl = { h: number; s: number; l: number };
+type Rgb = { r: number; g: number; b: number };
+
+function hue2rgb(p: number, q: number, t: number): number {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;
   if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -166,23 +175,30 @@ function hue2rgb(p, q, t) {
 }
 
 export class Color {
-  constructor(r, g, b) {
-    this.isColor = true;
+  static Names: Record<ColorName, number> = _colorKeywords;
+  declare ['constructor']: typeof Color;
+  declare isColor: boolean;
+  r: number;
+  g: number;
+  b: number;
 
+  constructor(color?: ColorRepresentation, g?: unknown, b?: unknown);
+  constructor(r: number, g: number, b: number);
+  constructor(r?: ColorRepresentation | number, g?: number, b?: number) {
     this.r = 1;
     this.g = 1;
     this.b = 1;
 
-    return this.set(r, g, b);
+    this.set(r, g, b);
   }
 
-  set(r, g, b) {
+  set(color?: ColorRepresentation, g?: unknown, b?: unknown): Color;
+  set(r: number, g: number, b: number): Color;
+  set(r?: ColorRepresentation | number, g?: number, b?: number): Color {
     if (g === undefined && b === undefined) {
-      // r is THREE.Color, hex or string
-
       const value = r;
 
-      if (value && value.isColor) {
+      if (typeof value === 'object' && value.isColor) {
         this.copy(value);
       } else if (typeof value === 'number') {
         this.setHex(value);
@@ -190,13 +206,13 @@ export class Color {
         this.setStyle(value);
       }
     } else {
-      this.setRGB(r, g, b);
+      this.setRGB(r as number, g as number, b as number);
     }
 
     return this;
   }
 
-  setScalar(scalar) {
+  setScalar(scalar: number): Color {
     this.r = scalar;
     this.g = scalar;
     this.b = scalar;
@@ -204,7 +220,7 @@ export class Color {
     return this;
   }
 
-  setHex(hex, colorSpace = SRGBColorSpace) {
+  setHex(hex: number, colorSpace: ColorSpace = SRGBColorSpace): Color {
     hex = Math.floor(hex);
 
     this.r = ((hex >> 16) & 255) / 255;
@@ -216,7 +232,7 @@ export class Color {
     return this;
   }
 
-  setRGB(r, g, b, colorSpace = ColorManagement.workingColorSpace) {
+  setRGB(r: number, g: number, b: number, colorSpace: ColorSpace = ColorManagement.workingColorSpace): Color {
     this.r = r;
     this.g = g;
     this.b = b;
@@ -226,7 +242,7 @@ export class Color {
     return this;
   }
 
-  setHSL(h, s, l, colorSpace = ColorManagement.workingColorSpace) {
+  setHSL(h: number, s: number, l: number, colorSpace: ColorSpace = ColorManagement.workingColorSpace): Color {
     // h,s,l ranges are in 0.0 - 1.0
     h = euclideanModulo(h, 1);
     s = clamp(s, 0, 1);
@@ -248,8 +264,8 @@ export class Color {
     return this;
   }
 
-  setStyle(style, colorSpace = SRGBColorSpace) {
-    function handleAlpha(string) {
+  setStyle(style: ColorName, colorSpace: ColorSpace = SRGBColorSpace) {
+    function handleAlpha(string: string) {
       if (string === undefined) return;
 
       if (parseFloat(string) < 1) {
@@ -348,9 +364,9 @@ export class Color {
     return this;
   }
 
-  setColorName(style, colorSpace = SRGBColorSpace) {
+  setColorName(style: ColorName, colorSpace: ColorSpace = SRGBColorSpace) {
     // color keywords
-    const hex = _colorKeywords[style.toLowerCase()];
+    const hex = _colorKeywords[style];
 
     if (hex !== undefined) {
       // red
@@ -363,11 +379,11 @@ export class Color {
     return this;
   }
 
-  clone() {
+  clone(): Color {
     return new this.constructor(this.r, this.g, this.b);
   }
 
-  copy(color) {
+  copy(color: Color): Color {
     this.r = color.r;
     this.g = color.g;
     this.b = color.b;
@@ -375,7 +391,7 @@ export class Color {
     return this;
   }
 
-  copySRGBToLinear(color) {
+  copySRGBToLinear(color: Color): Color {
     this.r = SRGBToLinear(color.r);
     this.g = SRGBToLinear(color.g);
     this.b = SRGBToLinear(color.b);
@@ -383,7 +399,7 @@ export class Color {
     return this;
   }
 
-  copyLinearToSRGB(color) {
+  copyLinearToSRGB(color: Color): Color {
     this.r = LinearToSRGB(color.r);
     this.g = LinearToSRGB(color.g);
     this.b = LinearToSRGB(color.b);
@@ -391,19 +407,19 @@ export class Color {
     return this;
   }
 
-  convertSRGBToLinear() {
+  convertSRGBToLinear(): Color {
     this.copySRGBToLinear(this);
 
     return this;
   }
 
-  convertLinearToSRGB() {
+  convertLinearToSRGB(): Color {
     this.copyLinearToSRGB(this);
 
     return this;
   }
 
-  getHex(colorSpace = SRGBColorSpace) {
+  getHex(colorSpace: ColorSpace = SRGBColorSpace): number {
     ColorManagement.fromWorkingColorSpace(_color.copy(this), colorSpace);
 
     return (
@@ -413,11 +429,11 @@ export class Color {
     );
   }
 
-  getHexString(colorSpace = SRGBColorSpace) {
+  getHexString(colorSpace: ColorSpace = SRGBColorSpace): string {
     return ('000000' + this.getHex(colorSpace).toString(16)).slice(-6);
   }
 
-  getHSL(target, colorSpace = ColorManagement.workingColorSpace) {
+  getHSL(target: Hsl, colorSpace: ColorSpace = ColorManagement.workingColorSpace): Hsl {
     // h,s,l ranges are in 0.0 - 1.0
 
     ColorManagement.fromWorkingColorSpace(_color.copy(this), colorSpace);
@@ -429,7 +445,8 @@ export class Color {
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
 
-    let hue, saturation;
+    let hue = 0;
+    let saturation;
     const lightness = (min + max) / 2.0;
 
     if (min === max) {
@@ -462,7 +479,7 @@ export class Color {
     return target;
   }
 
-  getRGB(target, colorSpace = ColorManagement.workingColorSpace) {
+  getRGB(target: Rgb, colorSpace = ColorManagement.workingColorSpace): Rgb {
     ColorManagement.fromWorkingColorSpace(_color.copy(this), colorSpace);
 
     target.r = _color.r;
@@ -472,7 +489,7 @@ export class Color {
     return target;
   }
 
-  getStyle(colorSpace = SRGBColorSpace) {
+  getStyle(colorSpace: ColorSpace = SRGBColorSpace): string {
     ColorManagement.fromWorkingColorSpace(_color.copy(this), colorSpace);
 
     const r = _color.r,
@@ -487,7 +504,7 @@ export class Color {
     return `rgb(${Math.round(r * 255)},${Math.round(g * 255)},${Math.round(b * 255)})`;
   }
 
-  offsetHSL(h, s, l) {
+  offsetHSL(h: number, s: number, l: number): Color {
     this.getHSL(_hslA);
 
     _hslA.h += h;
@@ -499,7 +516,7 @@ export class Color {
     return this;
   }
 
-  add(color) {
+  add(color: Color): Color {
     this.r += color.r;
     this.g += color.g;
     this.b += color.b;
@@ -507,7 +524,7 @@ export class Color {
     return this;
   }
 
-  addColors(color1, color2) {
+  addColors(color1: Color, color2: Color): Color {
     this.r = color1.r + color2.r;
     this.g = color1.g + color2.g;
     this.b = color1.b + color2.b;
@@ -515,7 +532,7 @@ export class Color {
     return this;
   }
 
-  addScalar(s) {
+  addScalar(s: number): Color {
     this.r += s;
     this.g += s;
     this.b += s;
@@ -523,7 +540,7 @@ export class Color {
     return this;
   }
 
-  sub(color) {
+  sub(color: Color): Color {
     this.r = Math.max(0, this.r - color.r);
     this.g = Math.max(0, this.g - color.g);
     this.b = Math.max(0, this.b - color.b);
@@ -531,7 +548,7 @@ export class Color {
     return this;
   }
 
-  multiply(color) {
+  multiply(color: Color): Color {
     this.r *= color.r;
     this.g *= color.g;
     this.b *= color.b;
@@ -539,7 +556,7 @@ export class Color {
     return this;
   }
 
-  multiplyScalar(s) {
+  multiplyScalar(s: number): Color {
     this.r *= s;
     this.g *= s;
     this.b *= s;
@@ -547,7 +564,7 @@ export class Color {
     return this;
   }
 
-  lerp(color, alpha) {
+  lerp(color: Color, alpha: number): Color {
     this.r += (color.r - this.r) * alpha;
     this.g += (color.g - this.g) * alpha;
     this.b += (color.b - this.b) * alpha;
@@ -555,7 +572,7 @@ export class Color {
     return this;
   }
 
-  lerpColors(color1, color2, alpha) {
+  lerpColors(color1: Color, color2: Color, alpha: number): Color {
     this.r = color1.r + (color2.r - color1.r) * alpha;
     this.g = color1.g + (color2.g - color1.g) * alpha;
     this.b = color1.b + (color2.b - color1.b) * alpha;
@@ -563,7 +580,7 @@ export class Color {
     return this;
   }
 
-  lerpHSL(color, alpha) {
+  lerpHSL(color: Color, alpha: number): Color {
     this.getHSL(_hslA);
     color.getHSL(_hslB);
 
@@ -576,7 +593,7 @@ export class Color {
     return this;
   }
 
-  setFromVector3(v) {
+  setFromVector3(v: Vector3): Color {
     this.r = v.x;
     this.g = v.y;
     this.b = v.z;
@@ -584,7 +601,7 @@ export class Color {
     return this;
   }
 
-  applyMatrix3(m) {
+  applyMatrix3(m: Matrix3): Color {
     const r = this.r,
       g = this.g,
       b = this.b;
@@ -597,11 +614,11 @@ export class Color {
     return this;
   }
 
-  equals(c) {
+  equals(c: Color): boolean {
     return c.r === this.r && c.g === this.g && c.b === this.b;
   }
 
-  fromArray(array, offset = 0) {
+  fromArray(array: number[], offset: number = 0): Color {
     this.r = array[offset];
     this.g = array[offset + 1];
     this.b = array[offset + 2];
@@ -609,7 +626,7 @@ export class Color {
     return this;
   }
 
-  toArray(array = [], offset = 0) {
+  toArray(array: number[] = [], offset: number = 0): number[] {
     array[offset] = this.r;
     array[offset + 1] = this.g;
     array[offset + 2] = this.b;
@@ -617,7 +634,7 @@ export class Color {
     return array;
   }
 
-  fromBufferAttribute(attribute, index) {
+  fromBufferAttribute(attribute: BufferAttribute, index: number): Color {
     this.r = attribute.getX(index);
     this.g = attribute.getY(index);
     this.b = attribute.getZ(index);
@@ -631,7 +648,5 @@ export class Color {
     yield this.b;
   }
 }
-
-const _color = /*@__PURE__*/ new Color();
-
-Color.NAMES = _colorKeywords;
+Color.prototype.isColor = true;
+const _color = new Color();

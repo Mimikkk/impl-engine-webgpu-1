@@ -1,9 +1,12 @@
-/**
- * Ref: https://en.wikipedia.org/wiki/Cylindrical_coordinate_system
- */
+import { Vector3 } from './Vector3.js';
+export class Cylindrical {
+  declare ['constructor']: typeof Cylindrical;
+  declare isCylindrical: boolean;
+  radius: number;
+  theta: number;
+  y: number;
 
-class Cylindrical {
-  constructor(radius = 1, theta = 0, y = 0) {
+  constructor(radius: number = 1, theta: number = 0, y: number = 0) {
     this.radius = radius; // distance from the origin to a point in the x-z plane
     this.theta = theta; // counterclockwise angle in the x-z plane measured in radians from the positive z-axis
     this.y = y; // height above the x-z plane
@@ -11,7 +14,7 @@ class Cylindrical {
     return this;
   }
 
-  set(radius, theta, y) {
+  set(radius: number, theta: number, y: number): Cylindrical {
     this.radius = radius;
     this.theta = theta;
     this.y = y;
@@ -19,7 +22,7 @@ class Cylindrical {
     return this;
   }
 
-  copy(other) {
+  copy(other: Cylindrical): Cylindrical {
     this.radius = other.radius;
     this.theta = other.theta;
     this.y = other.y;
@@ -27,11 +30,11 @@ class Cylindrical {
     return this;
   }
 
-  setFromVector3(v) {
+  setFromVector3(v: Vector3): Cylindrical {
     return this.setFromCartesianCoords(v.x, v.y, v.z);
   }
 
-  setFromCartesianCoords(x, y, z) {
+  setFromCartesianCoords(x: number, y: number, z: number): Cylindrical {
     this.radius = Math.sqrt(x * x + z * z);
     this.theta = Math.atan2(x, z);
     this.y = y;
@@ -43,5 +46,4 @@ class Cylindrical {
     return new this.constructor().copy(this);
   }
 }
-
-export { Cylindrical };
+Cylindrical.prototype.isCylindrical = true;

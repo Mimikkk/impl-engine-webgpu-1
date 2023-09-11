@@ -4,8 +4,8 @@ import { denormalize, normalize } from '../math/MathUtils.js';
 import { FloatType, StaticDrawUsage } from '../constants.js';
 import { fromHalfFloat, toHalfFloat } from '../extras/DataUtils.js';
 
-const _vector = /*@__PURE__*/ new Vector3();
-const _vector2 = /*@__PURE__*/ new Vector2();
+const _vector = new Vector3();
+const _vector2 = new Vector2();
 
 class BufferAttribute {
   constructor(array, itemSize, normalized = false) {

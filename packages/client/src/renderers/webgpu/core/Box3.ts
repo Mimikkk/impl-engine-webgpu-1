@@ -394,36 +394,36 @@ export class Box3 {
 }
 
 const _points = [
-  /*@__PURE__*/ new Vector3(),
-  /*@__PURE__*/ new Vector3(),
-  /*@__PURE__*/ new Vector3(),
-  /*@__PURE__*/ new Vector3(),
-  /*@__PURE__*/ new Vector3(),
-  /*@__PURE__*/ new Vector3(),
-  /*@__PURE__*/ new Vector3(),
-  /*@__PURE__*/ new Vector3(),
+  new Vector3(),
+  new Vector3(),
+  new Vector3(),
+  new Vector3(),
+  new Vector3(),
+  new Vector3(),
+  new Vector3(),
+  new Vector3(),
 ];
 
-const _vector = /*@__PURE__*/ new Vector3();
+const _vector = new Vector3();
 
-const _box = /*@__PURE__*/ new Box3();
+const _box = new Box3();
 
 // triangle centered vertices
 
-const _v0 = /*@__PURE__*/ new Vector3();
-const _v1 = /*@__PURE__*/ new Vector3();
-const _v2 = /*@__PURE__*/ new Vector3();
+const _v0 = new Vector3();
+const _v1 = new Vector3();
+const _v2 = new Vector3();
 
 // triangle edge vectors
 
-const _f0 = /*@__PURE__*/ new Vector3();
-const _f1 = /*@__PURE__*/ new Vector3();
-const _f2 = /*@__PURE__*/ new Vector3();
+const _f0 = new Vector3();
+const _f1 = new Vector3();
+const _f2 = new Vector3();
 
-const _center = /*@__PURE__*/ new Vector3();
-const _extents = /*@__PURE__*/ new Vector3();
-const _triangleNormal = /*@__PURE__*/ new Vector3();
-const _testAxis = /*@__PURE__*/ new Vector3();
+const _center = new Vector3();
+const _extents = new Vector3();
+const _triangleNormal = new Vector3();
+const _testAxis = new Vector3();
 
 function satForAxes(axes: number[], v0: Vector3, v1: Vector3, v2: Vector3, extents: Vector3) {
   for (let i = 0, j = axes.length - 3; i <= j; i += 3) {

@@ -17,12 +17,12 @@ import { arrayNeedsUint32 } from '../utils.js';
 
 let _id = 0;
 
-const _m1 = /*@__PURE__*/ new Matrix4();
-const _obj = /*@__PURE__*/ new Object3D();
-const _offset = /*@__PURE__*/ new Vector3();
-const _box = /*@__PURE__*/ new Box3();
-const _boxMorphTargets = /*@__PURE__*/ new Box3();
-const _vector = /*@__PURE__*/ new Vector3();
+const _m1 = new Matrix4();
+const _obj = new Object3D();
+const _offset = new Vector3();
+const _box = new Box3();
+const _boxMorphTargets = new Box3();
+const _vector = new Vector3();
 
 class BufferGeometry extends EventDispatcher {
   constructor() {

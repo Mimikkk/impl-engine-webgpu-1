@@ -1,13 +1,13 @@
 import { MathUtils, Quaternion, Vector3 } from '../Three.js';
 
-const _va = /*@__PURE__*/ new Vector3(), // from pe to pa
-  _vb = /*@__PURE__*/ new Vector3(), // from pe to pb
-  _vc = /*@__PURE__*/ new Vector3(), // from pe to pc
-  _vr = /*@__PURE__*/ new Vector3(), // right axis of screen
-  _vu = /*@__PURE__*/ new Vector3(), // up axis of screen
-  _vn = /*@__PURE__*/ new Vector3(), // normal vector of screen
-  _vec = /*@__PURE__*/ new Vector3(), // temporary vector
-  _quat = /*@__PURE__*/ new Quaternion(); // temporary quaternion
+const _va = new Vector3(), // from pe to pa
+  _vb = new Vector3(), // from pe to pb
+  _vc = new Vector3(), // from pe to pc
+  _vr = new Vector3(), // right axis of screen
+  _vu = new Vector3(), // up axis of screen
+  _vn = new Vector3(), // normal vector of screen
+  _vec = new Vector3(), // temporary vector
+  _quat = new Quaternion(); // temporary quaternion
 
 /** Set a PerspectiveCamera's projectionMatrix and quaternion
  * to exactly frame the corners of an arbitrary rectangle.

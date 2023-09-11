@@ -6,10 +6,10 @@ import { Vector3 } from '../math/Vector3.js';
 import { PointsMaterial } from '../materials/PointsMaterial.js';
 import { BufferGeometry } from '../core/BufferGeometry.js';
 
-const _inverseMatrix = /*@__PURE__*/ new Matrix4();
-const _ray = /*@__PURE__*/ new Ray();
-const _sphere = /*@__PURE__*/ new Sphere();
-const _position = /*@__PURE__*/ new Vector3();
+const _inverseMatrix = new Matrix4();
+const _ray = new Ray();
+const _sphere = new Sphere();
+const _position = new Vector3();
 
 class Points extends Object3D {
   constructor(geometry = new BufferGeometry(), material = new PointsMaterial()) {

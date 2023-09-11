@@ -9,18 +9,18 @@ import { MathUtils } from '../math/MathUtils.js';
 
 let _object3DId = 0;
 
-const _v1 = /*@__PURE__*/ new Vector3();
-const _q1 = /*@__PURE__*/ new Quaternion();
-const _m1 = /*@__PURE__*/ new Matrix4();
-const _target = /*@__PURE__*/ new Vector3();
+const _v1 = new Vector3();
+const _q1 = new Quaternion();
+const _m1 = new Matrix4();
+const _target = new Vector3();
 
-const _position = /*@__PURE__*/ new Vector3();
-const _scale = /*@__PURE__*/ new Vector3();
-const _quaternion = /*@__PURE__*/ new Quaternion();
+const _position = new Vector3();
+const _scale = new Vector3();
+const _quaternion = new Quaternion();
 
-const _xAxis = /*@__PURE__*/ new Vector3(1, 0, 0);
-const _yAxis = /*@__PURE__*/ new Vector3(0, 1, 0);
-const _zAxis = /*@__PURE__*/ new Vector3(0, 0, 1);
+const _xAxis = new Vector3(1, 0, 0);
+const _yAxis = new Vector3(0, 1, 0);
+const _zAxis = new Vector3(0, 0, 1);
 
 const _addedEvent = { type: 'added' };
 const _removedEvent = { type: 'removed' };
@@ -562,6 +562,6 @@ export class Object3D extends EventDispatcher {
   }
 }
 
-Object3D.DEFAULT_UP = /*@__PURE__*/ new Vector3(0, 1, 0);
+Object3D.DEFAULT_UP = new Vector3(0, 1, 0);
 Object3D.DEFAULT_MATRIX_AUTO_UPDATE = true;
 Object3D.DEFAULT_MATRIX_WORLD_AUTO_UPDATE = true;

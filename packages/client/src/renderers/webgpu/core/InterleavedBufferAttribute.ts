@@ -5,7 +5,7 @@ import { InterleavedBuffer } from './InterleavedBuffer.js';
 import { Matrix4 } from './Matrix4.js';
 import { Matrix3 } from './Matrix3.js';
 
-const _vector = /*@__PURE__*/ new Vector3();
+const _vector = new Vector3();
 
 export class InterleavedBufferAttribute {
   isInterleavedBufferAttribute: boolean;

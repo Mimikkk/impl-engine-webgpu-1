@@ -3,8 +3,8 @@ import { clamp } from './MathUtils.js';
 import { Vector3 } from './Vector3.js';
 import { Matrix4 } from './Matrix4.js';
 
-const _matrix = /*@__PURE__*/ new Matrix4();
-const _quaternion = /*@__PURE__*/ new Quaternion();
+const _matrix = new Matrix4();
+const _quaternion = new Quaternion();
 
 export class Euler {
   static DEFAULT_ORDER: Euler.Order = 'XYZ';

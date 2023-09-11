@@ -2,8 +2,8 @@ import { Vector3 } from './Vector3.js';
 import { MathUtils } from './MathUtils.js';
 import { Matrix4 } from './Matrix4.js';
 
-const _startP = /*@__PURE__*/ new Vector3();
-const _startEnd = /*@__PURE__*/ new Vector3();
+const _startP = new Vector3();
+const _startEnd = new Vector3();
 
 export class Line3 {
   start: Vector3;

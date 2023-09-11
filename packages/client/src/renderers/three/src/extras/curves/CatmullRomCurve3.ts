@@ -68,10 +68,10 @@ function CubicPoly() {
 
 //
 
-const tmp = /*@__PURE__*/ new Vector3();
-const px = /*@__PURE__*/ new CubicPoly();
-const py = /*@__PURE__*/ new CubicPoly();
-const pz = /*@__PURE__*/ new CubicPoly();
+const tmp = new Vector3();
+const px = new CubicPoly();
+const py = new CubicPoly();
+const pz = new CubicPoly();
 
 export class CatmullRomCurve3 extends Curve {
   constructor(points = [], closed = false, curveType = 'centripetal', tension = 0.5) {

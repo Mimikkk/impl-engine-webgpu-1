@@ -1,8 +1,8 @@
 import { Vector3 } from '../math/Vector3.js';
 import { Object3D } from '../core/Object3D.js';
 
-const _v1 = /*@__PURE__*/ new Vector3();
-const _v2 = /*@__PURE__*/ new Vector3();
+const _v1 = new Vector3();
+const _v2 = new Vector3();
 
 export class LOD extends Object3D {
   constructor() {

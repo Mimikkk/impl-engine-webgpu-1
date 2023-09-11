@@ -7,18 +7,18 @@ import { Vector4 } from '../Vector4.js';
 import { Ray } from '../Ray.js';
 import { Material } from '../materials/Material.js';
 
-const _basePosition = /*@__PURE__*/ new Vector3();
+const _basePosition = new Vector3();
 
-const _skinIndex = /*@__PURE__*/ new Vector4();
-const _skinWeight = /*@__PURE__*/ new Vector4();
+const _skinIndex = new Vector4();
+const _skinWeight = new Vector4();
 
-const _vector3 = /*@__PURE__*/ new Vector3();
-const _matrix4 = /*@__PURE__*/ new Matrix4();
-const _vertex = /*@__PURE__*/ new Vector3();
+const _vector3 = new Vector3();
+const _matrix4 = new Matrix4();
+const _vertex = new Vector3();
 
-const _sphere = /*@__PURE__*/ new Sphere();
-const _inverseMatrix = /*@__PURE__*/ new Matrix4();
-const _ray = /*@__PURE__*/ new Ray();
+const _sphere = new Sphere();
+const _inverseMatrix = new Matrix4();
+const _ray = new Ray();
 
 class SkinnedMesh extends Mesh {
   isSkinnedMesh: boolean;

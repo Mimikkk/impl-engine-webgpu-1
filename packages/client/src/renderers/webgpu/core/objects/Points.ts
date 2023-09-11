@@ -8,10 +8,10 @@ import { Object3D } from '../Object3D.js';
 import { Intersection, Raycaster } from '../Raycaster.js';
 import { BufferGeometry } from '../BufferGeometry.js';
 
-const _inverseMatrix = /*@__PURE__*/ new Matrix4();
-const _ray = /*@__PURE__*/ new Ray();
-const _sphere = /*@__PURE__*/ new Sphere();
-const _position = /*@__PURE__*/ new Vector3();
+const _inverseMatrix = new Matrix4();
+const _ray = new Ray();
+const _sphere = new Sphere();
+const _position = new Vector3();
 
 class Points extends Object3D {
   isPoints: boolean;

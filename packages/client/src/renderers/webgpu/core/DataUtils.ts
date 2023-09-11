@@ -1,7 +1,7 @@
 import { clamp } from './MathUtils.js';
 
 // Fast Half Float Conversions, http://www.fox-toolkit.org/ftp/fasthalffloatconversion.pdf
-const _tables = /*@__PURE__*/ _generateTables();
+const _tables = _generateTables();
 
 function _generateTables() {
   // float32 to float16 helpers

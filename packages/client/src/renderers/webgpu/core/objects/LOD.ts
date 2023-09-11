@@ -3,8 +3,8 @@ import { Intersection, Raycaster } from '../Raycaster.js';
 import { Vector3 } from '../Vector3.js';
 import { Camera } from '../camera/Camera.js';
 
-const _v1 = /*@__PURE__*/ new Vector3();
-const _v2 = /*@__PURE__*/ new Vector3();
+const _v1 = new Vector3();
+const _v2 = new Vector3();
 
 class LOD extends Object3D {
   _currentLevel: number;

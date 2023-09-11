@@ -7,11 +7,11 @@ import { Vector3 } from '../Vector3.js';
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
 import { BufferGeometry } from '../BufferGeometry.js';
 
-const _start = /*@__PURE__*/ new Vector3();
-const _end = /*@__PURE__*/ new Vector3();
-const _inverseMatrix = /*@__PURE__*/ new Matrix4();
-const _ray = /*@__PURE__*/ new Ray();
-const _sphere = /*@__PURE__*/ new Sphere();
+const _start = new Vector3();
+const _end = new Vector3();
+const _inverseMatrix = new Matrix4();
+const _ray = new Ray();
+const _sphere = new Sphere();
 
 export class Line extends Object3D {
   constructor(geometry = new BufferGeometry(), material = new LineBasicMaterial()) {

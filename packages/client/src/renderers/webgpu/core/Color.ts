@@ -632,4 +632,4 @@ export class Color {
   }
 }
 
-const _color = /*@__PURE__*/ new Color(0, 0, 0);
+const _color = new Color(0, 0, 0);

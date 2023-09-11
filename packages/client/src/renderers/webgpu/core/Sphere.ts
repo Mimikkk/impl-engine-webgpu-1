@@ -3,9 +3,9 @@ import { Vector3 } from './Vector3.js';
 import { Plane } from './Plane.js';
 import { Matrix4 } from './Matrix4.js';
 
-const _box = /*@__PURE__*/ new Box3();
-const _v1 = /*@__PURE__*/ new Vector3();
-const _v2 = /*@__PURE__*/ new Vector3();
+const _box = new Box3();
+const _v1 = new Vector3();
+const _v2 = new Vector3();
 
 class Sphere {
   center: Vector3;

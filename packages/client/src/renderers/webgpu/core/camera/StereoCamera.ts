@@ -2,9 +2,9 @@ import { Matrix4 } from '../Matrix4.js';
 import { MathUtils } from '../MathUtils.js';
 import { PerspectiveCamera } from './PerspectiveCamera.js';
 
-const _eyeRight = /*@__PURE__*/ new Matrix4();
-const _eyeLeft = /*@__PURE__*/ new Matrix4();
-const _projectionMatrix = /*@__PURE__*/ new Matrix4();
+const _eyeRight = new Matrix4();
+const _eyeLeft = new Matrix4();
+const _projectionMatrix = new Matrix4();
 
 export class StereoCamera {
   static type: string = 'StereoCamera';

@@ -10,21 +10,21 @@ import { BufferGeometry } from '../BufferGeometry.js';
 
 let _geometry: BufferGeometry;
 
-const _intersectPoint = /*@__PURE__*/ new Vector3();
-const _worldScale = /*@__PURE__*/ new Vector3();
-const _mvPosition = /*@__PURE__*/ new Vector3();
+const _intersectPoint = new Vector3();
+const _worldScale = new Vector3();
+const _mvPosition = new Vector3();
 
-const _alignedPosition = /*@__PURE__*/ new Vector2();
-const _rotatedPosition = /*@__PURE__*/ new Vector2();
-const _viewWorldMatrix = /*@__PURE__*/ new Matrix4();
+const _alignedPosition = new Vector2();
+const _rotatedPosition = new Vector2();
+const _viewWorldMatrix = new Matrix4();
 
-const _vA = /*@__PURE__*/ new Vector3();
-const _vB = /*@__PURE__*/ new Vector3();
-const _vC = /*@__PURE__*/ new Vector3();
+const _vA = new Vector3();
+const _vB = new Vector3();
+const _vC = new Vector3();
 
-const _uvA = /*@__PURE__*/ new Vector2();
-const _uvB = /*@__PURE__*/ new Vector2();
-const _uvC = /*@__PURE__*/ new Vector2();
+const _uvA = new Vector2();
+const _uvB = new Vector2();
+const _uvC = new Vector2();
 
 class Sprite extends Object3D {
   constructor(material) {

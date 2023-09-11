@@ -2,7 +2,7 @@ import { Vector3 } from '../math/Vector3.js';
 import { BufferAttribute } from './BufferAttribute.js';
 import { denormalize, normalize } from '../math/MathUtils.js';
 
-const _vector = /*@__PURE__*/ new Vector3();
+const _vector = new Vector3();
 
 class InterleavedBufferAttribute {
   constructor(interleavedBuffer, itemSize, offset, normalized = false) {

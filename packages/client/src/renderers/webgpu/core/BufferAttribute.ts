@@ -7,8 +7,8 @@ import { Matrix3 } from './Matrix3.js';
 import { Matrix4 } from './Matrix4.js';
 import { TypedArray } from './types.js';
 
-const _vector = /*@__PURE__*/ new Vector3();
-const _vector2 = /*@__PURE__*/ new Vector2();
+const _vector = new Vector3();
+const _vector2 = new Vector2();
 
 export class BufferAttribute {
   isBufferAttribute: boolean;

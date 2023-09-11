@@ -6,9 +6,9 @@ import { Frustum } from '../Frustum.js';
 import { Camera } from '../camera/Camera.js';
 import { Light } from './Light.js';
 
-const _projScreenMatrix = /*@__PURE__*/ new Matrix4();
-const _lightPositionWorld = /*@__PURE__*/ new Vector3();
-const _lookTarget = /*@__PURE__*/ new Vector3();
+const _projScreenMatrix = new Matrix4();
+const _lightPositionWorld = new Vector3();
+const _lookTarget = new Vector3();
 
 export class LightShadow {
   camera: Camera;

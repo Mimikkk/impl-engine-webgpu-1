@@ -392,7 +392,7 @@ export class Quaternion {
     return this;
   }
 
-  dot(v: Quaternion): Quaternion {
+  dot(v: Quaternion): number {
     return this._x * v._x + this._y * v._y + this._z * v._z + this._w * v._w;
   }
 
@@ -545,7 +545,7 @@ export class Quaternion {
     );
   }
 
-  fromArray(array: NumberArray, offset = 0): Quaternion {
+  fromArray(array: number[], offset = 0): Quaternion {
     this._x = array[offset];
     this._y = array[offset + 1];
     this._z = array[offset + 2];
@@ -556,7 +556,7 @@ export class Quaternion {
     return this;
   }
 
-  toArray(array: NumberArray = [], offset = 0): number[] {
+  toArray(array: number[] = [], offset = 0): number[] {
     array[offset] = this._x;
     array[offset + 1] = this._y;
     array[offset + 2] = this._z;

@@ -5,9 +5,9 @@ import { Line3 } from './Line3.js';
 import { Box3 } from './Box3.js';
 import { Matrix4 } from './Matrix4.js';
 
-const _vector1 = /*@__PURE__*/ new Vector3();
-const _vector2 = /*@__PURE__*/ new Vector3();
-const _normalMatrix = /*@__PURE__*/ new Matrix3();
+const _vector1 = new Vector3();
+const _vector2 = new Vector3();
+const _normalMatrix = new Matrix3();
 
 export class Plane {
   isPlane: boolean;

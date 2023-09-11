@@ -1,28 +1,28 @@
 import { Vector3 } from './Vector3.js';
 
-/**
- * Primary reference:
- *   https://graphics.stanford.edu/papers/envmap/envmap.pdf
- *
- * Secondary reference:
- *   https://www.ppsloan.org/publications/StupidSH36.pdf
- */
+export class SphericalHarmonics3 {
+  declare ['constructor']: typeof SphericalHarmonics3;
+  declare isSphericalHarmonics3: boolean;
+  coefficients: [Vector3, Vector3, Vector3, Vector3, Vector3, Vector3, Vector3, Vector3, Vector3];
 
-// 3-band SH defined by 9 coefficients
-
-class SphericalHarmonics3 {
   constructor() {
-    this.isSphericalHarmonics3 = true;
-
-    this.coefficients = [];
-
-    for (let i = 0; i < 9; i++) {
-      this.coefficients.push(new Vector3());
-    }
+    this.coefficients = [
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+    ];
   }
 
-  // shBasis is an Array[ 9 ]
-  static getBasisAt(normal, shBasis) {
+  static getBasisAt(
+    normal: Vector3,
+    shBasis: [number, number, number, number, number, number, number, number, number],
+  ): void {
     // normal is assumed to be unit length
 
     const x = normal.x,
@@ -45,15 +45,15 @@ class SphericalHarmonics3 {
     shBasis[8] = 0.546274 * (x * x - y * y);
   }
 
-  set(coefficients) {
+  set(
+    coefficients: [Vector3, Vector3, Vector3, Vector3, Vector3, Vector3, Vector3, Vector3, Vector3],
+  ): SphericalHarmonics3 {
     for (let i = 0; i < 9; i++) {
       this.coefficients[i].copy(coefficients[i]);
     }
 
     return this;
   }
-
-  // get the radiance in the direction of the normal
 
   zero() {
     for (let i = 0; i < 9; i++) {
@@ -63,11 +63,7 @@ class SphericalHarmonics3 {
     return this;
   }
 
-  // get the irradiance (radiance convolved with cosine lobe) in the direction of the normal
-  // target is a Vector3
-
-  // target is a Vector3
-  getAt(normal, target) {
+  getAt(normal: Vector3, target: Vector3): Vector3 {
     // normal is assumed to be unit length
 
     const x = normal.x,
@@ -94,8 +90,7 @@ class SphericalHarmonics3 {
     return target;
   }
 
-  // https://graphics.stanford.edu/papers/envmap/envmap.pdf
-  getIrradianceAt(normal, target) {
+  getIrradianceAt(normal: Vector3, target: Vector3): Vector3 {
     // normal is assumed to be unit length
 
     const x = normal.x,
@@ -122,7 +117,7 @@ class SphericalHarmonics3 {
     return target;
   }
 
-  add(sh) {
+  add(sh: SphericalHarmonics3): SphericalHarmonics3 {
     for (let i = 0; i < 9; i++) {
       this.coefficients[i].add(sh.coefficients[i]);
     }
@@ -130,7 +125,7 @@ class SphericalHarmonics3 {
     return this;
   }
 
-  addScaledSH(sh, s) {
+  addScaledSH(sh: SphericalHarmonics3, s: number): SphericalHarmonics3 {
     for (let i = 0; i < 9; i++) {
       this.coefficients[i].addScaledVector(sh.coefficients[i], s);
     }
@@ -138,7 +133,7 @@ class SphericalHarmonics3 {
     return this;
   }
 
-  scale(s) {
+  scale(s: number): SphericalHarmonics3 {
     for (let i = 0; i < 9; i++) {
       this.coefficients[i].multiplyScalar(s);
     }
@@ -146,7 +141,7 @@ class SphericalHarmonics3 {
     return this;
   }
 
-  lerp(sh, alpha) {
+  lerp(sh: SphericalHarmonics3, alpha: number): SphericalHarmonics3 {
     for (let i = 0; i < 9; i++) {
       this.coefficients[i].lerp(sh.coefficients[i], alpha);
     }
@@ -154,7 +149,7 @@ class SphericalHarmonics3 {
     return this;
   }
 
-  equals(sh) {
+  equals(sh: SphericalHarmonics3): boolean {
     for (let i = 0; i < 9; i++) {
       if (!this.coefficients[i].equals(sh.coefficients[i])) {
         return false;
@@ -164,15 +159,15 @@ class SphericalHarmonics3 {
     return true;
   }
 
-  copy(sh) {
+  copy(sh: SphericalHarmonics3): SphericalHarmonics3 {
     return this.set(sh.coefficients);
   }
 
-  clone() {
+  clone(): SphericalHarmonics3 {
     return new this.constructor().copy(this);
   }
 
-  fromArray(array, offset = 0) {
+  fromArray(array: number[], offset: number = 0): SphericalHarmonics3 {
     const coefficients = this.coefficients;
 
     for (let i = 0; i < 9; i++) {
@@ -184,7 +179,7 @@ class SphericalHarmonics3 {
 
   // evaluate the basis functions
 
-  toArray(array = [], offset = 0) {
+  toArray(array: number[] = [], offset: number = 0): number[] {
     const coefficients = this.coefficients;
 
     for (let i = 0; i < 9; i++) {
@@ -194,5 +189,4 @@ class SphericalHarmonics3 {
     return array;
   }
 }
-
-export { SphericalHarmonics3 };
+SphericalHarmonics3.prototype.isSphericalHarmonics3 = true;

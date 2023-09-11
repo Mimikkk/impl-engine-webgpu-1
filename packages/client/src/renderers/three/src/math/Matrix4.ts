@@ -1,18 +1,92 @@
 import { WebGLCoordinateSystem, WebGPUCoordinateSystem } from '../constants.js';
 import { Vector3 } from './Vector3.js';
+import { Matrix3 } from './Matrix3.js';
+import { Euler } from './Euler.js';
+import { Quaternion } from './Quaternion.js';
+import { CoordinateSystem } from './types.js';
 
-class Matrix4 {
-  constructor(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44) {
-    Matrix4.prototype.isMatrix4 = true;
-
+export class Matrix4 {
+  declare ['constructor']: typeof Matrix4;
+  declare isMatrix4: boolean;
+  elements: [
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+  ];
+  constructor();
+  constructor(
+    n11: number,
+    n12: number,
+    n13: number,
+    n14: number,
+    n21: number,
+    n22: number,
+    n23: number,
+    n24: number,
+    n31: number,
+    n32: number,
+    n33: number,
+    n34: number,
+    n41: number,
+    n42: number,
+    n43: number,
+    n44: number,
+  );
+  constructor(
+    n11?: number,
+    n12?: number,
+    n13?: number,
+    n14?: number,
+    n21?: number,
+    n22?: number,
+    n23?: number,
+    n24?: number,
+    n31?: number,
+    n32?: number,
+    n33?: number,
+    n34?: number,
+    n41?: number,
+    n42?: number,
+    n43?: number,
+    n44?: number,
+  ) {
     this.elements = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
     if (n11 !== undefined) {
-      this.set(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44);
+      this.set(n11, n12!, n13!, n14!, n21!, n22!, n23!, n24!, n31!, n32!, n33!, n34!, n41!, n42!, n43!, n44!);
     }
   }
-
-  set(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44) {
+  set(
+    n11: number,
+    n12: number,
+    n13: number,
+    n14: number,
+    n21: number,
+    n22: number,
+    n23: number,
+    n24: number,
+    n31: number,
+    n32: number,
+    n33: number,
+    n34: number,
+    n41: number,
+    n42: number,
+    n43: number,
+    n44: number,
+  ): Matrix4 {
     const te = this.elements;
 
     te[0] = n11;
@@ -35,17 +109,17 @@ class Matrix4 {
     return this;
   }
 
-  identity() {
+  identity(): Matrix4 {
     this.set(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
     return this;
   }
 
-  clone() {
+  clone(): Matrix4 {
     return new Matrix4().fromArray(this.elements);
   }
 
-  copy(m) {
+  copy(m: Matrix4): Matrix4 {
     const te = this.elements;
     const me = m.elements;
 
@@ -69,7 +143,7 @@ class Matrix4 {
     return this;
   }
 
-  copyPosition(m) {
+  copyPosition(m: Matrix4): Matrix4 {
     const te = this.elements,
       me = m.elements;
 
@@ -80,7 +154,7 @@ class Matrix4 {
     return this;
   }
 
-  setFromMatrix3(m) {
+  setFromMatrix3(m: Matrix3): Matrix4 {
     const me = m.elements;
 
     this.set(me[0], me[3], me[6], 0, me[1], me[4], me[7], 0, me[2], me[5], me[8], 0, 0, 0, 0, 1);
@@ -88,7 +162,7 @@ class Matrix4 {
     return this;
   }
 
-  extractBasis(xAxis, yAxis, zAxis) {
+  extractBasis(xAxis: Vector3, yAxis: Vector3, zAxis: Vector3): Matrix4 {
     xAxis.setFromMatrixColumn(this, 0);
     yAxis.setFromMatrixColumn(this, 1);
     zAxis.setFromMatrixColumn(this, 2);
@@ -96,13 +170,13 @@ class Matrix4 {
     return this;
   }
 
-  makeBasis(xAxis, yAxis, zAxis) {
+  makeBasis(xAxis: Vector3, yAxis: Vector3, zAxis: Vector3): Matrix4 {
     this.set(xAxis.x, yAxis.x, zAxis.x, 0, xAxis.y, yAxis.y, zAxis.y, 0, xAxis.z, yAxis.z, zAxis.z, 0, 0, 0, 0, 1);
 
     return this;
   }
 
-  extractRotation(m) {
+  extractRotation(m: Matrix4): Matrix4 {
     // this method does not support reflection matrices
 
     const te = this.elements;
@@ -135,7 +209,7 @@ class Matrix4 {
     return this;
   }
 
-  makeRotationFromEuler(euler) {
+  makeRotationFromEuler(euler: Euler): Matrix4 {
     const te = this.elements;
 
     const x = euler.x,
@@ -266,11 +340,11 @@ class Matrix4 {
     return this;
   }
 
-  makeRotationFromQuaternion(q) {
+  makeRotationFromQuaternion(q: Quaternion): Matrix4 {
     return this.compose(_zero, q, _one);
   }
 
-  lookAt(eye, target, up) {
+  lookAt(eye: Vector3, target: Vector3, up: Vector3): Matrix4 {
     const te = this.elements;
 
     _z.subVectors(eye, target);
@@ -313,15 +387,15 @@ class Matrix4 {
     return this;
   }
 
-  multiply(m) {
+  multiply(m: Matrix4): Matrix4 {
     return this.multiplyMatrices(this, m);
   }
 
-  premultiply(m) {
+  premultiply(m: Matrix4): Matrix4 {
     return this.multiplyMatrices(m, this);
   }
 
-  multiplyMatrices(a, b) {
+  multiplyMatrices(a: Matrix4, b: Matrix4): Matrix4 {
     const ae = a.elements;
     const be = b.elements;
     const te = this.elements;
@@ -383,7 +457,7 @@ class Matrix4 {
     return this;
   }
 
-  multiplyScalar(s) {
+  multiplyScalar(s: number): Matrix4 {
     const te = this.elements;
 
     te[0] *= s;
@@ -406,7 +480,7 @@ class Matrix4 {
     return this;
   }
 
-  determinant() {
+  determinant(): number {
     const te = this.elements;
 
     const n11 = te[0],
@@ -440,7 +514,7 @@ class Matrix4 {
     );
   }
 
-  transpose() {
+  transpose(): Matrix4 {
     const te = this.elements;
     let tmp;
 
@@ -467,10 +541,12 @@ class Matrix4 {
     return this;
   }
 
-  setPosition(x, y, z) {
+  setPosition(x: Vector3, y?: unknown, z?: unknown): Matrix4;
+  setPosition(x: number, y: number, z: number): Matrix4;
+  setPosition(x: Vector3 | number, y: number, z: number): Matrix4 {
     const te = this.elements;
 
-    if (x.isVector3) {
+    if (typeof x === 'object') {
       te[12] = x.x;
       te[13] = x.y;
       te[14] = x.z;
@@ -483,7 +559,7 @@ class Matrix4 {
     return this;
   }
 
-  invert() {
+  invert(): Matrix4 {
     // based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
     const te = this.elements,
       n11 = te[0],
@@ -560,7 +636,7 @@ class Matrix4 {
     return this;
   }
 
-  scale(v) {
+  scale(v: Vector3): Matrix4 {
     const te = this.elements;
     const x = v.x,
       y = v.y,
@@ -582,7 +658,7 @@ class Matrix4 {
     return this;
   }
 
-  getMaxScaleOnAxis() {
+  getMaxScaleOnAxis(): number {
     const te = this.elements;
 
     const scaleXSq = te[0] * te[0] + te[1] * te[1] + te[2] * te[2];
@@ -592,8 +668,10 @@ class Matrix4 {
     return Math.sqrt(Math.max(scaleXSq, scaleYSq, scaleZSq));
   }
 
-  makeTranslation(x, y, z) {
-    if (x.isVector3) {
+  makeTranslation(x: Vector3, y?: unknown, z?: unknown): Matrix4;
+  makeTranslation(x: number, y: number, z: number): Matrix4;
+  makeTranslation(x: Vector3 | number, y: number, z: number): Matrix4 {
+    if (typeof x === 'object') {
       this.set(1, 0, 0, x.x, 0, 1, 0, x.y, 0, 0, 1, x.z, 0, 0, 0, 1);
     } else {
       this.set(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
@@ -602,7 +680,7 @@ class Matrix4 {
     return this;
   }
 
-  makeRotationX(theta) {
+  makeRotationX(theta: number): Matrix4 {
     const c = Math.cos(theta),
       s = Math.sin(theta);
 
@@ -611,7 +689,7 @@ class Matrix4 {
     return this;
   }
 
-  makeRotationY(theta) {
+  makeRotationY(theta: number): Matrix4 {
     const c = Math.cos(theta),
       s = Math.sin(theta);
 
@@ -620,7 +698,7 @@ class Matrix4 {
     return this;
   }
 
-  makeRotationZ(theta) {
+  makeRotationZ(theta: number): Matrix4 {
     const c = Math.cos(theta),
       s = Math.sin(theta);
 
@@ -629,7 +707,7 @@ class Matrix4 {
     return this;
   }
 
-  makeRotationAxis(axis, angle) {
+  makeRotationAxis(axis: Vector3, angle: number): Matrix4 {
     // Based on http://www.gamedev.net/reference/articles/article1199.asp
 
     const c = Math.cos(angle);
@@ -663,19 +741,19 @@ class Matrix4 {
     return this;
   }
 
-  makeScale(x, y, z) {
+  makeScale(x: number, y: number, z: number): Matrix4 {
     this.set(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
 
     return this;
   }
 
-  makeShear(xy, xz, yx, yz, zx, zy) {
+  makeShear(xy: number, xz: number, yx: number, yz: number, zx: number, zy: number): Matrix4 {
     this.set(1, yx, zx, 0, xy, 1, zy, 0, xz, yz, 1, 0, 0, 0, 0, 1);
 
     return this;
   }
 
-  compose(position, quaternion, scale) {
+  compose(position: Vector3, quaternion: Quaternion, scale: Vector3): Matrix4 {
     const te = this.elements;
 
     const x = quaternion._x,
@@ -722,7 +800,7 @@ class Matrix4 {
     return this;
   }
 
-  decompose(position, quaternion, scale) {
+  decompose(position: Vector3, quaternion: Quaternion, scale: Vector3): Matrix4 {
     const te = this.elements;
 
     let sx = _v1.set(te[0], te[1], te[2]).length();
@@ -765,7 +843,15 @@ class Matrix4 {
     return this;
   }
 
-  makePerspective(left, right, top, bottom, near, far, coordinateSystem = WebGLCoordinateSystem) {
+  makePerspective(
+    left: number,
+    right: number,
+    top: number,
+    bottom: number,
+    near: number,
+    far: number,
+    coordinateSystem: CoordinateSystem = WebGLCoordinateSystem,
+  ): Matrix4 {
     const te = this.elements;
     const x = (2 * near) / (right - left);
     const y = (2 * near) / (top - bottom);
@@ -805,7 +891,15 @@ class Matrix4 {
     return this;
   }
 
-  makeOrthographic(left, right, top, bottom, near, far, coordinateSystem = WebGLCoordinateSystem) {
+  makeOrthographic(
+    left: number,
+    right: number,
+    top: number,
+    bottom: number,
+    near: number,
+    far: number,
+    coordinateSystem: CoordinateSystem = WebGLCoordinateSystem,
+  ): Matrix4 {
     const te = this.elements;
     const w = 1.0 / (right - left);
     const h = 1.0 / (top - bottom);
@@ -846,7 +940,7 @@ class Matrix4 {
     return this;
   }
 
-  equals(matrix) {
+  equals(matrix: Matrix4): boolean {
     const te = this.elements;
     const me = matrix.elements;
 
@@ -857,7 +951,7 @@ class Matrix4 {
     return true;
   }
 
-  fromArray(array, offset = 0) {
+  fromArray(array: number[], offset: number = 0): Matrix4 {
     for (let i = 0; i < 16; i++) {
       this.elements[i] = array[i + offset];
     }
@@ -865,7 +959,7 @@ class Matrix4 {
     return this;
   }
 
-  toArray(array = [], offset = 0) {
+  toArray(array: number[] = [], offset: number = 0): number[] {
     const te = this.elements;
 
     array[offset] = te[0];
@@ -891,13 +985,12 @@ class Matrix4 {
     return array;
   }
 }
+Matrix4.prototype.isMatrix4 = true;
 
-const _v1 = /*@__PURE__*/ new Vector3();
-const _m1 = /*@__PURE__*/ new Matrix4();
-const _zero = /*@__PURE__*/ new Vector3(0, 0, 0);
-const _one = /*@__PURE__*/ new Vector3(1, 1, 1);
-const _x = /*@__PURE__*/ new Vector3();
-const _y = /*@__PURE__*/ new Vector3();
-const _z = /*@__PURE__*/ new Vector3();
-
-export { Matrix4 };
+const _v1 = new Vector3();
+const _m1 = new Matrix4();
+const _zero = new Vector3(0, 0, 0);
+const _one = new Vector3(1, 1, 1);
+const _x = new Vector3();
+const _y = new Vector3();
+const _z = new Vector3();

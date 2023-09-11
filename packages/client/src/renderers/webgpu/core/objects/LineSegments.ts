@@ -2,8 +2,8 @@ import { Line } from './Line.js';
 import { Vector3 } from '../Vector3.js';
 import { Float32BufferAttribute } from '../BufferAttribute.js';
 
-const _start = /*@__PURE__*/ new Vector3();
-const _end = /*@__PURE__*/ new Vector3();
+const _start = new Vector3();
+const _end = new Vector3();
 
 class LineSegments extends Line {
   constructor(geometry, material) {
