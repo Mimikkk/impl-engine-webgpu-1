@@ -13,7 +13,7 @@
   import * as THREE from '../src/Three.ts';
   import { mix, range, normalWorld, oscSine, timerLocal } from '../src/nodes/Nodes.ts';
 
-  import Stats from '../src/libs/stats.module.ts';
+  import createStats from '../src/libs/stats.module.ts';
   import { GUI } from 'lil-gui';
 
   import WebGPURenderer from '../src/WebGPURenderer.ts';
@@ -70,7 +70,7 @@
 
     //
 
-    stats = new Stats();
+    stats = createStats();
     document.body.appendChild(stats.dom);
 
     //

@@ -15,7 +15,7 @@
   import * as THREE from '../src/Three.ts';
   import { color, rangeFog, checker, uv, mix, texture, lights, normalMap, MeshPhongNodeMaterial } from '../src/nodes/Nodes.ts';
 
-  import Stats from '../src/libs/stats.module.ts';
+  import createStats from '../src/libs/stats.module.ts';
 
   import { OrbitControls } from '../src/controls/OrbitControls.ts';
   import { TeapotGeometry } from '../src/geometries/TeapotGeometry.ts';
@@ -124,7 +124,7 @@
 
     // stats
 
-    stats = new Stats();
+    stats = createStats();
     document.body.appendChild(stats.dom);
 
     window.addEventListener('resize', onWindowResize);

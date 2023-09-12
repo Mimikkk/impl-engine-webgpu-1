@@ -1,167 +1,126 @@
-var Stats = function () {
+interface PanelOptions {
+  foreground: string;
+  background: string;
+  title: string;
+}
 
-	var mode = 0;
+interface Panel {
+  canvas: HTMLCanvasElement;
+  update(value: number, maxValue: number): void;
+}
 
-	var container = document.createElement( 'div' );
-	container.style.cssText = 'position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000';
-	container.addEventListener( 'click', function ( event ) {
+const createPanel = ({ foreground, title, background }: PanelOptions): Panel => {
+  let min = Infinity;
+  let max = 0;
+  const ratio = Math.round(window.devicePixelRatio || 1);
 
-		event.preventDefault();
-		showPanel( ++ mode % container.children.length );
+  const rect = { width: 80 * ratio, height: 48 * ratio };
+  const text = {
+    x: 3 * ratio,
+    y: 2 * ratio,
+    font: `bold ${9 * ratio}px Helvetica,Arial,sans-serif`,
+    textBaseline: 'top',
+  };
+  const graph = { x: 3 * ratio, y: 15 * ratio, width: 74 * ratio, height: 30 * ratio };
 
-	}, false );
+  const canvas = document.createElement('canvas');
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+  canvas.style.cssText = 'width:80px;height:48px';
 
-	//
+  const context = canvas.getContext('2d')!;
+  context.font = `bold ${9 * ratio}px Helvetica,Arial,sans-serif`;
+  context.textBaseline = 'top';
 
-	function addPanel( panel ) {
+  context.fillStyle = background;
+  context.fillRect(0, 0, rect.width, rect.height);
 
-		container.appendChild( panel.dom );
-		return panel;
+  context.fillStyle = foreground;
+  context.fillText(title, text.x, text.y);
+  context.fillRect(graph.x, graph.y, graph.width, graph.height);
 
-	}
+  context.fillStyle = background;
+  context.globalAlpha = 0.9;
+  context.fillRect(graph.x, graph.y, graph.width, graph.height);
 
-	function showPanel( id ) {
+  return {
+    canvas,
+    update(value: number, maxValue: number) {
+      min = Math.min(min, value);
+      max = Math.max(max, value);
 
-		for ( var i = 0; i < container.children.length; i ++ ) {
+      context.fillStyle = background;
+      context.globalAlpha = 1;
+      context.fillRect(0, 0, rect.width, graph.y);
+      context.fillStyle = foreground;
+      context.fillText(`${Math.round(value)} ${title} (${Math.round(min)}-${Math.round(max)})`, text.x, text.y);
 
-			container.children[ i ].style.display = i === id ? 'block' : 'none';
+      context.drawImage(
+        canvas,
+        graph.x + ratio,
+        graph.y,
+        graph.width - ratio,
+        graph.height,
+        graph.x,
+        graph.y,
+        graph.width - ratio,
+        graph.height,
+      );
 
-		}
+      context.fillRect(graph.x + graph.width - ratio, graph.y, ratio, graph.height);
 
-		mode = id;
-
-	}
-
-	//
-
-	var beginTime = ( performance || Date ).now(), prevTime = beginTime, frames = 0;
-
-	var fpsPanel = addPanel( new Stats.Panel( 'FPS', '#0ff', '#002' ) );
-	var msPanel = addPanel( new Stats.Panel( 'MS', '#0f0', '#020' ) );
-
-	if ( self.performance && self.performance.memory ) {
-
-		var memPanel = addPanel( new Stats.Panel( 'MB', '#f08', '#201' ) );
-
-	}
-
-	showPanel( 0 );
-
-	return {
-
-		REVISION: 16,
-
-		dom: container,
-
-		addPanel: addPanel,
-		showPanel: showPanel,
-
-		begin: function () {
-
-			beginTime = ( performance || Date ).now();
-
-		},
-
-		end: function () {
-
-			frames ++;
-
-			var time = ( performance || Date ).now();
-
-			msPanel.update( time - beginTime, 200 );
-
-			if ( time >= prevTime + 1000 ) {
-
-				fpsPanel.update( ( frames * 1000 ) / ( time - prevTime ), 100 );
-
-				prevTime = time;
-				frames = 0;
-
-				if ( memPanel ) {
-
-					var memory = performance.memory;
-					memPanel.update( memory.usedJSHeapSize / 1048576, memory.jsHeapSizeLimit / 1048576 );
-
-				}
-
-			}
-
-			return time;
-
-		},
-
-		update: function () {
-
-			beginTime = this.end();
-
-		},
-
-		// Backwards Compatibility
-
-		domElement: container,
-		setMode: showPanel
-
-	};
-
+      context.fillStyle = background;
+      context.globalAlpha = 0.9;
+      context.fillRect(
+        graph.x + graph.width - ratio,
+        graph.y,
+        ratio,
+        Math.round((1 - value / maxValue) * graph.height),
+      );
+    },
+  };
 };
 
-Stats.Panel = function ( name, fg, bg ) {
+interface Stats {
+  dom: HTMLDivElement;
+  update(): void;
+}
 
-	var min = Infinity, max = 0, round = Math.round;
-	var PR = round( window.devicePixelRatio || 1 );
+const createStats = (): Stats => {
+  const add = (panel: Panel): Panel => {
+    container.appendChild(panel.canvas);
+    return panel;
+  };
 
-	var WIDTH = 80 * PR, HEIGHT = 48 * PR,
-		TEXT_X = 3 * PR, TEXT_Y = 2 * PR,
-		GRAPH_X = 3 * PR, GRAPH_Y = 15 * PR,
-		GRAPH_WIDTH = 74 * PR, GRAPH_HEIGHT = 30 * PR;
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed; top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000';
 
-	var canvas = document.createElement( 'canvas' );
-	canvas.width = WIDTH;
-	canvas.height = HEIGHT;
-	canvas.style.cssText = 'width:80px;height:48px';
+  let startMs = performance.now();
+  let lastMs = startMs;
+  let frames = 0;
 
-	var context = canvas.getContext( '2d' );
-	context.font = 'bold ' + ( 9 * PR ) + 'px Helvetica,Arial,sans-serif';
-	context.textBaseline = 'top';
+  const panels = {
+    fps: add(createPanel({ title: 'FPS', foreground: '#0ff', background: '#002' })),
+    ms: add(createPanel({ title: 'MS', foreground: '#0f0', background: '#020' })),
+  };
 
-	context.fillStyle = bg;
-	context.fillRect( 0, 0, WIDTH, HEIGHT );
+  return {
+    dom: container,
+    update() {
+      ++frames;
+      const time = performance.now();
 
-	context.fillStyle = fg;
-	context.fillText( name, TEXT_X, TEXT_Y );
-	context.fillRect( GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT );
+      panels.ms.update(time - startMs, 200);
 
-	context.fillStyle = bg;
-	context.globalAlpha = 0.9;
-	context.fillRect( GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT );
+      if (time >= lastMs + 1000) {
+        panels.fps.update((frames * 1000) / (time - lastMs), 100);
+        lastMs = time;
+        frames = 0;
+      }
 
-	return {
-
-		dom: canvas,
-
-		update: function ( value, maxValue ) {
-
-			min = Math.min( min, value );
-			max = Math.max( max, value );
-
-			context.fillStyle = bg;
-			context.globalAlpha = 1;
-			context.fillRect( 0, 0, WIDTH, GRAPH_Y );
-			context.fillStyle = fg;
-			context.fillText( round( value ) + ' ' + name + ' (' + round( min ) + '-' + round( max ) + ')', TEXT_X, TEXT_Y );
-
-			context.drawImage( canvas, GRAPH_X + PR, GRAPH_Y, GRAPH_WIDTH - PR, GRAPH_HEIGHT, GRAPH_X, GRAPH_Y, GRAPH_WIDTH - PR, GRAPH_HEIGHT );
-
-			context.fillRect( GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y, PR, GRAPH_HEIGHT );
-
-			context.fillStyle = bg;
-			context.globalAlpha = 0.9;
-			context.fillRect( GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y, PR, round( ( 1 - ( value / maxValue ) ) * GRAPH_HEIGHT ) );
-
-		}
-
-	};
-
+      startMs = time;
+    },
+  };
 };
 
-export default Stats;
+export default createStats;

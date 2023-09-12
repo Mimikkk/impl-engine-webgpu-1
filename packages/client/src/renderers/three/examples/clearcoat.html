@@ -14,7 +14,7 @@
 
   import WebGPURenderer from '../src/WebGPURenderer.ts';
 
-  import Stats from '../src/libs/stats.module.ts';
+  import createStats from '../src/libs/stats.module.ts';
 
   import { OrbitControls } from '../src/controls/OrbitControls.ts';
   import { HDRCubeTextureLoader } from '../src/loaders/HDRCubeTextureLoader.ts';
@@ -174,7 +174,7 @@
 
     //
 
-    stats = new Stats();
+    stats = createStats();
     container.appendChild(stats.dom);
 
     // EVENTS

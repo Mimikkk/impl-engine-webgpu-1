@@ -27,7 +27,7 @@
 
   import { TeapotGeometry } from '../src/geometries/TeapotGeometry.ts';
 
-  import Stats from '../src/libs/stats.module.ts';
+  import createStats from '../src/libs/stats.module.ts';
 
   class InstanceUniformNode extends Node {
 
@@ -132,7 +132,7 @@
 
     //
 
-    stats = new Stats();
+    stats = createStats();
     container.appendChild(stats.dom);
 
     //

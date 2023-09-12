@@ -19,7 +19,7 @@
   import { RGBMLoader } from '../src/loaders/RGBMLoader.ts';
 
   import { GUI } from 'lil-gui';
-  import Stats from '../src/libs/stats.module.ts';
+  import createStats from '../src/libs/stats.module.ts';
 
   let camera, scene, renderer, stats;
   let cube, sphere, torus, material;
@@ -41,7 +41,7 @@
 
     window.addEventListener('resize', onWindowResized);
 
-    stats = new Stats();
+    stats = createStats();
     document.body.appendChild(stats.dom);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
