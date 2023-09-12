@@ -1,13 +1,13 @@
 import { Object3D } from '../core/Object3D.js';
 
-class Bone extends Object3D {
+export class Bone extends Object3D {
+  declare ['constructor']: typeof Bone;
+  declare isBone: true;
+  declare type: 'Bone';
+
   constructor() {
     super();
-
-    this.isBone = true;
-
-    this.type = 'Bone';
   }
 }
-
-export { Bone };
+Bone.prototype.isBone = true;
+Bone.prototype.type = 'Bone';

@@ -8,11 +8,10 @@ import {
   UniformsUtils,
   WebGLRenderTarget,
 } from '../Three.js';
-
 import { BokehDepthShader, BokehShader } from '../shaders/BokehShader2.js';
 
-class CinematicCamera extends PerspectiveCamera {
-  constructor(fov, aspect, near, far) {
+export class CinematicCamera extends PerspectiveCamera {
+  constructor(fov: number, aspect: number, near: number, far: number) {
     super(fov, aspect, near, far);
 
     this.type = 'CinematicCamera';
@@ -191,5 +190,3 @@ class CinematicCamera extends PerspectiveCamera {
     }
   }
 }
-
-export { CinematicCamera };

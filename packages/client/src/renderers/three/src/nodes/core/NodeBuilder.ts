@@ -13,7 +13,6 @@ import {
   Float16BufferAttribute,
   LinearEncoding,
   NoColorSpace,
-  REVISION,
   SRGBColorSpace,
   sRGBEncoding,
   Vector2,
@@ -802,7 +801,7 @@ class NodeBuilder {
   }
 
   getSignature() {
-    return `// Three.js r${REVISION} - NodeMaterial System\n`;
+    return `// Three.js r${123} - NodeMaterial System\n`;
   }
 }
 

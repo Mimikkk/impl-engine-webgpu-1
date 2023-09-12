@@ -6,7 +6,7 @@ interface Listener<T extends string, U> {
   (event: Event<T, U>): void;
 }
 
-export abstract class EventDispatcher<T extends string, E extends Event<T, unknown>> {
+export abstract class EventDispatcher<T extends string, E extends Event<T, unknown> = Event<T, any>> {
   listeners: Record<T, Listener<T, this>[]> = {} as Record<T, Listener<T, this>[]>;
 
   addEventListener(type: T, listener: Listener<T, this>): void {
@@ -30,7 +30,7 @@ export abstract class EventDispatcher<T extends string, E extends Event<T, unkno
     if (!listeners) return;
 
     event.target = this;
-    [...listeners].forEach(listener => listener.call(this, event));
+    listeners.slice().forEach(listener => listener.call(this, event));
     event.target = null;
   }
 }

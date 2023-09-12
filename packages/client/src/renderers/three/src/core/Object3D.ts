@@ -6,6 +6,14 @@ import { Euler } from '../math/Euler.js';
 import { Layers } from './Layers.js';
 import { Matrix3 } from '../math/Matrix3.js';
 import { MathUtils } from '../math/MathUtils.js';
+import { AnimationClip } from '../animation/AnimationClip.js';
+import { Material } from '../materials/Material.js';
+import { Scene } from '../scenes/Scene.js';
+import { Camera } from '../cameras/Camera.js';
+import { BufferGeometry } from './BufferGeometry.js';
+import { Group } from '../objects/Group.js';
+import { WebGLRenderer } from '../renderers/WebGLRenderer.js';
+import { Raycaster, Intersection } from './Raycaster.js';
 
 let _object3DId = 0;
 
@@ -25,7 +33,41 @@ const _zAxis = new Vector3(0, 0, 1);
 const _addedEvent = { type: 'added' };
 const _removedEvent = { type: 'removed' };
 
-export class Object3D extends EventDispatcher {
+export class Object3D extends EventDispatcher<'added' | 'removed'> {
+  static DEFAULT_UP: Vector3 = new Vector3(0, 1, 0);
+  static DEFAULT_MATRIX_AUTO_UPDATE: boolean = true;
+  static DEFAULT_MATRIX_WORLD_AUTO_UPDATE: boolean = true;
+  declare ['constructor']: typeof Object3D;
+  declare isObject3D: true;
+  declare type: 'Object3D';
+  id: number;
+  uuid: string;
+  name: string;
+  parent: Object3D | null;
+  children: Object3D[];
+  up: Vector3;
+  position: Vector3;
+  rotation: Euler;
+  quaternion: Quaternion;
+  scale: Vector3;
+  modelViewMatrix: Matrix4;
+  normalMatrix: Matrix3;
+  matrix: Matrix4;
+  matrixWorld: Matrix4;
+  matrixAutoUpdate: boolean;
+  matrixWorldNeedsUpdate: boolean;
+  matrixWorldAutoUpdate: boolean;
+  layers: Layers;
+  visible: boolean;
+  castShadow: boolean;
+  receiveShadow: boolean;
+  frustumCulled: boolean;
+  renderOrder: number;
+  animations: AnimationClip[];
+  userData: Record<string, any>;
+  customDepthMaterial: Material | undefined;
+  customDistanceMaterial: Material | undefined;
+
   constructor() {
     super();
 
@@ -110,50 +152,61 @@ export class Object3D extends EventDispatcher {
     this.userData = {};
   }
 
-  onBeforeRender(/* renderer, scene, camera, geometry, material, group */) {}
+  onBeforeRender(
+    renderer: WebGLRenderer,
+    scene: Scene,
+    camera: Camera,
+    geometry: BufferGeometry,
+    material: Material,
+    group: Group,
+  ): void {}
 
-  onAfterRender(/* renderer, scene, camera, geometry, material, group */) {}
+  onAfterRender(
+    renderer: WebGLRenderer,
+    scene: Scene,
+    camera: Camera,
+    geometry: BufferGeometry,
+    material: Material,
+    group: Group,
+  ): void {}
 
-  applyMatrix4(matrix) {
+  applyMatrix4(matrix: Matrix4): this {
     if (this.matrixAutoUpdate) this.updateMatrix();
 
     this.matrix.premultiply(matrix);
 
     this.matrix.decompose(this.position, this.quaternion, this.scale);
+
+    return this;
   }
 
-  applyQuaternion(q) {
+  applyQuaternion(q: Quaternion): this {
     this.quaternion.premultiply(q);
 
     return this;
   }
 
-  setRotationFromAxisAngle(axis, angle) {
-    // assumes axis is normalized
-
+  setRotationFromAxisAngle(axis: Vector3, angle: number): this {
     this.quaternion.setFromAxisAngle(axis, angle);
+    return this;
   }
 
-  setRotationFromEuler(euler) {
+  setRotationFromEuler(euler: Euler): this {
     this.quaternion.setFromEuler(euler, true);
+    return this;
   }
 
-  setRotationFromMatrix(m) {
-    // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
-
+  setRotationFromMatrix(m: Matrix4): this {
     this.quaternion.setFromRotationMatrix(m);
+    return this;
   }
 
-  setRotationFromQuaternion(q) {
-    // assumes q is normalized
-
+  setRotationFromQuaternion(q: Quaternion): this {
     this.quaternion.copy(q);
+    return this;
   }
 
-  rotateOnAxis(axis, angle) {
-    // rotate object on axis in object space
-    // axis is assumed to be normalized
-
+  rotateOnAxis(axis: Vector3, angle: number): this {
     _q1.setFromAxisAngle(axis, angle);
 
     this.quaternion.multiply(_q1);
@@ -161,11 +214,7 @@ export class Object3D extends EventDispatcher {
     return this;
   }
 
-  rotateOnWorldAxis(axis, angle) {
-    // rotate object on axis in world space
-    // axis is assumed to be normalized
-    // method assumes no rotated parent
-
+  rotateOnWorldAxis(axis: Vector3, angle: number): this {
     _q1.setFromAxisAngle(axis, angle);
 
     this.quaternion.premultiply(_q1);
@@ -173,19 +222,19 @@ export class Object3D extends EventDispatcher {
     return this;
   }
 
-  rotateX(angle) {
+  rotateX(angle: number): this {
     return this.rotateOnAxis(_xAxis, angle);
   }
 
-  rotateY(angle) {
+  rotateY(angle: number): this {
     return this.rotateOnAxis(_yAxis, angle);
   }
 
-  rotateZ(angle) {
+  rotateZ(angle: number): this {
     return this.rotateOnAxis(_zAxis, angle);
   }
 
-  translateOnAxis(axis, distance) {
+  translateOnAxis(axis: Vector3, distance: number): this {
     // translate object by distance along axis in object space
     // axis is assumed to be normalized
 
@@ -196,38 +245,37 @@ export class Object3D extends EventDispatcher {
     return this;
   }
 
-  translateX(distance) {
+  translateX(distance: number): this {
     return this.translateOnAxis(_xAxis, distance);
   }
 
-  translateY(distance) {
+  translateY(distance: number): this {
     return this.translateOnAxis(_yAxis, distance);
   }
 
-  translateZ(distance) {
+  translateZ(distance: number): this {
     return this.translateOnAxis(_zAxis, distance);
   }
 
-  localToWorld(vector) {
+  localToWorld(vector: Vector3): Vector3 {
     this.updateWorldMatrix(true, false);
 
     return vector.applyMatrix4(this.matrixWorld);
   }
 
-  worldToLocal(vector) {
+  worldToLocal(vector: Vector3): Vector3 {
     this.updateWorldMatrix(true, false);
 
     return vector.applyMatrix4(_m1.copy(this.matrixWorld).invert());
   }
 
-  lookAt(x, y, z) {
+  lookAt(x: Vector3, y?: unknown, z?: unknown): void;
+  lookAt(x: number, y: number, z: number): void;
+  lookAt(x: Vector3 | number, y: number, z: number): void {
     // This method does not support objects having non-uniformly-scaled parent(s)
 
-    if (x.isVector3) {
-      _target.copy(x);
-    } else {
-      _target.set(x, y, z);
-    }
+    if (typeof x === 'object') _target.copy(x);
+    else _target.set(x, y, z);
 
     const parent = this.parent;
 
@@ -250,7 +298,7 @@ export class Object3D extends EventDispatcher {
     }
   }
 
-  add(object) {
+  add(object: Object3D): this {
     if (arguments.length > 1) {
       for (let i = 0; i < arguments.length; i++) {
         this.add(arguments[i]);
@@ -280,7 +328,7 @@ export class Object3D extends EventDispatcher {
     return this;
   }
 
-  remove(object) {
+  remove(object: Object3D): this {
     if (arguments.length > 1) {
       for (let i = 0; i < arguments.length; i++) {
         this.remove(arguments[i]);
@@ -301,7 +349,7 @@ export class Object3D extends EventDispatcher {
     return this;
   }
 
-  removeFromParent() {
+  removeFromParent(): this {
     const parent = this.parent;
 
     if (parent !== null) {
@@ -311,7 +359,7 @@ export class Object3D extends EventDispatcher {
     return this;
   }
 
-  clear() {
+  clear(): this {
     for (let i = 0; i < this.children.length; i++) {
       const object = this.children[i];
 
@@ -325,7 +373,7 @@ export class Object3D extends EventDispatcher {
     return this;
   }
 
-  attach(object) {
+  attach(object: Object3D): this {
     // adds object as a child of this, while maintaining the object's world transform
 
     // Note: This method does not support scene graphs having non-uniformly-scaled nodes(s)
@@ -349,15 +397,15 @@ export class Object3D extends EventDispatcher {
     return this;
   }
 
-  getObjectById(id) {
+  getObjectById(id: number): Object3D | null {
     return this.getObjectByProperty('id', id);
   }
 
-  getObjectByName(name) {
+  getObjectByName(name: string): Object3D | null {
     return this.getObjectByProperty('name', name);
   }
 
-  getObjectByProperty(name, value) {
+  getObjectByProperty(name: string, value: any): Object3D | undefined {
     if (this[name] === value) return this;
 
     for (let i = 0, l = this.children.length; i < l; i++) {
@@ -372,7 +420,7 @@ export class Object3D extends EventDispatcher {
     return undefined;
   }
 
-  getObjectsByProperty(name, value) {
+  getObjectsByProperty(name: string, value: any): Object3D[] {
     let result = [];
 
     if (this[name] === value) result.push(this);
@@ -388,13 +436,13 @@ export class Object3D extends EventDispatcher {
     return result;
   }
 
-  getWorldPosition(target) {
+  getWorldPosition(target: Vector3): Vector3 {
     this.updateWorldMatrix(true, false);
 
     return target.setFromMatrixPosition(this.matrixWorld);
   }
 
-  getWorldQuaternion(target) {
+  getWorldQuaternion(target: Vector3): Vector3 {
     this.updateWorldMatrix(true, false);
 
     this.matrixWorld.decompose(_position, target, _scale);
@@ -402,7 +450,7 @@ export class Object3D extends EventDispatcher {
     return target;
   }
 
-  getWorldScale(target) {
+  getWorldScale(target: Vector3): Vector3 {
     this.updateWorldMatrix(true, false);
 
     this.matrixWorld.decompose(_position, _quaternion, target);
@@ -410,7 +458,7 @@ export class Object3D extends EventDispatcher {
     return target;
   }
 
-  getWorldDirection(target) {
+  getWorldDirection(target: Vector3): Vector3 {
     this.updateWorldMatrix(true, false);
 
     const e = this.matrixWorld.elements;
@@ -418,47 +466,37 @@ export class Object3D extends EventDispatcher {
     return target.set(e[8], e[9], e[10]).normalize();
   }
 
-  raycast(/* raycaster, intersects */) {}
+  raycast(raycaster: Raycaster, intersects: Intersection[]): void {}
 
-  traverse(callback) {
+  traverse(callback: (object: Object3D) => void): void {
     callback(this);
-
     const children = this.children;
-
-    for (let i = 0, l = children.length; i < l; i++) {
-      children[i].traverse(callback);
-    }
+    for (let i = 0, l = children.length; i < l; i++) children[i].traverse(callback);
   }
 
-  traverseVisible(callback) {
-    if (this.visible === false) return;
+  traverseVisible(callback: (object: Object3D) => void): void {
+    if (!this.visible) return;
 
     callback(this);
-
     const children = this.children;
-
-    for (let i = 0, l = children.length; i < l; i++) {
-      children[i].traverseVisible(callback);
-    }
+    for (let i = 0, l = children.length; i < l; i++) children[i].traverseVisible(callback);
   }
 
-  traverseAncestors(callback) {
+  traverseAncestors(callback: (object: Object3D) => void): void {
     const parent = this.parent;
+    if (!parent) return;
 
-    if (parent !== null) {
-      callback(parent);
-
-      parent.traverseAncestors(callback);
-    }
+    callback(parent);
+    parent.traverseAncestors(callback);
   }
 
-  updateMatrix() {
+  updateMatrix(): void {
     this.matrix.compose(this.position, this.quaternion, this.scale);
 
     this.matrixWorldNeedsUpdate = true;
   }
 
-  updateMatrixWorld(force) {
+  updateMatrixWorld(force?: boolean): void {
     if (this.matrixAutoUpdate) this.updateMatrix();
 
     if (this.matrixWorldNeedsUpdate || force) {
@@ -486,7 +524,7 @@ export class Object3D extends EventDispatcher {
     }
   }
 
-  updateWorldMatrix(updateParents, updateChildren) {
+  updateWorldMatrix(updateParents: boolean, updateChildren: boolean): void {
     const parent = this.parent;
 
     if (updateParents === true && parent !== null && parent.matrixWorldAutoUpdate === true) {
@@ -516,11 +554,11 @@ export class Object3D extends EventDispatcher {
     }
   }
 
-  clone(recursive) {
+  clone(recursive?: boolean): this {
     return new this.constructor().copy(this, recursive);
   }
 
-  copy(source, recursive = true) {
+  copy(source: this, recursive: boolean = true): this {
     this.name = source.name;
 
     this.up.copy(source.up);
@@ -561,7 +599,5 @@ export class Object3D extends EventDispatcher {
     return this;
   }
 }
-
-Object3D.DEFAULT_UP = new Vector3(0, 1, 0);
-Object3D.DEFAULT_MATRIX_AUTO_UPDATE = true;
-Object3D.DEFAULT_MATRIX_WORLD_AUTO_UPDATE = true;
+Object3D.prototype.isObject3D = true;
+Object3D.prototype.type = 'Object3D';

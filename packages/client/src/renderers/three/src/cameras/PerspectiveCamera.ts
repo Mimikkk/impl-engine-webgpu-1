@@ -2,6 +2,8 @@ import { Camera } from './Camera.js';
 import { MathUtils } from '../math/MathUtils.js';
 
 export class PerspectiveCamera extends Camera {
+  static is = (item: Camera): item is PerspectiveCamera => 'isPerspectiveCamera' in item;
+
   constructor(fov = 50, aspect = 1, near = 0.1, far = 2000) {
     super();
 

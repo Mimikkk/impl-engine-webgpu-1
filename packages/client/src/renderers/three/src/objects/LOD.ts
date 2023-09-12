@@ -5,27 +5,20 @@ const _v1 = new Vector3();
 const _v2 = new Vector3();
 
 export class LOD extends Object3D {
+  declare ['constructor']: typeof LOD;
+  declare isLOD: true;
+  declare type: 'LOD';
+  levels: { distance: number; hysteresis: number; object: Object3D }[];
+  autoUpdate: boolean;
+  level: number = 0;
+
   constructor() {
     super();
-
-    this._currentLevel = 0;
-
-    this.type = 'LOD';
-
-    Object.defineProperties(this, {
-      levels: {
-        enumerable: true,
-        value: [],
-      },
-      isLOD: {
-        value: true,
-      },
-    });
 
     this.autoUpdate = true;
   }
 
-  copy(source) {
+  copy(source: LOD): LOD {
     super.copy(source, false);
 
     const levels = source.levels;
@@ -59,10 +52,6 @@ export class LOD extends Object3D {
     this.add(object);
 
     return this;
-  }
-
-  getCurrentLevel() {
-    return this._currentLevel;
   }
 
   getObjectForDistance(distance) {
@@ -129,7 +118,7 @@ export class LOD extends Object3D {
         }
       }
 
-      this._currentLevel = i - 1;
+      this.level = i - 1;
 
       for (; i < l; i++) {
         levels[i].object.visible = false;
@@ -137,3 +126,5 @@ export class LOD extends Object3D {
     }
   }
 }
+LOD.prototype.isLOD = true;
+LOD.prototype.type = 'LOD';

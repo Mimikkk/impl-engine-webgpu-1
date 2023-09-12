@@ -1,6 +1,8 @@
 import { Camera } from './Camera.js';
 
 export class OrthographicCamera extends Camera {
+  static is = (item: Camera): item is OrthographicCamera => 'isOrthographicCamera' in item;
+
   constructor(left = -1, right = 1, top = 1, bottom = -1, near = 0.1, far = 2000) {
     super();
 
