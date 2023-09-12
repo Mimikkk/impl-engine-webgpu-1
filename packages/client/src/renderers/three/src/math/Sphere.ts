@@ -8,7 +8,8 @@ const _v1 = new Vector3();
 const _v2 = new Vector3();
 
 export class Sphere {
-  declare ['constructor']: typeof Sphere;
+  declare ['constructor']: new () => this;
+
   declare isSphere: boolean;
   center: Vector3;
   radius: number;

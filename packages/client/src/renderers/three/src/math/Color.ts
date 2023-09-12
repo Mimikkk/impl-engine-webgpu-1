@@ -176,7 +176,8 @@ function hue2rgb(p: number, q: number, t: number): number {
 
 export class Color {
   static Names: Record<ColorName, number> = _colorKeywords;
-  declare ['constructor']: typeof Color;
+  declare ['constructor']: new () => this;
+
   declare isColor: boolean;
   r: number;
   g: number;

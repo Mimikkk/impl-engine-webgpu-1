@@ -1,11 +1,21 @@
 import { Vector3 } from '../math/Vector3.js';
 import { BufferAttribute } from './BufferAttribute.js';
 import { denormalize, normalize } from '../math/MathUtils.js';
+import { InterleavedBuffer } from './InterleavedBuffer.js';
+import { Matrix4 } from '../math/Matrix4.js';
+import { Matrix3 } from '../math/Matrix3.js';
 
 const _vector = new Vector3();
 
-class InterleavedBufferAttribute {
-  constructor(interleavedBuffer, itemSize, offset, normalized = false) {
+export class InterleavedBufferAttribute {
+  name: string;
+  data: InterleavedBuffer;
+  itemSize: number;
+  offset: number;
+  normalized: boolean;
+  declare isInterleavedBufferAttribute: boolean;
+
+  constructor(interleavedBuffer: InterleavedBuffer, itemSize: number, offset: number, normalized: boolean = false) {
     this.isInterleavedBufferAttribute = true;
 
     this.name = '';
@@ -25,11 +35,11 @@ class InterleavedBufferAttribute {
     return this.data.array;
   }
 
-  set needsUpdate(value) {
+  set needsUpdate(value: boolean) {
     this.data.needsUpdate = value;
   }
 
-  applyMatrix4(m) {
+  applyMatrix4(m: Matrix4): this {
     for (let i = 0, l = this.data.count; i < l; i++) {
       _vector.fromBufferAttribute(this, i);
 
@@ -41,7 +51,7 @@ class InterleavedBufferAttribute {
     return this;
   }
 
-  applyNormalMatrix(m) {
+  applyNormalMatrix(m: Matrix3): this {
     for (let i = 0, l = this.count; i < l; i++) {
       _vector.fromBufferAttribute(this, i);
 
@@ -53,7 +63,7 @@ class InterleavedBufferAttribute {
     return this;
   }
 
-  transformDirection(m) {
+  transformDirection(m: Matrix4): this {
     for (let i = 0, l = this.count; i < l; i++) {
       _vector.fromBufferAttribute(this, i);
 
@@ -65,7 +75,7 @@ class InterleavedBufferAttribute {
     return this;
   }
 
-  setX(index, x) {
+  setX(index: number, x: number): this {
     if (this.normalized) x = normalize(x, this.array);
 
     this.data.array[index * this.data.stride + this.offset] = x;
@@ -73,7 +83,7 @@ class InterleavedBufferAttribute {
     return this;
   }
 
-  setY(index, y) {
+  setY(index: number, y: number): this {
     if (this.normalized) y = normalize(y, this.array);
 
     this.data.array[index * this.data.stride + this.offset + 1] = y;
@@ -81,7 +91,7 @@ class InterleavedBufferAttribute {
     return this;
   }
 
-  setZ(index, z) {
+  setZ(index: number, z: number): this {
     if (this.normalized) z = normalize(z, this.array);
 
     this.data.array[index * this.data.stride + this.offset + 2] = z;
@@ -89,7 +99,7 @@ class InterleavedBufferAttribute {
     return this;
   }
 
-  setW(index, w) {
+  setW(index: number, w: number): this {
     if (this.normalized) w = normalize(w, this.array);
 
     this.data.array[index * this.data.stride + this.offset + 3] = w;
@@ -97,7 +107,7 @@ class InterleavedBufferAttribute {
     return this;
   }
 
-  getX(index) {
+  getX(index: number): number {
     let x = this.data.array[index * this.data.stride + this.offset];
 
     if (this.normalized) x = denormalize(x, this.array);
@@ -105,7 +115,7 @@ class InterleavedBufferAttribute {
     return x;
   }
 
-  getY(index) {
+  getY(index: number): number {
     let y = this.data.array[index * this.data.stride + this.offset + 1];
 
     if (this.normalized) y = denormalize(y, this.array);
@@ -113,7 +123,7 @@ class InterleavedBufferAttribute {
     return y;
   }
 
-  getZ(index) {
+  getZ(index: number): number {
     let z = this.data.array[index * this.data.stride + this.offset + 2];
 
     if (this.normalized) z = denormalize(z, this.array);
@@ -121,7 +131,7 @@ class InterleavedBufferAttribute {
     return z;
   }
 
-  getW(index) {
+  getW(index: number): number {
     let w = this.data.array[index * this.data.stride + this.offset + 3];
 
     if (this.normalized) w = denormalize(w, this.array);
@@ -129,7 +139,7 @@ class InterleavedBufferAttribute {
     return w;
   }
 
-  setXY(index, x, y) {
+  setXY(index: number, x: number, y: number): this {
     index = index * this.data.stride + this.offset;
 
     if (this.normalized) {
@@ -143,7 +153,7 @@ class InterleavedBufferAttribute {
     return this;
   }
 
-  setXYZ(index, x, y, z) {
+  setXYZ(index: number, x: number, y: number, z: number): this {
     index = index * this.data.stride + this.offset;
 
     if (this.normalized) {
@@ -159,7 +169,7 @@ class InterleavedBufferAttribute {
     return this;
   }
 
-  setXYZW(index, x, y, z, w) {
+  setXYZW(index: number, x: number, y: number, z: number, w: number): this {
     index = index * this.data.stride + this.offset;
 
     if (this.normalized) {
@@ -177,7 +187,11 @@ class InterleavedBufferAttribute {
     return this;
   }
 
-  clone(data) {
+  clone(data: {
+    interleavedBuffers: {
+      [key: string]: InterleavedBuffer;
+    };
+  }) {
     if (data === undefined) {
       console.log(
         'THREE.InterleavedBufferAttribute.clone(): Cloning an interleaved buffer attribute will de-interleave buffer data.',
@@ -193,6 +207,7 @@ class InterleavedBufferAttribute {
         }
       }
 
+      //@ts-expect-error
       return new BufferAttribute(new this.array.constructor(array), this.itemSize, this.normalized);
     } else {
       if (data.interleavedBuffers === undefined) {
@@ -200,6 +215,7 @@ class InterleavedBufferAttribute {
       }
 
       if (data.interleavedBuffers[this.data.uuid] === undefined) {
+        //@ts-expect-error
         data.interleavedBuffers[this.data.uuid] = this.data.clone(data);
       }
 
@@ -212,5 +228,4 @@ class InterleavedBufferAttribute {
     }
   }
 }
-
-export { InterleavedBufferAttribute };
+InterleavedBufferAttribute.prototype.isInterleavedBufferAttribute = true;

@@ -1,15 +1,17 @@
 import { InterleavedBuffer } from './InterleavedBuffer.js';
+import { TypedArray } from '../types.js';
 
 export class InstancedInterleavedBuffer extends InterleavedBuffer {
-  constructor(array, stride, meshPerAttribute = 1) {
-    super(array, stride);
+  declare isInstancedInterleavedBuffer: true;
+  meshPerAttribute: number;
 
-    this.isInstancedInterleavedBuffer = true;
+  constructor(array: TypedArray, stride: number, meshPerAttribute: number = 1) {
+    super(array, stride);
 
     this.meshPerAttribute = meshPerAttribute;
   }
 
-  copy(source) {
+  copy(source: InstancedInterleavedBuffer): this {
     super.copy(source);
 
     this.meshPerAttribute = source.meshPerAttribute;
@@ -17,7 +19,7 @@ export class InstancedInterleavedBuffer extends InterleavedBuffer {
     return this;
   }
 
-  clone(data) {
+  clone(data: TypedArray): this {
     const ib = super.clone(data);
 
     ib.meshPerAttribute = this.meshPerAttribute;
@@ -25,3 +27,4 @@ export class InstancedInterleavedBuffer extends InterleavedBuffer {
     return ib;
   }
 }
+InstancedInterleavedBuffer.prototype.isInstancedInterleavedBuffer = true;

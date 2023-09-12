@@ -5,7 +5,8 @@ import { Matrix4 } from './Matrix4.js';
 import { NumberArray } from '../types.js';
 
 export class Quaternion {
-  declare ['constructor']: typeof Quaternion;
+  declare ['constructor']: new () => this;
+
   declare isQuaternion: boolean;
   _x: number;
   _y: number;

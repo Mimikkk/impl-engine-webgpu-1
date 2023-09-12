@@ -37,9 +37,10 @@ export class Object3D extends EventDispatcher<'added' | 'removed'> {
   static DEFAULT_UP: Vector3 = new Vector3(0, 1, 0);
   static DEFAULT_MATRIX_AUTO_UPDATE: boolean = true;
   static DEFAULT_MATRIX_WORLD_AUTO_UPDATE: boolean = true;
-  declare ['constructor']: typeof Object3D;
+  declare ['constructor']: new () => this;
+
   declare isObject3D: true;
-  declare type: 'Object3D';
+  declare type: string | 'Object3D';
   id: number;
   uuid: string;
   name: string;
@@ -558,7 +559,7 @@ export class Object3D extends EventDispatcher<'added' | 'removed'> {
     return new this.constructor().copy(this, recursive);
   }
 
-  copy(source: this, recursive: boolean = true): this {
+  copy(source: Camera, recursive: boolean = true): this {
     this.name = source.name;
 
     this.up.copy(source.up);

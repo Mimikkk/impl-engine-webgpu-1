@@ -10,7 +10,8 @@ const _vector2 = new Vector3();
 const _normalMatrix = new Matrix3();
 
 export class Plane {
-  declare ['constructor']: typeof Plane;
+  declare ['constructor']: new () => this;
+
   declare isPlane: boolean;
   normal: Vector3;
   constant: number;

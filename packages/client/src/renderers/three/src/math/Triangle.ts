@@ -19,7 +19,8 @@ const _vcp = new Vector3();
 let warnedGetUV = false;
 
 export class Triangle {
-  declare ['constructor']: typeof Triangle;
+  declare ['constructor']: new () => this;
+
   declare isTriangle: boolean;
   a: Vector3;
   b: Vector3;

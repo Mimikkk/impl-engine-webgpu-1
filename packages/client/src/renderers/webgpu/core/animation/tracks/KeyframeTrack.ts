@@ -10,7 +10,8 @@ export type InterpolationMode = typeof InterpolateDiscrete | typeof InterpolateL
 type CreateInterpolateFn = (result: NumberArray) => Interpolant;
 
 class KeyframeTrack {
-  declare ['constructor']: typeof KeyframeTrack;
+  declare ['constructor']: new () => this;
+
   declare TimeBufferType: NumberArrayConstructor;
   declare ValueBufferType: NumberArrayConstructor;
   declare DefaultInterpolation: InterpolationMode;

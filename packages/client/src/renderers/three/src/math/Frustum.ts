@@ -12,7 +12,8 @@ const _sphere = new Sphere();
 const _vector = new Vector3();
 
 export class Frustum {
-  declare ['constructor']: typeof Frustum;
+  declare ['constructor']: new () => this;
+
   declare isFrustum: boolean;
   planes: [Plane, Plane, Plane, Plane, Plane, Plane];
 

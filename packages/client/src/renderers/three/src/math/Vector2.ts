@@ -3,7 +3,8 @@ import { Matrix3 } from './Matrix3.js';
 import { BufferAttribute } from '../core/BufferAttribute.js';
 
 export class Vector2 {
-  declare ['constructor']: typeof Vector2;
+  declare ['constructor']: new () => this;
+
   declare isVector2: boolean;
   x: number = 0;
   y: number = 0;

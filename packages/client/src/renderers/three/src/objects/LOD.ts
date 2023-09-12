@@ -5,9 +5,10 @@ const _v1 = new Vector3();
 const _v2 = new Vector3();
 
 export class LOD extends Object3D {
-  declare ['constructor']: typeof LOD;
+  declare ['constructor']: new () => this;
+
   declare isLOD: true;
-  declare type: 'LOD';
+  declare type: string | 'LOD';
   levels: { distance: number; hysteresis: number; object: Object3D }[];
   autoUpdate: boolean;
   level: number = 0;

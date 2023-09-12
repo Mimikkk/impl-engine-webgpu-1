@@ -11,7 +11,8 @@ import { NumberArray } from '../types.js';
 import { Constructable } from 'vitest';
 
 export class AnimationClip {
-  declare ['constructor']: typeof AnimationClip;
+  declare ['constructor']: new () => this;
+
   name: any;
   duration: number;
   blendMode: number;

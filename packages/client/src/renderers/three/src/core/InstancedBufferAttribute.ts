@@ -1,15 +1,17 @@
 import { BufferAttribute } from './BufferAttribute.js';
+import { TypedArray } from '../types.js';
 
 export class InstancedBufferAttribute extends BufferAttribute {
-  constructor(array, itemSize, normalized, meshPerAttribute = 1) {
-    super(array, itemSize, normalized);
+  declare isInstancedBufferAttribute: true;
+  meshPerAttribute: number;
 
-    this.isInstancedBufferAttribute = true;
+  constructor(array: TypedArray, itemSize: number, normalized?: boolean, meshPerAttribute: number = 1) {
+    super(array, itemSize, normalized);
 
     this.meshPerAttribute = meshPerAttribute;
   }
 
-  copy(source) {
+  copy(source: InstancedBufferAttribute): this {
     super.copy(source);
 
     this.meshPerAttribute = source.meshPerAttribute;
@@ -17,3 +19,4 @@ export class InstancedBufferAttribute extends BufferAttribute {
     return this;
   }
 }
+InstancedBufferAttribute.prototype.isInstancedBufferAttribute = true;

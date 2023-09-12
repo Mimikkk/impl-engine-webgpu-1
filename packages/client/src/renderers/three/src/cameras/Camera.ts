@@ -5,11 +5,10 @@ import { CoordinateSystem } from '../math/types.js';
 import { Vector3 } from '../math/Vector3.js';
 
 export class Camera extends Object3D {
-  //@ts-expect-error
-  declare ['constructor']: typeof Camera;
+  declare ['constructor']: new () => this;
+
   declare isCamera: true;
-  //@ts-expect-error
-  declare type: 'Camera';
+  declare type: string | 'Camera';
   matrixWorldInverse: Matrix4;
   projectionMatrix: Matrix4;
   projectionMatrixInverse: Matrix4;
@@ -17,10 +16,6 @@ export class Camera extends Object3D {
 
   constructor() {
     super();
-
-    this.isCamera = true;
-
-    this.type = 'Camera';
 
     this.matrixWorldInverse = new Matrix4();
 
@@ -33,11 +28,9 @@ export class Camera extends Object3D {
   copy(source: Camera, recursive?: boolean): this {
     super.copy(source, recursive);
 
-    this.matrixWorldInverse.copy(source.matrixWorldInverse);
-
-    this.projectionMatrix.copy(source.projectionMatrix);
     this.projectionMatrixInverse.copy(source.projectionMatrixInverse);
-
+    this.matrixWorldInverse.copy(source.matrixWorldInverse);
+    this.projectionMatrix.copy(source.projectionMatrix);
     this.coordinateSystem = source.coordinateSystem;
 
     return this;
@@ -45,17 +38,13 @@ export class Camera extends Object3D {
 
   getWorldDirection(target: Vector3): Vector3 {
     this.updateWorldMatrix(true, false);
-
     const e = this.matrixWorld.elements;
-
     return target.set(-e[8], -e[9], -e[10]).normalize();
   }
 
   updateMatrixWorld(force: boolean): this {
     super.updateMatrixWorld(force);
-
     this.matrixWorldInverse.copy(this.matrixWorld).invert();
-
     return this;
   }
 
@@ -66,7 +55,8 @@ export class Camera extends Object3D {
   }
 
   clone(): this {
-    //@ts-expect-error
     return new this.constructor().copy(this);
   }
 }
+Camera.prototype.isCamera = true;
+Camera.prototype.type = 'Camera';

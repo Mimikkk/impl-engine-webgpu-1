@@ -1,6 +1,7 @@
 import { Vector3 } from './Vector3.js';
 export class Cylindrical {
-  declare ['constructor']: typeof Cylindrical;
+  declare ['constructor']: new () => this;
+
   declare isCylindrical: boolean;
   radius: number;
   theta: number;

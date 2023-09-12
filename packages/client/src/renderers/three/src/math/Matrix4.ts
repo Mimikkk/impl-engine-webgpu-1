@@ -6,7 +6,8 @@ import { Quaternion } from './Quaternion.js';
 import { CoordinateSystem } from './types.js';
 
 export class Matrix4 {
-  declare ['constructor']: typeof Matrix4;
+  declare ['constructor']: new () => this;
+
   declare isMatrix4: boolean;
   elements: [
     number,

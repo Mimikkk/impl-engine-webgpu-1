@@ -9,7 +9,8 @@ import { Color } from './Color.js';
 import { Camera } from '../cameras/Camera.js';
 
 export class Vector3 {
-  declare ['constructor']: typeof Vector3;
+  declare ['constructor']: new () => this;
+
   declare isVector3: boolean;
   x: number;
   y: number;

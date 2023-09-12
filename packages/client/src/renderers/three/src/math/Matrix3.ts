@@ -2,7 +2,8 @@ import { Vector3 } from './Vector3.js';
 import { Matrix4 } from './Matrix4.js';
 import { Vector2 } from './Vector2.js';
 export class Matrix3 {
-  declare ['constructor']: typeof Matrix3;
+  declare ['constructor']: new () => this;
+
   declare isMatrix3: boolean;
   elements: [number, number, number, number, number, number, number, number, number];
 

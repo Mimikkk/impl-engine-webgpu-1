@@ -12,7 +12,7 @@ import { Vector3 } from './Vector3.js';
 export class SphericalHarmonics3 {
   coefficients: [Vector3, Vector3, Vector3, Vector3, Vector3, Vector3, Vector3, Vector3, Vector3];
   isSphericalHarmonics3: boolean;
-  declare ['constructor']: typeof SphericalHarmonics3;
+  declare ['constructor']: new () => this;
 
   constructor() {
     this.isSphericalHarmonics3 = true;

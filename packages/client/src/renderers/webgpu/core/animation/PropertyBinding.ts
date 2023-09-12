@@ -94,7 +94,8 @@ class Composite {
 // become no-ops.
 
 export class PropertyBinding {
-  declare ['constructor']: typeof PropertyBinding;
+  declare ['constructor']: new () => this;
+
   static Composite = Composite;
   BindingType: { Direct: number; EntireArray: number; ArrayElement: number; HasFromToArray: number };
   Versioning: { None: number; NeedsUpdate: number; MatrixWorldNeedsUpdate: number };

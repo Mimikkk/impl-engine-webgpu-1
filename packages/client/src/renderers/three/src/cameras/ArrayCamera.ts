@@ -1,11 +1,10 @@
 import { PerspectiveCamera } from './PerspectiveCamera.js';
 
 export class ArrayCamera extends PerspectiveCamera {
-  //@ts-expect-error
-  declare ['constructor']: typeof ArrayCamera;
+  declare ['constructor']: new () => this;
+
   declare isArrayCamera: true;
-  //@ts-expect-error
-  declare type: 'ArrayCamera';
+  declare type: string | 'ArrayCamera';
   cameras: PerspectiveCamera[];
 
   constructor(array: PerspectiveCamera[] = []) {

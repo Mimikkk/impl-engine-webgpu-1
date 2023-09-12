@@ -1,13 +1,15 @@
-class Layers {
+export class Layers {
+  mask: number;
+
   constructor() {
     this.mask = 1 | 0;
   }
 
-  set(channel) {
+  set(channel: number) {
     this.mask = ((1 << channel) | 0) >>> 0;
   }
 
-  enable(channel) {
+  enable(channel: number) {
     this.mask |= (1 << channel) | 0;
   }
 
@@ -15,11 +17,11 @@ class Layers {
     this.mask = 0xffffffff | 0;
   }
 
-  toggle(channel) {
+  toggle(channel: number) {
     this.mask ^= (1 << channel) | 0;
   }
 
-  disable(channel) {
+  disable(channel: number) {
     this.mask &= ~((1 << channel) | 0);
   }
 
@@ -27,13 +29,11 @@ class Layers {
     this.mask = 0;
   }
 
-  test(layers) {
+  test(layers: Layers): boolean {
     return (this.mask & layers.mask) !== 0;
   }
 
-  isEnabled(channel) {
+  isEnabled(channel: number): boolean {
     return (this.mask & ((1 << channel) | 0)) !== 0;
   }
 }
-
-export { Layers };

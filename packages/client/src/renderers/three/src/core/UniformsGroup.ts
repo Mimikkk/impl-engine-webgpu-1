@@ -1,9 +1,18 @@
 import { EventDispatcher } from './EventDispatcher.js';
 import { StaticDrawUsage } from '../constants.js';
+import { Uniform } from './Uniform.js';
+import { Usage } from '../types.js';
 
 let id = 0;
 
-class UniformsGroup extends EventDispatcher {
+export class UniformsGroup extends EventDispatcher<'dispose'> {
+  declare ['constructor']: new () => this;
+  declare isUniformsGroup: true;
+  id: number;
+  name: string;
+  usage: number;
+  uniforms: Uniform[];
+
   constructor() {
     super();
 
@@ -17,13 +26,13 @@ class UniformsGroup extends EventDispatcher {
     this.uniforms = [];
   }
 
-  add(uniform) {
+  add(uniform: Uniform): this {
     this.uniforms.push(uniform);
 
     return this;
   }
 
-  remove(uniform) {
+  remove(uniform: Uniform): this {
     const index = this.uniforms.indexOf(uniform);
 
     if (index !== -1) this.uniforms.splice(index, 1);
@@ -31,25 +40,24 @@ class UniformsGroup extends EventDispatcher {
     return this;
   }
 
-  setName(name) {
+  setName(name: string): this {
     this.name = name;
 
     return this;
   }
 
-  setUsage(value) {
+  setUsage(value: Usage): this {
     this.usage = value;
 
     return this;
   }
 
-  dispose() {
+  dispose(): this {
     this.dispatchEvent({ type: 'dispose' });
-
     return this;
   }
 
-  copy(source) {
+  copy(source: UniformsGroup): this {
     this.name = source.name;
     this.usage = source.usage;
 
@@ -68,5 +76,3 @@ class UniformsGroup extends EventDispatcher {
     return new this.constructor().copy(this);
   }
 }
-
-export { UniformsGroup };

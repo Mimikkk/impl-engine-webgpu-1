@@ -3,7 +3,8 @@ import { Matrix3 } from './Matrix3.js';
 import { Quaternion } from './Quaternion.js';
 
 export class Vector4 {
-  declare ['constructor']: typeof Vector4;
+  declare ['constructor']: new () => this;
+
   declare isVector4: boolean;
   x: number;
   y: number;

@@ -7,7 +7,8 @@ import { Object3D } from '../core/Object3D.js';
 import { Plane } from './Plane.js';
 import { Triangle } from './Triangle.js';
 export class Box3 {
-  declare ['constructor']: typeof Box3;
+  declare ['constructor']: new () => this;
+
   declare isBox3: boolean;
   min: Vector3;
   max: Vector3;

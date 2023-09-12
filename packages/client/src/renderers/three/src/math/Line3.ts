@@ -6,7 +6,8 @@ const _startP = new Vector3();
 const _startEnd = new Vector3();
 
 export class Line3 {
-  declare ['constructor']: typeof Line3;
+  declare ['constructor']: new () => this;
+
   declare isLine3: boolean;
   start: Vector3;
   end: Vector3;

@@ -14,7 +14,8 @@ const _edge2 = new Vector3();
 const _normal = new Vector3();
 
 export class Ray {
-  declare ['constructor']: typeof Ray;
+  declare ['constructor']: new () => this;
+
   declare isRay: boolean;
   origin: Vector3;
   direction: Vector3;

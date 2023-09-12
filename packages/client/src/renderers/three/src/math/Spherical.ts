@@ -2,7 +2,8 @@ import { MathUtils } from './MathUtils.js';
 import { Vector3 } from './Vector3.js';
 
 export class Spherical {
-  declare ['constructor']: typeof Spherical;
+  declare ['constructor']: new () => this;
+
   declare isSpherical: boolean;
   radius: number;
   phi: number;

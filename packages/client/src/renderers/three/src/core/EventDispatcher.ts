@@ -25,12 +25,12 @@ export abstract class EventDispatcher<T extends string, E extends Event<T, unkno
     if (index !== -1) this.listeners[type].splice(index, 1);
   }
 
-  dispatchEvent(event: E): void {
+  dispatchEvent(event: Omit<E, 'target'>): void {
     const listeners = this.listeners[event.type];
     if (!listeners) return;
 
-    event.target = this;
+    (event as E).target = this;
     listeners.slice().forEach(listener => listener.call(this, event));
-    event.target = null;
+    (event as E).target = null;
   }
 }
