@@ -1,6 +1,9 @@
 import { Object3D } from '../core/Object3D.js';
 
 export class Scene extends Object3D {
+  declare isScene: true;
+  declare type: 'Scene';
+
   constructor() {
     super();
 
@@ -16,13 +19,9 @@ export class Scene extends Object3D {
     this.backgroundIntensity = 1;
 
     this.overrideMaterial = null;
-
-    if (typeof __THREE_DEVTOOLS__ !== 'undefined') {
-      __THREE_DEVTOOLS__.dispatchEvent(new CustomEvent('observe', { detail: this }));
-    }
   }
 
-  copy(source, recursive) {
+  copy(source: Scene, recursive?: boolean): this {
     super.copy(source, recursive);
 
     if (source.background !== null) this.background = source.background.clone();

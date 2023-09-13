@@ -6,10 +6,24 @@ const _eyeRight = new Matrix4();
 const _eyeLeft = new Matrix4();
 const _projectionMatrix = new Matrix4();
 
-class StereoCamera {
-  constructor() {
-    this.type = 'StereoCamera';
+export class StereoCamera {
+  declare isStereoCamera: true;
+  declare type: 'StereoCamera';
+  aspect: number;
+  eyeSep: number;
+  cameraL: PerspectiveCamera;
+  cameraR: PerspectiveCamera;
+  _cache: {
+    focus: number | null;
+    fov: number | null;
+    aspect: number | null;
+    near: number | null;
+    far: number | null;
+    zoom: number | null;
+    eyeSep: number | null;
+  };
 
+  constructor() {
     this.aspect = 1;
 
     this.eyeSep = 0.064;
@@ -33,7 +47,7 @@ class StereoCamera {
     };
   }
 
-  update(camera) {
+  update(camera: PerspectiveCamera): void {
     const cache = this._cache;
 
     const needsUpdate =
@@ -93,5 +107,5 @@ class StereoCamera {
     this.cameraR.matrixWorld.copy(camera.matrixWorld).multiply(_eyeRight);
   }
 }
-
-export { StereoCamera };
+StereoCamera.prototype.isStereoCamera = true;
+StereoCamera.prototype.type = 'StereoCamera';
