@@ -1,6 +1,6 @@
 import { EventDispatcher } from './EventDispatcher.js';
 import { Texture } from '../textures/Texture.js';
-import { LinearFilter, NoColorSpace, SRGBColorSpace, sRGBEncoding } from '../constants.js';
+import { LinearFilter, Mapping, NoColorSpace, SRGBColorSpace, sRGBEncoding } from '../constants.js';
 import { Vector4 } from '../math/Vector4.js';
 import { Source } from '../textures/Source.js';
 import { warnOnce } from '../utils.js';
@@ -15,6 +15,7 @@ import {
 import { DepthTexture } from 'three/src/textures/DepthTexture.js';
 
 export interface RenderTargetOptions {
+  mapping?: Mapping;
   wrapS?: Wrapping;
   wrapT?: Wrapping;
   magFilter?: MagnificationTextureFilter;

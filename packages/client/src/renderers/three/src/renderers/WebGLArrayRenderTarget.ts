@@ -1,18 +1,16 @@
 import { WebGLRenderTarget } from './WebGLRenderTarget.js';
 import { DataArrayTexture } from '../textures/DataArrayTexture.js';
 
-class WebGLArrayRenderTarget extends WebGLRenderTarget {
-  constructor(width = 1, height = 1, depth = 1) {
+export class WebGLArrayRenderTarget extends WebGLRenderTarget {
+  declare isWebGLArrayRenderTarget: true;
+  depth: number;
+  texture: DataArrayTexture;
+
+  constructor(width: number = 1, height: number = 1, depth: number = 1) {
     super(width, height);
-
-    this.isWebGLArrayRenderTarget = true;
-
     this.depth = depth;
-
     this.texture = new DataArrayTexture(null, width, height, depth);
-
     this.texture.isRenderTargetTexture = true;
   }
 }
-
-export { WebGLArrayRenderTarget };
+WebGLArrayRenderTarget.prototype.isWebGLArrayRenderTarget = true;

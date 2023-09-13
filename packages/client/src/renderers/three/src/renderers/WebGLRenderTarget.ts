@@ -1,11 +1,10 @@
-import { RenderTarget } from '../core/RenderTarget.js';
+import { RenderTarget, RenderTargetOptions } from '../core/RenderTarget.js';
 
-class WebGLRenderTarget extends RenderTarget {
-  constructor(width = 1, height = 1, options = {}) {
+export class WebGLRenderTarget extends RenderTarget {
+  declare isWebGLRenderTarget: true;
+
+  constructor(width: number = 1, height: number = 1, options: RenderTargetOptions = {}) {
     super(width, height, options);
-
-    this.isWebGLRenderTarget = true;
   }
 }
-
-export { WebGLRenderTarget };
+WebGLRenderTarget.prototype.isWebGLRenderTarget = true;

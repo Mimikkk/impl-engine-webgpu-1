@@ -192,18 +192,13 @@
     renderer.setAnimationLoop(render);
     container.appendChild(renderer.domElement);
 
-    window.addEventListener('resize', onWindowResize);
-
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
   }
 
-  function onWindowResize() {
-
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-  }
 
   function render() {
 

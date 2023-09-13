@@ -1,10 +1,10 @@
 import {
   BackSide,
+  CoordinateSystem,
   DoubleSide,
   FloatType,
   FrontSide,
   HalfFloatType,
-  LinearEncoding,
   LinearMipmapLinearFilter,
   LinearSRGBColorSpace,
   NoToneMapping,
@@ -13,7 +13,6 @@ import {
   RGBAIntegerFormat,
   RGIntegerFormat,
   SRGBColorSpace,
-  sRGBEncoding,
   UnsignedByteType,
   UnsignedInt248Type,
   UnsignedIntType,
@@ -58,6 +57,20 @@ import { WebXRManager } from './webxr/WebXRManager.js';
 import { WebGLMaterials } from './webgl/WebGLMaterials.js';
 import { WebGLUniformsGroups } from './webgl/WebGLUniformsGroups.js';
 import { createElementNS } from '../utils.js';
+import { OffscreenCanvas, ToneMapping } from 'three';
+import { Object3D } from 'three/src/core/Object3D.js';
+import { Camera } from 'three/src/cameras/Camera.js';
+import { Plane } from '../math/Plane.js';
+import { ColorSpace } from '../math/types.js';
+import { ColorRepresentation } from 'three/src/math/Color.js';
+import { Scene } from 'three/src/scenes/Scene.js';
+import { BufferGeometry } from 'three/src/core/BufferGeometry.js';
+import { Material } from 'three/src/materials/Material.js';
+import { WebGLMultipleRenderTargets } from 'three/src/renderers/WebGLMultipleRenderTargets.js';
+import { Texture } from 'three/src/textures/Texture.js';
+import { Box3 } from 'three/src/math/Box3.js';
+import { Data3DTexture } from 'three/src/textures/Data3DTexture.js';
+import { DataArrayTexture } from 'three/src/textures/DataArrayTexture.js';
 
 function createCanvasElement() {
   const canvas = createElementNS('canvas');
@@ -65,8 +78,132 @@ function createCanvasElement() {
   return canvas;
 }
 
-class WebGLRenderer {
-  constructor(parameters = {}) {
+interface Parameters {
+  canvas?: HTMLCanvasElement | OffscreenCanvas;
+  context?: WebGLRenderingContext;
+  precision?: 'highp' | 'mediump' | 'lowp';
+  alpha?: boolean;
+  premultipliedAlpha?: boolean;
+  antialias?: boolean;
+  stencil?: boolean;
+  preserveDrawingBuffer?: boolean;
+  powerPreference?: 'default' | 'high-performance' | 'low-power';
+  depth?: boolean;
+  logarithmicDepthBuffer?: boolean;
+  failIfMajorPerformanceCaveat?: boolean;
+}
+
+export class WebGLRenderer {
+  domElement: HTMLCanvasElement;
+  render: (scene: Object3D, camera: Camera) => void;
+  setSize: (width: number, height: number, updateStyle?: boolean) => void;
+  autoClear: boolean;
+  autoClearColor: boolean;
+  autoClearDepth: boolean;
+  autoClearStencil: boolean;
+  sortObjects: boolean;
+  clippingPlanes: Plane[];
+  localClippingEnabled: boolean;
+  extensions: WebGLExtensions;
+  outputColorSpace: ColorSpace;
+  toneMapping: ToneMapping;
+  toneMappingExposure: number;
+  info: WebGLInfo;
+  shadowMap: WebGLShadowMap;
+  pixelRatio: number;
+  capabilities: WebGLCapabilities;
+  properties: WebGLProperties;
+  renderLists: WebGLRenderLists;
+  state: WebGLState;
+  xr: WebXRManager;
+  getContext(): WebGLRenderingContext | WebGL2RenderingContext;
+  getContextAttributes(): any;
+  forceContextLoss(): void;
+  forceContextRestore(): void;
+  getMaxAnisotropy(): number;
+  getPrecision(): string;
+  getPixelRatio(): number;
+  setPixelRatio(value: number): void;
+  getDrawingBufferSize(target: Vector2): Vector2;
+  setDrawingBufferSize(width: number, height: number, pixelRatio: number): void;
+  getSize(target: Vector2): Vector2;
+  setSize(width: number, height: number, updateStyle?: boolean): void;
+  getCurrentViewport(target: Vector4): Vector4;
+  getViewport(target: Vector4): Vector4;
+  setViewport(x: Vector4 | number, y?: number, width?: number, height?: number): void;
+  getScissor(target: Vector4): Vector4;
+  setScissor(x: Vector4 | number, y?: number, width?: number, height?: number): void;
+  getScissorTest(): boolean;
+  setScissorTest(enable: boolean): void;
+  setOpaqueSort(method: (a: any, b: any) => number): void;
+  setTransparentSort(method: (a: any, b: any) => number): void;
+  getClearColor(target: Color): Color;
+  setClearColor(color: ColorRepresentation, alpha?: number): void;
+  getClearAlpha(): number;
+  setClearAlpha(alpha: number): void;
+  clear(color?: boolean, depth?: boolean, stencil?: boolean): void;
+
+  clearColor(): void;
+  clearDepth(): void;
+  clearStencil(): void;
+  clearTarget(renderTarget: WebGLRenderTarget, color: boolean, depth: boolean, stencil: boolean): void;
+
+  dispose(): void;
+
+  renderBufferDirect(
+    camera: Camera,
+    scene: Scene,
+    geometry: BufferGeometry,
+    material: Material,
+    object: Object3D,
+    geometryGroup: any,
+  ): void;
+
+  setAnimationLoop(callback: XRFrameRequestCallback | null): void;
+
+  compile(scene: Object3D, camera: Camera): void;
+
+  render(scene: Object3D, camera: Camera): void;
+
+  getActiveCubeFace(): number;
+
+  getActiveMipmapLevel(): number;
+
+  getRenderTarget(): WebGLRenderTarget | null;
+
+  setRenderTarget(
+    renderTarget: WebGLRenderTarget | WebGLMultipleRenderTargets | null,
+    activeCubeFace?: number,
+    activeMipmapLevel?: number,
+  ): void;
+
+  readRenderTargetPixels(
+    renderTarget: WebGLRenderTarget | WebGLMultipleRenderTargets,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    buffer: any,
+    activeCubeFaceIndex?: number,
+  ): void;
+
+  copyFramebufferToTexture(position: Vector2, texture: Texture, level?: number): void;
+
+  copyTextureToTexture(position: Vector2, srcTexture: Texture, dstTexture: Texture, level?: number): void;
+
+  copyTextureToTexture3D(
+    sourceBox: Box3,
+    position: Vector3,
+    srcTexture: Texture,
+    dstTexture: Data3DTexture | DataArrayTexture,
+    level?: number,
+  ): void;
+
+  initTexture(texture: Texture): void;
+
+  resetState(): void;
+
+  constructor(parameters: Parameters = {}) {
     const {
       canvas = createCanvasElement(),
       context = null,
@@ -139,10 +276,6 @@ class WebGLRenderer {
     // physically based shading
 
     this.outputColorSpace = SRGBColorSpace;
-
-    // physical lights
-
-    this._useLegacyLights = false;
 
     // tone mapping
 
@@ -776,7 +909,7 @@ class WebGLRenderer {
         }
       });
 
-      currentRenderState.setupLights(_this._useLegacyLights);
+      currentRenderState.setupLights(false);
 
       scene.traverse(function (object) {
         const material = object.material;
@@ -1066,12 +1199,12 @@ class WebGLRenderer {
         // debug
 
         /*
-        const geometry = new PlaneGeometry();
-        const material = new MeshBasicMaterial( { map: _transmissionRenderTarget.texture } );
+         const geometry = new PlaneGeometry();
+         const material = new MeshBasicMaterial( { map: _transmissionRenderTarget.texture } );
 
-        const mesh = new Mesh( geometry, material );
-        scene.add( mesh );
-        */
+         const mesh = new Mesh( geometry, material );
+         scene.add( mesh );
+         */
       }
 
       _this.getDrawingBufferSize(_vector2);
@@ -2007,68 +2140,12 @@ class WebGLRenderer {
       _currentActiveMipmapLevel = 0;
       _currentRenderTarget = null;
 
-      state.reset();
-      bindingStates.reset();
+      (state as any).reset();
+      (bindingStates as any).reset();
     };
-
-    if (typeof __THREE_DEVTOOLS__ !== 'undefined') {
-      __THREE_DEVTOOLS__.dispatchEvent(new CustomEvent('observe', { detail: this }));
-    }
   }
 
-  get coordinateSystem() {
+  get coordinateSystem(): CoordinateSystem {
     return WebGLCoordinateSystem;
   }
-
-  get physicallyCorrectLights() {
-    // @deprecated, r150
-
-    console.warn(
-      'THREE.WebGLRenderer: The property .physicallyCorrectLights has been removed. Set renderer.useLegacyLights instead.',
-    );
-    return !this.useLegacyLights;
-  }
-
-  set physicallyCorrectLights(value) {
-    // @deprecated, r150
-
-    console.warn(
-      'THREE.WebGLRenderer: The property .physicallyCorrectLights has been removed. Set renderer.useLegacyLights instead.',
-    );
-    this.useLegacyLights = !value;
-  }
-
-  get outputEncoding() {
-    // @deprecated, r152
-
-    console.warn('THREE.WebGLRenderer: Property .outputEncoding has been removed. Use .outputColorSpace instead.');
-    return this.outputColorSpace === SRGBColorSpace ? sRGBEncoding : LinearEncoding;
-  }
-
-  set outputEncoding(encoding) {
-    // @deprecated, r152
-
-    console.warn('THREE.WebGLRenderer: Property .outputEncoding has been removed. Use .outputColorSpace instead.');
-    this.outputColorSpace = encoding === sRGBEncoding ? SRGBColorSpace : LinearSRGBColorSpace;
-  }
-
-  get useLegacyLights() {
-    // @deprecated, r155
-
-    console.warn(
-      'THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733.',
-    );
-    return this._useLegacyLights;
-  }
-
-  set useLegacyLights(value) {
-    // @deprecated, r155
-
-    console.warn(
-      'THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733.',
-    );
-    this._useLegacyLights = value;
-  }
 }
-
-export { WebGLRenderer };

@@ -1,7 +1,7 @@
 import Renderer from './common/Renderer.js';
 import WebGPUBackend from './WebGPUBackend.js';
 
-class WebGPURenderer extends Renderer {
+export class WebGPURenderer extends Renderer {
   constructor(parameters = {}) {
     super(new WebGPUBackend(parameters));
     this.isWebGPURenderer = true;

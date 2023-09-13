@@ -1,10 +1,11 @@
 import { WebGLRenderTarget } from './WebGLRenderTarget.js';
+import { RenderTargetOptions } from '../core/RenderTarget.js';
 
-class WebGLMultipleRenderTargets extends WebGLRenderTarget {
-  constructor(width = 1, height = 1, count = 1, options = {}) {
+export class WebGLMultipleRenderTargets extends WebGLRenderTarget {
+  declare isWebGLMultipleRenderTargets: true;
+
+  constructor(width: number = 1, height: number = 1, count: number = 1, options: RenderTargetOptions = {}) {
     super(width, height, options);
-
-    this.isWebGLMultipleRenderTargets = true;
 
     const texture = this.texture;
 
@@ -16,7 +17,7 @@ class WebGLMultipleRenderTargets extends WebGLRenderTarget {
     }
   }
 
-  setSize(width, height, depth = 1) {
+  setSize(width?: number, height?: number, depth: number = 1) {
     if (this.width !== width || this.height !== height || this.depth !== depth) {
       this.width = width;
       this.height = height;
@@ -35,7 +36,7 @@ class WebGLMultipleRenderTargets extends WebGLRenderTarget {
     this.scissor.set(0, 0, width, height);
   }
 
-  copy(source) {
+  copy(source: WebGLMultipleRenderTargets): this {
     this.dispose();
 
     this.width = source.width;
@@ -62,5 +63,4 @@ class WebGLMultipleRenderTargets extends WebGLRenderTarget {
     return this;
   }
 }
-
-export { WebGLMultipleRenderTargets };
+WebGLMultipleRenderTargets.prototype.isWebGLMultipleRenderTargets = true;

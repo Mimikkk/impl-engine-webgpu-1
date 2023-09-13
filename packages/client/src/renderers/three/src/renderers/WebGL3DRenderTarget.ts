@@ -1,11 +1,13 @@
 import { WebGLRenderTarget } from './WebGLRenderTarget.js';
 import { Data3DTexture } from '../textures/Data3DTexture.js';
 
-class WebGL3DRenderTarget extends WebGLRenderTarget {
-  constructor(width = 1, height = 1, depth = 1) {
-    super(width, height);
+export class WebGL3DRenderTarget extends WebGLRenderTarget {
+  declare isWebGL3DRenderTarget: true;
+  depth: number;
+  texture: Data3DTexture;
 
-    this.isWebGL3DRenderTarget = true;
+  constructor(width: number = 1, height: number = 1, depth: number = 1) {
+    super(width, height);
 
     this.depth = depth;
 
@@ -14,5 +16,4 @@ class WebGL3DRenderTarget extends WebGLRenderTarget {
     this.texture.isRenderTargetTexture = true;
   }
 }
-
-export { WebGL3DRenderTarget };
+WebGL3DRenderTarget.prototype.isWebGL3DRenderTarget = true;

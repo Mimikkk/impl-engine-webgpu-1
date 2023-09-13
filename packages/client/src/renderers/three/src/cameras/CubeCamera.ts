@@ -1,18 +1,26 @@
-import { WebGLCoordinateSystem, WebGPUCoordinateSystem } from '../constants.js';
+import { CoordinateSystem, WebGLCoordinateSystem, WebGPUCoordinateSystem } from '../constants.js';
 import { Object3D } from '../core/Object3D.js';
 import { PerspectiveCamera } from './PerspectiveCamera.js';
+import { WebGLCubeRenderTarget } from '../renderers/WebGLCubeRenderTarget.js';
+import { WebGLRenderer } from '../renderers/WebGLRenderer.js';
+import { Scene } from '../scenes/Scene.js';
 
-const fov = -90; // negative fov is not an error
+const fov = -90;
 const aspect = 1;
 
-class CubeCamera extends Object3D {
-  constructor(near, far, renderTarget) {
+export class CubeCamera extends Object3D {
+  declare isCubeCamera: true;
+  declare type: 'CubeCamera';
+  renderTarget: WebGLCubeRenderTarget;
+  coordinateSystem: CoordinateSystem;
+
+  constructor(near: number, far: number, renderTarget: WebGLCubeRenderTarget) {
     super();
 
     this.type = 'CubeCamera';
 
     this.renderTarget = renderTarget;
-    this.coordinateSystem = null;
+    this.coordinateSystem = null!;
 
     const cameraPX = new PerspectiveCamera(fov, aspect, near, far);
     cameraPX.layers = this.layers;
@@ -39,7 +47,7 @@ class CubeCamera extends Object3D {
     this.add(cameraNZ);
   }
 
-  updateCoordinateSystem() {
+  updateCoordinateSystem(): void {
     const coordinateSystem = this.coordinateSystem;
 
     const cameras = this.children.concat();
@@ -95,55 +103,36 @@ class CubeCamera extends Object3D {
     }
   }
 
-  update(renderer, scene) {
+  update(renderer: WebGLRenderer, scene: Scene): void {
     if (this.parent === null) this.updateMatrixWorld();
-
     const renderTarget = this.renderTarget;
-
     if (this.coordinateSystem !== renderer.coordinateSystem) {
       this.coordinateSystem = renderer.coordinateSystem;
-
       this.updateCoordinateSystem();
     }
-
     const [cameraPX, cameraNX, cameraPY, cameraNY, cameraPZ, cameraNZ] = this.children;
-
     const currentRenderTarget = renderer.getRenderTarget();
-
     const currentXrEnabled = renderer.xr.enabled;
-
     renderer.xr.enabled = false;
-
     const generateMipmaps = renderTarget.texture.generateMipmaps;
-
     renderTarget.texture.generateMipmaps = false;
-
     renderer.setRenderTarget(renderTarget, 0);
     renderer.render(scene, cameraPX);
-
     renderer.setRenderTarget(renderTarget, 1);
     renderer.render(scene, cameraNX);
-
     renderer.setRenderTarget(renderTarget, 2);
     renderer.render(scene, cameraPY);
-
     renderer.setRenderTarget(renderTarget, 3);
     renderer.render(scene, cameraNY);
-
     renderer.setRenderTarget(renderTarget, 4);
     renderer.render(scene, cameraPZ);
-
     renderTarget.texture.generateMipmaps = generateMipmaps;
-
     renderer.setRenderTarget(renderTarget, 5);
     renderer.render(scene, cameraNZ);
-
     renderer.setRenderTarget(currentRenderTarget);
-
     renderer.xr.enabled = currentXrEnabled;
-
     renderTarget.texture.needsPMREMUpdate = true;
   }
 }
-
-export { CubeCamera };
+CubeCamera.prototype.isCubeCamera = true;
+CubeCamera.prototype.type = 'CubeCamera';
