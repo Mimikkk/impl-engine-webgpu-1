@@ -1,5 +1,3 @@
-export const MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2, ROTATE: 0, DOLLY: 1, PAN: 2 };
-export const TOUCH = { ROTATE: 0, PAN: 1, DOLLY_PAN: 2, DOLLY_ROTATE: 3 };
 export const CullFaceNone = 0;
 export const CullFaceBack = 1;
 export const CullFaceFront = 2;
@@ -197,3 +195,292 @@ export const _SRGBAFormat = 1035; // fallback for WebGL 1
 
 export const WebGLCoordinateSystem = 2000;
 export const WebGPUCoordinateSystem = 2001;
+
+export enum MOUSE {
+  LEFT = 0,
+  MIDDLE = 1,
+  RIGHT = 2,
+  ROTATE = 0,
+  DOLLY = 1,
+  PAN = 2,
+}
+
+export enum TOUCH {
+  ROTATE = 0,
+  PAN = 1,
+  DOLLY_PAN = 2,
+  DOLLY_ROTATE = 3,
+}
+
+export type CullFace = typeof CullFaceNone | typeof CullFaceBack | typeof CullFaceFront | typeof CullFaceFrontBack;
+
+export type ShadowMapType = typeof BasicShadowMap | typeof PCFShadowMap | typeof PCFSoftShadowMap | typeof VSMShadowMap;
+
+export type Side = typeof FrontSide | typeof BackSide | typeof DoubleSide | typeof TwoPassDoubleSide;
+
+export type Blending =
+  | typeof NoBlending
+  | typeof NormalBlending
+  | typeof AdditiveBlending
+  | typeof SubtractiveBlending
+  | typeof MultiplyBlending
+  | typeof CustomBlending;
+
+export type BlendingEquation =
+  | typeof AddEquation
+  | typeof SubtractEquation
+  | typeof ReverseSubtractEquation
+  | typeof MinEquation
+  | typeof MaxEquation;
+
+export type BlendingDstFactor =
+  | typeof ZeroFactor
+  | typeof OneFactor
+  | typeof SrcColorFactor
+  | typeof OneMinusSrcColorFactor
+  | typeof SrcAlphaFactor
+  | typeof OneMinusSrcAlphaFactor
+  | typeof DstAlphaFactor
+  | typeof OneMinusDstAlphaFactor
+  | typeof DstColorFactor
+  | typeof OneMinusDstColorFactor;
+
+export type BlendingSrcFactor = typeof SrcAlphaSaturateFactor;
+
+export type DepthModes =
+  | typeof NeverDepth
+  | typeof AlwaysDepth
+  | typeof LessDepth
+  | typeof LessEqualDepth
+  | typeof EqualDepth
+  | typeof GreaterEqualDepth
+  | typeof GreaterDepth
+  | typeof NotEqualDepth;
+
+export type Combine = typeof MultiplyOperation | typeof MixOperation | typeof AddOperation;
+
+export type ToneMapping =
+  | typeof NoToneMapping
+  | typeof LinearToneMapping
+  | typeof ReinhardToneMapping
+  | typeof CineonToneMapping
+  | typeof ACESFilmicToneMapping
+  | typeof CustomToneMapping;
+
+export type Mapping =
+  | typeof UVMapping
+  | typeof EquirectangularReflectionMapping
+  | typeof EquirectangularRefractionMapping;
+
+export type CubeTextureMapping =
+  | typeof CubeReflectionMapping
+  | typeof CubeRefractionMapping
+  | typeof CubeUVReflectionMapping;
+
+export type AnyMapping = Mapping | CubeTextureMapping;
+export type Wrapping = typeof RepeatWrapping | typeof ClampToEdgeWrapping | typeof MirroredRepeatWrapping;
+export type MagnificationTextureFilter = typeof NearestFilter | typeof LinearFilter;
+export type MinificationTextureFilter =
+  | typeof NearestFilter
+  | typeof NearestMipmapNearestFilter
+  | typeof NearestMipMapNearestFilter
+  | typeof NearestMipmapLinearFilter
+  | typeof NearestMipMapLinearFilter
+  | typeof LinearFilter
+  | typeof LinearMipmapNearestFilter
+  | typeof LinearMipMapNearestFilter
+  | typeof LinearMipmapLinearFilter
+  | typeof LinearMipMapLinearFilter;
+
+export type TextureFilter = MagnificationTextureFilter | MinificationTextureFilter;
+export type AttributeGPUType = typeof FloatType | typeof IntType;
+
+export type TextureDataType =
+  | typeof UnsignedByteType
+  | typeof ByteType
+  | typeof ShortType
+  | typeof UnsignedShortType
+  | typeof IntType
+  | typeof UnsignedIntType
+  | typeof FloatType
+  | typeof HalfFloatType
+  | typeof UnsignedShort4444Type
+  | typeof UnsignedShort5551Type
+  | typeof UnsignedInt248Type;
+
+export type WebGL1PixelFormat =
+  | typeof AlphaFormat
+  | typeof LuminanceFormat
+  | typeof LuminanceAlphaFormat
+  | typeof DepthFormat
+  | typeof DepthStencilFormat
+  | typeof RedFormat
+  | typeof RedIntegerFormat
+  | typeof RGFormat
+  | typeof _SRGBAFormat;
+
+export type WebGL2PixelFormat =
+  | typeof AlphaFormat
+  | typeof RGBAFormat
+  | typeof LuminanceFormat
+  | typeof LuminanceAlphaFormat
+  | typeof DepthFormat
+  | typeof DepthStencilFormat
+  | typeof RedFormat
+  | typeof RedIntegerFormat
+  | typeof RGFormat
+  | typeof RGIntegerFormat
+  | typeof RGBAIntegerFormat
+  | typeof _SRGBAFormat;
+
+export type PixelFormat = WebGL1PixelFormat | WebGL2PixelFormat;
+
+export type DeepTexturePixelFormat = typeof DepthFormat | typeof DepthStencilFormat;
+
+export type CompressedPixelFormat =
+  | typeof RGB_S3TC_DXT1_Format
+  | typeof RGBA_S3TC_DXT1_Format
+  | typeof RGBA_S3TC_DXT3_Format
+  | typeof RGBA_S3TC_DXT5_Format
+  | typeof RGB_PVRTC_4BPPV1_Format
+  | typeof RGB_PVRTC_2BPPV1_Format
+  | typeof RGBA_PVRTC_4BPPV1_Format
+  | typeof RGBA_PVRTC_2BPPV1_Format
+  | typeof RGB_ETC1_Format
+  | typeof RGB_ETC2_Format
+  | typeof RGBA_ETC2_EAC_Format
+  | typeof RGBA_ASTC_4x4_Format
+  | typeof RGBA_ASTC_5x4_Format
+  | typeof RGBA_ASTC_5x5_Format
+  | typeof RGBA_ASTC_6x5_Format
+  | typeof RGBA_ASTC_6x6_Format
+  | typeof RGBA_ASTC_8x5_Format
+  | typeof RGBA_ASTC_8x6_Format
+  | typeof RGBA_ASTC_8x8_Format
+  | typeof RGBA_ASTC_10x5_Format
+  | typeof RGBA_ASTC_10x6_Format
+  | typeof RGBA_ASTC_10x8_Format
+  | typeof RGBA_ASTC_10x10_Format
+  | typeof RGBA_ASTC_12x10_Format
+  | typeof RGBA_ASTC_12x12_Format
+  | typeof RGBA_BPTC_Format
+  | typeof RED_RGTC1_Format
+  | typeof SIGNED_RED_RGTC1_Format
+  | typeof RED_GREEN_RGTC2_Format
+  | typeof SIGNED_RED_GREEN_RGTC2_Format;
+
+export type AnyPixelFormat = PixelFormat | DeepTexturePixelFormat | CompressedPixelFormat;
+export type AnimationActionLoopStyle = typeof LoopOnce | typeof LoopRepeat | typeof LoopPingPong;
+export type InterpolationModes = typeof InterpolateDiscrete | typeof InterpolateLinear | typeof InterpolateSmooth;
+export type InterpolationEndingModes = typeof ZeroCurvatureEnding | typeof ZeroSlopeEnding | typeof WrapAroundEnding;
+export type AnimationBlendMode = typeof NormalAnimationBlendMode | typeof AdditiveAnimationBlendMode;
+export type TrianglesDrawModes = typeof TrianglesDrawMode | typeof TriangleStripDrawMode | typeof TriangleFanDrawMode;
+export type TextureEncoding = typeof LinearEncoding | typeof sRGBEncoding;
+export type DepthPackingStrategies = typeof BasicDepthPacking | typeof RGBADepthPacking;
+export type NormalMapTypes = typeof TangentSpaceNormalMap | typeof ObjectSpaceNormalMap;
+export type ColorSpace =
+  | typeof NoColorSpace
+  | typeof SRGBColorSpace
+  | typeof LinearSRGBColorSpace
+  | typeof DisplayP3ColorSpace;
+export type StencilOp =
+  | typeof ZeroStencilOp
+  | typeof KeepStencilOp
+  | typeof ReplaceStencilOp
+  | typeof IncrementStencilOp
+  | typeof DecrementStencilOp
+  | typeof IncrementWrapStencilOp
+  | typeof DecrementWrapStencilOp
+  | typeof InvertStencilOp;
+export type StencilFunc =
+  | typeof NeverStencilFunc
+  | typeof LessStencilFunc
+  | typeof EqualStencilFunc
+  | typeof LessEqualStencilFunc
+  | typeof GreaterStencilFunc
+  | typeof NotEqualStencilFunc
+  | typeof GreaterEqualStencilFunc
+  | typeof AlwaysStencilFunc;
+export type TextureComparisonFunction =
+  | typeof NeverCompare
+  | typeof LessCompare
+  | typeof EqualCompare
+  | typeof LessEqualCompare
+  | typeof GreaterCompare
+  | typeof NotEqualCompare
+  | typeof GreaterEqualCompare
+  | typeof AlwaysCompare;
+export type Usage =
+  | typeof StaticDrawUsage
+  | typeof DynamicDrawUsage
+  | typeof StreamDrawUsage
+  | typeof StaticReadUsage
+  | typeof DynamicReadUsage
+  | typeof StreamReadUsage
+  | typeof StaticCopyUsage
+  | typeof DynamicCopyUsage
+  | typeof StreamCopyUsage;
+export type GLSLVersion = typeof GLSL1 | typeof GLSL3;
+export type CoordinateSystem = typeof WebGLCoordinateSystem | typeof WebGPUCoordinateSystem;
+export type PixelFormatGPU =
+  | 'ALPHA'
+  | 'RGB'
+  | 'RGBA'
+  | 'LUMINANCE'
+  | 'LUMINANCE_ALPHA'
+  | 'RED_INTEGER'
+  | 'R8'
+  | 'R8_SNORM'
+  | 'R8I'
+  | 'R8UI'
+  | 'R16I'
+  | 'R16UI'
+  | 'R16F'
+  | 'R32I'
+  | 'R32UI'
+  | 'R32F'
+  | 'RG8'
+  | 'RG8_SNORM'
+  | 'RG8I'
+  | 'RG8UI'
+  | 'RG16I'
+  | 'RG16UI'
+  | 'RG16F'
+  | 'RG32I'
+  | 'RG32UI'
+  | 'RG32F'
+  | 'RGB565'
+  | 'RGB8'
+  | 'RGB8_SNORM'
+  | 'RGB8I'
+  | 'RGB8UI'
+  | 'RGB16I'
+  | 'RGB16UI'
+  | 'RGB16F'
+  | 'RGB32I'
+  | 'RGB32UI'
+  | 'RGB32F'
+  | 'RGB9_E5'
+  | 'SRGB8'
+  | 'R11F_G11F_B10F'
+  | 'RGBA4'
+  | 'RGBA8'
+  | 'RGBA8_SNORM'
+  | 'RGBA8I'
+  | 'RGBA8UI'
+  | 'RGBA16I'
+  | 'RGBA16UI'
+  | 'RGBA16F'
+  | 'RGBA32I'
+  | 'RGBA32UI'
+  | 'RGBA32F'
+  | 'RGB5_A1'
+  | 'RGB10_A2'
+  | 'RGB10_A2UI'
+  | 'SRGB8_ALPHA8'
+  | 'SRGB8'
+  | 'DEPTH_COMPONENT16'
+  | 'DEPTH_COMPONENT24'
+  | 'DEPTH_COMPONENT32F'
+  | 'DEPTH24_STENCIL8'
+  | 'DEPTH32F_STENCIL8';

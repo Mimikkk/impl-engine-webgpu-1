@@ -1,27 +1,11 @@
 import { Quaternion } from '../math/Quaternion.js';
 
-class PropertyMixer {
+export class PropertyMixer {
   constructor(binding, typeName, valueSize) {
     this.binding = binding;
     this.valueSize = valueSize;
 
     let mixFunction, mixFunctionAdditive, setIdentity;
-
-    // buffer layout: [ incoming | accu0 | accu1 | orig | addAccu | (optional work) ]
-    //
-    // interpolators can use .buffer as their .result
-    // the data then goes to 'incoming'
-    //
-    // 'accu0' and 'accu1' are used frame-interleaved for
-    // the cumulative result and are compared to detect
-    // changes
-    //
-    // 'orig' stores the original state of the property
-    //
-    // 'add' is used for additive cumulative results
-    //
-    // 'work' is optional and is only present for quaternion types. It is used
-    // to store intermediate quaternion multiplication results
 
     switch (typeName) {
       case 'quaternion':
@@ -66,8 +50,6 @@ class PropertyMixer {
     this.useCount = 0;
     this.referenceCount = 0;
   }
-
-  // accumulate data in the 'incoming' region into 'accu<i>'
   accumulate(accuIndex, weight) {
     // note: happily accumulating nothing when weight = 0, the caller knows
     // the weight and shouldn't have made the call in the first place
@@ -96,8 +78,6 @@ class PropertyMixer {
 
     this.cumulativeWeight = currentWeight;
   }
-
-  // accumulate data in the 'incoming' region into 'add'
   accumulateAdditive(weight) {
     const buffer = this.buffer,
       stride = this.valueSize,
@@ -114,8 +94,6 @@ class PropertyMixer {
     this._mixBufferRegionAdditive(buffer, offset, 0, weight, stride);
     this.cumulativeWeightAdditive += weight;
   }
-
-  // apply the state of 'accu<i>' to the binding when accus differ
   apply(accuIndex) {
     const stride = this.valueSize,
       buffer = this.buffer,
@@ -150,8 +128,6 @@ class PropertyMixer {
       }
     }
   }
-
-  // remember the state of the bound property and copy it to both accus
   saveOriginalState() {
     const binding = this.binding;
 
@@ -172,13 +148,10 @@ class PropertyMixer {
     this.cumulativeWeight = 0;
     this.cumulativeWeightAdditive = 0;
   }
-
-  // apply the state previously taken via 'saveOriginalState' to the binding
   restoreOriginalState() {
     const originalValueOffset = this.valueSize * 3;
     this.binding.setValue(this.buffer, originalValueOffset);
   }
-
   _setAdditiveIdentityNumeric() {
     const startIndex = this._addIndex * this.valueSize;
     const endIndex = startIndex + this.valueSize;
@@ -187,12 +160,10 @@ class PropertyMixer {
       this.buffer[i] = 0;
     }
   }
-
   _setAdditiveIdentityQuaternion() {
     this._setAdditiveIdentityNumeric();
     this.buffer[this._addIndex * this.valueSize + 3] = 1;
   }
-
   _setAdditiveIdentityOther() {
     const startIndex = this._origIndex * this.valueSize;
     const targetIndex = this._addIndex * this.valueSize;
@@ -201,9 +172,6 @@ class PropertyMixer {
       this.buffer[targetIndex + i] = this.buffer[startIndex + i];
     }
   }
-
-  // mix functions
-
   _select(buffer, dstOffset, srcOffset, t, stride) {
     if (t >= 0.5) {
       for (let i = 0; i !== stride; ++i) {
@@ -211,11 +179,9 @@ class PropertyMixer {
       }
     }
   }
-
   _slerp(buffer, dstOffset, srcOffset, t) {
     Quaternion.slerpFlat(buffer, dstOffset, buffer, dstOffset, buffer, srcOffset, t);
   }
-
   _slerpAdditive(buffer, dstOffset, srcOffset, t, stride) {
     const workOffset = this._workIndex * stride;
 
@@ -225,7 +191,6 @@ class PropertyMixer {
     // Slerp to the intermediate result
     Quaternion.slerpFlat(buffer, dstOffset, buffer, dstOffset, buffer, workOffset, t);
   }
-
   _lerp(buffer, dstOffset, srcOffset, t, stride) {
     const s = 1 - t;
 
@@ -235,7 +200,6 @@ class PropertyMixer {
       buffer[j] = buffer[j] * s + buffer[srcOffset + i] * t;
     }
   }
-
   _lerpAdditive(buffer, dstOffset, srcOffset, t, stride) {
     for (let i = 0; i !== stride; ++i) {
       const j = dstOffset + i;
@@ -244,5 +208,3 @@ class PropertyMixer {
     }
   }
 }
-
-export { PropertyMixer };

@@ -1,8 +1,8 @@
-import { InterpolateDiscrete, InterpolateLinear, InterpolateSmooth } from '../constants.js';
-import { AnimationUtils } from './AnimationUtils.js';
-import { NumberArray, NumberArrayConstructor } from '../types.js';
-import { Interpolant } from '../math/interpolants/Interpolant.js';
-import { Interpolants } from '../math/interpolants/interpolants.js';
+import { InterpolateDiscrete, InterpolateLinear, InterpolateSmooth } from '../../constants.js';
+import { AnimationUtils } from '../AnimationUtils.js';
+import { Interpolant } from '../../math/interpolants/Interpolant.js';
+import { Interpolants } from '../../math/interpolants/interpolants.js';
+import { NumberArray, NumberArrayConstructor } from '../../../../webgpu/core/types.js';
 
 export type InterpolationMode = typeof InterpolateDiscrete | typeof InterpolateLinear | typeof InterpolateSmooth;
 
@@ -16,7 +16,7 @@ export class KeyframeTrack {
   times: NumberArray;
   values: NumberArray;
 
-  constructor(name: string, times: ArrayLike<number>, values: ArrayLike<any>, interpolation: InterpolationMode) {
+  constructor(name: string, times: ArrayLike<number>, values: ArrayLike<number>, interpolation: InterpolationMode) {
     this.name = name;
     this.times = AnimationUtils.convertArray(times, this.TimeBufferType, undefined);
     this.values = AnimationUtils.convertArray(values, this.ValueBufferType, undefined);
@@ -27,15 +27,12 @@ export class KeyframeTrack {
   get stride() {
     return this.getValueSize();
   }
-
   InterpolantFactoryMethodDiscrete(result?: NumberArray): Interpolant {
     return Interpolants.discrete({ positions: this.times, samples: this.values, stride: this.stride, result });
   }
-
   InterpolantFactoryMethodLinear(result?: NumberArray): Interpolant {
     return Interpolants.linear({ positions: this.times, samples: this.values, stride: this.stride, result });
   }
-
   InterpolantFactoryMethodSmooth(result?: NumberArray): Interpolant {
     return Interpolants.cubic({ positions: this.times, samples: this.values, stride: this.stride, result });
   }
@@ -97,9 +94,7 @@ export class KeyframeTrack {
   getValueSize() {
     return this.values.length / this.times.length;
   }
-
-  // move all keyframes either forwards or backwards in time
-  shift(timeOffset) {
+  shift(timeOffset: number): KeyframeTrack {
     if (timeOffset !== 0.0) {
       const times = this.times;
 
@@ -110,9 +105,7 @@ export class KeyframeTrack {
 
     return this;
   }
-
-  // scale all keyframe times by a factor (useful for frame <-> seconds conversions)
-  scale(timeScale) {
+  scale(timeScale: number): KeyframeTrack {
     if (timeScale !== 1.0) {
       const times = this.times;
 
@@ -123,10 +116,7 @@ export class KeyframeTrack {
 
     return this;
   }
-
-  // removes keyframes before and after animation without changing any values within the range [startTime, endTime].
-  // IMPORTANT: We do not shift around keys to the start of the track time, because for interpolated keys this will change their values
-  trim(startTime, endTime) {
+  trim(startTime: number, endTime: number): KeyframeTrack {
     const times = this.times,
       nKeys = times.length;
 
@@ -157,9 +147,7 @@ export class KeyframeTrack {
 
     return this;
   }
-
-  // ensure we do not get a GarbageInGarbageOut situation, make sure tracks are at least minimally viable
-  validate() {
+  validate(): boolean {
     let valid = true;
 
     const valueSize = this.getValueSize();
@@ -213,10 +201,7 @@ export class KeyframeTrack {
 
     return valid;
   }
-
-  // removes equivalent sequential keys as common in morph target sequences
-  // (0,0,0,0,1,1,1,0,0,0,0,0,0,0) --> (0,0,1,1,0,0)
-  optimize() {
+  optimize(): KeyframeTrack {
     // times or values may be shared with other tracks, so overwriting is unsafe
     const times = AnimationUtils.arraySlice(this.times),
       values = AnimationUtils.arraySlice(this.values),
@@ -295,8 +280,7 @@ export class KeyframeTrack {
 
     return this;
   }
-
-  clone() {
+  clone(): KeyframeTrack {
     const times = AnimationUtils.arraySlice(this.times, 0);
     const values = AnimationUtils.arraySlice(this.values, 0);
 

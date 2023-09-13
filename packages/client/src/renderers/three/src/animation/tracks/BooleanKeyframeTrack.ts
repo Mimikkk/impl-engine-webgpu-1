@@ -1,5 +1,5 @@
 import { InterpolateDiscrete } from '../../constants.js';
-import { KeyframeTrack } from '../KeyframeTrack.js';
+import { KeyframeTrack } from './KeyframeTrack.js';
 
 export class BooleanKeyframeTrack extends KeyframeTrack {}
 

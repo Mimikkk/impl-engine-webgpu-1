@@ -4,14 +4,35 @@ import { LinearFilter, NoColorSpace, SRGBColorSpace, sRGBEncoding } from '../con
 import { Vector4 } from '../math/Vector4.js';
 import { Source } from '../textures/Source.js';
 import { warnOnce } from '../utils.js';
+import {
+  ColorSpace,
+  MagnificationTextureFilter,
+  MinificationTextureFilter,
+  TextureDataType,
+  TextureEncoding,
+  Wrapping,
+} from 'three/src/constants.js';
+import { DepthTexture } from 'three/src/textures/DepthTexture.js';
 
-/*
- In options, we can specify:
- * Texture parameters for an auto-generated target texture
- * depthBuffer/stencilBuffer: Booleans to indicate if we should generate these buffers
-*/
-class RenderTarget extends EventDispatcher {
-  constructor(width = 1, height = 1, options = {}) {
+export interface RenderTargetOptions {
+  wrapS?: Wrapping;
+  wrapT?: Wrapping;
+  magFilter?: MagnificationTextureFilter;
+  minFilter?: MinificationTextureFilter;
+  generateMipmaps?: boolean;
+  format?: number;
+  type?: TextureDataType;
+  anisotropy?: number;
+  colorSpace?: ColorSpace;
+  depthBuffer?: boolean;
+  stencilBuffer?: boolean;
+  depthTexture?: DepthTexture;
+  samples?: number;
+  encoding?: TextureEncoding;
+}
+
+class RenderTarget extends EventDispatcher<'dispose'> {
+  constructor(width: number = 1, height: number = 1, options = {}) {
     super();
 
     this.isRenderTarget = true;

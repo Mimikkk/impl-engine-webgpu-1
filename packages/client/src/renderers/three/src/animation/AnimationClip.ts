@@ -1,5 +1,5 @@
 import * as AnimationUtils from './AnimationUtils.js';
-import { KeyframeTrack } from './KeyframeTrack.js';
+import { KeyframeTrack } from './tracks/KeyframeTrack.js';
 import { BooleanKeyframeTrack } from './tracks/BooleanKeyframeTrack.js';
 import { ColorKeyframeTrack } from './tracks/ColorKeyframeTrack.js';
 import { NumberKeyframeTrack } from './tracks/NumberKeyframeTrack.js';
@@ -7,24 +7,45 @@ import { QuaternionKeyframeTrack } from './tracks/QuaternionKeyframeTrack.js';
 import { StringKeyframeTrack } from './tracks/StringKeyframeTrack.js';
 import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js';
 import { MathUtils } from '../math/MathUtils.js';
-import { NormalAnimationBlendMode } from '../constants.js';
+import { AnimationBlendMode, NormalAnimationBlendMode } from '../constants.js';
+import { Vector3 } from 'three/src/math/Vector3.js';
+import { Bone } from '../objects/Bone.js';
+import { Parseable } from '../types.js';
+
+export interface MorphTarget {
+  name: string;
+  vertices: Vector3[];
+}
 
 export class AnimationClip {
-  constructor(name, duration = -1, tracks, blendMode = NormalAnimationBlendMode) {
+  declare ['constructor']: new (
+    name?: string,
+    duration?: number,
+    tracks?: KeyframeTrack[],
+    blendMode?: AnimationBlendMode,
+  ) => this;
+  name: string;
+  tracks: KeyframeTrack[];
+  blendMode: AnimationBlendMode;
+  duration: number;
+  uuid: string;
+
+  constructor(
+    name: string,
+    duration: number = -1,
+    tracks: KeyframeTrack[] = [],
+    blendMode: AnimationBlendMode = NormalAnimationBlendMode,
+  ) {
     this.name = name;
     this.tracks = tracks;
     this.duration = duration;
     this.blendMode = blendMode;
 
     this.uuid = MathUtils.generateUUID();
-
-    // this means it should figure out its duration by scanning the tracks
-    if (this.duration < 0) {
-      this.resetDuration();
-    }
+    if (this.duration < 0) this.resetDuration();
   }
 
-  static parse(json) {
+  static parse(json: any): AnimationClip {
     const tracks = [],
       jsonTracks = json.tracks,
       frameTime = 1.0 / (json.fps || 1.0);
@@ -39,7 +60,12 @@ export class AnimationClip {
     return clip;
   }
 
-  static CreateFromMorphTargetSequence(name, morphTargetSequence, fps, noLoop) {
+  static CreateFromMorphTargetSequence(
+    name: string,
+    morphTargetSequence: MorphTarget[],
+    fps: number,
+    noLoop: boolean,
+  ): AnimationClip {
     const numMorphTargets = morphTargetSequence.length;
     const tracks = [];
 
@@ -72,7 +98,7 @@ export class AnimationClip {
     return new this(name, -1, tracks);
   }
 
-  static findByName(objectOrClipArray, name) {
+  static findByName(objectOrClipArray: AnimationClip[], name: string): AnimationClip {
     let clipArray = objectOrClipArray;
 
     if (!Array.isArray(objectOrClipArray)) {
@@ -89,7 +115,11 @@ export class AnimationClip {
     return null;
   }
 
-  static CreateClipsFromMorphTargetSequences(morphTargets, fps, noLoop) {
+  static CreateClipsFromMorphTargetSequences(
+    morphTargets: MorphTarget[],
+    fps: number,
+    noLoop: boolean,
+  ): AnimationClip[] {
     const animationToMorphTargets = {};
 
     // tested with https://regex101.com/ on trick sequences
@@ -125,7 +155,7 @@ export class AnimationClip {
   }
 
   // parse the animation.hierarchy format
-  static parseAnimation(animation, bones) {
+  static parseAnimation(animation: any, bones: Bone[]): AnimationClip {
     if (!animation) {
       console.error('THREE.AnimationClip: No animation in JSONLoader data.');
       return null;
@@ -218,7 +248,7 @@ export class AnimationClip {
     return clip;
   }
 
-  resetDuration() {
+  resetDuration(): AnimationClip {
     const tracks = this.tracks;
     let duration = 0;
 
@@ -233,7 +263,7 @@ export class AnimationClip {
     return this;
   }
 
-  trim() {
+  trim(): AnimationClip {
     for (let i = 0; i < this.tracks.length; i++) {
       this.tracks[i].trim(0, this.duration);
     }
@@ -241,7 +271,7 @@ export class AnimationClip {
     return this;
   }
 
-  validate() {
+  validate(): boolean {
     let valid = true;
 
     for (let i = 0; i < this.tracks.length; i++) {
@@ -251,7 +281,7 @@ export class AnimationClip {
     return valid;
   }
 
-  optimize() {
+  optimize(): AnimationClip {
     for (let i = 0; i < this.tracks.length; i++) {
       this.tracks[i].optimize();
     }
@@ -259,7 +289,7 @@ export class AnimationClip {
     return this;
   }
 
-  clone() {
+  clone(): AnimationClip {
     const tracks = [];
 
     for (let i = 0; i < this.tracks.length; i++) {
@@ -270,48 +300,54 @@ export class AnimationClip {
   }
 }
 
-function getTrackTypeForValueTypeName(typeName) {
-  switch (typeName.toLowerCase()) {
+type TrackType =
+  | 'scalar'
+  | 'double'
+  | 'float'
+  | 'number'
+  | 'integer'
+  | 'vector'
+  | 'vector2'
+  | 'vector3'
+  | 'vector4'
+  | 'color'
+  | 'quaternion'
+  | 'bool'
+  | 'boolean'
+  | 'string';
+function getTrackTypeForValueTypeName(type: TrackType) {
+  switch (type) {
     case 'scalar':
     case 'double':
     case 'float':
     case 'number':
     case 'integer':
       return NumberKeyframeTrack;
-
     case 'vector':
     case 'vector2':
     case 'vector3':
     case 'vector4':
       return VectorKeyframeTrack;
-
     case 'color':
       return ColorKeyframeTrack;
-
     case 'quaternion':
       return QuaternionKeyframeTrack;
-
     case 'bool':
     case 'boolean':
       return BooleanKeyframeTrack;
-
     case 'string':
       return StringKeyframeTrack;
   }
-
-  throw new Error('THREE.KeyframeTrack: Unsupported typeName: ' + typeName);
 }
 
-function parseKeyframeTrack(json) {
-  if (json.type === undefined) {
-    throw new Error('THREE.KeyframeTrack: track type undefined, can not parse');
-  }
+function parseKeyframeTrack(json: any): KeyframeTrack {
+  if (json.type === undefined) throw new Error('THREE.KeyframeTrack: track type undefined, can not parse');
 
   const trackType = getTrackTypeForValueTypeName(json.type);
 
   if (json.times === undefined) {
-    const times = [],
-      values = [];
+    const times: number[] = [];
+    const values: number[] = [];
 
     AnimationUtils.flattenJSON(json.keys, times, values, 'value');
 
@@ -319,11 +355,6 @@ function parseKeyframeTrack(json) {
     json.values = values;
   }
 
-  // derived classes can define a static parse method
-  if (trackType.parse !== undefined) {
-    return trackType.parse(json);
-  } else {
-    // by default, we assume a constructor compatible with the base
-    return new trackType(json.name, json.times, json.values, json.interpolation);
-  }
+  if (Parseable.is(trackType)) return trackType.parse() as unknown as KeyframeTrack;
+  return new trackType(json.name, json.times, json.values, json.interpolation);
 }
