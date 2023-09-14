@@ -1,7 +1,32 @@
 import { Object3D } from '../core/Object3D.js';
+import { AudioListener } from './AudioListener.js';
 
-class Audio extends Object3D {
-  constructor(listener) {
+export class Audio extends Object3D {
+  declare isAudio: true;
+  declare type: 'Audio';
+  listener: AudioListener;
+  context: AudioContext;
+
+  gain: GainNode;
+  autoplay: boolean;
+  buffer: AudioBuffer | null;
+  detune: number;
+  loop: boolean;
+  loopStart: number;
+  loopEnd: number;
+  offset: number;
+  duration: number | undefined;
+  playbackRate: number;
+  isPlaying: boolean;
+  hasPlaybackControl: boolean;
+  source: null | AudioScheduledSourceNode | MediaElementAudioSourceNode | MediaStreamAudioSourceNode;
+  filters: AudioNode[];
+  sourceType: 'empty' | 'buffer' | 'audioNode' | 'mediaNode' | 'mediaStreamNode';
+  _startedAt: number;
+  _progress: number;
+  _connected: boolean;
+
+  constructor(listener: AudioListener) {
     super();
 
     this.type = 'Audio';
@@ -34,11 +59,11 @@ class Audio extends Object3D {
     this.filters = [];
   }
 
-  getOutput() {
+  getOutput(): GainNode {
     return this.gain;
   }
 
-  setNodeSource(audioNode) {
+  setNodeSource(audioNode: AudioScheduledSourceNode): this {
     this.hasPlaybackControl = false;
     this.sourceType = 'audioNode';
     this.source = audioNode;
@@ -47,7 +72,7 @@ class Audio extends Object3D {
     return this;
   }
 
-  setMediaElementSource(mediaElement) {
+  setMediaElementSource(mediaElement: HTMLMediaElement): this {
     this.hasPlaybackControl = false;
     this.sourceType = 'mediaNode';
     this.source = this.context.createMediaElementSource(mediaElement);
@@ -56,7 +81,7 @@ class Audio extends Object3D {
     return this;
   }
 
-  setMediaStreamSource(mediaStream) {
+  setMediaStreamSource(mediaStream: MediaStream): this {
     this.hasPlaybackControl = false;
     this.sourceType = 'mediaStreamNode';
     this.source = this.context.createMediaStreamSource(mediaStream);
@@ -65,7 +90,7 @@ class Audio extends Object3D {
     return this;
   }
 
-  setBuffer(audioBuffer) {
+  setBuffer(audioBuffer: AudioBuffer): this {
     this.buffer = audioBuffer;
     this.sourceType = 'buffer';
 
@@ -74,15 +99,15 @@ class Audio extends Object3D {
     return this;
   }
 
-  play(delay = 0) {
+  play(delay: number = 0): this {
     if (this.isPlaying === true) {
       console.warn('THREE.Audio: Audio is already playing.');
-      return;
+      return this;
     }
 
     if (this.hasPlaybackControl === false) {
       console.warn('THREE.Audio: this Audio has no playback control.');
-      return;
+      return this;
     }
 
     this._startedAt = this.context.currentTime + delay;
@@ -104,25 +129,25 @@ class Audio extends Object3D {
 
     return this.connect();
   }
-
-  pause() {
+  pause(): this {
     if (this.hasPlaybackControl === false) {
       console.warn('THREE.Audio: this Audio has no playback control.');
-      return;
+      return this;
     }
 
-    if (this.isPlaying === true) {
+    if (this.isPlaying && this.source) {
       // update current progress
 
       this._progress += Math.max(this.context.currentTime - this._startedAt, 0) * this.playbackRate;
 
-      if (this.loop === true) {
-        // ensure _progress does not exceed duration with looped audios
-
-        this._progress = this._progress % (this.duration || this.buffer.duration);
+      // ensure _progress does not exceed duration with looped audios
+      if (this.loop) {
+        this._progress = this._progress % (this.duration || this.buffer!.duration);
       }
 
+      //@ts-expect-error
       this.source.stop();
+      //@ts-expect-error
       this.source.onended = null;
 
       this.isPlaying = false;
@@ -130,17 +155,18 @@ class Audio extends Object3D {
 
     return this;
   }
-
-  stop() {
+  stop(): this {
     if (this.hasPlaybackControl === false) {
       console.warn('THREE.Audio: this Audio has no playback control.');
-      return;
+      return this;
     }
 
     this._progress = 0;
 
     if (this.source !== null) {
+      //@ts-expect-error
       this.source.stop();
+      //@ts-expect-error
       this.source.onended = null;
     }
 
@@ -148,10 +174,9 @@ class Audio extends Object3D {
 
     return this;
   }
-
-  connect() {
+  connect(): this {
     if (this.filters.length > 0) {
-      this.source.connect(this.filters[0]);
+      this.source!.connect(this.filters[0]);
 
       for (let i = 1, l = this.filters.length; i < l; i++) {
         this.filters[i - 1].connect(this.filters[i]);
@@ -159,17 +184,16 @@ class Audio extends Object3D {
 
       this.filters[this.filters.length - 1].connect(this.getOutput());
     } else {
-      this.source.connect(this.getOutput());
+      this.source!.connect(this.getOutput());
     }
 
     this._connected = true;
 
     return this;
   }
-
-  disconnect() {
+  disconnect(): this {
     if (this.filters.length > 0) {
-      this.source.disconnect(this.filters[0]);
+      this.source!.disconnect(this.filters[0]);
 
       for (let i = 1, l = this.filters.length; i < l; i++) {
         this.filters[i - 1].disconnect(this.filters[i]);
@@ -177,19 +201,17 @@ class Audio extends Object3D {
 
       this.filters[this.filters.length - 1].disconnect(this.getOutput());
     } else {
-      this.source.disconnect(this.getOutput());
+      this.source!.disconnect(this.getOutput());
     }
 
     this._connected = false;
 
     return this;
   }
-
-  getFilters() {
+  getFilters(): AudioNode[] {
     return this.filters;
   }
-
-  setFilters(value) {
+  setFilters(value: AudioNode[]): this {
     if (!value) value = [];
 
     if (this._connected === true) {
@@ -202,55 +224,49 @@ class Audio extends Object3D {
 
     return this;
   }
-
-  setDetune(value) {
+  setDetune(value: number): this {
     this.detune = value;
 
-    if (this.source.detune === undefined) return; // only set detune when available
+    if (!('detune' in this.source!)) return this;
 
     if (this.isPlaying === true) {
+      //@ts-expect-error
       this.source.detune.setTargetAtTime(this.detune, this.context.currentTime, 0.01);
     }
 
     return this;
   }
-
-  getDetune() {
+  getDetune(): number {
     return this.detune;
   }
-
-  getFilter() {
+  getFilter(): AudioNode {
     return this.getFilters()[0];
   }
-
-  setFilter(filter) {
+  setFilter(filter?: AudioNode): this {
     return this.setFilters(filter ? [filter] : []);
   }
-
-  setPlaybackRate(value) {
+  setPlaybackRate(value: number): this {
     if (this.hasPlaybackControl === false) {
       console.warn('THREE.Audio: this Audio has no playback control.');
-      return;
+      return this;
     }
 
     this.playbackRate = value;
 
-    if (this.isPlaying === true) {
+    if (this.isPlaying === true && this.source) {
+      //@ts-expect-error
       this.source.playbackRate.setTargetAtTime(this.playbackRate, this.context.currentTime, 0.01);
     }
 
     return this;
   }
-
-  getPlaybackRate() {
+  getPlaybackRate(): number {
     return this.playbackRate;
   }
-
-  onEnded() {
+  onEnded(): void {
     this.isPlaying = false;
   }
-
-  getLoop() {
+  getLoop(): boolean {
     if (this.hasPlaybackControl === false) {
       console.warn('THREE.Audio: this Audio has no playback control.');
       return false;
@@ -258,43 +274,39 @@ class Audio extends Object3D {
 
     return this.loop;
   }
-
-  setLoop(value) {
+  setLoop(value: boolean): this {
     if (this.hasPlaybackControl === false) {
       console.warn('THREE.Audio: this Audio has no playback control.');
-      return;
+      return this;
     }
 
     this.loop = value;
 
     if (this.isPlaying === true) {
+      //@ts-expect-error
       this.source.loop = this.loop;
     }
 
     return this;
   }
-
-  setLoopStart(value) {
+  setLoopStart(value: number): this {
     this.loopStart = value;
 
     return this;
   }
-
-  setLoopEnd(value) {
+  setLoopEnd(value: number): this {
     this.loopEnd = value;
 
     return this;
   }
-
-  getVolume() {
+  getVolume(): number {
     return this.gain.gain.value;
   }
-
-  setVolume(value) {
+  setVolume(value: number): this {
     this.gain.gain.setTargetAtTime(value, this.context.currentTime, 0.01);
 
     return this;
   }
 }
-
-export { Audio };
+Audio.prototype.isAudio = true;
+Audio.prototype.type = 'Audio';

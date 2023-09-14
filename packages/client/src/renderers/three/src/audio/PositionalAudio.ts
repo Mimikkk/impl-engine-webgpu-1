@@ -1,14 +1,17 @@
 import { Vector3 } from '../math/Vector3.js';
 import { Quaternion } from '../math/Quaternion.js';
 import { Audio } from './Audio.js';
+import { AudioListener } from './AudioListener.js';
 
 const _position = new Vector3();
 const _quaternion = new Quaternion();
 const _scale = new Vector3();
 const _orientation = new Vector3();
 
-class PositionalAudio extends Audio {
-  constructor(listener) {
+export class PositionalAudio extends Audio {
+  panner: PannerNode;
+
+  constructor(listener: AudioListener) {
     super(listener);
 
     this.panner = this.context.createPanner();
@@ -16,63 +19,68 @@ class PositionalAudio extends Audio {
     this.panner.connect(this.gain);
   }
 
-  connect() {
+  connect(): this {
     super.connect();
 
     this.panner.connect(this.gain);
+
+    return this;
   }
 
-  disconnect() {
+  disconnect(): this {
     super.disconnect();
 
     this.panner.disconnect(this.gain);
+
+    return this;
   }
 
-  getOutput() {
+  //@ts-expect-error
+  getOutput(): PannerNode {
     return this.panner;
   }
 
-  getRefDistance() {
+  getRefDistance(): number {
     return this.panner.refDistance;
   }
 
-  setRefDistance(value) {
+  setRefDistance(value: number): this {
     this.panner.refDistance = value;
 
     return this;
   }
 
-  getRolloffFactor() {
+  getRolloffFactor(): number {
     return this.panner.rolloffFactor;
   }
 
-  setRolloffFactor(value) {
+  setRolloffFactor(value: number): this {
     this.panner.rolloffFactor = value;
 
     return this;
   }
 
-  getDistanceModel() {
+  getDistanceModel(): DistanceModelType {
     return this.panner.distanceModel;
   }
 
-  setDistanceModel(value) {
+  setDistanceModel(value: DistanceModelType): this {
     this.panner.distanceModel = value;
 
     return this;
   }
 
-  getMaxDistance() {
+  getMaxDistance(): number {
     return this.panner.maxDistance;
   }
 
-  setMaxDistance(value) {
+  setMaxDistance(value: number): this {
     this.panner.maxDistance = value;
 
     return this;
   }
 
-  setDirectionalCone(coneInnerAngle, coneOuterAngle, coneOuterGain) {
+  setDirectionalCone(coneInnerAngle: number, coneOuterAngle: number, coneOuterGain: number): this {
     this.panner.coneInnerAngle = coneInnerAngle;
     this.panner.coneOuterAngle = coneOuterAngle;
     this.panner.coneOuterGain = coneOuterGain;
@@ -80,7 +88,7 @@ class PositionalAudio extends Audio {
     return this;
   }
 
-  updateMatrixWorld(force) {
+  updateMatrixWorld(force?: boolean): void {
     super.updateMatrixWorld(force);
 
     if (this.hasPlaybackControl === true && this.isPlaying === false) return;
@@ -108,5 +116,3 @@ class PositionalAudio extends Audio {
     }
   }
 }
-
-export { PositionalAudio };

@@ -2,30 +2,30 @@ import { Vector3 } from '../math/Vector3.js';
 import { Quaternion } from '../math/Quaternion.js';
 import { Clock } from '../core/Clock.js';
 import { Object3D } from '../core/Object3D.js';
-import { AudioContext } from './AudioContext.js';
+import { AudioContextt } from './AudioContextt.js';
 
 const _position = new Vector3();
 const _quaternion = new Quaternion();
 const _scale = new Vector3();
 const _orientation = new Vector3();
 
-class AudioListener extends Object3D {
+export class AudioListener extends Object3D {
+  declare isAudioListener: true;
+  declare type: string | 'AudioListener';
+  context: AudioContext;
+  gain: GainNode;
+  filter: null | AudioNode;
+  timeDelta: number;
+  _clock: Clock;
+
   constructor() {
     super();
 
-    this.type = 'AudioListener';
-
-    this.context = AudioContext.getContext();
-
+    this.context = AudioContextt.getContext();
     this.gain = this.context.createGain();
     this.gain.connect(this.context.destination);
-
     this.filter = null;
-
     this.timeDelta = 0;
-
-    // private
-
     this._clock = new Clock();
   }
 
@@ -44,11 +44,11 @@ class AudioListener extends Object3D {
     return this;
   }
 
-  getFilter() {
+  getFilter(): AudioNode | null {
     return this.filter;
   }
 
-  setFilter(value) {
+  setFilter(value: AudioNode): this {
     if (this.filter !== null) {
       this.gain.disconnect(this.filter);
       this.filter.disconnect(this.context.destination);
@@ -63,17 +63,17 @@ class AudioListener extends Object3D {
     return this;
   }
 
-  getMasterVolume() {
+  getMasterVolume(): number {
     return this.gain.gain.value;
   }
 
-  setMasterVolume(value) {
+  setMasterVolume(value: number): this {
     this.gain.gain.setTargetAtTime(value, this.context.currentTime, 0.01);
 
     return this;
   }
 
-  updateMatrixWorld(force) {
+  updateMatrixWorld(force?: boolean): void {
     super.updateMatrixWorld(force);
 
     const listener = this.context.listener;
@@ -105,5 +105,5 @@ class AudioListener extends Object3D {
     }
   }
 }
-
-export { AudioListener };
+AudioListener.prototype.isAudioListener = true;
+AudioListener.prototype.type = 'AudioListener';
