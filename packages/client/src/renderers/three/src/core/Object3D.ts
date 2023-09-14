@@ -559,7 +559,7 @@ export class Object3D extends EventDispatcher<'added' | 'removed'> {
     return new this.constructor().copy(this, recursive);
   }
 
-  copy(source: Camera, recursive: boolean = true): this {
+  copy(source: Object3D, recursive: boolean = true): this {
     this.name = source.name;
 
     this.up.copy(source.up);

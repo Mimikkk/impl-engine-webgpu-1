@@ -6,7 +6,6 @@ import { Vector3 } from '../math/Vector3.js';
 
 export class Camera extends Object3D {
   declare ['constructor']: new () => this;
-
   declare isCamera: true;
   declare type: string | 'Camera';
   matrixWorldInverse: Matrix4;

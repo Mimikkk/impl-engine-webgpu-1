@@ -2,7 +2,6 @@ import { PerspectiveCamera } from './PerspectiveCamera.js';
 
 export class ArrayCamera extends PerspectiveCamera {
   declare ['constructor']: new () => this;
-
   declare isArrayCamera: true;
   declare type: string | 'ArrayCamera';
   cameras: PerspectiveCamera[];

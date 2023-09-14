@@ -30,18 +30,14 @@ export class OrthographicCamera extends Camera {
     far: number = 2000,
   ) {
     super();
-
     this.zoom = 1;
     this.view = null;
-
     this.left = left;
     this.right = right;
     this.top = top;
     this.bottom = bottom;
-
     this.near = near;
     this.far = far;
-
     this.updateProjectionMatrix();
   }
 

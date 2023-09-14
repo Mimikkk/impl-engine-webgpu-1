@@ -1,13 +1,23 @@
 import { Object3D } from '../core/Object3D.js';
+import { FogExp2 } from './FogExp2.js';
+import { Fog } from './Fog.js';
+import { Material } from '../materials/Material.js';
+import { Color } from '../math/Color.js';
+import { Texture } from '../textures/Texture.js';
+import { CubeTexture } from '../textures/CubeTexture.js';
 
 export class Scene extends Object3D {
   declare isScene: true;
   declare type: 'Scene';
+  fog: Fog | FogExp2 | null;
+  background: Color | Texture | CubeTexture | null;
+  environment: Texture | null;
+  backgroundBlurriness: number;
+  backgroundIntensity: number;
+  overrideMaterial: Material | null;
 
   constructor() {
     super();
-
-    this.isScene = true;
 
     this.type = 'Scene';
 
@@ -30,11 +40,11 @@ export class Scene extends Object3D {
 
     this.backgroundBlurriness = source.backgroundBlurriness;
     this.backgroundIntensity = source.backgroundIntensity;
-
     if (source.overrideMaterial !== null) this.overrideMaterial = source.overrideMaterial.clone();
-
     this.matrixAutoUpdate = source.matrixAutoUpdate;
 
     return this;
   }
 }
+Scene.prototype.isScene = true;
+Scene.prototype.type = 'Scene';

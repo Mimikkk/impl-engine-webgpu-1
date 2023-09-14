@@ -25,9 +25,7 @@ export class StereoCamera {
 
   constructor() {
     this.aspect = 1;
-
     this.eyeSep = 0.064;
-
     this.cameraL = new PerspectiveCamera();
     this.cameraL.layers.enable(1);
     this.cameraL.matrixAutoUpdate = false;
@@ -49,7 +47,6 @@ export class StereoCamera {
 
   update(camera: PerspectiveCamera): void {
     const cache = this._cache;
-
     const needsUpdate =
       cache.focus !== camera.focus ||
       cache.fov !== camera.fov ||
@@ -67,39 +64,22 @@ export class StereoCamera {
       cache.far = camera.far;
       cache.zoom = camera.zoom;
       cache.eyeSep = this.eyeSep;
-
-      // Off-axis stereoscopic effect based on
-      // http://paulbourke.net/stereographics/stereorender/
-
       _projectionMatrix.copy(camera.projectionMatrix);
       const eyeSepHalf = cache.eyeSep / 2;
       const eyeSepOnProjection = (eyeSepHalf * cache.near) / cache.focus;
       const ymax = (cache.near * Math.tan(MathUtils.DEG2RAD * cache.fov * 0.5)) / cache.zoom;
       let xmin, xmax;
-
-      // translate xOffset
-
       _eyeLeft.elements[12] = -eyeSepHalf;
       _eyeRight.elements[12] = eyeSepHalf;
-
-      // for left eye
-
       xmin = -ymax * cache.aspect + eyeSepOnProjection;
       xmax = ymax * cache.aspect + eyeSepOnProjection;
-
       _projectionMatrix.elements[0] = (2 * cache.near) / (xmax - xmin);
       _projectionMatrix.elements[8] = (xmax + xmin) / (xmax - xmin);
-
       this.cameraL.projectionMatrix.copy(_projectionMatrix);
-
-      // for right eye
-
       xmin = -ymax * cache.aspect - eyeSepOnProjection;
       xmax = ymax * cache.aspect - eyeSepOnProjection;
-
       _projectionMatrix.elements[0] = (2 * cache.near) / (xmax - xmin);
       _projectionMatrix.elements[8] = (xmax + xmin) / (xmax - xmin);
-
       this.cameraR.projectionMatrix.copy(_projectionMatrix);
     }
 
