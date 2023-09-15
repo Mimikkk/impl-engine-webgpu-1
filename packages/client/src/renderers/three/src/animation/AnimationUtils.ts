@@ -1,18 +1,16 @@
 import { Quaternion } from '../math/Quaternion.js';
 import { AdditiveAnimationBlendMode } from '../constants.js';
 import { NumberArray, TypedArray } from '../../../webgpu/core/types.js';
+import { AnimationClip } from './AnimationClip.js';
 
-// same as Array.prototype.slice, but also works on typed arrays
-function arraySlice(array: NumberArray, from?: number, to?: number) {
+function arraySlice(array: NumberArray, from?: number, to?: number): NumberArray {
   if (isTypedArray(array)) {
-    //@tas-expect-error
+    //@ts-expect-error
     return new array.constructor(array.subarray(from, to !== undefined ? to : array.length));
   }
 
   return array.slice(from, to);
 }
-
-// converts an array to a specific type
 function convertArray(array: NumberArray, type: any, forceClone: boolean = false) {
   if (
     !array || // let 'undefined' and 'null' pass
@@ -26,16 +24,11 @@ function convertArray(array: NumberArray, type: any, forceClone: boolean = false
 
   return Array.prototype.slice.call(array); // create Array
 }
-
 function isTypedArray(object: NumberArray): object is TypedArray {
   return ArrayBuffer.isView(object) && !(object instanceof DataView);
 }
-
-// returns an array by which times and values can be sorted
-function getKeyframeOrder(times: NumberArray) {
-  function compareTime(i, j) {
-    return times[i] - times[j];
-  }
+function getKeyframeOrder(times: NumberArray): NumberArray {
+  const compareTime = (i: number, j: number) => times[i] - times[j];
 
   const n = times.length;
   const result = new Array(n);
@@ -45,10 +38,9 @@ function getKeyframeOrder(times: NumberArray) {
 
   return result;
 }
-
-// uses the array previously returned by 'getKeyframeOrder' to sort data
-function sortedArray(values, stride, order) {
+function sortedArray(values: NumberArray, stride: number, order: number[]): NumberArray {
   const nValues = values.length;
+  //@ts-expect-error
   const result = new values.constructor(nValues);
 
   for (let i = 0, dstOffset = 0; dstOffset !== nValues; ++i) {
@@ -62,40 +54,39 @@ function sortedArray(values, stride, order) {
   return result;
 }
 
-// function for parsing AOS keyframe formats
-function flattenJSON(jsonKeys, times, values, valuePropertyName) {
+function flattenJSON(jsonKeys: string[], times: number[], values: number[], valuePropertyName: string): any {
   let i = 1,
     key = jsonKeys[0];
 
-  while (key !== undefined && key[valuePropertyName] === undefined) {
+  while (key !== undefined && key[valuePropertyName as any] === undefined) {
     key = jsonKeys[i++];
   }
 
   if (key === undefined) return; // no data
 
-  let value = key[valuePropertyName];
+  let value = key[valuePropertyName as any];
   if (value === undefined) return; // no data
 
   if (Array.isArray(value)) {
     do {
-      value = key[valuePropertyName];
+      value = key[valuePropertyName as any];
 
       if (value !== undefined) {
-        times.push(key.time);
+        times.push((key as any).time);
         values.push.apply(values, value); // push all elements
       }
 
       key = jsonKeys[i++];
     } while (key !== undefined);
-  } else if (value.toArray !== undefined) {
+  } else if ((value as any).toArray !== undefined) {
     // ...assume THREE.Math-ish
 
     do {
-      value = key[valuePropertyName];
+      value = key[valuePropertyName as any];
 
       if (value !== undefined) {
-        times.push(key.time);
-        value.toArray(values, values.length);
+        times.push((key as any).time);
+        (value as any).toArray(values, values.length);
       }
 
       key = jsonKeys[i++];
@@ -104,11 +95,11 @@ function flattenJSON(jsonKeys, times, values, valuePropertyName) {
     // otherwise push as-is
 
     do {
-      value = key[valuePropertyName];
+      value = key[valuePropertyName as any];
 
       if (value !== undefined) {
-        times.push(key.time);
-        values.push(value);
+        times.push((key as any).time);
+        values.push(value as any);
       }
 
       key = jsonKeys[i++];
@@ -116,7 +107,13 @@ function flattenJSON(jsonKeys, times, values, valuePropertyName) {
   }
 }
 
-function subclip(sourceClip, name, startFrame, endFrame, fps = 30) {
+function subclip(
+  sourceClip: AnimationClip,
+  name: string,
+  startFrame: number,
+  endFrame: number,
+  fps: number = 30,
+): AnimationClip {
   const clip = sourceClip.clone();
 
   clip.name = name;
@@ -173,7 +170,12 @@ function subclip(sourceClip, name, startFrame, endFrame, fps = 30) {
   return clip;
 }
 
-function makeClipAdditive(targetClip, referenceFrame = 0, referenceClip = targetClip, fps = 30) {
+function makeClipAdditive(
+  targetClip: AnimationClip,
+  referenceFrame: number = 0,
+  referenceClip: AnimationClip = targetClip,
+  fps: number = 30,
+): AnimationClip {
   if (fps <= 0) fps = 30;
 
   const numTracks = referenceClip.tracks.length;

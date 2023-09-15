@@ -15,9 +15,9 @@ const _supportedObjectNames = ['material', 'materials', 'bones', 'map'];
 export interface ParseTrackNameResults {
   nodeName: string;
   objectName: string;
-  objectIndex: number;
+  objectIndex: string;
   propertyName: string;
-  propertyIndex: number;
+  propertyIndex: string;
 }
 
 export type GetValue = (targetArray: NumberArray, offset: number) => void;
@@ -115,9 +115,9 @@ export class PropertyBinding {
     const results: ParseTrackNameResults = {
       nodeName: matches[2],
       objectName: matches[3],
-      objectIndex: +matches[4],
+      objectIndex: matches[4],
       propertyName: matches[5],
-      propertyIndex: +matches[6],
+      propertyIndex: matches[6],
     };
 
     const lastDot = results.nodeName?.lastIndexOf('.');
@@ -324,7 +324,7 @@ export class PropertyBinding {
           // support resolving morphTarget names into indices.
           for (let i = 0; i < targetObject.length; i++) {
             if (targetObject[i].name === objectIndex) {
-              objectIndex = i;
+              objectIndex = `${i}`;
               break;
             }
           }
@@ -442,12 +442,9 @@ export class PropertyBinding {
       bindingType = this.BindingType.ArrayElement;
 
       this.resolvedProperty = nodeProperty;
-      this.propertyIndex = propertyIndex;
+      this.propertyIndex = +propertyIndex;
     } else if (nodeProperty.fromArray !== undefined && nodeProperty.toArray !== undefined) {
-      // must use copy for Object3D.Euler/Quaternion
-
       bindingType = this.BindingType.HasFromToArray;
-
       this.resolvedProperty = nodeProperty;
     } else if (Array.isArray(nodeProperty)) {
       bindingType = this.BindingType.EntireArray;

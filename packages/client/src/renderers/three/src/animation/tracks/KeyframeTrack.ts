@@ -287,8 +287,6 @@ export class KeyframeTrack {
 
     const TypedKeyframeTrack = this.constructor;
     const track = new TypedKeyframeTrack(this.name, times, values);
-
-    // Interpolant argument to constructor is not saved, so copy the factory method directly.
     track.createInterpolant = this.createInterpolant;
 
     return track;

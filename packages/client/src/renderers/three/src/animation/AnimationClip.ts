@@ -8,9 +8,10 @@ import { StringKeyframeTrack } from './tracks/StringKeyframeTrack.js';
 import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js';
 import { MathUtils } from '../math/MathUtils.js';
 import { AnimationBlendMode, NormalAnimationBlendMode } from '../constants.js';
-import { Vector3 } from 'three/src/math/Vector3.js';
 import { Bone } from '../objects/Bone.js';
 import { Parseable } from '../types.js';
+import { Object3D } from '../core/Object3D.js';
+import { Vector3 } from '../math/Vector3.js';
 
 export interface MorphTarget {
   name: string;
@@ -98,7 +99,7 @@ export class AnimationClip {
     return new this(name, -1, tracks);
   }
 
-  static findByName(objectOrClipArray: AnimationClip[], name: string): AnimationClip {
+  static findByName(objectOrClipArray: Object3D | AnimationClip[], name: string): AnimationClip | null {
     let clipArray = objectOrClipArray;
 
     if (!Array.isArray(objectOrClipArray)) {
