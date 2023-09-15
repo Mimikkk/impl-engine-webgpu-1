@@ -1,51 +1,46 @@
-// Characters [].:/ are reserved for track binding syntax.
+import { AnimationObjectGroup } from './AnimationObjectGroup.js';
+import { NumberArray } from '../../../webgpu/core/types.js';
+import { Object3D } from '../core/Object3D.js';
 const _RESERVED_CHARS_RE = '\\[\\]\\.:\\/';
 const _reservedRe = new RegExp('[' + _RESERVED_CHARS_RE + ']', 'g');
-
-// Attempts to allow node names from any language. ES5's `\w` regexp matches
-// only latin characters, and the unicode \p{L} is not yet supported. So
-// instead, we exclude reserved characters and match everything else.
 const _wordChar = '[^' + _RESERVED_CHARS_RE + ']';
 const _wordCharOrDot = '[^' + _RESERVED_CHARS_RE.replace('\\.', '') + ']';
-
-// Parent directories, delimited by '/' or ':'. Currently unused, but must
-// be matched to parse the rest of the track name.
 const _directoryRe = /((?:WC+[\/:])*)/.source.replace('WC', _wordChar);
-
-// Target node. May contain word characters (a-zA-Z0-9_) and '.' or '-'.
 const _nodeRe = /(WCOD+)?/.source.replace('WCOD', _wordCharOrDot);
-
-// Object on target node, and accessor. May not contain reserved
-// characters. Accessor may contain any character except closing bracket.
 const _objectRe = /(?:\.(WC+)(?:\[(.+)\])?)?/.source.replace('WC', _wordChar);
-
-// Property and accessor. May not contain reserved characters. Accessor may
-// contain any non-bracket characters.
 const _propertyRe = /\.(WC+)(?:\[(.+)\])?/.source.replace('WC', _wordChar);
-
 const _trackRe = new RegExp('' + '^' + _directoryRe + _nodeRe + _objectRe + _propertyRe + '$');
-
 const _supportedObjectNames = ['material', 'materials', 'bones', 'map'];
 
-class Composite {
-  constructor(targetGroup, path, optionalParsedPath) {
-    const parsedPath = optionalParsedPath || PropertyBinding.parseTrackName(path);
+export interface ParseTrackNameResults {
+  nodeName: string;
+  objectName: string;
+  objectIndex: number;
+  propertyName: string;
+  propertyIndex: number;
+}
 
+export type GetValue = (targetArray: NumberArray, offset: number) => void;
+export type SetValue = (sourceArray: NumberArray, offset: number) => void;
+
+class Composite {
+  declare _targetGroup: AnimationObjectGroup;
+  declare _bindings: PropertyBinding[];
+
+  constructor(targetGroup: any, path: string, optionalParsedPath?: ParseTrackNameResults) {
+    const parsedPath = optionalParsedPath || PropertyBinding.parseTrackName(path);
     this._targetGroup = targetGroup;
     this._bindings = targetGroup.subscribe_(path, parsedPath);
   }
 
-  getValue(array, offset) {
-    this.bind(); // bind all binding
-
-    const firstValidIndex = this._targetGroup.nCachedObjects_,
-      binding = this._bindings[firstValidIndex];
-
-    // and only call .getValue on the first
+  getValue(array: NumberArray, offset: number) {
+    this.bind();
+    const firstValidIndex = this._targetGroup.nCachedObjects_;
+    const binding = this._bindings[firstValidIndex];
     if (binding !== undefined) binding.getValue(array, offset);
   }
 
-  setValue(array, offset) {
+  setValue(array: NumberArray, offset: number) {
     const bindings = this._bindings;
 
     for (let i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++i) {
@@ -70,75 +65,66 @@ class Composite {
   }
 }
 
-// Note: This class uses a State pattern on a per-method basis:
-// 'bind' sets 'this.getValue' / 'setValue' and shadows the
-// prototype version of these methods with one that represents
-// the bound state. When the property is not found, the methods
-// become no-ops.
 export class PropertyBinding {
   static Composite = Composite;
-  declare BindingType: any;
-  declare Versioning: any;
-  declare GetterByBindingType: any;
-  declare SetterByBindingTypeAndVersioning: any;
+  BindingType: Record<string, number>;
+  Versioning: Record<string, number>;
+  GetterByBindingType: GetValue[];
+  SetterByBindingTypeAndVersioning: SetValue[][];
+  path: string;
+  parsedPath: ParseTrackNameResults;
+  node: any;
+  rootNode: any;
+  targetObject: Object3D;
+  propertyName: string;
+  resolvedProperty: any;
+  propertyIndex: number;
 
-  constructor(rootNode, path, parsedPath) {
+  getValue: GetValue = () => {};
+  setValue: SetValue = () => {};
+
+  constructor(rootNode: Object3D, path: string, parsedPath?: ParseTrackNameResults) {
     this.path = path;
     this.parsedPath = parsedPath || PropertyBinding.parseTrackName(path);
-
     this.node = PropertyBinding.findNode(rootNode, this.parsedPath.nodeName);
-
     this.rootNode = rootNode;
 
-    // initial state of these methods that calls 'bind'
     this.getValue = this._getValue_unbound;
     this.setValue = this._setValue_unbound;
   }
 
-  static create(root, path, parsedPath) {
-    if (!(root && root.isAnimationObjectGroup)) {
+  static create(root: Object3D, path: string, parsedPath?: ParseTrackNameResults) {
+    if (!(root && AnimationObjectGroup.is(root))) {
       return new PropertyBinding(root, path, parsedPath);
     } else {
       return new PropertyBinding.Composite(root, path, parsedPath);
     }
   }
 
-  /**
-   * Replaces spaces with underscores and removes unsupported characters from
-   * node names, to ensure compatibility with parseTrackName().
-   *
-   * @param {string} name Node name to be sanitized.
-   * @return {string}
-   */
-  static sanitizeNodeName(name) {
+  static sanitizeNodeName(name: string): string {
     return name.replace(/\s/g, '_').replace(_reservedRe, '');
   }
 
-  static parseTrackName(trackName) {
+  static parseTrackName(trackName: string): ParseTrackNameResults {
     const matches = _trackRe.exec(trackName);
 
     if (matches === null) {
       throw new Error('PropertyBinding: Cannot parse trackName: ' + trackName);
     }
 
-    const results = {
-      // directoryName: matches[ 1 ], // (tschw) currently unused
+    const results: ParseTrackNameResults = {
       nodeName: matches[2],
       objectName: matches[3],
-      objectIndex: matches[4],
-      propertyName: matches[5], // required
-      propertyIndex: matches[6],
+      objectIndex: +matches[4],
+      propertyName: matches[5],
+      propertyIndex: +matches[6],
     };
 
-    const lastDot = results.nodeName && results.nodeName.lastIndexOf('.');
+    const lastDot = results.nodeName?.lastIndexOf('.');
 
     if (lastDot !== undefined && lastDot !== -1) {
       const objectName = results.nodeName.substring(lastDot + 1);
 
-      // Object names must be checked against an allowlist. Otherwise, there
-      // is no way to parse 'foo.bar.baz': 'baz' must be a property, but
-      // 'bar' could be the objectName, or part of a nodeName (which can
-      // include '.' characters).
       if (_supportedObjectNames.indexOf(objectName) !== -1) {
         results.nodeName = results.nodeName.substring(0, lastDot);
         results.objectName = objectName;
@@ -152,7 +138,7 @@ export class PropertyBinding {
     return results;
   }
 
-  static findNode(root, nodeName) {
+  static findNode(root: Object3D, nodeName: number | string): Object3D | null {
     if (
       nodeName === undefined ||
       nodeName === '' ||
@@ -160,22 +146,16 @@ export class PropertyBinding {
       nodeName === -1 ||
       nodeName === root.name ||
       nodeName === root.uuid
-    ) {
+    )
       return root;
-    }
 
-    // search into skeleton bones.
     if (root.skeleton) {
       const bone = root.skeleton.getBoneByName(nodeName);
 
-      if (bone !== undefined) {
-        return bone;
-      }
+      if (bone !== undefined) return bone;
     }
-
-    // search into node subtree.
     if (root.children) {
-      const searchNodeSubtree = function (children) {
+      const searchNodeSubtree = (children: Object3D[]): Object3D | null => {
         for (let i = 0; i < children.length; i++) {
           const childNode = children[i];
 
@@ -192,79 +172,58 @@ export class PropertyBinding {
       };
 
       const subTreeNode = searchNodeSubtree(root.children);
-
-      if (subTreeNode) {
-        return subTreeNode;
-      }
+      if (subTreeNode) return subTreeNode;
     }
 
     return null;
   }
 
-  // these are used to "bind" a nonexistent property
-  _getValue_unavailable() {}
-
-  _setValue_unavailable() {}
-
-  // Getters
-
-  _getValue_direct(buffer, offset) {
-    buffer[offset] = this.targetObject[this.propertyName];
+  _getValue_unavailable(): void {}
+  _setValue_unavailable(): void {}
+  _getValue_direct(buffer: NumberArray, offset: number): void {
+    buffer[offset] = this.targetObject[this.propertyName as never];
   }
-
-  _getValue_array(buffer, offset) {
+  _getValue_array(buffer: NumberArray, offset: number): void {
     const source = this.resolvedProperty;
 
     for (let i = 0, n = source.length; i !== n; ++i) {
       buffer[offset++] = source[i];
     }
   }
-
-  _getValue_arrayElement(buffer, offset) {
+  _getValue_arrayElement(buffer: NumberArray, offset: number): void {
     buffer[offset] = this.resolvedProperty[this.propertyIndex];
   }
-
-  _getValue_toArray(buffer, offset) {
+  _getValue_toArray(buffer: NumberArray, offset: number): void {
     this.resolvedProperty.toArray(buffer, offset);
   }
-
-  // Direct
-
-  _setValue_direct(buffer, offset) {
-    this.targetObject[this.propertyName] = buffer[offset];
+  _setValue_direct(buffer: NumberArray, offset: number): void {
+    this.targetObject[this.propertyName as never] = buffer[offset] as never;
   }
-
-  _setValue_direct_setNeedsUpdate(buffer, offset) {
-    this.targetObject[this.propertyName] = buffer[offset];
-    this.targetObject.needsUpdate = true;
+  _setValue_direct_setNeedsUpdate(buffer: NumberArray, offset: number): void {
+    this.targetObject[this.propertyName as never] = buffer[offset] as never;
+    (this.targetObject as any).needsUpdate = true;
   }
-
-  _setValue_direct_setMatrixWorldNeedsUpdate(buffer, offset) {
-    this.targetObject[this.propertyName] = buffer[offset];
+  _setValue_direct_setMatrixWorldNeedsUpdate(buffer: NumberArray, offset: number): void {
+    this.targetObject[this.propertyName as never] = buffer[offset] as never;
     this.targetObject.matrixWorldNeedsUpdate = true;
   }
-
-  // EntireArray
-
-  _setValue_array(buffer, offset) {
+  _setValue_array(buffer: NumberArray, offset: number): void {
     const dest = this.resolvedProperty;
 
     for (let i = 0, n = dest.length; i !== n; ++i) {
       dest[i] = buffer[offset++];
     }
   }
-
-  _setValue_array_setNeedsUpdate(buffer, offset) {
+  _setValue_array_setNeedsUpdate(buffer: NumberArray, offset: number): void {
     const dest = this.resolvedProperty;
 
     for (let i = 0, n = dest.length; i !== n; ++i) {
       dest[i] = buffer[offset++];
     }
 
-    this.targetObject.needsUpdate = true;
+    (this.targetObject as any).needsUpdate = true;
   }
-
-  _setValue_array_setMatrixWorldNeedsUpdate(buffer, offset) {
+  _setValue_array_setMatrixWorldNeedsUpdate(buffer: NumberArray, offset: number): void {
     const dest = this.resolvedProperty;
 
     for (let i = 0, n = dest.length; i !== n; ++i) {
@@ -273,50 +232,37 @@ export class PropertyBinding {
 
     this.targetObject.matrixWorldNeedsUpdate = true;
   }
-
-  // ArrayElement
-
-  _setValue_arrayElement(buffer, offset) {
+  _setValue_arrayElement(buffer: NumberArray, offset: number): void {
     this.resolvedProperty[this.propertyIndex] = buffer[offset];
   }
-
-  _setValue_arrayElement_setNeedsUpdate(buffer, offset) {
+  _setValue_arrayElement_setNeedsUpdate(buffer: NumberArray, offset: number): void {
     this.resolvedProperty[this.propertyIndex] = buffer[offset];
-    this.targetObject.needsUpdate = true;
+    (this.targetObject as any).needsUpdate = true;
   }
-
-  _setValue_arrayElement_setMatrixWorldNeedsUpdate(buffer, offset) {
+  _setValue_arrayElement_setMatrixWorldNeedsUpdate(buffer: NumberArray, offset: number): void {
     this.resolvedProperty[this.propertyIndex] = buffer[offset];
     this.targetObject.matrixWorldNeedsUpdate = true;
   }
-
-  // HasToFromArray
-
-  _setValue_fromArray(buffer, offset) {
+  _setValue_fromArray(buffer: NumberArray, offset: number): void {
     this.resolvedProperty.fromArray(buffer, offset);
   }
-
-  _setValue_fromArray_setNeedsUpdate(buffer, offset) {
+  _setValue_fromArray_setNeedsUpdate(buffer: NumberArray, offset: number): void {
     this.resolvedProperty.fromArray(buffer, offset);
-    this.targetObject.needsUpdate = true;
+    (this.targetObject as any).needsUpdate = true;
   }
-
-  _setValue_fromArray_setMatrixWorldNeedsUpdate(buffer, offset) {
+  _setValue_fromArray_setMatrixWorldNeedsUpdate(buffer: NumberArray, offset: number): void {
     this.resolvedProperty.fromArray(buffer, offset);
     this.targetObject.matrixWorldNeedsUpdate = true;
   }
-
-  _getValue_unbound(targetArray, offset) {
+  _getValue_unbound(targetArray: NumberArray, offset: number): void {
     this.bind();
     this.getValue(targetArray, offset);
   }
-
-  _setValue_unbound(sourceArray, offset) {
+  _setValue_unbound(sourceArray: NumberArray, offset: number): void {
     this.bind();
     this.setValue(sourceArray, offset);
   }
 
-  // create getter / setter pair for a property in the scene graph
   bind() {
     let targetObject = this.node;
     const parsedPath = this.parsedPath;
@@ -518,9 +464,6 @@ export class PropertyBinding {
 
   unbind() {
     this.node = null;
-
-    // back to the prototype version of getValue / setValue
-    // note: avoiding to mutate the shape of 'this' via 'delete'
     this.getValue = this._getValue_unbound;
     this.setValue = this._setValue_unbound;
   }
@@ -532,20 +475,17 @@ PropertyBinding.prototype.BindingType = {
   ArrayElement: 2,
   HasFromToArray: 3,
 };
-
 PropertyBinding.prototype.Versioning = {
   None: 0,
   NeedsUpdate: 1,
   MatrixWorldNeedsUpdate: 2,
 };
-
 PropertyBinding.prototype.GetterByBindingType = [
   PropertyBinding.prototype._getValue_direct,
   PropertyBinding.prototype._getValue_array,
   PropertyBinding.prototype._getValue_arrayElement,
   PropertyBinding.prototype._getValue_toArray,
 ];
-
 PropertyBinding.prototype.SetterByBindingTypeAndVersioning = [
   [
     // Direct

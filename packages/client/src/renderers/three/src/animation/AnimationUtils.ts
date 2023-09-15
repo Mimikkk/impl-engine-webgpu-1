@@ -1,11 +1,11 @@
 import { Quaternion } from '../math/Quaternion.js';
 import { AdditiveAnimationBlendMode } from '../constants.js';
+import { NumberArray, TypedArray } from '../../../webgpu/core/types.js';
 
 // same as Array.prototype.slice, but also works on typed arrays
-function arraySlice(array, from, to) {
+function arraySlice(array: NumberArray, from?: number, to?: number) {
   if (isTypedArray(array)) {
-    // in ios9 array.subarray(from, undefined) will return empty array
-    // but array.subarray(from) or array.subarray(from, len) is correct
+    //@tas-expect-error
     return new array.constructor(array.subarray(from, to !== undefined ? to : array.length));
   }
 
@@ -13,7 +13,7 @@ function arraySlice(array, from, to) {
 }
 
 // converts an array to a specific type
-function convertArray(array, type, forceClone) {
+function convertArray(array: NumberArray, type: any, forceClone: boolean = false) {
   if (
     !array || // let 'undefined' and 'null' pass
     (!forceClone && array.constructor === type)
@@ -27,12 +27,12 @@ function convertArray(array, type, forceClone) {
   return Array.prototype.slice.call(array); // create Array
 }
 
-function isTypedArray(object) {
+function isTypedArray(object: NumberArray): object is TypedArray {
   return ArrayBuffer.isView(object) && !(object instanceof DataView);
 }
 
 // returns an array by which times and values can be sorted
-function getKeyframeOrder(times) {
+function getKeyframeOrder(times: NumberArray) {
   function compareTime(i, j) {
     return times[i] - times[j];
   }

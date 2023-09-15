@@ -7,16 +7,18 @@ import { NumberArray, NumberArrayConstructor } from '../../../../webgpu/core/typ
 export type InterpolationMode = typeof InterpolateDiscrete | typeof InterpolateLinear | typeof InterpolateSmooth;
 
 export class KeyframeTrack {
+  declare ['constructor']: typeof KeyframeTrack;
   declare ValueTypeName: string;
   declare TimeBufferType: NumberArrayConstructor;
   declare ValueBufferType: NumberArrayConstructor;
   declare DefaultInterpolation: InterpolationMode;
 
+  createInterpolant: (result?: NumberArray) => Interpolant;
   name: string;
   times: NumberArray;
   values: NumberArray;
 
-  constructor(name: string, times: ArrayLike<number>, values: ArrayLike<number>, interpolation: InterpolationMode) {
+  constructor(name: string, times: NumberArray, values: NumberArray, interpolation?: InterpolationMode) {
     this.name = name;
     this.times = AnimationUtils.convertArray(times, this.TimeBufferType, undefined);
     this.values = AnimationUtils.convertArray(values, this.ValueBufferType, undefined);
@@ -27,13 +29,13 @@ export class KeyframeTrack {
   get stride() {
     return this.getValueSize();
   }
-  InterpolantFactoryMethodDiscrete(result?: NumberArray): Interpolant {
+  InterpolantFactoryMethodDiscrete?(result?: NumberArray): Interpolant {
     return Interpolants.discrete({ positions: this.times, samples: this.values, stride: this.stride, result });
   }
-  InterpolantFactoryMethodLinear(result?: NumberArray): Interpolant {
+  InterpolantFactoryMethodLinear?(result?: NumberArray): Interpolant {
     return Interpolants.linear({ positions: this.times, samples: this.values, stride: this.stride, result });
   }
-  InterpolantFactoryMethodSmooth(result?: NumberArray): Interpolant {
+  InterpolantFactoryMethodSmooth?(result?: NumberArray): Interpolant {
     return Interpolants.cubic({ positions: this.times, samples: this.values, stride: this.stride, result });
   }
 
@@ -202,7 +204,6 @@ export class KeyframeTrack {
     return valid;
   }
   optimize(): KeyframeTrack {
-    // times or values may be shared with other tracks, so overwriting is unsafe
     const times = AnimationUtils.arraySlice(this.times),
       values = AnimationUtils.arraySlice(this.values),
       stride = this.getValueSize(),

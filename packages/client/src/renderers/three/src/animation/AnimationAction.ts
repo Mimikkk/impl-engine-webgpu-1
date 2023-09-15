@@ -11,7 +11,7 @@ import {
   ZeroSlopeEnding,
 } from '../constants.js';
 import { AnimationMixer } from './AnimationMixer.js';
-import { AnimationClip } from 'three';
+import { AnimationClip } from './AnimationClip.js';
 import { Object3D } from '../core/Object3D.js';
 import { Interpolant } from '../math/interpolants/Interpolant.js';
 

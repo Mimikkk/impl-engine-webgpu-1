@@ -1,7 +1,7 @@
 import { InterpolateLinear } from '../../constants.js';
 import { KeyframeTrack } from './KeyframeTrack.js';
 import { QuaternionLinearInterpolant } from '../../math/interpolants/QuaternionLinearInterpolant.js';
-import { NumberArray } from '../../types.js';
+import { NumberArray } from '../../../../webgpu/core/types.js';
 
 export class QuaternionKeyframeTrack extends KeyframeTrack {
   InterpolantFactoryMethodLinear(result?: NumberArray) {

@@ -30,7 +30,25 @@ import { MathUtils } from '../math/MathUtils.js';
  *    target group or directly, but not both.
  */
 
-class AnimationObjectGroup {
+export class AnimationObjectGroup {
+  static is = (item: object): item is AnimationObjectGroup => 'isAnimationObjectGroup' in item;
+  declare isAnimationObjectGroup: boolean;
+  uuid: string;
+  _objects: any[];
+  nCachedObjects_: number;
+  _indicesByUUID: any;
+  _paths: any[];
+  _parsedPaths: any[];
+  _bindings: any[];
+  _bindingsIndicesByPath: any;
+  stats: {
+    bindingsPerObject: number;
+    objects: {
+      total: number;
+      inUse: number;
+    };
+  };
+
   constructor() {
     this.isAnimationObjectGroup = true;
 
@@ -323,5 +341,3 @@ class AnimationObjectGroup {
     }
   }
 }
-
-export { AnimationObjectGroup };

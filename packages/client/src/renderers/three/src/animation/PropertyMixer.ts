@@ -1,7 +1,23 @@
 import { Quaternion } from '../math/Quaternion.js';
+import { PropertyBinding } from './PropertyBinding.js';
+import { NumberArray } from '../../../webgpu/core/types.js';
 
 export class PropertyMixer {
-  constructor(binding, typeName, valueSize) {
+  binding: PropertyBinding;
+  valueSize: number;
+  buffer: NumberArray;
+  cumulativeWeight: number;
+  cumulativeWeightAdditive: number;
+  useCount: number;
+  referenceCount: number;
+  _mixBufferRegion: Function;
+  _mixBufferRegionAdditive: Function;
+  _setIdentity: Function;
+  _origIndex: number;
+  _addIndex: number;
+  _workIndex: number;
+
+  constructor(binding: PropertyBinding, typeName: string, valueSize: number) {
     this.binding = binding;
     this.valueSize = valueSize;
 
@@ -50,7 +66,7 @@ export class PropertyMixer {
     this.useCount = 0;
     this.referenceCount = 0;
   }
-  accumulate(accuIndex, weight) {
+  accumulate(accuIndex: number, weight: number): void {
     // note: happily accumulating nothing when weight = 0, the caller knows
     // the weight and shouldn't have made the call in the first place
 
@@ -78,7 +94,7 @@ export class PropertyMixer {
 
     this.cumulativeWeight = currentWeight;
   }
-  accumulateAdditive(weight) {
+  accumulateAdditive(weight: number): void {
     const buffer = this.buffer,
       stride = this.valueSize,
       offset = stride * this._addIndex;
@@ -94,7 +110,7 @@ export class PropertyMixer {
     this._mixBufferRegionAdditive(buffer, offset, 0, weight, stride);
     this.cumulativeWeightAdditive += weight;
   }
-  apply(accuIndex) {
+  apply(accuIndex: number): void {
     const stride = this.valueSize,
       buffer = this.buffer,
       offset = accuIndex * stride + stride,
@@ -128,7 +144,7 @@ export class PropertyMixer {
       }
     }
   }
-  saveOriginalState() {
+  saveOriginalState(): void {
     const binding = this.binding;
 
     const buffer = this.buffer,
@@ -148,11 +164,11 @@ export class PropertyMixer {
     this.cumulativeWeight = 0;
     this.cumulativeWeightAdditive = 0;
   }
-  restoreOriginalState() {
+  restoreOriginalState(): void {
     const originalValueOffset = this.valueSize * 3;
     this.binding.setValue(this.buffer, originalValueOffset);
   }
-  _setAdditiveIdentityNumeric() {
+  _setAdditiveIdentityNumeric(): void {
     const startIndex = this._addIndex * this.valueSize;
     const endIndex = startIndex + this.valueSize;
 
@@ -160,11 +176,11 @@ export class PropertyMixer {
       this.buffer[i] = 0;
     }
   }
-  _setAdditiveIdentityQuaternion() {
+  _setAdditiveIdentityQuaternion(): void {
     this._setAdditiveIdentityNumeric();
     this.buffer[this._addIndex * this.valueSize + 3] = 1;
   }
-  _setAdditiveIdentityOther() {
+  _setAdditiveIdentityOther(): void {
     const startIndex = this._origIndex * this.valueSize;
     const targetIndex = this._addIndex * this.valueSize;
 
@@ -172,17 +188,18 @@ export class PropertyMixer {
       this.buffer[targetIndex + i] = this.buffer[startIndex + i];
     }
   }
-  _select(buffer, dstOffset, srcOffset, t, stride) {
+
+  _select(buffer: NumberArray, dstOffset: number, srcOffset: number, t: number, stride: number): void {
     if (t >= 0.5) {
       for (let i = 0; i !== stride; ++i) {
         buffer[dstOffset + i] = buffer[srcOffset + i];
       }
     }
   }
-  _slerp(buffer, dstOffset, srcOffset, t) {
+  _slerp(buffer: NumberArray, dstOffset: number, srcOffset: number, t: number): void {
     Quaternion.slerpFlat(buffer, dstOffset, buffer, dstOffset, buffer, srcOffset, t);
   }
-  _slerpAdditive(buffer, dstOffset, srcOffset, t, stride) {
+  _slerpAdditive(buffer: NumberArray, dstOffset: number, srcOffset: number, t: number, stride: number): void {
     const workOffset = this._workIndex * stride;
 
     // Store result in intermediate buffer offset
@@ -191,7 +208,7 @@ export class PropertyMixer {
     // Slerp to the intermediate result
     Quaternion.slerpFlat(buffer, dstOffset, buffer, dstOffset, buffer, workOffset, t);
   }
-  _lerp(buffer, dstOffset, srcOffset, t, stride) {
+  _lerp(buffer: NumberArray, dstOffset: number, srcOffset: number, t: number, stride: number): void {
     const s = 1 - t;
 
     for (let i = 0; i !== stride; ++i) {
@@ -200,7 +217,7 @@ export class PropertyMixer {
       buffer[j] = buffer[j] * s + buffer[srcOffset + i] * t;
     }
   }
-  _lerpAdditive(buffer, dstOffset, srcOffset, t, stride) {
+  _lerpAdditive(buffer: NumberArray, dstOffset: number, srcOffset: number, t: number, stride: number): void {
     for (let i = 0; i !== stride; ++i) {
       const j = dstOffset + i;
 

@@ -1,36 +1,37 @@
 import {
   AnimationClip,
   BooleanKeyframeTrack,
+  Color,
   ColorKeyframeTrack,
   NumberKeyframeTrack,
   Vector3,
   VectorKeyframeTrack,
 } from '../Three.js';
 
-class AnimationClipCreator {
-  static CreateRotationAnimation(period, axis = 'x') {
+export namespace AnimationClipCreator {
+  export const CreateRotationAnimation = (period: number, axis: 'x' | 'y' | 'z'): AnimationClip => {
     const times = [0, period],
       values = [0, 360];
 
-    const trackName = '.rotation[' + axis + ']';
+    const trackName = `.rotation[${axis}]`;
 
     const track = new NumberKeyframeTrack(trackName, times, values);
 
-    return new AnimationClip(null, period, [track]);
-  }
+    return new AnimationClip(trackName, period, [track]);
+  };
 
-  static CreateScaleAxisAnimation(period, axis = 'x') {
+  export const CreateScaleAxisAnimation = (period: number, axis: 'x' | 'y' | 'z'): AnimationClip => {
     const times = [0, period],
       values = [0, 1];
 
-    const trackName = '.scale[' + axis + ']';
+    const trackName = `.scale[${axis}]`;
 
     const track = new NumberKeyframeTrack(trackName, times, values);
 
-    return new AnimationClip(null, period, [track]);
-  }
+    return new AnimationClip(trackName, period, [track]);
+  };
 
-  static CreateShakeAnimation(duration, shakeScale) {
+  export const CreateShakeAnimation = (duration: number, shakeScale: number): AnimationClip => {
     const times = [],
       values = [],
       tmp = new Vector3();
@@ -48,10 +49,10 @@ class AnimationClipCreator {
 
     const track = new VectorKeyframeTrack(trackName, times, values);
 
-    return new AnimationClip(null, duration, [track]);
-  }
+    return new AnimationClip(trackName, duration, [track]);
+  };
 
-  static CreatePulsationAnimation(duration, pulseScale) {
+  export const CreatePulsationAnimation = (duration: number, pulseScale: number): AnimationClip => {
     const times = [],
       values = [],
       tmp = new Vector3();
@@ -67,10 +68,10 @@ class AnimationClipCreator {
 
     const track = new VectorKeyframeTrack(trackName, times, values);
 
-    return new AnimationClip(null, duration, [track]);
-  }
+    return new AnimationClip(trackName, duration, [track]);
+  };
 
-  static CreateVisibilityAnimation(duration) {
+  export const CreateVisibilityAnimation = (duration: number): AnimationClip => {
     const times = [0, duration / 2, duration],
       values = [true, false, true];
 
@@ -78,10 +79,10 @@ class AnimationClipCreator {
 
     const track = new BooleanKeyframeTrack(trackName, times, values);
 
-    return new AnimationClip(null, duration, [track]);
-  }
+    return new AnimationClip(trackName, duration, [track]);
+  };
 
-  static CreateMaterialColorAnimation(duration, colors) {
+  export const CreateMaterialColorAnimation = (duration: number, colors: Color[]): AnimationClip => {
     const times = [],
       values = [],
       timeStep = duration / colors.length;
@@ -97,8 +98,6 @@ class AnimationClipCreator {
 
     const track = new ColorKeyframeTrack(trackName, times, values);
 
-    return new AnimationClip(null, duration, [track]);
-  }
+    return new AnimationClip(trackName, duration, [track]);
+  };
 }
-
-export { AnimationClipCreator };

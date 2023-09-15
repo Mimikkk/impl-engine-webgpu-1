@@ -13,7 +13,8 @@ import { Camera } from '../cameras/Camera.js';
 import { BufferGeometry } from './BufferGeometry.js';
 import { Group } from '../objects/Group.js';
 import { WebGLRenderer } from '../renderers/WebGLRenderer.js';
-import { Raycaster, Intersection } from './Raycaster.js';
+import { Intersection, Raycaster } from './Raycaster.js';
+import { Skeleton } from '../objects/Skeleton.js';
 
 let _object3DId = 0;
 
@@ -44,6 +45,7 @@ export class Object3D extends EventDispatcher<'added' | 'removed'> {
   id: number;
   uuid: string;
   name: string;
+  skeleton: Skeleton | null;
   parent: Object3D | null;
   children: Object3D[];
   up: Vector3;
