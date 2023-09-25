@@ -2,9 +2,37 @@ import { TangentSpaceNormalMap } from '../constants.js';
 import { Material } from './Material.js';
 import { Vector2 } from '../math/Vector2.js';
 import { Color } from '../math/Color.js';
+import { Texture } from '../textures/Texture.js';
 
-class MeshToonMaterial extends Material {
-  constructor(parameters) {
+export class MeshToonMaterial extends Material {
+  declare isMeshToonMaterial: boolean;
+  declare type: string | 'MeshToonMaterial';
+  color: Color;
+  map: Texture | null;
+  gradientMap: Texture | null;
+  lightMap: Texture | null;
+  lightMapIntensity: number;
+  aoMap: Texture | null;
+  aoMapIntensity: number;
+  emissive: Color;
+  emissiveIntensity: number;
+  emissiveMap: Texture | null;
+  bumpMap: Texture | null;
+  bumpScale: number;
+  normalMap: Texture | null;
+  normalMapType: number;
+  normalScale: Vector2;
+  displacementMap: Texture | null;
+  displacementScale: number;
+  displacementBias: number;
+  alphaMap: Texture | null;
+  wireframe: boolean;
+  wireframeLinewidth: number;
+  wireframeLinecap: string;
+  wireframeLinejoin: string;
+  fog: boolean;
+
+  constructor(parameters?: Material.Parameters) {
     super();
 
     this.isMeshToonMaterial = true;
@@ -51,7 +79,7 @@ class MeshToonMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: MeshToonMaterial) {
     super.copy(source);
 
     this.color.copy(source.color);
@@ -92,5 +120,3 @@ class MeshToonMaterial extends Material {
     return this;
   }
 }
-
-export { MeshToonMaterial };

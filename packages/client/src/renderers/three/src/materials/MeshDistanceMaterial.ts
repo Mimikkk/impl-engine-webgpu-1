@@ -1,7 +1,16 @@
 import { Material } from './Material.js';
+import { Texture } from '../textures/Texture.js';
 
-class MeshDistanceMaterial extends Material {
-  constructor(parameters) {
+export class MeshDistanceMaterial extends Material {
+  declare isMeshDistanceMaterial: boolean;
+  declare type: string | 'MeshDistanceMaterial';
+  map: Texture | null;
+  alphaMap: Texture | null;
+  displacementMap: Texture | null;
+  displacementScale: number;
+  displacementBias: number;
+
+  constructor(parameters?: Material.Parameters) {
     super();
 
     this.isMeshDistanceMaterial = true;
@@ -19,7 +28,7 @@ class MeshDistanceMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: MeshDistanceMaterial) {
     super.copy(source);
 
     this.map = source.map;
@@ -33,5 +42,3 @@ class MeshDistanceMaterial extends Material {
     return this;
   }
 }
-
-export { MeshDistanceMaterial };

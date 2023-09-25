@@ -1,8 +1,20 @@
 import { Material } from './Material.js';
 import { BasicDepthPacking } from '../constants.js';
+import { Texture } from '../textures/Texture.js';
 
-class MeshDepthMaterial extends Material {
-  constructor(parameters) {
+export class MeshDepthMaterial extends Material {
+  declare isMeshDepthMaterial: boolean;
+  declare type: string | 'MeshDepthMaterial';
+  depthPacking: number;
+  map: Texture | null;
+  alphaMap: Texture | null;
+  displacementMap: Texture | null;
+  displacementScale: number;
+  displacementBias: number;
+  wireframe: boolean;
+  wireframeLinewidth: number;
+
+  constructor(parameters?: Material.Parameters) {
     super();
 
     this.isMeshDepthMaterial = true;
@@ -10,11 +22,8 @@ class MeshDepthMaterial extends Material {
     this.type = 'MeshDepthMaterial';
 
     this.depthPacking = BasicDepthPacking;
-
     this.map = null;
-
     this.alphaMap = null;
-
     this.displacementMap = null;
     this.displacementScale = 1;
     this.displacementBias = 0;
@@ -25,7 +34,7 @@ class MeshDepthMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: MeshDepthMaterial) {
     super.copy(source);
 
     this.depthPacking = source.depthPacking;
@@ -44,5 +53,3 @@ class MeshDepthMaterial extends Material {
     return this;
   }
 }
-
-export { MeshDepthMaterial };

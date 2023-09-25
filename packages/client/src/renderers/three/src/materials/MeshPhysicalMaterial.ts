@@ -2,9 +2,44 @@ import { Vector2 } from '../math/Vector2.js';
 import { MeshStandardMaterial } from './MeshStandardMaterial.js';
 import { Color } from '../math/Color.js';
 import { MathUtils } from '../math/MathUtils.js';
+import { Texture } from '../textures/Texture.js';
+import { Material } from './Material.js';
 
-class MeshPhysicalMaterial extends MeshStandardMaterial {
-  constructor(parameters) {
+export class MeshPhysicalMaterial extends MeshStandardMaterial {
+  declare isMeshPhysicalMaterial: boolean;
+  declare type: string | 'MeshPhysicalMaterial';
+  anisotropyRotation: number;
+  anisotropyMap: Texture | null;
+  clearcoatMap: Texture | null;
+  clearcoatRoughness: number;
+  clearcoatRoughnessMap: Texture | null;
+  clearcoatNormalScale: Vector2;
+  clearcoatNormalMap: Texture | null;
+  ior: number;
+  iridescenceMap: Texture | null;
+  iridescenceIOR: number;
+  iridescenceThicknessRange: number[];
+  iridescenceThicknessMap: Texture | null;
+  sheenColor: Color;
+  sheenColorMap: Texture | null;
+  sheenRoughness: number;
+  sheenRoughnessMap: Texture | null;
+  transmissionMap: Texture | null;
+  thickness: number;
+  thicknessMap: Texture | null;
+  attenuationDistance: number;
+  attenuationColor: Color;
+  specularIntensity: number;
+  specularIntensityMap: Texture | null;
+  specularColor: Color;
+  specularColorMap: Texture | null;
+  _anisotropy: number;
+  _clearcoat: number;
+  _iridescence: number;
+  _sheen: number;
+  _transmission: number;
+
+  constructor(parameters?: Material.Parameters) {
     super();
 
     this.isMeshPhysicalMaterial = true;
@@ -127,7 +162,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
     this._transmission = value;
   }
 
-  copy(source) {
+  copy(source: MeshPhysicalMaterial) {
     super.copy(source);
 
     this.defines = {
@@ -176,5 +211,3 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
     return this;
   }
 }
-
-export { MeshPhysicalMaterial };

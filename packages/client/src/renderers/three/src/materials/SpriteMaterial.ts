@@ -1,8 +1,18 @@
 import { Material } from './Material.js';
 import { Color } from '../math/Color.js';
+import { Texture } from '../textures/Texture.js';
 
-class SpriteMaterial extends Material {
-  constructor(parameters) {
+export class SpriteMaterial extends Material {
+  declare isSpriteMaterial: boolean;
+  declare type: string | 'SpriteMaterial';
+  color: Color;
+  map: Texture | null;
+  alphaMap: Texture | null;
+  rotation: number;
+  sizeAttenuation: boolean;
+  fog: boolean;
+
+  constructor(parameters?: Material.Parameters) {
     super();
 
     this.isSpriteMaterial = true;
@@ -26,7 +36,7 @@ class SpriteMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: SpriteMaterial) {
     super.copy(source);
 
     this.color.copy(source.color);
@@ -44,5 +54,3 @@ class SpriteMaterial extends Material {
     return this;
   }
 }
-
-export { SpriteMaterial };

@@ -5,7 +5,29 @@ import default_vertex from '../renderers/shaders/ShaderChunk/default_vertex.glsl
 import default_fragment from '../renderers/shaders/ShaderChunk/default_fragment.glsl.js';
 
 export class ShaderMaterial extends Material {
-  constructor(parameters) {
+  declare isShaderMaterial: boolean;
+  declare type: string | 'ShaderMaterial';
+  defines: Record<string, any>;
+  uniforms: Record<string, any>;
+  uniformsGroups: Record<string, any>[];
+  vertexShader: string;
+  fragmentShader: string;
+  linewidth: number;
+  wireframe: boolean;
+  wireframeLinewidth: number;
+  fog: boolean;
+  lights: boolean;
+  clipping: boolean;
+  forceSinglePass: boolean;
+  extensions: Record<string, any>;
+
+  glslVersion: string | null;
+
+  defaultAttributeValues: Record<string, any>;
+  index0AttributeName: string | undefined;
+  uniformsNeedUpdate: boolean;
+
+  constructor(parameters?: Material.Parameters) {
     super();
 
     this.isShaderMaterial = true;
@@ -55,7 +77,7 @@ export class ShaderMaterial extends Material {
     }
   }
 
-  copy(source) {
+  copy(source: ShaderMaterial) {
     super.copy(source);
 
     this.fragmentShader = source.fragmentShader;

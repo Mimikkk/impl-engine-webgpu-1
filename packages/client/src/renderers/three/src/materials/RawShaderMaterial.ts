@@ -1,7 +1,11 @@
 import { ShaderMaterial } from './ShaderMaterial.js';
+import { Material } from './Material.js';
 
-class RawShaderMaterial extends ShaderMaterial {
-  constructor(parameters) {
+export class RawShaderMaterial extends ShaderMaterial {
+  declare isRawShaderMaterial: boolean;
+  declare type: string | 'RawShaderMaterial';
+
+  constructor(parameters?: Material.Parameters) {
     super(parameters);
 
     this.isRawShaderMaterial = true;
@@ -9,5 +13,3 @@ class RawShaderMaterial extends ShaderMaterial {
     this.type = 'RawShaderMaterial';
   }
 }
-
-export { RawShaderMaterial };

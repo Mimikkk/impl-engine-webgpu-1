@@ -1,7 +1,14 @@
 import { LineBasicMaterial } from './LineBasicMaterial.js';
+import { Material } from './Material.js';
 
-class LineDashedMaterial extends LineBasicMaterial {
-  constructor(parameters) {
+export class LineDashedMaterial extends LineBasicMaterial {
+  declare isLineDashedMaterial: boolean;
+  declare type: string | 'LineDashedMaterial';
+  scale: number;
+  dashSize: number;
+  gapSize: number;
+
+  constructor(parameters?: Material.Parameters) {
     super();
 
     this.isLineDashedMaterial = true;
@@ -15,7 +22,7 @@ class LineDashedMaterial extends LineBasicMaterial {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: LineDashedMaterial) {
     super.copy(source);
 
     this.scale = source.scale;
@@ -25,5 +32,3 @@ class LineDashedMaterial extends LineBasicMaterial {
     return this;
   }
 }
-
-export { LineDashedMaterial };

@@ -2,9 +2,42 @@ import { MultiplyOperation, TangentSpaceNormalMap } from '../constants.js';
 import { Material } from './Material.js';
 import { Vector2 } from '../math/Vector2.js';
 import { Color } from '../math/Color.js';
+import { Texture } from '../textures/Texture.js';
 
-class MeshLambertMaterial extends Material {
-  constructor(parameters) {
+export class MeshLambertMaterial extends Material {
+  declare isMeshLambertMaterial: boolean;
+  declare type: string | 'MeshLambertMaterial';
+  color: Color;
+  map: Texture | null;
+  lightMap: Texture | null;
+  lightMapIntensity: number;
+  aoMap: Texture | null;
+  aoMapIntensity: number;
+  emissive: Color;
+  emissiveIntensity: number;
+  emissiveMap: Texture | null;
+  bumpMap: Texture | null;
+  bumpScale: number;
+  normalMap: Texture | null;
+  normalMapType: number;
+  normalScale: Vector2;
+  displacementMap: Texture | null;
+  displacementScale: number;
+  displacementBias: number;
+  specularMap: Texture | null;
+  alphaMap: Texture | null;
+  envMap: Texture | null;
+  combine: number;
+  reflectivity: number;
+  refractionRatio: number;
+  wireframe: boolean;
+  wireframeLinewidth: number;
+  wireframeLinecap: string;
+  wireframeLinejoin: string;
+  flatShading: boolean;
+  fog: boolean;
+
+  constructor(parameters?: Material.Parameters) {
     super();
 
     this.isMeshLambertMaterial = true;
@@ -57,7 +90,7 @@ class MeshLambertMaterial extends Material {
     this.setValues(parameters);
   }
 
-  copy(source) {
+  copy(source: MeshLambertMaterial) {
     super.copy(source);
 
     this.color.copy(source.color);
@@ -106,5 +139,3 @@ class MeshLambertMaterial extends Material {
     return this;
   }
 }
-
-export { MeshLambertMaterial };
