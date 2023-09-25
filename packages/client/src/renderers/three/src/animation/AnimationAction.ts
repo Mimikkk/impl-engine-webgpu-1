@@ -396,7 +396,7 @@ export class AnimationAction {
 
         this.time = time;
 
-        this._mixer.dispatchEvent({
+        this._mixer.dispatchEvent<AnimationMixer.ProgressEvent>({
           type: 'finished',
           action: this,
           direction: deltaTime < 0 ? -1 : 1,
@@ -441,7 +441,7 @@ export class AnimationAction {
 
           this.time = time;
 
-          this._mixer.dispatchEvent({
+          this._mixer.dispatchEvent<AnimationMixer.ProgressEvent>({
             type: 'finished',
             action: this,
             direction: deltaTime > 0 ? 1 : -1,
@@ -462,7 +462,7 @@ export class AnimationAction {
 
           this.time = time;
 
-          this._mixer.dispatchEvent({
+          this._mixer.dispatchEvent<AnimationMixer.LoopEvent>({
             type: 'loop',
             action: this,
             loopDelta: loopDelta,
