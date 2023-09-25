@@ -2,7 +2,7 @@ import { Vector3 } from '../math/Vector3.js';
 import { Quaternion } from '../math/Quaternion.js';
 import { Clock } from '../core/Clock.js';
 import { Object3D } from '../core/Object3D.js';
-import { AudioContextt } from './AudioContextt.js';
+import { context } from './AudioContext.js';
 
 const _position = new Vector3();
 const _quaternion = new Quaternion();
@@ -21,7 +21,7 @@ export class AudioListener extends Object3D {
   constructor() {
     super();
 
-    this.context = AudioContextt.getContext();
+    this.context = context;
     this.gain = this.context.createGain();
     this.gain.connect(this.context.destination);
     this.filter = null;
