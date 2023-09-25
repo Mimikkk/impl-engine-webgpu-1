@@ -1,7 +1,6 @@
-import { DisplayP3ColorSpace, LinearSRGBColorSpace, SRGBColorSpace } from '../constants.js';
+import { ColorSpace, DisplayP3ColorSpace, LinearSRGBColorSpace, SRGBColorSpace } from '../constants.js';
 import { Matrix3 } from './Matrix3.js';
 import { Color } from './Color.js';
-import { ColorSpace } from './types.js';
 
 export function SRGBToLinear(c: number): number {
   return c < 0.04045 ? c * 0.0773993808 : Math.pow(c * 0.9478672986 + 0.0521327014, 2.4);

@@ -131,6 +131,7 @@ export namespace Interpolant {
     interpolate,
     positions,
     validate,
+    //@ts-expect-error
     result = new samples.constructor(stride),
     index = 0,
   }: Options): Interpolant => {

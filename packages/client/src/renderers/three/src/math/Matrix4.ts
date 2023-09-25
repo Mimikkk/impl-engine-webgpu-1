@@ -1,9 +1,8 @@
-import { WebGLCoordinateSystem, WebGPUCoordinateSystem } from '../constants.js';
+import { CoordinateSystem, WebGLCoordinateSystem, WebGPUCoordinateSystem } from '../constants.js';
 import { Vector3 } from './Vector3.js';
 import { Matrix3 } from './Matrix3.js';
 import { Euler } from './Euler.js';
 import { Quaternion } from './Quaternion.js';
-import { CoordinateSystem } from './types.js';
 
 export class Matrix4 {
   declare ['constructor']: new () => this;

@@ -1,8 +1,7 @@
-import { WebGLCoordinateSystem, WebGPUCoordinateSystem } from '../constants.js';
+import { CoordinateSystem, WebGLCoordinateSystem, WebGPUCoordinateSystem } from '../constants.js';
 import { Vector3 } from './Vector3.js';
 import { Sphere } from './Sphere.js';
 import { Plane } from './Plane.js';
-import { CoordinateSystem } from './types.js';
 import { Object3D } from '../core/Object3D.js';
 import { Sprite } from '../objects/Sprite.js';
 import { Box3 } from './Box3.js';

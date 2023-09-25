@@ -3,7 +3,7 @@ import { Vector2 } from './Vector2.js';
 const _vector = new Vector2();
 
 export class Box2 {
-  declare ['constructor']: new () => this;
+  declare ['constructor']: new (min: Vector2, max: Vector2) => this;
 
   declare isBox2: boolean;
   min: Vector2;

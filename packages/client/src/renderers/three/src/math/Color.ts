@@ -1,7 +1,6 @@
 import { clamp, euclideanModulo, lerp } from './MathUtils.js';
 import { ColorManagement, LinearToSRGB, SRGBToLinear } from './ColorManagement.js';
-import { SRGBColorSpace } from '../constants.js';
-import { ColorSpace } from './types.js';
+import { ColorSpace, SRGBColorSpace } from '../constants.js';
 import { Vector3 } from './Vector3.js';
 import { Matrix3 } from './Matrix3.js';
 import { BufferAttribute } from '../core/BufferAttribute.js';
@@ -176,7 +175,7 @@ function hue2rgb(p: number, q: number, t: number): number {
 
 export class Color {
   static Names: Record<ColorName, number> = _colorKeywords;
-  declare ['constructor']: new () => this;
+  declare ['constructor']: new (r: number, g: number, b: number) => this;
 
   declare isColor: boolean;
   r: number;

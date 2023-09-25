@@ -3,7 +3,7 @@ import { Matrix3 } from './Matrix3.js';
 import { Quaternion } from './Quaternion.js';
 
 export class Vector4 {
-  declare ['constructor']: new () => this;
+  declare ['constructor']: new (x: number, y: number, z: number, w: number) => this;
 
   declare isVector4: boolean;
   x: number;
@@ -247,7 +247,7 @@ export class Vector4 {
     return this;
   }
 
-  setAxisAngleFromRotationMatrix(m: Matrix3): Vector4 {
+  setAxisAngleFromRotationMatrix(m: Matrix4): Vector4 {
     // http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToAngle/index.htm
 
     // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)

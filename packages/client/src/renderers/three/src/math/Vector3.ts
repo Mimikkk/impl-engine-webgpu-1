@@ -7,9 +7,10 @@ import { Spherical } from './Spherical.js';
 import { Euler } from './Euler.js';
 import { Color } from './Color.js';
 import { Camera } from '../cameras/Camera.js';
+import { NumberArray } from '../types.js';
 
 export class Vector3 {
-  declare ['constructor']: new () => this;
+  declare ['constructor']: new (x: number, y: number, z: number) => this;
 
   declare isVector3: boolean;
   x: number;
@@ -547,7 +548,7 @@ export class Vector3 {
     return v.x === this.x && v.y === this.y && v.z === this.z;
   }
 
-  fromArray(array: number[], offset: number = 0): Vector3 {
+  fromArray(array: NumberArray, offset: number = 0): Vector3 {
     this.x = array[offset];
     this.y = array[offset + 1];
     this.z = array[offset + 2];
