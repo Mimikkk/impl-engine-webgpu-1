@@ -4,18 +4,24 @@ import { denormalize, normalize } from '../math/MathUtils.js';
 import { InterleavedBuffer } from './InterleavedBuffer.js';
 import { Matrix4 } from '../math/Matrix4.js';
 import { Matrix3 } from '../math/Matrix3.js';
+import { InstancedInterleavedBuffer } from './InstancedInterleavedBuffer.js';
 
 const _vector = new Vector3();
 
 export class InterleavedBufferAttribute {
   name: string;
-  data: InterleavedBuffer;
+  data: InterleavedBuffer | InstancedInterleavedBuffer;
   itemSize: number;
   offset: number;
   normalized: boolean;
   declare isInterleavedBufferAttribute: boolean;
 
-  constructor(interleavedBuffer: InterleavedBuffer, itemSize: number, offset: number, normalized: boolean = false) {
+  constructor(
+    interleavedBuffer: InterleavedBuffer | InstancedInterleavedBuffer,
+    itemSize: number,
+    offset: number,
+    normalized: boolean = false,
+  ) {
     this.isInterleavedBufferAttribute = true;
 
     this.name = '';

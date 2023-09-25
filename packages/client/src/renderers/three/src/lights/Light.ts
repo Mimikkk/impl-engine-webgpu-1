@@ -1,23 +1,23 @@
 import { Object3D } from '../core/Object3D.js';
-import { Color } from '../math/Color.js';
+import { Color, ColorRepresentation } from '../math/Color.js';
 
 export class Light extends Object3D {
-  constructor(color, intensity = 1) {
+  declare isLight: boolean;
+  declare type: string | 'Light';
+  color: Color;
+  intensity: number;
+  target: Object3D;
+
+  constructor(color?: ColorRepresentation, intensity: number = 1) {
     super();
-
-    this.isLight = true;
-
-    this.type = 'Light';
 
     this.color = new Color(color);
     this.intensity = intensity;
   }
 
-  dispose() {
-    // Empty here in base class; some subclasses override.
-  }
+  dispose() {}
 
-  copy(source, recursive) {
+  copy(source: Light, recursive?: boolean) {
     super.copy(source, recursive);
 
     this.color.copy(source.color);
@@ -26,3 +26,5 @@ export class Light extends Object3D {
     return this;
   }
 }
+Light.prototype.isLight = true;
+Light.prototype.type = 'Light';

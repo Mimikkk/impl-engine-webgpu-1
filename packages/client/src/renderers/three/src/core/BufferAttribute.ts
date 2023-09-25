@@ -8,6 +8,9 @@ const _vector = new Vector3();
 const _vector2 = new Vector2();
 
 class BufferAttribute {
+  declare isBufferAttribute: boolean;
+  count: number;
+
   constructor(array, itemSize, normalized = false) {
     if (Array.isArray(array)) {
       throw new TypeError('THREE.BufferAttribute: array should be a Typed Array.');
@@ -438,7 +441,7 @@ class Float16BufferAttribute extends BufferAttribute {
 }
 
 class Float32BufferAttribute extends BufferAttribute {
-  constructor(array, itemSize, normalized) {
+  constructor(array: number[], itemSize: number, normalized?: boolean) {
     super(new Float32Array(array), itemSize, normalized);
   }
 }

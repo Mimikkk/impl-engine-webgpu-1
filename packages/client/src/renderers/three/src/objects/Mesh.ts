@@ -33,6 +33,9 @@ const _intersectionPoint = new Vector3();
 const _intersectionPointWorld = new Vector3();
 
 class Mesh extends Object3D {
+  geometry: BufferGeometry;
+  material: MeshBasicMaterial;
+
   constructor(geometry = new BufferGeometry(), material = new MeshBasicMaterial()) {
     super();
 

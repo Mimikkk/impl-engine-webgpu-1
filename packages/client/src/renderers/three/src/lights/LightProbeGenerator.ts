@@ -1,16 +1,14 @@
-import {
-  Color,
-  LightProbe,
-  LinearSRGBColorSpace,
-  NoColorSpace,
-  SphericalHarmonics3,
-  SRGBColorSpace,
-  Vector3,
-} from '../Three.js';
+import { CubeTexture } from '../textures/CubeTexture.js';
+import Renderer from '../common/Renderer.js';
+import CubeRenderTarget from '../common/CubeRenderTarget.js';
+import { Color } from '../math/Color.js';
+import { ColorSpace, LinearSRGBColorSpace, NoColorSpace, SRGBColorSpace } from '../constants.js';
+import { Vector3 } from '../math/Vector3.js';
+import { SphericalHarmonics3 } from '../math/SphericalHarmonics3.js';
+import { LightProbe } from './LightProbe.js';
 
-class LightProbeGenerator {
-  // https://www.ppsloan.org/publications/StupidSH36.pdf
-  static fromCubeTexture(cubeTexture) {
+export class LightProbeGenerator {
+  static fromCubeTexture(cubeTexture: CubeTexture) {
     let totalWeight = 0;
 
     const coord = new Vector3();
@@ -19,7 +17,9 @@ class LightProbeGenerator {
 
     const color = new Color();
 
-    const shBasis = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const shBasis: [number, number, number, number, number, number, number, number, number] = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ];
 
     const sh = new SphericalHarmonics3();
     const shCoefficients = sh.coefficients;
@@ -31,11 +31,10 @@ class LightProbeGenerator {
       const height = image.height;
 
       const canvas = document.createElement('canvas');
-
       canvas.width = width;
       canvas.height = height;
 
-      const context = canvas.getContext('2d');
+      const context = canvas.getContext('2d')!;
 
       context.drawImage(image, 0, 0, width, height);
 
@@ -125,7 +124,7 @@ class LightProbeGenerator {
     return new LightProbe(sh);
   }
 
-  static fromCubeRenderTarget(renderer, cubeRenderTarget) {
+  static fromCubeRenderTarget(renderer: Renderer, cubeRenderTarget: CubeRenderTarget) {
     // The renderTarget must be set to RGBA in order to make readRenderTargetPixels works
     let totalWeight = 0;
 
@@ -135,7 +134,9 @@ class LightProbeGenerator {
 
     const color = new Color();
 
-    const shBasis = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const shBasis: [number, number, number, number, number, number, number, number, number] = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ];
 
     const sh = new SphericalHarmonics3();
     const shCoefficients = sh.coefficients;
@@ -226,7 +227,7 @@ class LightProbeGenerator {
   }
 }
 
-function convertColorToLinear(color, colorSpace) {
+function convertColorToLinear(color: Color, colorSpace: ColorSpace) {
   switch (colorSpace) {
     case SRGBColorSpace:
       color.convertSRGBToLinear();
@@ -243,5 +244,3 @@ function convertColorToLinear(color, colorSpace) {
 
   return color;
 }
-
-export { LightProbeGenerator };

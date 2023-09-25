@@ -1,15 +1,14 @@
-import { LineSegments2 } from '../lines/LineSegments2.js';
-import { LineGeometry } from '../lines/LineGeometry.js';
-import { LineMaterial } from '../lines/LineMaterial.js';
+import { LineSegments2 } from './LineSegments2.js';
+import { LineGeometry } from './LineGeometry.js';
+import { LineMaterial } from './LineMaterial.js';
 
-class Line2 extends LineSegments2 {
+export class Line2 extends LineSegments2 {
+  declare isLine2: boolean;
+  declare type: string;
+
   constructor(geometry = new LineGeometry(), material = new LineMaterial({ color: Math.random() * 0xffffff })) {
     super(geometry, material);
-
-    this.isLine2 = true;
-
-    this.type = 'Line2';
   }
 }
-
-export { Line2 };
+Line2.prototype.isLine2 = true;
+Line2.prototype.type = 'Line2';

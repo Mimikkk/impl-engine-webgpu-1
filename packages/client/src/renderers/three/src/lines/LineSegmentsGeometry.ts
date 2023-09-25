@@ -13,12 +13,11 @@ const _box = new Box3();
 const _vector = new Vector3();
 
 export class LineSegmentsGeometry extends InstancedBufferGeometry {
+  declare isLineSegmentsGeometry: boolean;
+  declare type: string;
+
   constructor() {
     super();
-
-    this.isLineSegmentsGeometry = true;
-
-    this.type = 'LineSegmentsGeometry';
 
     const positions = [-1, 2, 0, 1, 2, 0, -1, 1, 0, 1, 1, 0, -1, 0, 0, 1, 0, 0, -1, -1, 0, 1, -1, 0];
     const uvs = [-1, 2, 1, 2, -1, 1, 1, 1, -1, -1, 1, -1, -1, -2, 1, -2];
@@ -91,7 +90,7 @@ export class LineSegmentsGeometry extends InstancedBufferGeometry {
     return this;
   }
 
-  fromWireframeGeometry(geometry) {
+  fromWireframeGeometry(geometry: WireframeGeometry) {
     this.setPositions(geometry.attributes.position.array);
 
     return this;
@@ -182,3 +181,5 @@ export class LineSegmentsGeometry extends InstancedBufferGeometry {
     return this.applyMatrix4(matrix);
   }
 }
+LineSegmentsGeometry.prototype.isLineSegmentsGeometry = true;
+LineSegmentsGeometry.prototype.type = 'LineSegmentsGeometry';

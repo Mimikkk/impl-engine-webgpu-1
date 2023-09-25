@@ -1,12 +1,14 @@
 import { Light } from './Light.js';
+import { ColorRepresentation } from '../math/Color.js';
 
 export class RectAreaLight extends Light {
-  constructor(color, intensity, width = 10, height = 10) {
+  declare isRectAreaLight: boolean;
+  declare type: string | 'RectAreaLight';
+  width: number;
+  height: number;
+
+  constructor(color?: ColorRepresentation, intensity?: number, width: number = 10, height: number = 10) {
     super(color, intensity);
-
-    this.isRectAreaLight = true;
-
-    this.type = 'RectAreaLight';
 
     this.width = width;
     this.height = height;
@@ -22,7 +24,7 @@ export class RectAreaLight extends Light {
     this.intensity = power / (this.width * this.height * Math.PI);
   }
 
-  copy(source) {
+  copy(source: RectAreaLight) {
     super.copy(source);
 
     this.width = source.width;
@@ -31,3 +33,5 @@ export class RectAreaLight extends Light {
     return this;
   }
 }
+RectAreaLight.prototype.isRectAreaLight = true;
+RectAreaLight.prototype.type = 'RectAreaLight';

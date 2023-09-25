@@ -5,7 +5,7 @@ import { Plane } from './Plane.js';
 import { Object3D } from '../core/Object3D.js';
 import { Sprite } from '../objects/Sprite.js';
 import { Box3 } from './Box3.js';
-import { Matrix4 } from 'three/src/math/Matrix4.js';
+import { Matrix4 } from './Matrix4.js';
 
 const _sphere = new Sphere();
 const _vector = new Vector3();

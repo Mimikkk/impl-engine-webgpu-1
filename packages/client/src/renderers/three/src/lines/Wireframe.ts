@@ -1,20 +1,20 @@
-import { InstancedInterleavedBuffer, InterleavedBufferAttribute, Mesh, Vector3 } from '../Three.js';
-import { LineSegmentsGeometry } from '../lines/LineSegmentsGeometry.js';
-import { LineMaterial } from '../lines/LineMaterial.js';
+import { LineSegmentsGeometry } from './LineSegmentsGeometry.js';
+import { LineMaterial } from './LineMaterial.js';
+import { Vector3 } from '../math/Vector3.js';
+import { Mesh } from '../objects/Mesh.js';
+import { InstancedInterleavedBuffer } from '../core/InstancedInterleavedBuffer.js';
+import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js';
 
 const _start = new Vector3();
 const _end = new Vector3();
 
-class Wireframe extends Mesh {
+export class Wireframe extends Mesh {
+  declare isWireframe: boolean;
+  declare type: string;
+
   constructor(geometry = new LineSegmentsGeometry(), material = new LineMaterial({ color: Math.random() * 0xffffff })) {
     super(geometry, material);
-
-    this.isWireframe = true;
-
-    this.type = 'Wireframe';
   }
-
-  // for backwards-compatibility, but could be a method of LineSegmentsGeometry...
 
   computeLineDistances() {
     const geometry = this.geometry;
@@ -39,5 +39,5 @@ class Wireframe extends Mesh {
     return this;
   }
 }
-
-export { Wireframe };
+Wireframe.prototype.isWireframe = true;
+Wireframe.prototype.type = 'Wireframe';

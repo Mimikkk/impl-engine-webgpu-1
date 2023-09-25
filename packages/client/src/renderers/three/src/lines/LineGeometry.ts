@@ -1,15 +1,15 @@
-import { LineSegmentsGeometry } from '../lines/LineSegmentsGeometry.js';
+import { LineSegmentsGeometry } from './LineSegmentsGeometry.js';
+import { Line2 } from './Line2.js';
 
-class LineGeometry extends LineSegmentsGeometry {
+export class LineGeometry extends LineSegmentsGeometry {
+  declare isLineGeometry: boolean;
+  declare type: string;
+
   constructor() {
     super();
-
-    this.isLineGeometry = true;
-
-    this.type = 'LineGeometry';
   }
 
-  setPositions(array) {
+  setPositions(array: number[]) {
     // converts [ x1, y1, z1,  x2, y2, z2, ... ] to pairs format
 
     const length = array.length - 3;
@@ -30,7 +30,7 @@ class LineGeometry extends LineSegmentsGeometry {
     return this;
   }
 
-  setColors(array) {
+  setColors(array: number[]) {
     // converts [ r1, g1, b1,  r2, g2, b2, ... ] to pairs format
 
     const length = array.length - 3;
@@ -51,15 +51,13 @@ class LineGeometry extends LineSegmentsGeometry {
     return this;
   }
 
-  fromLine(line) {
+  fromLine(line: Line2) {
     const geometry = line.geometry;
 
-    this.setPositions(geometry.attributes.position.array); // assumes non-indexed
-
-    // set colors, maybe
+    this.setPositions(geometry.attributes.position.array);
 
     return this;
   }
 }
-
-export { LineGeometry };
+LineGeometry.prototype.isLineGeometry = true;
+LineGeometry.prototype.type = 'LineGeometry';

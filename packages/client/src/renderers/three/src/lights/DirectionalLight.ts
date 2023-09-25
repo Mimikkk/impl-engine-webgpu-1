@@ -1,9 +1,14 @@
 import { Light } from './Light.js';
 import { DirectionalLightShadow } from './DirectionalLightShadow.js';
 import { Object3D } from '../core/Object3D.js';
+import { ColorRepresentation } from '../math/Color.js';
 
-class DirectionalLight extends Light {
-  constructor(color, intensity) {
+export class DirectionalLight extends Light {
+  declare isDirectionalLight: boolean;
+  declare type: string | 'DirectionalLight';
+  shadow: DirectionalLightShadow;
+
+  constructor(color?: ColorRepresentation, intensity?: number) {
     super(color, intensity);
 
     this.isDirectionalLight = true;
@@ -22,7 +27,7 @@ class DirectionalLight extends Light {
     this.shadow.dispose();
   }
 
-  copy(source) {
+  copy(source: DirectionalLight) {
     super.copy(source);
 
     this.target = source.target.clone();
@@ -31,5 +36,5 @@ class DirectionalLight extends Light {
     return this;
   }
 }
-
-export { DirectionalLight };
+DirectionalLight.prototype.isDirectionalLight = true;
+DirectionalLight.prototype.type = 'DirectionalLight';

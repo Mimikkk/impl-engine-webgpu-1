@@ -25,6 +25,8 @@ const _boxMorphTargets = new Box3();
 const _vector = new Vector3();
 
 class BufferGeometry extends EventDispatcher {
+  attributes: Record<string, BufferAttribute>;
+
   constructor() {
     super();
 

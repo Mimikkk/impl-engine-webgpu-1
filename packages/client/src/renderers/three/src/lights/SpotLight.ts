@@ -1,13 +1,31 @@
 import { Light } from './Light.js';
 import { SpotLightShadow } from './SpotLightShadow.js';
 import { Object3D } from '../core/Object3D.js';
+import { ColorRepresentation } from '../math/Color.js';
+import { Texture } from '../textures/Texture.js';
 
-class SpotLight extends Light {
-  constructor(color, intensity, distance = 0, angle = Math.PI / 3, penumbra = 0, decay = 2) {
+export class SpotLight extends Light {
+  declare isSpotLight: boolean;
+  declare type: string | 'SpotLight';
+  distance: number;
+  angle: number;
+  penumbra: number;
+  decay: number;
+  shadow: SpotLightShadow;
+  castShadow: boolean;
+  map: Texture | null;
+
+  constructor(
+    color?: ColorRepresentation,
+    intensity?: number,
+    distance: number = 0,
+    angle: number = Math.PI / 3,
+    penumbra: number = 0,
+    decay: number = 2,
+  ) {
     super(color, intensity);
 
     this.isSpotLight = true;
-
     this.type = 'SpotLight';
 
     this.position.copy(Object3D.DEFAULT_UP);
@@ -26,13 +44,10 @@ class SpotLight extends Light {
   }
 
   get power() {
-    // compute the light's luminous power (in lumens) from its intensity (in candela)
-    // by convention for a spotlight, luminous power (lm) = π * luminous intensity (cd)
     return this.intensity * Math.PI;
   }
 
   set power(power) {
-    // set the light's intensity (in candela) from the desired luminous power (in lumens)
     this.intensity = power / Math.PI;
   }
 
@@ -40,7 +55,7 @@ class SpotLight extends Light {
     this.shadow.dispose();
   }
 
-  copy(source, recursive) {
+  copy(source: SpotLight, recursive?: boolean) {
     super.copy(source, recursive);
 
     this.distance = source.distance;
@@ -55,5 +70,5 @@ class SpotLight extends Light {
     return this;
   }
 }
-
-export { SpotLight };
+SpotLight.prototype.isSpotLight = true;
+SpotLight.prototype.type = 'SpotLight';

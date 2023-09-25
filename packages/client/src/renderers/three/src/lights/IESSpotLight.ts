@@ -1,19 +1,25 @@
-import { SpotLight } from '../Three.js';
+import { ColorRepresentation } from '../math/Color.js';
+import { SpotLight } from './SpotLight.js';
+import { Texture } from '../textures/Texture.js';
 
-class IESSpotLight extends SpotLight {
-  constructor(color, intensity, distance, angle, penumbra, decay) {
+export class IESSpotLight extends SpotLight {
+  iesMap: Texture | null;
+  constructor(
+    color?: ColorRepresentation,
+    intensity?: number,
+    distance?: number,
+    angle?: number,
+    penumbra?: number,
+    decay?: number,
+  ) {
     super(color, intensity, distance, angle, penumbra, decay);
 
     this.iesMap = null;
   }
 
-  copy(source, recursive) {
+  copy(source: IESSpotLight, recursive?: boolean) {
     super.copy(source, recursive);
-
     this.iesMap = source.iesMap;
-
     return this;
   }
 }
-
-export default IESSpotLight;

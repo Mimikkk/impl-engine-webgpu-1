@@ -3,13 +3,34 @@ import { Vector2 } from '../math/Vector2.js';
 import { Vector3 } from '../math/Vector3.js';
 import { Vector4 } from '../math/Vector4.js';
 import { Frustum } from '../math/Frustum.js';
+import { Light } from './Light.js';
+import { Camera } from '../cameras/Camera.js';
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js';
 
 const _projScreenMatrix = new Matrix4();
 const _lightPositionWorld = new Vector3();
 const _lookTarget = new Vector3();
 
 export class LightShadow {
-  constructor(camera) {
+  declare ['constructor']: new () => this;
+  declare isLightShadow: boolean;
+  camera: Camera;
+  bias: number;
+  normalBias: number;
+  radius: number;
+  blurSamples: number;
+  mapSize: Vector2;
+  map: WebGLRenderTarget | null;
+  mapPass: WebGLRenderTarget | null;
+  matrix: Matrix4;
+  autoUpdate: boolean;
+  needsUpdate: boolean;
+  _frustum: Frustum;
+  _frameExtents: Vector2;
+  _viewportCount: number;
+  _viewports: Vector4[];
+
+  constructor(camera: Camera) {
     this.camera = camera;
 
     this.bias = 0;
@@ -42,7 +63,7 @@ export class LightShadow {
     return this._frustum;
   }
 
-  updateMatrices(light) {
+  updateMatrices(light: Light): void {
     const shadowCamera = this.camera;
     const shadowMatrix = this.matrix;
 
@@ -61,7 +82,7 @@ export class LightShadow {
     shadowMatrix.multiply(_projScreenMatrix);
   }
 
-  getViewport(viewportIndex) {
+  getViewport(viewportIndex: number) {
     return this._viewports[viewportIndex];
   }
 
@@ -69,7 +90,7 @@ export class LightShadow {
     return this._frameExtents;
   }
 
-  dispose() {
+  dispose(): void {
     if (this.map) {
       this.map.dispose();
     }
@@ -79,7 +100,7 @@ export class LightShadow {
     }
   }
 
-  copy(source) {
+  copy(source: LightShadow) {
     this.camera = source.camera.clone();
 
     this.bias = source.bias;
