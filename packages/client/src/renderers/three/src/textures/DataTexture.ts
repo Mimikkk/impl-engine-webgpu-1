@@ -8,7 +8,7 @@ import {
   PixelFormat,
   TextureDataType,
   Wrapping,
-} from 'three/src/constants.js';
+} from '../constants.js';
 
 export class DataTexture extends Texture {
   declare isDataTexture: true;

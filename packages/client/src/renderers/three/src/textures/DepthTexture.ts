@@ -8,7 +8,7 @@ import {
   TextureComparisonFunction,
   TextureDataType,
   Wrapping,
-} from 'three/src/constants.js';
+} from '../constants.js';
 
 export class DepthTexture extends Texture {
   isDepthTexture: true;

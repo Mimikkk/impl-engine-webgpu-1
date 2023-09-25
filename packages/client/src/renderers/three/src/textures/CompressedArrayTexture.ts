@@ -1,6 +1,6 @@
 import { ClampToEdgeWrapping, Wrapping } from '../constants.js';
 import { CompressedTexture } from './CompressedTexture.js';
-import { CompressedPixelFormat, TextureDataType } from 'three/src/constants.js';
+import { CompressedPixelFormat, TextureDataType } from '../constants.js';
 
 export class CompressedArrayTexture extends CompressedTexture {
   declare isCompressedArrayTexture: true;

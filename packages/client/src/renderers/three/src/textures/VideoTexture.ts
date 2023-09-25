@@ -7,7 +7,7 @@ import {
   PixelFormat,
   TextureDataType,
   Wrapping,
-} from 'three/src/constants.js';
+} from '../constants.js';
 
 export class VideoTexture extends Texture {
   declare isVideoTexture: true;

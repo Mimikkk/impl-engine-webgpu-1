@@ -8,7 +8,7 @@ import {
   PixelFormat,
   TextureDataType,
   Wrapping,
-} from 'three/src/constants.js';
+} from '../constants.js';
 
 export class CubeTexture extends Texture {
   declare isCubeTexture: true;
