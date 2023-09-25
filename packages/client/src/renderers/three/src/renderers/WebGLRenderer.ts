@@ -53,7 +53,6 @@ import { WebGLState } from './webgl/WebGLState.js';
 import { WebGLTextures } from './webgl/WebGLTextures.js';
 import { WebGLUniforms } from './webgl/WebGLUniforms.js';
 import { WebGLUtils } from './webgl/WebGLUtils.js';
-import { WebXRManager } from './webxr/WebXRManager.js';
 import { WebGLMaterials } from './webgl/WebGLMaterials.js';
 import { WebGLUniformsGroups } from './webgl/WebGLUniformsGroups.js';
 import { createElementNS } from '../utils.js';
@@ -61,7 +60,6 @@ import { OffscreenCanvas, ToneMapping } from 'three';
 import { Object3D } from 'three/src/core/Object3D.js';
 import { Camera } from 'three/src/cameras/Camera.js';
 import { Plane } from '../math/Plane.js';
-import { ColorSpace } from '../math/types.js';
 import { ColorRepresentation } from 'three/src/math/Color.js';
 import { Scene } from 'three/src/scenes/Scene.js';
 import { BufferGeometry } from 'three/src/core/BufferGeometry.js';
@@ -115,7 +113,6 @@ export class WebGLRenderer {
   properties: WebGLProperties;
   renderLists: WebGLRenderLists;
   state: WebGLState;
-  xr: WebXRManager;
   getContext(): WebGLRenderingContext | WebGL2RenderingContext;
   getContextAttributes(): any;
   forceContextLoss(): void;
@@ -159,7 +156,7 @@ export class WebGLRenderer {
     geometryGroup: any,
   ): void;
 
-  setAnimationLoop(callback: XRFrameRequestCallback | null): void;
+  setAnimationLoop(callback: FrameRequestCallback | null): void;
 
   compile(scene: Object3D, camera: Camera): void;
 
@@ -467,12 +464,6 @@ export class WebGLRenderer {
 
     initGLContext();
 
-    // xr
-
-    const xr = new WebXRManager(_this, _gl);
-
-    this.xr = xr;
-
     // API
 
     this.getContext = function () {
@@ -510,11 +501,6 @@ export class WebGLRenderer {
     };
 
     this.setSize = function (width, height, updateStyle = true) {
-      if (xr.isPresenting) {
-        console.warn("THREE.WebGLRenderer: Can't change size while VR device is presenting.");
-        return;
-      }
-
       _width = width;
       _height = height;
 
@@ -693,11 +679,6 @@ export class WebGLRenderer {
       bindingStates.dispose();
       uniformsGroups.dispose();
       programCache.dispose();
-
-      xr.dispose();
-
-      xr.removeEventListener('sessionstart', onXRSessionStart);
-      xr.removeEventListener('sessionend', onXRSessionEnd);
 
       if (_transmissionRenderTarget) {
         _transmissionRenderTarget.dispose();
@@ -939,14 +920,6 @@ export class WebGLRenderer {
       if (onAnimationFrameCallback) onAnimationFrameCallback(time);
     }
 
-    function onXRSessionStart() {
-      animation.stop();
-    }
-
-    function onXRSessionEnd() {
-      animation.start();
-    }
-
     const animation = new WebGLAnimation();
     animation.setAnimationLoop(onAnimationFrame);
 
@@ -954,13 +927,9 @@ export class WebGLRenderer {
 
     this.setAnimationLoop = function (callback) {
       onAnimationFrameCallback = callback;
-      xr.setAnimationLoop(callback);
 
       callback === null ? animation.stop() : animation.start();
     };
-
-    xr.addEventListener('sessionstart', onXRSessionStart);
-    xr.addEventListener('sessionend', onXRSessionEnd);
 
     // Rendering
 
@@ -979,13 +948,7 @@ export class WebGLRenderer {
       // update camera matrices and frustum
 
       if (camera.parent === null && camera.matrixWorldAutoUpdate === true) camera.updateMatrixWorld();
-
-      if (xr.enabled === true && xr.isPresenting === true) {
-        if (xr.cameraAutoUpdate === true) xr.updateCamera(camera);
-
-        camera = xr.getCamera(); // use XR camera for rendering
-      }
-
+      f;
       //
       if (scene.isScene === true) scene.onBeforeRender(_this, scene, camera, _currentRenderTarget);
 
@@ -1446,12 +1409,7 @@ export class WebGLRenderer {
 
       const fog = scene.fog;
       const environment = material.isMeshStandardMaterial ? scene.environment : null;
-      const colorSpace =
-        _currentRenderTarget === null
-          ? _this.outputColorSpace
-          : _currentRenderTarget.isXRRenderTarget === true
-          ? _currentRenderTarget.texture.colorSpace
-          : LinearSRGBColorSpace;
+      const colorSpace = _currentRenderTarget === null ? _this.outputColorSpace : LinearSRGBColorSpace;
       const envMap = (material.isMeshStandardMaterial ? cubeuvmaps : cubemaps).get(material.envMap || environment);
       const vertexAlphas =
         material.vertexColors === true && !!geometry.attributes.color && geometry.attributes.color.itemSize === 4;
@@ -1463,7 +1421,7 @@ export class WebGLRenderer {
       let toneMapping = NoToneMapping;
 
       if (material.toneMapped) {
-        if (_currentRenderTarget === null || _currentRenderTarget.isXRRenderTarget === true) {
+        if (_currentRenderTarget === null) {
           toneMapping = _this.toneMapping;
         }
       }

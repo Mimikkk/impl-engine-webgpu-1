@@ -1,7 +1,6 @@
-import { WebGLCoordinateSystem } from '../constants.js';
+import { CoordinateSystem, WebGLCoordinateSystem } from '../constants.js';
 import { Matrix4 } from '../math/Matrix4.js';
 import { Object3D } from '../core/Object3D.js';
-import { CoordinateSystem } from '../math/types.js';
 import { Vector3 } from '../math/Vector3.js';
 
 export class Camera extends Object3D {

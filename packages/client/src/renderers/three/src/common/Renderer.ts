@@ -108,10 +108,6 @@ class Renderer {
       enabled: false,
       type: null,
     };
-
-    this.xr = {
-      enabled: false,
-    };
   }
 
   get coordinateSystem() {
