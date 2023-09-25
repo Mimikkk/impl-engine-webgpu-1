@@ -33,7 +33,40 @@ export interface RenderTargetOptions {
 }
 
 class RenderTarget extends EventDispatcher<'dispose'> {
-  constructor(width: number = 1, height: number = 1, options = {}) {
+  isRenderTarget: true = true;
+  width: number;
+  height: number;
+  depth: number;
+  scissor: Vector4;
+  scissorTest: boolean;
+  viewport: Vector4;
+  texture: Texture;
+  depthBuffer: boolean;
+  stencilBuffer: boolean;
+  depthTexture: DepthTexture;
+  samples: number;
+
+  constructor(
+    width: number = 1,
+    height: number = 1,
+    options: {
+      mapping?: Mapping;
+      wrapS?: Wrapping;
+      wrapT?: Wrapping;
+      magFilter?: MagnificationTextureFilter;
+      minFilter?: MinificationTextureFilter;
+      generateMipmaps?: boolean;
+      format?: number;
+      type?: TextureDataType;
+      anisotropy?: number;
+      colorSpace?: ColorSpace;
+      depthBuffer?: boolean;
+      stencilBuffer?: boolean;
+      depthTexture?: DepthTexture;
+      samples?: number;
+      encoding?: TextureEncoding;
+    } = {},
+  ) {
     super();
 
     this.isRenderTarget = true;
@@ -68,7 +101,6 @@ class RenderTarget extends EventDispatcher<'dispose'> {
       options.colorSpace,
     );
     this.texture.isRenderTargetTexture = true;
-
     this.texture.flipY = false;
     this.texture.generateMipmaps = options.generateMipmaps !== undefined ? options.generateMipmaps : false;
     this.texture.internalFormat = options.internalFormat !== undefined ? options.internalFormat : null;

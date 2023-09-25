@@ -41,7 +41,7 @@ export class Camera extends Object3D {
     return target.set(-e[8], -e[9], -e[10]).normalize();
   }
 
-  updateMatrixWorld(force: boolean): this {
+  updateMatrixWorld(force?: boolean): this {
     super.updateMatrixWorld(force);
     this.matrixWorldInverse.copy(this.matrixWorld).invert();
     return this;

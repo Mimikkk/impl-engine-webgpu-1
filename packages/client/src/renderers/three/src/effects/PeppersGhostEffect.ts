@@ -1,18 +1,21 @@
-import { PerspectiveCamera, Quaternion, Vector3 } from '../Three.js';
+import Renderer from '../common/Renderer.js';
+import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js';
+import { Vector3 } from '../math/Vector3.js';
+import { Quaternion } from '../math/Quaternion.js';
+import { Scene } from '../scenes/Scene.js';
 
-/**
- * peppers ghost effect based on http://www.instructables.com/id/Reflective-Prism/?ALLSTEPS
- */
+export class PeppersGhostEffect {
+  cameraDistance: number;
+  reflectFromAbove: boolean;
 
-class PeppersGhostEffect {
-  constructor(renderer) {
+  constructor(renderer: Renderer) {
     const scope = this;
 
     scope.cameraDistance = 15;
     scope.reflectFromAbove = false;
 
     // Internals
-    let _halfWidth, _width, _height;
+    let _halfWidth: number, _width: number, _height: number;
 
     const _cameraF = new PerspectiveCamera(); //front
     const _cameraB = new PerspectiveCamera(); //back
@@ -115,6 +118,7 @@ class PeppersGhostEffect {
       renderer.setScissorTest(false);
     };
   }
-}
 
-export { PeppersGhostEffect };
+  setSize: (width: number, height: number) => void;
+  render: (scene: Scene, camera: PerspectiveCamera) => void;
+}

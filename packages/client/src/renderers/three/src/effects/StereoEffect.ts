@@ -1,7 +1,11 @@
-import { StereoCamera, Vector2 } from '../Three.js';
+import { StereoCamera } from '../cameras/StereoCamera.js';
+import { Vector2 } from '../math/Vector2.js';
+import Renderer from '../common/Renderer.js';
+import { Scene } from '../scenes/Scene.js';
+import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js';
 
-class StereoEffect {
-  constructor(renderer) {
+export class StereoEffect {
+  constructor(renderer: Renderer) {
     const _stereo = new StereoCamera();
     _stereo.aspect = 0.5;
     const size = new Vector2();
@@ -37,6 +41,8 @@ class StereoEffect {
       renderer.setScissorTest(false);
     };
   }
-}
 
-export { StereoEffect };
+  setEyeSeparation: (eyeSep: number) => void;
+  setSize: (width: number, height: number) => void;
+  render: (scene: Scene, camera: PerspectiveCamera) => void;
+}

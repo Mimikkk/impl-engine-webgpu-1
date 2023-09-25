@@ -1,4 +1,9 @@
-import { BackSide, Color, ShaderMaterial, UniformsLib, UniformsUtils } from '../Three.js';
+import Renderer from '../common/Renderer.js';
+import { Color } from '../math/Color.js';
+import { ShaderMaterial } from '../materials/ShaderMaterial.js';
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js';
+import { UniformsLib } from '../renderers/shaders/UniformsLib.js';
+import { BackSide } from '../constants.js';
 
 /**
  * Reference: https://en.wikipedia.org/wiki/Cel_shading
@@ -56,8 +61,17 @@ import { BackSide, Color, ShaderMaterial, UniformsLib, UniformsUtils } from '../
  * };
  */
 
-class OutlineEffect {
-  constructor(renderer, parameters = {}) {
+export class OutlineEffect {
+  enabled: boolean;
+  constructor(
+    renderer: Renderer,
+    parameters: {
+      defaultThickness?: number;
+      defaultColor?: [number, number, number];
+      defaultAlpha?: number;
+      defaultKeepAlive?: boolean;
+    } = {},
+  ) {
     this.enabled = true;
 
     const defaultThickness = parameters.defaultThickness !== undefined ? parameters.defaultThickness : 0.003;
@@ -440,5 +454,3 @@ class OutlineEffect {
     };
   }
 }
-
-export { OutlineEffect };

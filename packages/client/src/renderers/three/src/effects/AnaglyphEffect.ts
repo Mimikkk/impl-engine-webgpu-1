@@ -1,19 +1,19 @@
-import {
-  LinearFilter,
-  Matrix3,
-  Mesh,
-  NearestFilter,
-  OrthographicCamera,
-  PlaneGeometry,
-  RGBAFormat,
-  Scene,
-  ShaderMaterial,
-  StereoCamera,
-  WebGLRenderTarget,
-} from '../Three.js';
+import Renderer from '../common/Renderer.js';
+import { Matrix3 } from '../math/Matrix3.js';
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js';
+import { Scene } from '../scenes/Scene.js';
+import { StereoCamera } from '../cameras/StereoCamera.js';
+import { LinearFilter, NearestFilter, RGBAFormat } from '../constants.js';
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js';
+import { ShaderMaterial } from '../materials/ShaderMaterial.js';
+import { PlaneGeometry } from '../geometries/PlaneGeometry.js';
+import { Mesh } from '../objects/Mesh.js';
+import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js';
+export class AnaglyphEffect {
+  colorMatrixLeft: Matrix3;
+  colorMatrixRight: Matrix3;
 
-class AnaglyphEffect {
-  constructor(renderer, width = 512, height = 512) {
+  constructor(renderer: Renderer, width: number = 512, height: number = 512) {
     // Dubois matrices from https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.7.6968&rep=rep1&type=pdf#page=4
 
     this.colorMatrixLeft = new Matrix3().fromArray([
@@ -30,7 +30,7 @@ class AnaglyphEffect {
 
     const _stereo = new StereoCamera();
 
-    const _params = { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat };
+    const _params = { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat } as const;
 
     const _renderTargetL = new WebGLRenderTarget(width, height, _params);
     const _renderTargetR = new WebGLRenderTarget(width, height, _params);
@@ -127,6 +127,8 @@ class AnaglyphEffect {
       _mesh.material.dispose();
     };
   }
-}
 
-export { AnaglyphEffect };
+  setSize: (width: number, height: number) => void;
+  render: (scene: Scene, camera: PerspectiveCamera) => void;
+  dispose: () => void;
+}

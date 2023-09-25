@@ -1,25 +1,22 @@
-import {
-  LinearFilter,
-  Mesh,
-  NearestFilter,
-  OrthographicCamera,
-  PlaneGeometry,
-  RGBAFormat,
-  Scene,
-  ShaderMaterial,
-  StereoCamera,
-  WebGLRenderTarget,
-} from '../Three.js';
+import Renderer from '../common/Renderer.js';
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js';
+import { Scene } from '../scenes/Scene.js';
+import { StereoCamera } from '../cameras/StereoCamera.js';
+import { LinearFilter, NearestFilter, RGBAFormat } from '../constants.js';
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js';
+import { ShaderMaterial } from '../materials/ShaderMaterial.js';
+import { PlaneGeometry } from '../geometries/PlaneGeometry.js';
+import { Mesh } from '../objects/Mesh.js';
 
-class ParallaxBarrierEffect {
-  constructor(renderer) {
+export class ParallaxBarrierEffect {
+  constructor(renderer: Renderer) {
     const _camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
     const _scene = new Scene();
 
     const _stereo = new StereoCamera();
 
-    const _params = { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat };
+    const _params = { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat } as const;
 
     const _renderTargetL = new WebGLRenderTarget(512, 512, _params);
     const _renderTargetR = new WebGLRenderTarget(512, 512, _params);
@@ -98,6 +95,7 @@ class ParallaxBarrierEffect {
       renderer.render(_scene, _camera);
     };
   }
-}
 
-export { ParallaxBarrierEffect };
+  setSize: (width: number, height: number) => void;
+  render: (scene: Scene, camera: OrthographicCamera) => void;
+}
