@@ -7,8 +7,8 @@ import { WebGLRenderTarget } from './WebGLRenderTarget.js';
 import { CubeCamera } from '../cameras/CubeCamera.js';
 import { CubeTexture } from '../textures/CubeTexture.js';
 import { RenderTargetOptions } from '../core/RenderTarget.js';
-import { WebGLRenderer } from './WebGLRenderer.js';
 import { Texture } from '../textures/Texture.js';
+import Renderer from '../common/Renderer.js';
 
 export class WebGLCubeRenderTarget extends WebGLRenderTarget {
   declare isWebGLCubeRenderTarget: true;
@@ -39,7 +39,7 @@ export class WebGLCubeRenderTarget extends WebGLRenderTarget {
     this.texture.minFilter = options?.minFilter ?? LinearFilter;
   }
 
-  fromEquirectangularTexture(renderer: WebGLRenderer, texture: Texture): this {
+  fromEquirectangularTexture(renderer: Renderer, texture: Texture): this {
     this.texture.type = texture.type;
     this.texture.colorSpace = texture.colorSpace;
 
@@ -124,7 +124,7 @@ export class WebGLCubeRenderTarget extends WebGLRenderTarget {
     return this;
   }
 
-  clear(renderer: WebGLRenderer, color: boolean, depth: boolean, stencil: boolean): void {
+  clear(renderer: Renderer, color: boolean, depth: boolean, stencil: boolean): void {
     const currentRenderTarget = renderer.getRenderTarget();
 
     for (let i = 0; i < 6; i++) {

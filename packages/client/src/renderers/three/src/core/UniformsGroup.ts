@@ -1,7 +1,6 @@
 import { EventDispatcher } from './EventDispatcher.js';
-import { StaticDrawUsage } from '../constants.js';
+import { StaticDrawUsage, Usage } from '../constants.js';
 import { Uniform } from './Uniform.js';
-import { Usage } from '../types.js';
 
 let id = 0;
 

@@ -1,10 +1,7 @@
 import { LinearSRGBColorSpace } from '../../constants.js';
+import Renderer from '../../common/Renderer.js';
 
-/**
- * Uniform Utilities
- */
-
-export function cloneUniforms(src) {
+export function cloneUniforms(src: any) {
   const dst = {};
 
   for (const u in src) {
@@ -43,7 +40,7 @@ export function cloneUniforms(src) {
   return dst;
 }
 
-export function mergeUniforms(uniforms) {
+export function mergeUniforms(uniforms: any[]) {
   const merged = {};
 
   for (let u = 0; u < uniforms.length; u++) {
@@ -67,7 +64,7 @@ export function cloneUniformsGroups(src) {
   return dst;
 }
 
-export function getUnlitUniformColorSpace(renderer) {
+export function getUnlitUniformColorSpace(renderer: Renderer) {
   if (renderer.getRenderTarget() === null) {
     // https://github.com/mrdoob/three.js/pull/23937#issuecomment-1111067398
     return renderer.outputColorSpace;
@@ -78,6 +75,7 @@ export function getUnlitUniformColorSpace(renderer) {
 
 // Legacy
 
-const UniformsUtils = { clone: cloneUniforms, merge: mergeUniforms };
-
-export { UniformsUtils };
+export namespace UniformsUtils {
+  export const clone = cloneUniforms;
+  export const merge = mergeUniforms;
+}

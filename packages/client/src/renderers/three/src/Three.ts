@@ -149,5 +149,4 @@ export { DataUtils } from './extras/DataUtils.js';
 export { ImageUtils } from './extras/ImageUtils.js';
 export { ShapeUtils } from './extras/ShapeUtils.js';
 export { PMREMGenerator } from './extras/PMREMGenerator.js';
-export { WebGLUtils } from './renderers/webgl/WebGLUtils.js';
 export * from './constants.js';

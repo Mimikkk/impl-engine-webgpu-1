@@ -2,8 +2,8 @@ import { CoordinateSystem, WebGLCoordinateSystem, WebGPUCoordinateSystem } from 
 import { Object3D } from '../core/Object3D.js';
 import { PerspectiveCamera } from './PerspectiveCamera.js';
 import { WebGLCubeRenderTarget } from '../renderers/WebGLCubeRenderTarget.js';
-import { WebGLRenderer } from '../renderers/WebGLRenderer.js';
 import { Scene } from '../scenes/Scene.js';
+import Renderer from '../common/Renderer.js';
 
 const fov = -90;
 const aspect = 1;
@@ -103,7 +103,7 @@ export class CubeCamera extends Object3D {
     }
   }
 
-  update(renderer: WebGLRenderer, scene: Scene): void {
+  update(renderer: Renderer, scene: Scene): void {
     if (this.parent === null) this.updateMatrixWorld();
     const renderTarget = this.renderTarget;
     if (this.coordinateSystem !== renderer.coordinateSystem) {

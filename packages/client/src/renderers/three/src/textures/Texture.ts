@@ -3,6 +3,7 @@ import {
   ClampToEdgeWrapping,
   ColorSpace,
   CompressedPixelFormat,
+  CubeTextureMapping,
   LinearEncoding,
   LinearFilter,
   LinearMipmapLinearFilter,
@@ -26,7 +27,7 @@ import { Vector2 } from '../math/Vector2.js';
 import { Matrix3 } from '../math/Matrix3.js';
 import { Source } from './Source.js';
 import { warnOnce } from '../utils.js';
-import { CubeTextureMapping } from '../constants.js';
+
 let textureId = 0;
 
 export class Texture extends EventDispatcher<'dispose'> {
@@ -48,7 +49,7 @@ export class Texture extends EventDispatcher<'dispose'> {
   minFilter: MinificationTextureFilter;
   anisotropy: number;
   format: CompressedPixelFormat | PixelFormat;
-  internalFormat: null;
+  internalFormat: CompressedPixelFormat | PixelFormat | null;
   type: TextureDataType;
   offset: Vector2;
   repeat: Vector2;

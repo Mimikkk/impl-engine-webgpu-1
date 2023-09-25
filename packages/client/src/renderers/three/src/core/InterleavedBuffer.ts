@@ -1,7 +1,7 @@
 import { MathUtils } from '../math/MathUtils.js';
-import { StaticDrawUsage } from '../constants.js';
-import { TypedArray, Usage } from '../types.js';
+import { StaticDrawUsage, Usage } from '../constants.js';
 import { InterleavedBufferAttribute } from './InterleavedBufferAttribute.js';
+import { TypedArray } from '../types.js';
 
 export class InterleavedBuffer {
   declare ['constructor']: new (array: TypedArray, stride: number) => this;

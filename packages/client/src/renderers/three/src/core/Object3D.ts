@@ -12,9 +12,9 @@ import { Scene } from '../scenes/Scene.js';
 import { Camera } from '../cameras/Camera.js';
 import { BufferGeometry } from './BufferGeometry.js';
 import { Group } from '../objects/Group.js';
-import { WebGLRenderer } from '../renderers/WebGLRenderer.js';
 import { Intersection, Raycaster } from './Raycaster.js';
 import { Skeleton } from '../objects/Skeleton.js';
+import Renderer from '../common/Renderer.js';
 
 let _object3DId = 0;
 
@@ -156,7 +156,7 @@ export class Object3D extends EventDispatcher<'added' | 'removed'> {
   }
 
   onBeforeRender(
-    renderer: WebGLRenderer,
+    renderer: Renderer,
     scene: Scene,
     camera: Camera,
     geometry: BufferGeometry,
@@ -165,7 +165,7 @@ export class Object3D extends EventDispatcher<'added' | 'removed'> {
   ): void {}
 
   onAfterRender(
-    renderer: WebGLRenderer,
+    renderer: Renderer,
     scene: Scene,
     camera: Camera,
     geometry: BufferGeometry,

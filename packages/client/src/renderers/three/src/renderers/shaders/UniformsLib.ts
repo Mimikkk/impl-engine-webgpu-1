@@ -2,8 +2,8 @@ import { Color } from '../../math/Color.js';
 import { Vector2 } from '../../math/Vector2.js';
 import { Matrix3 } from '../../math/Matrix3.js';
 
-const UniformsLib = {
-  common: {
+export namespace UniformsLib {
+  export const common = {
     diffuse: { value: new Color(0xffffff) },
     opacity: { value: 1.0 },
 
@@ -14,79 +14,79 @@ const UniformsLib = {
     alphaMapTransform: { value: new Matrix3() },
 
     alphaTest: { value: 0 },
-  },
+  };
 
-  specularmap: {
+  export const specularmap = {
     specularMap: { value: null },
     specularMapTransform: { value: new Matrix3() },
-  },
+  };
 
-  envmap: {
+  export const envmap = {
     envMap: { value: null },
     flipEnvMap: { value: -1 },
     reflectivity: { value: 1.0 }, // basic, lambert, phong
     ior: { value: 1.5 }, // physical
     refractionRatio: { value: 0.98 }, // basic, lambert, phong
-  },
+  };
 
-  aomap: {
+  export const aomap = {
     aoMap: { value: null },
     aoMapIntensity: { value: 1 },
     aoMapTransform: { value: new Matrix3() },
-  },
+  };
 
-  lightmap: {
+  export const lightmap = {
     lightMap: { value: null },
     lightMapIntensity: { value: 1 },
     lightMapTransform: { value: new Matrix3() },
-  },
+  };
 
-  bumpmap: {
+  export const bumpmap = {
     bumpMap: { value: null },
     bumpMapTransform: { value: new Matrix3() },
     bumpScale: { value: 1 },
-  },
+  };
 
-  normalmap: {
+  export const normalmap = {
     normalMap: { value: null },
     normalMapTransform: { value: new Matrix3() },
     normalScale: { value: new Vector2(1, 1) },
-  },
+  };
 
-  displacementmap: {
+  export const displacementmap = {
     displacementMap: { value: null },
     displacementMapTransform: { value: new Matrix3() },
     displacementScale: { value: 1 },
     displacementBias: { value: 0 },
-  },
+  };
 
-  emissivemap: {
+  export const emissivemap = {
     emissiveMap: { value: null },
     emissiveMapTransform: { value: new Matrix3() },
-  },
+  };
 
-  metalnessmap: {
+  export const metalnessmap = {
     metalnessMap: { value: null },
     metalnessMapTransform: { value: new Matrix3() },
-  },
+  };
 
-  roughnessmap: {
+  export const roughnessmap = {
     roughnessMap: { value: null },
     roughnessMapTransform: { value: new Matrix3() },
-  },
+  };
 
-  gradientmap: {
+  export const gradientmap = {
     gradientMap: { value: null },
-  },
+  };
 
-  fog: {
+  export const fog = {
     fogDensity: { value: 0.00025 },
     fogNear: { value: 1 },
     fogFar: { value: 2000 },
     fogColor: { value: new Color(0xffffff) },
-  },
+  };
 
-  lights: {
+  export const lights = {
     ambientLightColor: { value: [] },
 
     lightProbe: { value: [] },
@@ -186,9 +186,9 @@ const UniformsLib = {
 
     ltc_1: { value: null },
     ltc_2: { value: null },
-  },
+  };
 
-  points: {
+  export const points = {
     diffuse: { value: new Color(0xffffff) },
     opacity: { value: 1.0 },
     size: { value: 1.0 },
@@ -198,9 +198,9 @@ const UniformsLib = {
     alphaMapTransform: { value: new Matrix3() },
     alphaTest: { value: 0 },
     uvTransform: { value: new Matrix3() },
-  },
+  };
 
-  sprite: {
+  export const sprite = {
     diffuse: { value: new Color(0xffffff) },
     opacity: { value: 1.0 },
     center: { value: new Vector2(0.5, 0.5) },
@@ -210,7 +210,5 @@ const UniformsLib = {
     alphaMap: { value: null },
     alphaMapTransform: { value: new Matrix3() },
     alphaTest: { value: 0 },
-  },
-};
-
-export { UniformsLib };
+  };
+}

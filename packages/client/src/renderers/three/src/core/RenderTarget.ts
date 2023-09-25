@@ -1,6 +1,14 @@
 import { EventDispatcher } from './EventDispatcher.js';
 import { Texture } from '../textures/Texture.js';
-import { LinearFilter, Mapping, NoColorSpace, SRGBColorSpace, sRGBEncoding } from '../constants.js';
+import {
+  CompressedPixelFormat,
+  LinearFilter,
+  Mapping,
+  NoColorSpace,
+  PixelFormat,
+  SRGBColorSpace,
+  sRGBEncoding,
+} from '../constants.js';
 import { Vector4 } from '../math/Vector4.js';
 import { Source } from '../textures/Source.js';
 import { warnOnce } from '../utils.js';
@@ -32,7 +40,7 @@ export interface RenderTargetOptions {
   encoding?: TextureEncoding;
 }
 
-class RenderTarget extends EventDispatcher<'dispose'> {
+export class RenderTarget extends EventDispatcher<'dispose'> {
   isRenderTarget: true = true;
   width: number;
   height: number;
@@ -43,7 +51,7 @@ class RenderTarget extends EventDispatcher<'dispose'> {
   texture: Texture;
   depthBuffer: boolean;
   stencilBuffer: boolean;
-  depthTexture: DepthTexture;
+  depthTexture: DepthTexture | null;
   samples: number;
 
   constructor(
@@ -56,7 +64,7 @@ class RenderTarget extends EventDispatcher<'dispose'> {
       magFilter?: MagnificationTextureFilter;
       minFilter?: MinificationTextureFilter;
       generateMipmaps?: boolean;
-      format?: number;
+      format?: CompressedPixelFormat | PixelFormat;
       type?: TextureDataType;
       anisotropy?: number;
       colorSpace?: ColorSpace;
@@ -65,6 +73,7 @@ class RenderTarget extends EventDispatcher<'dispose'> {
       depthTexture?: DepthTexture;
       samples?: number;
       encoding?: TextureEncoding;
+      internalFormat?: CompressedPixelFormat | PixelFormat;
     } = {},
   ) {
     super();
@@ -114,7 +123,7 @@ class RenderTarget extends EventDispatcher<'dispose'> {
     this.samples = options.samples !== undefined ? options.samples : 0;
   }
 
-  setSize(width, height, depth = 1) {
+  setSize(width: number, height: number, depth: number = 1) {
     if (this.width !== width || this.height !== height || this.depth !== depth) {
       this.width = width;
       this.height = height;
@@ -132,10 +141,11 @@ class RenderTarget extends EventDispatcher<'dispose'> {
   }
 
   clone() {
+    //@ts-expect-error
     return new this.constructor().copy(this);
   }
 
-  copy(source) {
+  copy(source: RenderTarget) {
     this.width = source.width;
     this.height = source.height;
     this.depth = source.depth;
@@ -167,5 +177,3 @@ class RenderTarget extends EventDispatcher<'dispose'> {
     this.dispatchEvent({ type: 'dispose' });
   }
 }
-
-export { RenderTarget };
