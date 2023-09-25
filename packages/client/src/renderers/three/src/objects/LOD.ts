@@ -1,5 +1,7 @@
 import { Vector3 } from '../math/Vector3.js';
 import { Object3D } from '../core/Object3D.js';
+import { Intersection, Raycaster } from '../core/Raycaster.js';
+import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js';
 
 const _v1 = new Vector3();
 const _v2 = new Vector3();
@@ -19,7 +21,7 @@ export class LOD extends Object3D {
     this.autoUpdate = true;
   }
 
-  copy(source: LOD): LOD {
+  copy(source: LOD) {
     super.copy(source, false);
 
     const levels = source.levels;
@@ -35,7 +37,7 @@ export class LOD extends Object3D {
     return this;
   }
 
-  addLevel(object, distance = 0, hysteresis = 0) {
+  addLevel(object: Object3D, distance: number = 0, hysteresis: number = 0) {
     distance = Math.abs(distance);
 
     const levels = this.levels;
@@ -55,7 +57,7 @@ export class LOD extends Object3D {
     return this;
   }
 
-  getObjectForDistance(distance) {
+  getObjectForDistance(distance: number) {
     const levels = this.levels;
 
     if (levels.length > 0) {
@@ -79,7 +81,7 @@ export class LOD extends Object3D {
     return null;
   }
 
-  raycast(raycaster, intersects) {
+  raycast(raycaster: Raycaster, intersects: Intersection[]) {
     const levels = this.levels;
 
     if (levels.length > 0) {
@@ -87,11 +89,11 @@ export class LOD extends Object3D {
 
       const distance = raycaster.ray.origin.distanceTo(_v1);
 
-      this.getObjectForDistance(distance).raycast(raycaster, intersects);
+      this.getObjectForDistance(distance)!.raycast(raycaster, intersects);
     }
   }
 
-  update(camera) {
+  update(camera: PerspectiveCamera) {
     const levels = this.levels;
 
     if (levels.length > 1) {

@@ -5,14 +5,20 @@ import { Object3D } from '../core/Object3D.js';
 import { Vector3 } from '../math/Vector3.js';
 import { PointsMaterial } from '../materials/PointsMaterial.js';
 import { BufferGeometry } from '../core/BufferGeometry.js';
+import { Material } from '../materials/Material.js';
+import { Intersection, Raycaster } from '../core/Raycaster.js';
 
 const _inverseMatrix = new Matrix4();
 const _ray = new Ray();
 const _sphere = new Sphere();
 const _position = new Vector3();
 
-class Points extends Object3D {
-  constructor(geometry = new BufferGeometry(), material = new PointsMaterial()) {
+export class Points extends Object3D {
+  declare isPoints: true;
+  geometry: BufferGeometry;
+  material: Material;
+
+  constructor(geometry: BufferGeometry = new BufferGeometry(), material: Material = new PointsMaterial()) {
     super();
 
     this.isPoints = true;
@@ -25,7 +31,7 @@ class Points extends Object3D {
     this.updateMorphTargets();
   }
 
-  copy(source, recursive) {
+  copy(source: Points, recursive?: boolean) {
     super.copy(source, recursive);
 
     this.material = source.material;
@@ -34,7 +40,7 @@ class Points extends Object3D {
     return this;
   }
 
-  raycast(raycaster, intersects) {
+  raycast(raycaster: Raycaster, intersects: Intersection[]) {
     const geometry = this.geometry;
     const matrixWorld = this.matrixWorld;
     const threshold = raycaster.params.Points.threshold;
@@ -44,7 +50,7 @@ class Points extends Object3D {
 
     if (geometry.boundingSphere === null) geometry.computeBoundingSphere();
 
-    _sphere.copy(geometry.boundingSphere);
+    _sphere.copy(geometry.boundingSphere!);
     _sphere.applyMatrix4(matrixWorld);
     _sphere.radius += threshold;
 
@@ -109,7 +115,15 @@ class Points extends Object3D {
   }
 }
 
-function testPoint(point, index, localThresholdSq, matrixWorld, raycaster, intersects, object) {
+function testPoint(
+  point: Vector3,
+  index: number,
+  localThresholdSq: number,
+  matrixWorld: Matrix4,
+  raycaster: Raycaster,
+  intersects: Intersection[],
+  object: Points,
+) {
   const rayPointDistanceSq = _ray.distanceSqToPoint(point);
 
   if (rayPointDistanceSq < localThresholdSq) {
@@ -132,5 +146,3 @@ function testPoint(point, index, localThresholdSq, matrixWorld, raycaster, inter
     });
   }
 }
-
-export { Points };

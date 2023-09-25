@@ -8,7 +8,14 @@ const _offsetMatrix = new Matrix4();
 const _identityMatrix = new Matrix4();
 
 export class Skeleton {
-  constructor(bones = [], boneInverses = []) {
+  uuid: string;
+  bones: Bone[];
+  boneInverses: Matrix4[];
+  boneMatrices: Float32Array | null;
+  boneTexture: DataTexture | null;
+  boneTextureSize: number;
+
+  constructor(bones: Bone[] = [], boneInverses: Matrix4[] = []) {
     this.uuid = MathUtils.generateUUID();
 
     this.bones = bones.slice(0);
@@ -77,7 +84,7 @@ export class Skeleton {
       const bone = this.bones[i];
 
       if (bone) {
-        if (bone.parent && bone.parent.isBone) {
+        if (bone.parent && Bone.is(bone.parent)) {
           bone.matrix.copy(bone.parent.matrixWorld).invert();
           bone.matrix.multiply(bone.matrixWorld);
         } else {
@@ -103,7 +110,7 @@ export class Skeleton {
       const matrix = bones[i] ? bones[i].matrixWorld : _identityMatrix;
 
       _offsetMatrix.multiplyMatrices(matrix, boneInverses[i]);
-      _offsetMatrix.toArray(boneMatrices, i * 16);
+      _offsetMatrix.toArray(boneMatrices!, i * 16);
     }
 
     if (boneTexture !== null) {
@@ -128,7 +135,7 @@ export class Skeleton {
     size = Math.max(size, 4);
 
     const boneMatrices = new Float32Array(size * size * 4); // 4 floats per RGBA pixel
-    boneMatrices.set(this.boneMatrices); // copy current values
+    boneMatrices.set(this.boneMatrices!); // copy current values
 
     const boneTexture = new DataTexture(boneMatrices, size, size, RGBAFormat, FloatType);
     boneTexture.needsUpdate = true;
@@ -140,7 +147,7 @@ export class Skeleton {
     return this;
   }
 
-  getBoneByName(name) {
+  getBoneByName(name: string): Bone | undefined {
     for (let i = 0, il = this.bones.length; i < il; i++) {
       const bone = this.bones[i];
 

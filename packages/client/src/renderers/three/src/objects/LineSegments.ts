@@ -1,12 +1,18 @@
 import { Line } from './Line.js';
 import { Vector3 } from '../math/Vector3.js';
 import { Float32BufferAttribute } from '../core/BufferAttribute.js';
+import { BufferGeometry } from '../core/BufferGeometry.js';
+import { Material } from '../materials/Material.js';
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
 
 const _start = new Vector3();
 const _end = new Vector3();
 
-class LineSegments extends Line {
-  constructor(geometry, material) {
+export class LineSegments extends Line {
+  declare isLineSegments: true;
+  declare type: string | 'LineSegments';
+
+  constructor(geometry: BufferGeometry, material: LineBasicMaterial) {
     super(geometry, material);
 
     this.isLineSegments = true;
@@ -21,7 +27,7 @@ class LineSegments extends Line {
 
     if (geometry.index === null) {
       const positionAttribute = geometry.attributes.position;
-      const lineDistances = [];
+      const lineDistances: number[] = [];
 
       for (let i = 0, l = positionAttribute.count; i < l; i += 2) {
         _start.fromBufferAttribute(positionAttribute, i);
@@ -41,5 +47,3 @@ class LineSegments extends Line {
     return this;
   }
 }
-
-export { LineSegments };

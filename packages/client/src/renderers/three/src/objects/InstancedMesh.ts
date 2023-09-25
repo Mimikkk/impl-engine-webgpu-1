@@ -3,19 +3,30 @@ import { Mesh } from './Mesh.js';
 import { Box3 } from '../math/Box3.js';
 import { Matrix4 } from '../math/Matrix4.js';
 import { Sphere } from '../math/Sphere.js';
+import { Color } from '../math/Color.js';
+import { Intersection, Raycaster } from '../core/Raycaster.js';
+import { BufferGeometry } from '../core/BufferGeometry.js';
+import { Material } from '../materials/Material.js';
 
 const _instanceLocalMatrix = new Matrix4();
 const _instanceWorldMatrix = new Matrix4();
 
-const _instanceIntersects = [];
+const _instanceIntersects: Intersection[] = [];
 
 const _box3 = new Box3();
 const _identity = new Matrix4();
 const _mesh = new Mesh();
 const _sphere = new Sphere();
 
-class InstancedMesh extends Mesh {
-  constructor(geometry, material, count) {
+export class InstancedMesh extends Mesh {
+  declare isInstancedMesh: true;
+  instanceMatrix: InstancedBufferAttribute;
+  instanceColor: InstancedBufferAttribute | null;
+  count: number;
+  boundingBox: Box3 | null;
+  boundingSphere: Sphere | null;
+
+  constructor(geometry: BufferGeometry, material: Material, count: number) {
     super(geometry, material);
 
     this.isInstancedMesh = true;
@@ -79,7 +90,7 @@ class InstancedMesh extends Mesh {
     }
   }
 
-  copy(source, recursive) {
+  copy(source: InstancedMesh, recursive?: boolean) {
     super.copy(source, recursive);
 
     this.instanceMatrix.copy(source.instanceMatrix);
@@ -94,15 +105,15 @@ class InstancedMesh extends Mesh {
     return this;
   }
 
-  getColorAt(index, color) {
-    color.fromArray(this.instanceColor.array, index * 3);
+  getColorAt(index: number, color: Color) {
+    color.fromArray(this.instanceColor!.array, index * 3);
   }
 
-  getMatrixAt(index, matrix) {
+  getMatrixAt(index: number, matrix: Matrix4) {
     matrix.fromArray(this.instanceMatrix.array, index * 16);
   }
 
-  raycast(raycaster, intersects) {
+  raycast(raycaster: Raycaster, intersects: Intersection[]) {
     const matrixWorld = this.matrixWorld;
     const raycastTimes = this.count;
 
@@ -115,7 +126,7 @@ class InstancedMesh extends Mesh {
 
     if (this.boundingSphere === null) this.computeBoundingSphere();
 
-    _sphere.copy(this.boundingSphere);
+    _sphere.copy(this.boundingSphere!);
     _sphere.applyMatrix4(matrixWorld);
 
     if (raycaster.ray.intersectsSphere(_sphere) === false) return;
@@ -148,7 +159,7 @@ class InstancedMesh extends Mesh {
     }
   }
 
-  setColorAt(index, color) {
+  setColorAt(index: number, color: Color) {
     if (this.instanceColor === null) {
       this.instanceColor = new InstancedBufferAttribute(new Float32Array(this.instanceMatrix.count * 3), 3);
     }
@@ -156,7 +167,7 @@ class InstancedMesh extends Mesh {
     color.toArray(this.instanceColor.array, index * 3);
   }
 
-  setMatrixAt(index, matrix) {
+  setMatrixAt(index: number, matrix: Matrix4) {
     matrix.toArray(this.instanceMatrix.array, index * 16);
   }
 
@@ -166,5 +177,3 @@ class InstancedMesh extends Mesh {
     this.dispatchEvent({ type: 'dispose' });
   }
 }
-
-export { InstancedMesh };

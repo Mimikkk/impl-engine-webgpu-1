@@ -2,7 +2,7 @@ import { Camera } from './Camera.js';
 import { MathUtils } from '../math/MathUtils.js';
 
 export class PerspectiveCamera extends Camera {
-  static is = (item: Camera): item is PerspectiveCamera => 'isPerspectiveCamera' in item;
+  static is = (item?: null | Camera): item is PerspectiveCamera => !!item && 'isPerspectiveCamera' in item;
   declare isPerspectiveCamera: true;
   declare type: string | 'PerspectiveCamera';
 

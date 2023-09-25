@@ -1,7 +1,13 @@
 import { Line } from './Line.js';
+import { BufferGeometry } from '../core/BufferGeometry.js';
+import { Material } from '../materials/Material.js';
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
 
-class LineLoop extends Line {
-  constructor(geometry, material) {
+export class LineLoop extends Line {
+  declare isLineLoop: true;
+  declare type: string | 'LineLoop';
+
+  constructor(geometry: BufferGeometry, material: LineBasicMaterial) {
     super(geometry, material);
 
     this.isLineLoop = true;
@@ -9,5 +15,3 @@ class LineLoop extends Line {
     this.type = 'LineLoop';
   }
 }
-
-export { LineLoop };

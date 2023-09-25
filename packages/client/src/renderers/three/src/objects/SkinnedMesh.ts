@@ -5,6 +5,11 @@ import { Sphere } from '../math/Sphere.js';
 import { Vector3 } from '../math/Vector3.js';
 import { Vector4 } from '../math/Vector4.js';
 import { Ray } from '../math/Ray.js';
+import { Material } from '../materials/Material.js';
+import { BufferGeometry } from '../core/BufferGeometry.js';
+import { Skeleton } from './Skeleton.js';
+import { Intersection, Raycaster } from '../core/Raycaster.js';
+import { Object3D } from '../core/Object3D.js';
 
 const _basePosition = new Vector3();
 
@@ -19,8 +24,16 @@ const _sphere = new Sphere();
 const _inverseMatrix = new Matrix4();
 const _ray = new Ray();
 
-class SkinnedMesh extends Mesh {
-  constructor(geometry, material) {
+export class SkinnedMesh extends Mesh {
+  declare isSkinnedMesh: true;
+  skeleton: Skeleton;
+  bindMode: string;
+  bindMatrix: Matrix4;
+  bindMatrixInverse: Matrix4;
+  boundingBox: Box3 | null;
+  boundingSphere: Sphere | null;
+
+  constructor(geometry: BufferGeometry, material: Material | Material[]) {
     super(geometry, material);
 
     this.isSkinnedMesh = true;
@@ -35,7 +48,7 @@ class SkinnedMesh extends Mesh {
     this.boundingSphere = null;
   }
 
-  computeBoundingBox() {
+  computeBoundingBox(): void {
     const geometry = this.geometry;
 
     if (this.boundingBox === null) {
@@ -53,7 +66,7 @@ class SkinnedMesh extends Mesh {
     }
   }
 
-  computeBoundingSphere() {
+  computeBoundingSphere(): void {
     const geometry = this.geometry;
 
     if (this.boundingSphere === null) {
@@ -71,7 +84,7 @@ class SkinnedMesh extends Mesh {
     }
   }
 
-  copy(source, recursive) {
+  copy(source: SkinnedMesh, recursive?: boolean) {
     super.copy(source, recursive);
 
     this.bindMode = source.bindMode;
@@ -86,7 +99,7 @@ class SkinnedMesh extends Mesh {
     return this;
   }
 
-  raycast(raycaster, intersects) {
+  raycast(raycaster: Raycaster, intersects: Intersection[]) {
     const material = this.material;
     const matrixWorld = this.matrixWorld;
 
@@ -96,7 +109,7 @@ class SkinnedMesh extends Mesh {
 
     if (this.boundingSphere === null) this.computeBoundingSphere();
 
-    _sphere.copy(this.boundingSphere);
+    _sphere.copy(this.boundingSphere!);
     _sphere.applyMatrix4(matrixWorld);
 
     if (raycaster.ray.intersectsSphere(_sphere) === false) return;
@@ -109,7 +122,7 @@ class SkinnedMesh extends Mesh {
     // test with bounding box in local space
 
     if (this.boundingBox !== null) {
-      if (_ray.intersectsBox(this.boundingBox) === false) return;
+      if (!_ray.intersectsBox(this.boundingBox)) return;
     }
 
     // test for intersections with geometry
@@ -117,7 +130,7 @@ class SkinnedMesh extends Mesh {
     this._computeIntersections(raycaster, intersects, _ray);
   }
 
-  getVertexPosition(index, target) {
+  getVertexPosition(index: number, target: Vector3) {
     super.getVertexPosition(index, target);
 
     this.applyBoneTransform(index, target);
@@ -125,7 +138,7 @@ class SkinnedMesh extends Mesh {
     return target;
   }
 
-  bind(skeleton, bindMatrix) {
+  bind(skeleton: Skeleton, bindMatrix?: Matrix4): void {
     this.skeleton = skeleton;
 
     if (bindMatrix === undefined) {
@@ -140,11 +153,11 @@ class SkinnedMesh extends Mesh {
     this.bindMatrixInverse.copy(bindMatrix).invert();
   }
 
-  pose() {
-    this.skeleton.pose();
+  pose(): void {
+    this.skeleton!.pose();
   }
 
-  normalizeSkinWeights() {
+  normalizeSkinWeights(): void {
     const vector = new Vector4();
 
     const skinWeight = this.geometry.attributes.skinWeight;
@@ -164,7 +177,7 @@ class SkinnedMesh extends Mesh {
     }
   }
 
-  updateMatrixWorld(force) {
+  updateMatrixWorld(force?: boolean): void {
     super.updateMatrixWorld(force);
 
     if (this.bindMode === 'attached') {
@@ -176,7 +189,7 @@ class SkinnedMesh extends Mesh {
     }
   }
 
-  applyBoneTransform(index, vector) {
+  applyBoneTransform(index: number, vector: Vector3): Vector3 {
     const skeleton = this.skeleton;
     const geometry = this.geometry;
 
@@ -202,12 +215,10 @@ class SkinnedMesh extends Mesh {
     return vector.applyMatrix4(this.bindMatrixInverse);
   }
 
-  boneTransform(index, vector) {
+  boneTransform(index: number, vector: Vector3): Vector3 {
     // @deprecated, r151
 
     console.warn('THREE.SkinnedMesh: .boneTransform() was renamed to .applyBoneTransform() in r151.');
     return this.applyBoneTransform(index, vector);
   }
 }
-
-export { SkinnedMesh };

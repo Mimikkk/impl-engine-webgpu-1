@@ -3,6 +3,7 @@ import { Vector3 } from './Vector3.js';
 import { Matrix3 } from './Matrix3.js';
 import { Euler } from './Euler.js';
 import { Quaternion } from './Quaternion.js';
+import { NumberArray } from '../types.js';
 
 export class Matrix4 {
   declare ['constructor']: new () => this;
@@ -951,7 +952,7 @@ export class Matrix4 {
     return true;
   }
 
-  fromArray(array: number[], offset: number = 0): Matrix4 {
+  fromArray(array: NumberArray, offset: number = 0): Matrix4 {
     for (let i = 0; i < 16; i++) {
       this.elements[i] = array[i + offset];
     }
@@ -959,7 +960,7 @@ export class Matrix4 {
     return this;
   }
 
-  toArray(array: number[] = [], offset: number = 0): number[] {
+  toArray(array: NumberArray = [], offset: number = 0): NumberArray {
     const te = this.elements;
 
     array[offset] = te[0];

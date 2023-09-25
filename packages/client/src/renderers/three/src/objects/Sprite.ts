@@ -7,8 +7,10 @@ import { BufferGeometry } from '../core/BufferGeometry.js';
 import { InterleavedBuffer } from '../core/InterleavedBuffer.js';
 import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js';
 import { SpriteMaterial } from '../materials/SpriteMaterial.js';
+import { Intersection, Raycaster } from '../core/Raycaster.js';
+import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js';
 
-let _geometry;
+let _geometry: BufferGeometry;
 
 const _intersectPoint = new Vector3();
 const _worldScale = new Vector3();
@@ -26,8 +28,14 @@ const _uvA = new Vector2();
 const _uvB = new Vector2();
 const _uvC = new Vector2();
 
-class Sprite extends Object3D {
-  constructor(material) {
+export class Sprite extends Object3D {
+  declare isSprite: true;
+  declare type: string | 'Sprite';
+  geometry: BufferGeometry;
+  material: SpriteMaterial;
+  center: Vector2;
+
+  constructor(material?: SpriteMaterial) {
     super();
 
     this.isSprite = true;
@@ -54,9 +62,10 @@ class Sprite extends Object3D {
     this.center = new Vector2(0.5, 0.5);
   }
 
-  raycast(raycaster, intersects) {
+  raycast(raycaster: Raycaster, intersects: Intersection[]) {
     if (raycaster.camera === null) {
       console.error('THREE.Sprite: "Raycaster.camera" needs to be set in order to raycast against sprites.');
+      return;
     }
 
     _worldScale.setFromMatrixScale(this.matrixWorld);
@@ -66,7 +75,7 @@ class Sprite extends Object3D {
 
     _mvPosition.setFromMatrixPosition(this.modelViewMatrix);
 
-    if (raycaster.camera.isPerspectiveCamera && this.material.sizeAttenuation === false) {
+    if (PerspectiveCamera.is(raycaster.camera) && !this.material.sizeAttenuation) {
       _worldScale.multiplyScalar(-_mvPosition.z);
     }
 
@@ -115,7 +124,7 @@ class Sprite extends Object3D {
     });
   }
 
-  copy(source, recursive) {
+  copy(source: Sprite, recursive?: boolean) {
     super.copy(source, recursive);
 
     if (source.center !== undefined) this.center.copy(source.center);
@@ -126,12 +135,20 @@ class Sprite extends Object3D {
   }
 }
 
-function transformVertex(vertexPosition, mvPosition, center, scale, sin, cos) {
+function transformVertex(
+  vertexPosition: Vector3,
+  mvPosition: Vector3,
+  center: Vector2,
+  scale: Vector3,
+  sin?: number,
+  cos?: number,
+) {
   // compute position in camera space
+  //@ts-expect-error
   _alignedPosition.subVectors(vertexPosition, center).addScalar(0.5).multiply(scale);
 
   // to check if rotation is not zero
-  if (sin !== undefined) {
+  if (sin !== undefined && cos !== undefined) {
     _rotatedPosition.x = cos * _alignedPosition.x - sin * _alignedPosition.y;
     _rotatedPosition.y = sin * _alignedPosition.x + cos * _alignedPosition.y;
   } else {
@@ -145,5 +162,3 @@ function transformVertex(vertexPosition, mvPosition, center, scale, sin, cos) {
   // transform to world space
   vertexPosition.applyMatrix4(_viewWorldMatrix);
 }
-
-export { Sprite };

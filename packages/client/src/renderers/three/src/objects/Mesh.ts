@@ -8,6 +8,7 @@ import { Triangle } from '../math/Triangle.js';
 import { BackSide, FrontSide } from '../constants.js';
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js';
 import { BufferGeometry } from '../core/BufferGeometry.js';
+import { Material } from '../materials/Material.js';
 
 const _inverseMatrix = new Matrix4();
 const _ray = new Ray();
@@ -33,10 +34,13 @@ const _intersectionPoint = new Vector3();
 const _intersectionPointWorld = new Vector3();
 
 class Mesh extends Object3D {
-  geometry: BufferGeometry;
-  material: MeshBasicMaterial;
+  declare isMesh: boolean;
+  declare type: string | 'Mesh';
 
-  constructor(geometry = new BufferGeometry(), material = new MeshBasicMaterial()) {
+  geometry: BufferGeometry;
+  material: Material | Material[];
+
+  constructor(geometry = new BufferGeometry(), material: Material | Material[] = new MeshBasicMaterial()) {
     super();
 
     this.isMesh = true;
