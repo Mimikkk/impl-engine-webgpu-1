@@ -1,8 +1,30 @@
 import { Texture } from './Texture.js';
 import { CubeReflectionMapping } from '../constants.js';
+import {
+  ColorSpace,
+  CubeTextureMapping,
+  MagnificationTextureFilter,
+  MinificationTextureFilter,
+  PixelFormat,
+  TextureDataType,
+  Wrapping,
+} from 'three/src/constants.js';
 
-class CubeTexture extends Texture {
-  constructor(images, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, colorSpace) {
+export class CubeTexture extends Texture {
+  declare isCubeTexture: true;
+
+  constructor(
+    images?: (HTMLImageElement | HTMLCanvasElement)[],
+    mapping?: CubeTextureMapping,
+    wrapS?: Wrapping,
+    wrapT?: Wrapping,
+    magFilter?: MagnificationTextureFilter,
+    minFilter?: MinificationTextureFilter,
+    format?: PixelFormat,
+    type?: TextureDataType,
+    anisotropy?: number,
+    colorSpace?: ColorSpace,
+  ) {
     images = images !== undefined ? images : [];
     mapping = mapping !== undefined ? mapping : CubeReflectionMapping;
 
@@ -21,5 +43,3 @@ class CubeTexture extends Texture {
     this.image = value;
   }
 }
-
-export { CubeTexture };

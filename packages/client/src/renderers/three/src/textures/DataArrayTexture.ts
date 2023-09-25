@@ -1,8 +1,11 @@
 import { Texture } from './Texture.js';
-import { ClampToEdgeWrapping, NearestFilter } from '../constants.js';
+import { ClampToEdgeWrapping, NearestFilter, Wrapping } from '../constants.js';
 
-class DataArrayTexture extends Texture {
-  constructor(data = null, width = 1, height = 1, depth = 1) {
+export class DataArrayTexture extends Texture {
+  declare isDataArrayTexture: true;
+  wrapR: Wrapping;
+
+  constructor(data: BufferSource | null = null, width: number = 1, height: number = 1, depth: number = 1) {
     super(null);
 
     this.isDataArrayTexture = true;
@@ -19,5 +22,3 @@ class DataArrayTexture extends Texture {
     this.unpackAlignment = 1;
   }
 }
-
-export { DataArrayTexture };

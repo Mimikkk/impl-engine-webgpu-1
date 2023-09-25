@@ -1,8 +1,31 @@
 import { Texture } from './Texture.js';
 import { DepthFormat, DepthStencilFormat, NearestFilter, UnsignedInt248Type, UnsignedIntType } from '../constants.js';
+import {
+  DeepTexturePixelFormat,
+  MagnificationTextureFilter,
+  Mapping,
+  MinificationTextureFilter,
+  TextureComparisonFunction,
+  TextureDataType,
+  Wrapping,
+} from 'three/src/constants.js';
 
 export class DepthTexture extends Texture {
-  constructor(width, height, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, format) {
+  isDepthTexture: true;
+  compareFunction: TextureComparisonFunction | null;
+
+  constructor(
+    width: number,
+    height: number,
+    type?: TextureDataType,
+    mapping?: Mapping,
+    wrapS?: Wrapping,
+    wrapT?: Wrapping,
+    magFilter?: MagnificationTextureFilter,
+    minFilter?: MinificationTextureFilter,
+    anisotropy?: number,
+    format?: DeepTexturePixelFormat,
+  ) {
     format = format !== undefined ? format : DepthFormat;
 
     if (format !== DepthFormat && format !== DepthStencilFormat) {
@@ -27,7 +50,7 @@ export class DepthTexture extends Texture {
     this.compareFunction = null;
   }
 
-  copy(source) {
+  copy(source: DepthTexture) {
     super.copy(source);
 
     this.compareFunction = source.compareFunction;

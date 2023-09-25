@@ -1,20 +1,31 @@
 import { Texture } from './Texture.js';
 import { NearestFilter } from '../constants.js';
+import {
+  ColorSpace,
+  MagnificationTextureFilter,
+  Mapping,
+  MinificationTextureFilter,
+  PixelFormat,
+  TextureDataType,
+  Wrapping,
+} from 'three/src/constants.js';
 
-class DataTexture extends Texture {
+export class DataTexture extends Texture {
+  declare isDataTexture: true;
+
   constructor(
-    data = null,
-    width = 1,
-    height = 1,
-    format,
-    type,
-    mapping,
-    wrapS,
-    wrapT,
-    magFilter = NearestFilter,
-    minFilter = NearestFilter,
-    anisotropy,
-    colorSpace,
+    data: BufferSource | null = null,
+    width: number = 1,
+    height: number = 1,
+    format?: PixelFormat,
+    type?: TextureDataType,
+    mapping?: Mapping,
+    wrapS?: Wrapping,
+    wrapT?: Wrapping,
+    magFilter: MagnificationTextureFilter = NearestFilter,
+    minFilter: MinificationTextureFilter = NearestFilter,
+    anisotropy?: number,
+    colorSpace?: ColorSpace,
   ) {
     super(null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, colorSpace);
 
@@ -27,5 +38,3 @@ class DataTexture extends Texture {
     this.unpackAlignment = 1;
   }
 }
-
-export { DataTexture };

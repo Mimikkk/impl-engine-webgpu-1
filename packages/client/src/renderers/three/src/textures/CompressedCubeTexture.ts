@@ -1,9 +1,12 @@
-import { CubeReflectionMapping } from '../constants.js';
+import { CompressedPixelFormat, CubeReflectionMapping, TextureDataType } from '../constants.js';
 import { CompressedTexture } from './CompressedTexture.js';
 
-class CompressedCubeTexture extends CompressedTexture {
-  constructor(images, format, type) {
-    super(undefined, images[0].width, images[0].height, format, type, CubeReflectionMapping);
+export class CompressedCubeTexture extends CompressedTexture {
+  declare isCompressedCubeTexture: true;
+  declare isCubeTexture: true;
+
+  constructor(images: ImageData[], format: CompressedPixelFormat, type: TextureDataType) {
+    super([], images[0].width, images[0].height, format, type, CubeReflectionMapping);
 
     this.isCompressedCubeTexture = true;
     this.isCubeTexture = true;
@@ -11,5 +14,3 @@ class CompressedCubeTexture extends CompressedTexture {
     this.image = images;
   }
 }
-
-export { CompressedCubeTexture };

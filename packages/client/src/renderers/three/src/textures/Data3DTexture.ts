@@ -1,16 +1,11 @@
 import { Texture } from './Texture.js';
-import { ClampToEdgeWrapping, NearestFilter } from '../constants.js';
+import { ClampToEdgeWrapping, NearestFilter, Wrapping } from '../constants.js';
 
-class Data3DTexture extends Texture {
-  constructor(data = null, width = 1, height = 1, depth = 1) {
-    // We're going to add .setXXX() methods for setting properties later.
-    // Users can still set in DataTexture3D directly.
-    //
-    //	const texture = new THREE.DataTexture3D( data, width, height, depth );
-    // 	texture.anisotropy = 16;
-    //
-    // See #14839
+export class Data3DTexture extends Texture {
+  declare isData3DTexture: true;
+  wrapR: Wrapping;
 
+  constructor(data: BufferSource | null = null, width: number = 1, height: number = 1, depth: number = 1) {
     super(null);
 
     this.isData3DTexture = true;
@@ -27,5 +22,3 @@ class Data3DTexture extends Texture {
     this.unpackAlignment = 1;
   }
 }
-
-export { Data3DTexture };

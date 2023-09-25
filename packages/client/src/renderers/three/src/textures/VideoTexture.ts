@@ -1,8 +1,28 @@
 import { LinearFilter } from '../constants.js';
 import { Texture } from './Texture.js';
+import {
+  MagnificationTextureFilter,
+  Mapping,
+  MinificationTextureFilter,
+  PixelFormat,
+  TextureDataType,
+  Wrapping,
+} from 'three/src/constants.js';
 
-class VideoTexture extends Texture {
-  constructor(video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy) {
+export class VideoTexture extends Texture {
+  declare isVideoTexture: true;
+
+  constructor(
+    video: HTMLVideoElement,
+    mapping?: Mapping,
+    wrapS?: Wrapping,
+    wrapT?: Wrapping,
+    magFilter?: MagnificationTextureFilter,
+    minFilter?: MinificationTextureFilter,
+    format?: PixelFormat,
+    type?: TextureDataType,
+    anisotropy?: number,
+  ) {
     super(video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
 
     this.isVideoTexture = true;
@@ -24,12 +44,13 @@ class VideoTexture extends Texture {
     }
   }
 
-  clone() {
+  clone(): VideoTexture {
+    //@ts-ignore
     return new this.constructor(this.image).copy(this);
   }
 
   update() {
-    const video = this.image;
+    const video = this.image! as HTMLVideoElement;
     const hasVideoFrameCallback = 'requestVideoFrameCallback' in video;
 
     if (hasVideoFrameCallback === false && video.readyState >= video.HAVE_CURRENT_DATA) {
@@ -37,5 +58,3 @@ class VideoTexture extends Texture {
     }
   }
 }
-
-export { VideoTexture };

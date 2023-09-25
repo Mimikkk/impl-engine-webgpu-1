@@ -1,19 +1,31 @@
 import { Texture } from './Texture.js';
+import {
+  ColorSpace,
+  CompressedPixelFormat,
+  CubeTextureMapping,
+  MagnificationTextureFilter,
+  Mapping,
+  MinificationTextureFilter,
+  TextureDataType,
+  Wrapping,
+} from '../constants.js';
 
-class CompressedTexture extends Texture {
+export class CompressedTexture extends Texture {
+  declare isCompressedTexture: true;
+
   constructor(
-    mipmaps,
-    width,
-    height,
-    format,
-    type,
-    mapping,
-    wrapS,
-    wrapT,
-    magFilter,
-    minFilter,
-    anisotropy,
-    colorSpace,
+    mipmaps: ImageData[],
+    width: number,
+    height: number,
+    format: CompressedPixelFormat,
+    type?: TextureDataType,
+    mapping?: CubeTextureMapping | Mapping,
+    wrapS?: Wrapping,
+    wrapT?: Wrapping,
+    magFilter?: MagnificationTextureFilter,
+    minFilter?: MinificationTextureFilter,
+    anisotropy?: number,
+    colorSpace?: ColorSpace,
   ) {
     super(null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, colorSpace);
 
@@ -22,16 +34,7 @@ class CompressedTexture extends Texture {
     this.image = { width: width, height: height };
     this.mipmaps = mipmaps;
 
-    // no flipping for cube textures
-    // (also flipping doesn't work for compressed textures )
-
     this.flipY = false;
-
-    // can't generate mipmaps for compressed textures
-    // mips must be embedded in DDS files
-
     this.generateMipmaps = false;
   }
 }
-
-export { CompressedTexture };

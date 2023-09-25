@@ -1,38 +1,88 @@
 import { EventDispatcher } from '../core/EventDispatcher.js';
 import {
   ClampToEdgeWrapping,
+  ColorSpace,
+  CompressedPixelFormat,
   LinearEncoding,
   LinearFilter,
   LinearMipmapLinearFilter,
+  MagnificationTextureFilter,
+  Mapping,
+  MinificationTextureFilter,
   MirroredRepeatWrapping,
   NoColorSpace,
+  PixelFormat,
   RepeatWrapping,
   RGBAFormat,
   SRGBColorSpace,
   sRGBEncoding,
+  TextureDataType,
   UnsignedByteType,
   UVMapping,
+  Wrapping,
 } from '../constants.js';
 import { MathUtils } from '../math/MathUtils.js';
 import { Vector2 } from '../math/Vector2.js';
 import { Matrix3 } from '../math/Matrix3.js';
 import { Source } from './Source.js';
 import { warnOnce } from '../utils.js';
-
+import { CubeTextureMapping } from 'three/src/constants.js';
 let textureId = 0;
 
-export class Texture extends EventDispatcher {
+export class Texture extends EventDispatcher<'dispose'> {
+  static DEFAULT_IMAGE: TexImageSource | OffscreenCanvas | null = null;
+  static DEFAULT_MAPPING: Mapping = UVMapping;
+  static DEFAULT_ANISOTROPY: number = 1;
+
+  declare isTexture: true;
+  declare id: number;
+  uuid: string;
+  name: string;
+  source: Source;
+  mipmaps: TexImageSource[];
+  mapping: CubeTextureMapping | Mapping;
+  channel: number;
+  wrapS: Wrapping;
+  wrapT: Wrapping;
+  magFilter: MagnificationTextureFilter;
+  minFilter: MinificationTextureFilter;
+  anisotropy: number;
+  format: CompressedPixelFormat | PixelFormat;
+  internalFormat: null;
+  type: TextureDataType;
+  offset: Vector2;
+  repeat: Vector2;
+  center: Vector2;
+  rotation: number;
+  matrixAutoUpdate: boolean;
+  matrix: Matrix3;
+  generateMipmaps: boolean;
+  premultiplyAlpha: boolean;
+  flipY: boolean;
+  unpackAlignment: number;
+  colorSpace: ColorSpace;
+  userData: any;
+  version: number;
+  onUpdate: null | (() => void);
+  isRenderTargetTexture: boolean;
+  needsPMREMUpdate: boolean;
+
   constructor(
-    image = Texture.DEFAULT_IMAGE,
-    mapping = Texture.DEFAULT_MAPPING,
-    wrapS = ClampToEdgeWrapping,
-    wrapT = ClampToEdgeWrapping,
-    magFilter = LinearFilter,
-    minFilter = LinearMipmapLinearFilter,
-    format = RGBAFormat,
-    type = UnsignedByteType,
-    anisotropy = Texture.DEFAULT_ANISOTROPY,
-    colorSpace = NoColorSpace,
+    image:
+      | TexImageSource
+      | (HTMLImageElement | HTMLCanvasElement)[]
+      | { width: number; height: number }
+      | OffscreenCanvas
+      | null = Texture.DEFAULT_IMAGE,
+    mapping: CubeTextureMapping | Mapping = Texture.DEFAULT_MAPPING,
+    wrapS: Wrapping = ClampToEdgeWrapping,
+    wrapT: Wrapping = ClampToEdgeWrapping,
+    magFilter: MagnificationTextureFilter = LinearFilter,
+    minFilter: MinificationTextureFilter = LinearMipmapLinearFilter,
+    format: CompressedPixelFormat | PixelFormat = RGBAFormat,
+    type: TextureDataType = UnsignedByteType,
+    anisotropy: number = Texture.DEFAULT_ANISOTROPY,
+    colorSpace: ColorSpace = NoColorSpace,
   ) {
     super();
 
@@ -97,12 +147,12 @@ export class Texture extends EventDispatcher {
     return this.source.data;
   }
 
-  set image(value) {
+  set image(value: any) {
     this.source.data = value;
   }
 
-  set needsUpdate(value) {
-    if (value === true) {
+  set needsUpdate(value: boolean) {
+    if (value) {
       this.version++;
       this.source.needsUpdate = true;
     }
@@ -134,11 +184,12 @@ export class Texture extends EventDispatcher {
     );
   }
 
-  clone() {
+  clone(): Texture {
+    //@ts-ignore
     return new this.constructor().copy(this);
   }
 
-  copy(source) {
+  copy(source: Texture) {
     this.name = source.name;
 
     this.source = source.source;
@@ -184,7 +235,7 @@ export class Texture extends EventDispatcher {
     this.dispatchEvent({ type: 'dispose' });
   }
 
-  transformUv(uv) {
+  transformUv(uv: Vector2): Vector2 {
     if (this.mapping !== UVMapping) return uv;
 
     uv.applyMatrix3(this.matrix);
@@ -238,7 +289,3 @@ export class Texture extends EventDispatcher {
     return uv;
   }
 }
-
-Texture.DEFAULT_IMAGE = null;
-Texture.DEFAULT_MAPPING = UVMapping;
-Texture.DEFAULT_ANISOTROPY = 1;
