@@ -2,18 +2,24 @@ import { Color } from '../../math/Color.js';
 import { Path } from './Path.js';
 import { Shape } from './Shape.js';
 import { ShapeUtils } from '../ShapeUtils.js';
+import { Vector2 } from '../../math/Vector2.js';
 
-class ShapePath {
+export class ShapePath {
+  type: string;
+  color: Color;
+  subPaths: Path[];
+  currentPath: Path | null;
+
   constructor() {
     this.type = 'ShapePath';
 
-    this.color = new Color();
+    this.color = new Color(0xffffff);
 
     this.subPaths = [];
     this.currentPath = null;
   }
 
-  moveTo(x, y) {
+  moveTo(x: number, y: number) {
     this.currentPath = new Path();
     this.subPaths.push(this.currentPath);
     this.currentPath.moveTo(x, y);
@@ -21,32 +27,32 @@ class ShapePath {
     return this;
   }
 
-  lineTo(x, y) {
-    this.currentPath.lineTo(x, y);
+  lineTo(x: number, y: number) {
+    this.currentPath!.lineTo(x, y);
 
     return this;
   }
 
-  quadraticCurveTo(aCPx, aCPy, aX, aY) {
-    this.currentPath.quadraticCurveTo(aCPx, aCPy, aX, aY);
+  quadraticCurveTo(aCPx: number, aCPy: number, aX: number, aY: number) {
+    this.currentPath!.quadraticCurveTo(aCPx, aCPy, aX, aY);
 
     return this;
   }
 
-  bezierCurveTo(aCP1x, aCP1y, aCP2x, aCP2y, aX, aY) {
-    this.currentPath.bezierCurveTo(aCP1x, aCP1y, aCP2x, aCP2y, aX, aY);
+  bezierCurveTo(aCP1x: number, aCP1y: number, aCP2x: number, aCP2y: number, aX: number, aY: number) {
+    this.currentPath!.bezierCurveTo(aCP1x, aCP1y, aCP2x, aCP2y, aX, aY);
 
     return this;
   }
 
-  splineThru(pts) {
-    this.currentPath.splineThru(pts);
+  splineThru(pts: Vector2[]) {
+    this.currentPath!.splineThru(pts);
 
     return this;
   }
 
-  toShapes(isCCW) {
-    function toShapesNoHoles(inSubpaths) {
+  toShapes(isCCW: boolean) {
+    function toShapesNoHoles(inSubpaths: Path[]) {
       const shapes = [];
 
       for (let i = 0, l = inSubpaths.length; i < l; i++) {
@@ -61,7 +67,7 @@ class ShapePath {
       return shapes;
     }
 
-    function isPointInsidePolygon(inPt, inPolygon) {
+    function isPointInsidePolygon(inPt: Vector2, inPolygon: Vector2[]) {
       const polyLen = inPolygon.length;
 
       // inPt on polygon contour => immediate success    or
@@ -130,9 +136,9 @@ class ShapePath {
 
     // console.log("Holes first", holesFirst);
 
-    const betterShapeHoles = [];
+    const betterShapeHoles: { h: Path; p: Vector2 }[][] = [];
     const newShapes = [];
-    let newShapeHoles = [];
+    let newShapeHoles: { h: Path; p: Vector2 }[][] = [];
     let mainIdx = 0;
     let tmpPoints;
 
@@ -149,16 +155,12 @@ class ShapePath {
         if (!holesFirst && newShapes[mainIdx]) mainIdx++;
 
         newShapes[mainIdx] = { s: new Shape(), p: tmpPoints };
-        newShapes[mainIdx].s.curves = tmpPath.curves;
+        newShapes[mainIdx]!.s.curves = tmpPath.curves;
 
         if (holesFirst) mainIdx++;
         newShapeHoles[mainIdx] = [];
-
-        //console.log('cw', i);
       } else {
         newShapeHoles[mainIdx].push({ h: tmpPath, p: tmpPoints[0] });
-
-        //console.log('ccw', i);
       }
     }
 
@@ -181,7 +183,7 @@ class ShapePath {
           let hole_unassigned = true;
 
           for (let s2Idx = 0; s2Idx < newShapes.length; s2Idx++) {
-            if (isPointInsidePolygon(ho.p, newShapes[s2Idx].p)) {
+            if (isPointInsidePolygon(ho.p, newShapes[s2Idx]!.p)) {
               if (sIdx !== s2Idx) toChange++;
 
               if (hole_unassigned) {
@@ -207,7 +209,7 @@ class ShapePath {
     let tmpHoles;
 
     for (let i = 0, il = newShapes.length; i < il; i++) {
-      tmpShape = newShapes[i].s;
+      tmpShape = newShapes[i]!.s;
       shapes.push(tmpShape);
       tmpHoles = newShapeHoles[i];
 
@@ -221,5 +223,3 @@ class ShapePath {
     return shapes;
   }
 }
-
-export { ShapePath };

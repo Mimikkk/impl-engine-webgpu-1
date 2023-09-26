@@ -33,32 +33,35 @@ import { Matrix4 } from '../../math/Matrix4.js';
  *
  **/
 
-export class Curve {
+export class Curve<T extends Vector2 | Vector3> {
+  type: string;
+  arcLengthDivisions: number;
+  needsUpdate: boolean;
+  cacheArcLengths: number[];
   constructor() {
     this.type = 'Curve';
-
     this.arcLengthDivisions = 200;
   }
 
   // Virtual base class method to overwrite and implement in subclasses
   //	- t [0 .. 1]
 
-  getPoint(/* t, optionalTarget */) {
+  getPoint(t: number, optionalTarget?: T): T {
     console.warn('THREE.Curve: .getPoint() not implemented.');
-    return null;
+    return undefined as never;
   }
 
   // Get point at relative position in curve according to arc length
   // - u [0 .. 1]
 
-  getPointAt(u, optionalTarget) {
+  getPointAt(u: number, optionalTarget?: T) {
     const t = this.getUtoTmapping(u);
     return this.getPoint(t, optionalTarget);
   }
 
   // Get sequence of points using getPoint( t )
 
-  getPoints(divisions = 5) {
+  getPoints(divisions: number = 5) {
     const points = [];
 
     for (let d = 0; d <= divisions; d++) {
@@ -70,8 +73,8 @@ export class Curve {
 
   // Get sequence of points using getPointAt( u )
 
-  getSpacedPoints(divisions = 5) {
-    const points = [];
+  getSpacedPoints(divisions: number = 5): T[] {
+    const points: T[] = [];
 
     for (let d = 0; d <= divisions; d++) {
       points.push(this.getPointAt(d / divisions));
@@ -97,15 +100,15 @@ export class Curve {
     this.needsUpdate = false;
 
     const cache = [];
-    let current,
-      last = this.getPoint(0);
+    let current: T;
+    let last = this.getPoint(0);
     let sum = 0;
 
     cache.push(0);
 
     for (let p = 1; p <= divisions; p++) {
       current = this.getPoint(p / divisions);
-      sum += current.distanceTo(last);
+      sum += current.distanceTo(last as Vector2 & Vector3);
       cache.push(sum);
       last = current;
     }
@@ -122,18 +125,19 @@ export class Curve {
 
   // Given u ( 0 .. 1 ), get a t to find p. This gives you points which are equidistant
 
-  getUtoTmapping(u, distance) {
+  getUtoTmapping(u: number, distance?: number) {
     const arcLengths = this.getLengths();
 
     let i = 0;
     const il = arcLengths.length;
 
-    let targetArcLength; // The targeted u distance value to get
+    // The targeted u distance value to get
+    let targetArcLength;
 
-    if (distance) {
-      targetArcLength = distance;
-    } else {
+    if (distance === undefined) {
       targetArcLength = u * arcLengths[il - 1];
+    } else {
+      targetArcLength = distance;
     }
 
     // binary search for the index with largest value smaller than target u distance
@@ -188,7 +192,7 @@ export class Curve {
   // 2 points a small delta apart will be used to find its gradient
   // which seems to give a reasonable approximation
 
-  getTangent(t, optionalTarget) {
+  getTangent(t: number, optionalTarget?: T): T {
     const delta = 0.0001;
     let t1 = t - delta;
     let t2 = t + delta;
@@ -198,29 +202,29 @@ export class Curve {
     if (t1 < 0) t1 = 0;
     if (t2 > 1) t2 = 1;
 
-    const pt1 = this.getPoint(t1);
-    const pt2 = this.getPoint(t2);
+    const pt1 = this.getPoint(t1) as Vector2 & Vector3;
+    const pt2 = this.getPoint(t2) as Vector2 & Vector3;
 
     const tangent = optionalTarget || (pt1.isVector2 ? new Vector2() : new Vector3());
 
     tangent.copy(pt2).sub(pt1).normalize();
 
-    return tangent;
+    return tangent as T;
   }
 
-  getTangentAt(u, optionalTarget) {
+  getTangentAt(u: number, optionalTarget?: T): T {
     const t = this.getUtoTmapping(u);
     return this.getTangent(t, optionalTarget);
   }
 
-  computeFrenetFrames(segments, closed) {
+  computeFrenetFrames(segments: number, closed?: boolean) {
     // see http://www.cs.indiana.edu/pub/techreports/TR425.pdf
 
     const normal = new Vector3();
 
-    const tangents = [];
-    const normals = [];
-    const binormals = [];
+    const tangents: Vector3[] = [];
+    const normals: Vector3[] = [];
+    const binormals: Vector3[] = [];
 
     const vec = new Vector3();
     const mat = new Matrix4();
@@ -230,7 +234,7 @@ export class Curve {
     for (let i = 0; i <= segments; i++) {
       const u = i / segments;
 
-      tangents[i] = this.getTangentAt(u, new Vector3());
+      tangents[i] = this.getTangentAt(u, new Vector3() as T) as Vector3;
     }
 
     // select an initial normal vector perpendicular to the first tangent vector,
@@ -299,18 +303,14 @@ export class Curve {
       }
     }
 
-    return {
-      tangents: tangents,
-      normals: normals,
-      binormals: binormals,
-    };
+    return { tangents, normals, binormals };
   }
 
-  clone() {
-    return new this.constructor().copy(this);
+  clone(): Curve<T> {
+    return new Curve<T>().copy(this);
   }
 
-  copy(source) {
+  copy(source: Curve<T>): Curve<T> {
     this.arcLengthDivisions = source.arcLengthDivisions;
 
     return this;

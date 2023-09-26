@@ -2,8 +2,19 @@ import { Curve } from '../core/Curve.js';
 import { CubicBezier } from '../core/Interpolations.js';
 import { Vector3 } from '../../math/Vector3.js';
 
-export class CubicBezierCurve3 extends Curve {
-  constructor(v0 = new Vector3(), v1 = new Vector3(), v2 = new Vector3(), v3 = new Vector3()) {
+export class CubicBezierCurve3 extends Curve<Vector3> {
+  isCubicBezierCurve3: boolean;
+  v0: Vector3;
+  v1: Vector3;
+  v2: Vector3;
+  v3: Vector3;
+
+  constructor(
+    v0: Vector3 = new Vector3(),
+    v1: Vector3 = new Vector3(),
+    v2: Vector3 = new Vector3(),
+    v3: Vector3 = new Vector3(),
+  ) {
     super();
 
     this.isCubicBezierCurve3 = true;
@@ -16,7 +27,7 @@ export class CubicBezierCurve3 extends Curve {
     this.v3 = v3;
   }
 
-  getPoint(t, optionalTarget = new Vector3()) {
+  getPoint(t: number, optionalTarget: Vector3 = new Vector3()): Vector3 {
     const point = optionalTarget;
 
     const v0 = this.v0,
@@ -33,24 +44,13 @@ export class CubicBezierCurve3 extends Curve {
     return point;
   }
 
-  copy(source) {
+  copy(source: CubicBezierCurve3): CubicBezierCurve3 {
     super.copy(source);
 
     this.v0.copy(source.v0);
     this.v1.copy(source.v1);
     this.v2.copy(source.v2);
     this.v3.copy(source.v3);
-
-    return this;
-  }
-
-  fromJSON(json) {
-    super.fromJSON(json);
-
-    this.v0.fromArray(json.v0);
-    this.v1.fromArray(json.v1);
-    this.v2.fromArray(json.v2);
-    this.v3.fromArray(json.v3);
 
     return this;
   }

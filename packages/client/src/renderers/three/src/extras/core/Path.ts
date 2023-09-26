@@ -7,7 +7,9 @@ import { QuadraticBezierCurve } from '../curves/QuadraticBezierCurve.js';
 import { LineCurve } from '../curves/LineCurve.js';
 
 export class Path extends CurvePath {
-  constructor(points) {
+  type: string;
+  currentPoint: Vector2;
+  constructor(points?: Vector2[]) {
     super();
 
     this.type = 'Path';
@@ -19,7 +21,7 @@ export class Path extends CurvePath {
     }
   }
 
-  setFromPoints(points) {
+  setFromPoints(points: Vector2[]) {
     this.moveTo(points[0].x, points[0].y);
 
     for (let i = 1, l = points.length; i < l; i++) {
@@ -29,13 +31,13 @@ export class Path extends CurvePath {
     return this;
   }
 
-  moveTo(x, y) {
+  moveTo(x: number, y: number) {
     this.currentPoint.set(x, y); // TODO consider referencing vectors instead of copying?
 
     return this;
   }
 
-  lineTo(x, y) {
+  lineTo(x: number, y: number) {
     const curve = new LineCurve(this.currentPoint.clone(), new Vector2(x, y));
     this.curves.push(curve);
 
@@ -44,7 +46,7 @@ export class Path extends CurvePath {
     return this;
   }
 
-  quadraticCurveTo(aCPx, aCPy, aX, aY) {
+  quadraticCurveTo(aCPx: number, aCPy: number, aX: number, aY: number) {
     const curve = new QuadraticBezierCurve(this.currentPoint.clone(), new Vector2(aCPx, aCPy), new Vector2(aX, aY));
 
     this.curves.push(curve);
@@ -54,7 +56,7 @@ export class Path extends CurvePath {
     return this;
   }
 
-  bezierCurveTo(aCP1x, aCP1y, aCP2x, aCP2y, aX, aY) {
+  bezierCurveTo(aCP1x: number, aCP1y: number, aCP2x: number, aCP2y: number, aX: number, aY: number) {
     const curve = new CubicBezierCurve(
       this.currentPoint.clone(),
       new Vector2(aCP1x, aCP1y),
@@ -69,7 +71,7 @@ export class Path extends CurvePath {
     return this;
   }
 
-  splineThru(pts /*Array of Vector*/) {
+  splineThru(pts: Vector2[]) {
     const npts = [this.currentPoint.clone()].concat(pts);
 
     const curve = new SplineCurve(npts);
@@ -80,7 +82,7 @@ export class Path extends CurvePath {
     return this;
   }
 
-  arc(aX, aY, aRadius, aStartAngle, aEndAngle, aClockwise) {
+  arc(aX: number, aY: number, aRadius: number, aStartAngle: number, aEndAngle: number, aClockwise: boolean) {
     const x0 = this.currentPoint.x;
     const y0 = this.currentPoint.y;
 
@@ -89,13 +91,22 @@ export class Path extends CurvePath {
     return this;
   }
 
-  absarc(aX, aY, aRadius, aStartAngle, aEndAngle, aClockwise) {
-    this.absellipse(aX, aY, aRadius, aRadius, aStartAngle, aEndAngle, aClockwise);
+  absarc(aX: number, aY: number, aRadius: number, aStartAngle: number, aEndAngle: number, aClockwise: boolean) {
+    this.absellipse(aX, aY, aRadius, aRadius, aStartAngle, aEndAngle, aClockwise, 0);
 
     return this;
   }
 
-  ellipse(aX, aY, xRadius, yRadius, aStartAngle, aEndAngle, aClockwise, aRotation) {
+  ellipse(
+    aX: number,
+    aY: number,
+    xRadius: number,
+    yRadius: number,
+    aStartAngle: number,
+    aEndAngle: number,
+    aClockwise: boolean,
+    aRotation: number,
+  ) {
     const x0 = this.currentPoint.x;
     const y0 = this.currentPoint.y;
 
@@ -104,7 +115,16 @@ export class Path extends CurvePath {
     return this;
   }
 
-  absellipse(aX, aY, xRadius, yRadius, aStartAngle, aEndAngle, aClockwise, aRotation) {
+  absellipse(
+    aX: number,
+    aY: number,
+    xRadius: number,
+    yRadius: number,
+    aStartAngle: number,
+    aEndAngle: number,
+    aClockwise: boolean,
+    aRotation: number,
+  ) {
     const curve = new EllipseCurve(aX, aY, xRadius, yRadius, aStartAngle, aEndAngle, aClockwise, aRotation);
 
     if (this.curves.length > 0) {
@@ -124,7 +144,7 @@ export class Path extends CurvePath {
     return this;
   }
 
-  copy(source) {
+  copy(source: Path) {
     super.copy(source);
 
     this.currentPoint.copy(source.currentPoint);

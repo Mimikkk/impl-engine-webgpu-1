@@ -1,8 +1,12 @@
 import { Vector2 } from '../../math/Vector2.js';
 import { Curve } from '../core/Curve.js';
 
-export class LineCurve extends Curve {
-  constructor(v1 = new Vector2(), v2 = new Vector2()) {
+export class LineCurve extends Curve<Vector2> {
+  isLineCurve: boolean;
+  v1: Vector2;
+  v2: Vector2;
+
+  constructor(v1: Vector2 = new Vector2(), v2: Vector2 = new Vector2()) {
     super();
 
     this.isLineCurve = true;
@@ -13,7 +17,7 @@ export class LineCurve extends Curve {
     this.v2 = v2;
   }
 
-  getPoint(t, optionalTarget = new Vector2()) {
+  getPoint(t: number, optionalTarget: Vector2 = new Vector2()): Vector2 {
     const point = optionalTarget;
 
     if (t === 1) {
@@ -26,20 +30,19 @@ export class LineCurve extends Curve {
     return point;
   }
 
-  // Line curve is linear, so we can overwrite default getPointAt
-  getPointAt(u, optionalTarget) {
+  getPointAt(u: number, optionalTarget?: Vector2): Vector2 {
     return this.getPoint(u, optionalTarget);
   }
 
-  getTangent(t, optionalTarget = new Vector2()) {
+  getTangent(t: number, optionalTarget: Vector2 = new Vector2()): Vector2 {
     return optionalTarget.subVectors(this.v2, this.v1).normalize();
   }
 
-  getTangentAt(u, optionalTarget) {
+  getTangentAt(u: number, optionalTarget: Vector2): Vector2 {
     return this.getTangent(u, optionalTarget);
   }
 
-  copy(source) {
+  copy(source: LineCurve): LineCurve {
     super.copy(source);
 
     this.v1.copy(source.v1);

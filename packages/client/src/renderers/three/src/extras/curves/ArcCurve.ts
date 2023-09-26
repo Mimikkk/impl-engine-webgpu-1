@@ -1,13 +1,10 @@
 import { EllipseCurve } from './EllipseCurve.js';
 
-class ArcCurve extends EllipseCurve {
-  constructor(aX, aY, aRadius, aStartAngle, aEndAngle, aClockwise) {
+export class ArcCurve extends EllipseCurve {
+  isArcCurve: boolean = true;
+  type: string = 'ArcCurve';
+
+  constructor(aX: number, aY: number, aRadius: number, aStartAngle: number, aEndAngle: number, aClockwise: boolean) {
     super(aX, aY, aRadius, aRadius, aStartAngle, aEndAngle, aClockwise);
-
-    this.isArcCurve = true;
-
-    this.type = 'ArcCurve';
   }
 }
-
-export { ArcCurve };

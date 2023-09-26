@@ -1,16 +1,25 @@
 import { Curve } from '../core/Curve.js';
 import { Vector2 } from '../../math/Vector2.js';
 
-export class EllipseCurve extends Curve {
+export class EllipseCurve extends Curve<Vector2> {
+  isEllipseCurve: boolean;
+  aX: number;
+  aY: number;
+  xRadius: number;
+  yRadius: number;
+  aStartAngle: number;
+  aEndAngle: number;
+  aClockwise: boolean;
+  aRotation: number;
   constructor(
-    aX = 0,
-    aY = 0,
-    xRadius = 1,
-    yRadius = 1,
-    aStartAngle = 0,
-    aEndAngle = Math.PI * 2,
-    aClockwise = false,
-    aRotation = 0,
+    aX: number = 0,
+    aY: number = 0,
+    xRadius: number = 1,
+    yRadius: number = 1,
+    aStartAngle: number = 0,
+    aEndAngle: number = Math.PI * 2,
+    aClockwise: boolean = false,
+    aRotation: number = 0,
   ) {
     super();
 
@@ -32,14 +41,14 @@ export class EllipseCurve extends Curve {
     this.aRotation = aRotation;
   }
 
-  getPoint(t, optionalTarget) {
+  getPoint(t: number, optionalTarget?: Vector2): Vector2 {
     const point = optionalTarget || new Vector2();
 
     const twoPi = Math.PI * 2;
     let deltaAngle = this.aEndAngle - this.aStartAngle;
     const samePoints = Math.abs(deltaAngle) < Number.EPSILON;
 
-    // ensures that deltaAngle is 0 .. 2 PI
+    // ensures that deltaAngle is 0 … 2 PI
     while (deltaAngle < 0) deltaAngle += twoPi;
     while (deltaAngle > twoPi) deltaAngle -= twoPi;
 
@@ -51,7 +60,7 @@ export class EllipseCurve extends Curve {
       }
     }
 
-    if (this.aClockwise === true && !samePoints) {
+    if (this.aClockwise && !samePoints) {
       if (deltaAngle === twoPi) {
         deltaAngle = -twoPi;
       } else {
@@ -78,7 +87,7 @@ export class EllipseCurve extends Curve {
     return point.set(x, y);
   }
 
-  copy(source) {
+  copy(source: EllipseCurve): EllipseCurve {
     super.copy(source);
 
     this.aX = source.aX;

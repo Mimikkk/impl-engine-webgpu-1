@@ -1,12 +1,18 @@
 import { Curve } from './Curve.js';
 import * as Curves from '../curves/Curves.js';
+import { Vector2 } from '../../math/Vector2.js';
 
 /**************************************************************
  *  Curved Path - a curve path is simply a array of connected
  *  curves, but retains the api of a curve
  **************************************************************/
 
-export class CurvePath extends Curve {
+export class CurvePath extends Curve<Vector2> {
+  type: string;
+  curves: Curve<Vector2>[];
+  autoClose: boolean;
+  cacheLengths: null | number[];
+
   constructor() {
     super();
 
@@ -16,7 +22,7 @@ export class CurvePath extends Curve {
     this.autoClose = false; // Automatically closes the path
   }
 
-  add(curve) {
+  add(curve: Curve<Vector2>) {
     this.curves.push(curve);
   }
 
@@ -26,7 +32,7 @@ export class CurvePath extends Curve {
     const endPoint = this.curves[this.curves.length - 1].getPoint(1);
 
     if (!startPoint.equals(endPoint)) {
-      this.curves.push(new Curves['LineCurve'](endPoint, startPoint));
+      this.curves.push(new Curves.LineCurve(endPoint, startPoint));
     }
   }
 
@@ -39,7 +45,7 @@ export class CurvePath extends Curve {
   // 3. Get t for the curve
   // 4. Return curve.getPointAt(t')
 
-  getPoint(t, optionalTarget) {
+  getPoint(t: number, optionalTarget?: Vector2): Vector2 {
     const d = t * this.getLength();
     const curveLengths = this.getCurveLengths();
     let i = 0;
@@ -60,7 +66,7 @@ export class CurvePath extends Curve {
       i++;
     }
 
-    return null;
+    return null as never;
 
     // loop where sum != 0, sum > d , sum+1 <d
   }
@@ -107,7 +113,7 @@ export class CurvePath extends Curve {
     return lengths;
   }
 
-  getSpacedPoints(divisions = 40) {
+  getSpacedPoints(divisions: number = 40) {
     const points = [];
 
     for (let i = 0; i <= divisions; i++) {
@@ -121,18 +127,23 @@ export class CurvePath extends Curve {
     return points;
   }
 
-  getPoints(divisions = 12) {
-    const points = [];
-    let last;
+  getPoints(divisions: number = 12) {
+    const points: Vector2[] = [];
+    let last: Vector2 | null = null;
 
     for (let i = 0, curves = this.curves; i < curves.length; i++) {
       const curve = curves[i];
+
+      //@ts-expect-error
       const resolution = curve.isEllipseCurve
         ? divisions * 2
-        : curve.isLineCurve || curve.isLineCurve3
+        : //@ts-expect-error
+        curve.isLineCurve || curve.isLineCurve3
         ? 1
-        : curve.isSplineCurve
-        ? divisions * curve.points.length
+        : //@ts-expect-error
+        curve.isSplineCurve
+        ? //@ts-expect-error
+          divisions * curve.points.length
         : divisions;
 
       const pts = curve.getPoints(resolution);
@@ -154,7 +165,7 @@ export class CurvePath extends Curve {
     return points;
   }
 
-  copy(source) {
+  copy(source: CurvePath): CurvePath {
     super.copy(source);
 
     this.curves = [];

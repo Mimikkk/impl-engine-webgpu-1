@@ -1,18 +1,21 @@
 import { Path } from './Path.js';
 import { MathUtils } from '../../math/MathUtils.js';
+import { Vector2 } from '../../math/Vector2.js';
 
 export class Shape extends Path {
-  constructor(points) {
+  uuid: string;
+  type: string;
+  holes: Path[];
+
+  constructor(points?: Vector2[]) {
     super(points);
 
     this.uuid = MathUtils.generateUUID();
-
     this.type = 'Shape';
-
     this.holes = [];
   }
 
-  getPointsHoles(divisions) {
+  getPointsHoles(divisions: number) {
     const holesPts = [];
 
     for (let i = 0, l = this.holes.length; i < l; i++) {
@@ -24,14 +27,14 @@ export class Shape extends Path {
 
   // get points of shape and holes (keypoints based on segments parameter)
 
-  extractPoints(divisions) {
+  extractPoints(divisions: number) {
     return {
       shape: this.getPoints(divisions),
       holes: this.getPointsHoles(divisions),
     };
   }
 
-  copy(source) {
+  copy(source: Shape) {
     super.copy(source);
 
     this.holes = [];
@@ -39,7 +42,7 @@ export class Shape extends Path {
     for (let i = 0, l = source.holes.length; i < l; i++) {
       const hole = source.holes[i];
 
-      this.holes.push(hole.clone());
+      this.holes.push(hole.clone() as Path);
     }
 
     return this;
