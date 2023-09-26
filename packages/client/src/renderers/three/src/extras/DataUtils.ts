@@ -1,7 +1,5 @@
-import { clamp } from '../math/MathUtils.js';
-
 // Fast Half Float Conversions, http://www.fox-toolkit.org/ftp/fasthalffloatconversion.pdf
-
+import { clamp } from '../math/MathUtils.js';
 const _tables = _generateTables();
 
 function _generateTables() {
@@ -111,30 +109,26 @@ function _generateTables() {
   };
 }
 
-// float32 to float16
+export namespace DataUtils {
+  // float32 to float16
+  export const toHalfFloat = (val: number) => {
+    if (Math.abs(val) > 65504) console.warn('THREE.DataUtils.toHalfFloat(): Value out of range.');
 
-function toHalfFloat(val) {
-  if (Math.abs(val) > 65504) console.warn('THREE.DataUtils.toHalfFloat(): Value out of range.');
+    val = clamp(val, -65504, 65504);
 
-  val = clamp(val, -65504, 65504);
+    _tables.floatView[0] = val;
+    const f = _tables.uint32View[0];
+    const e = (f >> 23) & 0x1ff;
+    return _tables.baseTable[e] + ((f & 0x007fffff) >> _tables.shiftTable[e]);
+  };
 
-  _tables.floatView[0] = val;
-  const f = _tables.uint32View[0];
-  const e = (f >> 23) & 0x1ff;
-  return _tables.baseTable[e] + ((f & 0x007fffff) >> _tables.shiftTable[e]);
+  // float16 to float32
+  export const fromHalfFloat = (val: number) => {
+    const m = val >> 10;
+
+    _tables.uint32View[0] = _tables.mantissaTable[_tables.offsetTable[m] + (val & 0x3ff)] + _tables.exponentTable[m];
+
+    return _tables.floatView[0];
+  };
 }
-
-// float16 to float32
-
-function fromHalfFloat(val) {
-  const m = val >> 10;
-  _tables.uint32View[0] = _tables.mantissaTable[_tables.offsetTable[m] + (val & 0x3ff)] + _tables.exponentTable[m];
-  return _tables.floatView[0];
-}
-
-const DataUtils = {
-  toHalfFloat: toHalfFloat,
-  fromHalfFloat: fromHalfFloat,
-};
-
-export { toHalfFloat, fromHalfFloat, DataUtils };
+export const { toHalfFloat, fromHalfFloat } = DataUtils;

@@ -2,7 +2,7 @@ import { LinearSRGBColorSpace } from '../../constants.js';
 import Renderer from '../../common/Renderer.js';
 
 export function cloneUniforms(src: any) {
-  const dst = {};
+  const dst: Record<string, Record<string, any>> = {};
 
   for (const u in src) {
     dst[u] = {};
@@ -41,7 +41,7 @@ export function cloneUniforms(src: any) {
 }
 
 export function mergeUniforms(uniforms: any[]) {
-  const merged = {};
+  const merged: Record<string, any> = {};
 
   for (let u = 0; u < uniforms.length; u++) {
     const tmp = cloneUniforms(uniforms[u]);
@@ -54,7 +54,7 @@ export function mergeUniforms(uniforms: any[]) {
   return merged;
 }
 
-export function cloneUniformsGroups(src) {
+export function cloneUniformsGroups(src: any) {
   const dst = [];
 
   for (let u = 0; u < src.length; u++) {
@@ -67,6 +67,7 @@ export function cloneUniformsGroups(src) {
 export function getUnlitUniformColorSpace(renderer: Renderer) {
   if (renderer.getRenderTarget() === null) {
     // https://github.com/mrdoob/three.js/pull/23937#issuecomment-1111067398
+    //@ts-expect-error
     return renderer.outputColorSpace;
   }
 

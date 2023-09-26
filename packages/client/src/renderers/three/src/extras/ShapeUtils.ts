@@ -1,9 +1,9 @@
 import { Earcut } from './Earcut.js';
+import { Vector2 } from '../../../webgpu/core/Vector2.js';
 
-class ShapeUtils {
+export class ShapeUtils {
   // calculate area of the contour polygon
-
-  static area(contour) {
+  static area(contour: Vector2[]) {
     const n = contour.length;
     let a = 0.0;
 
@@ -14,19 +14,17 @@ class ShapeUtils {
     return a * 0.5;
   }
 
-  static isClockWise(pts) {
+  static isClockWise(pts: Vector2[]) {
     return ShapeUtils.area(pts) < 0;
   }
 
-  static triangulateShape(contour, holes) {
-    const vertices = []; // flat array of vertices like [ x0,y0, x1,y1, x2,y2, ... ]
-    const holeIndices = []; // array of hole indices
-    const faces = []; // final array of vertex indices like [ [ a,b,d ], [ b,c,d ] ]
+  static triangulateShape(contour: Vector2[], holes: Vector2[][]) {
+    const vertices: number[] = []; // flat array of vertices like [ x0,y0, x1,y1, x2,y2, ... ]
+    const holeIndices: number[] = []; // array of hole indices
+    const faces: [number, number, number][] = []; // final array of vertex indices like [ [ a,b,d ], [ b,c,d ] ]
 
     removeDupEndPts(contour);
     addContour(vertices, contour);
-
-    //
 
     let holeIndex = contour.length;
 
@@ -38,21 +36,17 @@ class ShapeUtils {
       addContour(vertices, holes[i]);
     }
 
-    //
-
     const triangles = Earcut.triangulate(vertices, holeIndices);
 
-    //
-
     for (let i = 0; i < triangles.length; i += 3) {
-      faces.push(triangles.slice(i, i + 3));
+      faces.push(triangles.slice(i, i + 3) as [number, number, number]);
     }
 
     return faces;
   }
 }
 
-function removeDupEndPts(points) {
+function removeDupEndPts(points: Vector2[]) {
   const l = points.length;
 
   if (l > 2 && points[l - 1].equals(points[0])) {
@@ -60,11 +54,9 @@ function removeDupEndPts(points) {
   }
 }
 
-function addContour(vertices, contour) {
+function addContour(vertices: number[], contour: Vector2[]) {
   for (let i = 0; i < contour.length; i++) {
     vertices.push(contour[i].x);
     vertices.push(contour[i].y);
   }
 }
-
-export { ShapeUtils };
