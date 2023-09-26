@@ -6,7 +6,7 @@ import { Vector2 } from '../math/Vector2.js';
 
 export class ShapeGeometry extends BufferGeometry {
   constructor(
-    shapes = new Shape([new Vector2(0, 0.5), new Vector2(-0.5, -0.5), new Vector2(0.5, -0.5)]),
+    shapes: Shape | Shape[] = new Shape([new Vector2(0, 0.5), new Vector2(-0.5, -0.5), new Vector2(0.5, -0.5)]),
     curveSegments = 12,
   ) {
     super();
@@ -20,10 +20,10 @@ export class ShapeGeometry extends BufferGeometry {
 
     // buffers
 
-    const indices = [];
-    const vertices = [];
-    const normals = [];
-    const uvs = [];
+    const indices: number[] = [];
+    const vertices: number[] = [];
+    const normals: number[] = [];
+    const uvs: number[] = [];
 
     // helper variables
 
@@ -32,13 +32,13 @@ export class ShapeGeometry extends BufferGeometry {
 
     // allow single and array values for "shapes" parameter
 
-    if (Array.isArray(shapes) === false) {
+    if (!Array.isArray(shapes)) {
       addShape(shapes);
     } else {
       for (let i = 0; i < shapes.length; i++) {
         addShape(shapes[i]);
-
-        this.addGroup(groupStart, groupCount, i); // enables MultiMaterial support
+        // enables MultiMaterial support
+        this.addGroup(groupStart, groupCount, i);
 
         groupStart += groupCount;
         groupCount = 0;
@@ -54,7 +54,7 @@ export class ShapeGeometry extends BufferGeometry {
 
     // helper functions
 
-    function addShape(shape) {
+    function addShape(shape: Shape) {
       const indexOffset = vertices.length / 3;
       const points = shape.extractPoints(curveSegments);
 
@@ -109,19 +109,7 @@ export class ShapeGeometry extends BufferGeometry {
     }
   }
 
-  static fromJSON(data, shapes) {
-    const geometryShapes = [];
-
-    for (let j = 0, jl = data.shapes.length; j < jl; j++) {
-      const shape = shapes[data.shapes[j]];
-
-      geometryShapes.push(shape);
-    }
-
-    return new ShapeGeometry(geometryShapes, data.curveSegments);
-  }
-
-  copy(source) {
+  copy(source: ShapeGeometry) {
     super.copy(source);
 
     this.parameters = Object.assign({}, source.parameters);

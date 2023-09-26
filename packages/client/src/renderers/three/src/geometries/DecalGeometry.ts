@@ -1,5 +1,3 @@
-import { BufferGeometry, Float32BufferAttribute, Matrix4, Vector3 } from '../Three.js';
-
 /**
  * You can use this geometry to create a decal mesh, that serves different kinds of purposes.
  * e.g. adding unique details to models, performing dynamic visual environmental changes or covering seams.
@@ -14,22 +12,21 @@ import { BufferGeometry, Float32BufferAttribute, Matrix4, Vector3 } from '../Thr
  * reference: http://blog.wolfire.com/2009/06/how-to-project-decals/
  *
  */
+import { BufferGeometry } from '../core/BufferGeometry.js';
+import { Mesh } from '../objects/Mesh.js';
+import { Vector3 } from '../math/Vector3.js';
+import { Matrix4 } from '../math/Matrix4.js';
+import { Float32BufferAttribute } from '../core/BufferAttribute.js';
+import { Euler } from '../math/Euler.js';
 
 class DecalGeometry extends BufferGeometry {
-  constructor(mesh, position, orientation, size) {
+  constructor(mesh: Mesh, position: Vector3, orientation: Euler, size: Vector3) {
     super();
 
-    // buffers
-
-    const vertices = [];
-    const normals = [];
-    const uvs = [];
-
-    // helpers
-
+    const vertices: number[] = [];
+    const normals: number[] = [];
+    const uvs: number[] = [];
     const plane = new Vector3();
-
-    // this matrix represents the transformation of the decal projector
 
     const projectorMatrix = new Matrix4();
     projectorMatrix.makeRotationFromEuler(orientation);
@@ -38,18 +35,14 @@ class DecalGeometry extends BufferGeometry {
     const projectorMatrixInverse = new Matrix4();
     projectorMatrixInverse.copy(projectorMatrix).invert();
 
-    // generate buffers
-
     generate();
-
-    // build geometry
 
     this.setAttribute('position', new Float32BufferAttribute(vertices, 3));
     this.setAttribute('normal', new Float32BufferAttribute(normals, 3));
     this.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
 
     function generate() {
-      let decalVertices = [];
+      let decalVertices: DecalVertex[] = [];
 
       const vertex = new Vector3();
       const normal = new Vector3();
@@ -80,7 +73,7 @@ class DecalGeometry extends BufferGeometry {
       } else {
         // non-indexed BufferGeometry
 
-        for (let i = 0; i < positionAttribute.count; i++) {
+        for (let i = 0; i < positionAttribute!.count; i++) {
           vertex.fromBufferAttribute(positionAttribute, i);
           normal.fromBufferAttribute(normalAttribute, i);
 
@@ -117,7 +110,7 @@ class DecalGeometry extends BufferGeometry {
       }
     }
 
-    function pushDecalVertex(decalVertices, vertex, normal) {
+    function pushDecalVertex(decalVertices: DecalVertex[], vertex: Vector3, normal: Vector3) {
       // transform the vertex to world space, then to projector space
 
       vertex.applyMatrix4(mesh.matrixWorld);
@@ -128,8 +121,8 @@ class DecalGeometry extends BufferGeometry {
       decalVertices.push(new DecalVertex(vertex.clone(), normal.clone()));
     }
 
-    function clipGeometry(inVertices, plane) {
-      const outVertices = [];
+    function clipGeometry(inVertices: DecalVertex[], plane: Vector3) {
+      const outVertices: DecalVertex[] = [];
 
       const s = 0.5 * Math.abs(size.dot(plane));
 
@@ -151,8 +144,6 @@ class DecalGeometry extends BufferGeometry {
         const v2Out = d2 > 0;
         const v3Out = d3 > 0;
 
-        // calculate, how many vertices of the face lie outside of the clipping plane
-
         total = (v1Out ? 1 : 0) + (v2Out ? 1 : 0) + (v3Out ? 1 : 0);
 
         switch (total) {
@@ -166,8 +157,6 @@ class DecalGeometry extends BufferGeometry {
           }
 
           case 1: {
-            // one vertex lies outside of the plane, perform clipping
-
             if (v1Out) {
               nV1 = inVertices[i + 1];
               nV2 = inVertices[i + 2];
@@ -198,13 +187,13 @@ class DecalGeometry extends BufferGeometry {
               nV4 = clip(inVertices[i + 2], nV2, plane, s);
             }
 
-            outVertices.push(nV1.clone());
-            outVertices.push(nV2.clone());
-            outVertices.push(nV3);
+            outVertices.push(nV1!.clone());
+            outVertices.push(nV2!.clone());
+            outVertices.push(nV3!);
 
-            outVertices.push(nV4);
-            outVertices.push(nV3.clone());
-            outVertices.push(nV2.clone());
+            outVertices.push(nV4!);
+            outVertices.push(nV3!.clone());
+            outVertices.push(nV2!.clone());
 
             break;
           }
@@ -253,7 +242,7 @@ class DecalGeometry extends BufferGeometry {
       return outVertices;
     }
 
-    function clip(v0, v1, p, s) {
+    function clip(v0: DecalVertex, v1: DecalVertex, p: Vector3, s: number) {
       const d0 = v0.position.dot(p) - s;
       const d1 = v1.position.dot(p) - s;
 
@@ -280,10 +269,12 @@ class DecalGeometry extends BufferGeometry {
   }
 }
 
-// helper
-
 class DecalVertex {
-  constructor(position, normal) {
+  declare ['constructor']: typeof DecalVertex;
+  position: Vector3;
+  normal: Vector3;
+
+  constructor(position: Vector3, normal: Vector3) {
     this.position = position;
     this.normal = normal;
   }

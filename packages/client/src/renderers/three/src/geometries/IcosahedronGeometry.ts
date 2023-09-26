@@ -1,7 +1,7 @@
 import { PolyhedronGeometry } from './PolyhedronGeometry.js';
 
-class IcosahedronGeometry extends PolyhedronGeometry {
-  constructor(radius = 1, detail = 0) {
+export class IcosahedronGeometry extends PolyhedronGeometry {
+  constructor(radius: number = 1, detail: number = 0) {
     const t = (1 + Math.sqrt(5)) / 2;
 
     const vertices = [
@@ -57,10 +57,4 @@ class IcosahedronGeometry extends PolyhedronGeometry {
       detail: detail,
     };
   }
-
-  static fromJSON(data) {
-    return new IcosahedronGeometry(data.radius, data.detail);
-  }
 }
-
-export { IcosahedronGeometry };

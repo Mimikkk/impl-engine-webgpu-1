@@ -162,8 +162,9 @@ export type ColorRepresentation = Color | ColorName | number;
 const _hslA = { h: 0, s: 0, l: 0 };
 const _hslB = { h: 0, s: 0, l: 0 };
 
-type Hsl = { h: number; s: number; l: number };
-type Rgb = { r: number; g: number; b: number };
+export type Hsl = { h: number; s: number; l: number };
+export type Hsv = { h: number; s: number; v: number };
+export type Rgb = { r: number; g: number; b: number };
 
 function hue2rgb(p: number, q: number, t: number): number {
   if (t < 0) t += 1;

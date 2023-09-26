@@ -1,7 +1,7 @@
 import { BufferGeometry, Float32BufferAttribute } from '../Three.js';
 import { ConvexHull } from '../math/ConvexHull.js';
 
-class ConvexGeometry extends BufferGeometry {
+export class ConvexGeometry extends BufferGeometry {
   constructor(points = []) {
     super();
 
@@ -38,5 +38,3 @@ class ConvexGeometry extends BufferGeometry {
     this.setAttribute('normal', new Float32BufferAttribute(normals, 3));
   }
 }
-
-export { ConvexGeometry };

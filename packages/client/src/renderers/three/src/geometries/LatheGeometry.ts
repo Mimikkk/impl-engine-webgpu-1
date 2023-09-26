@@ -4,12 +4,12 @@ import { Vector3 } from '../math/Vector3.js';
 import { Vector2 } from '../math/Vector2.js';
 import { MathUtils } from '../math/MathUtils.js';
 
-class LatheGeometry extends BufferGeometry {
+export class LatheGeometry extends BufferGeometry {
   constructor(
-    points = [new Vector2(0, -0.5), new Vector2(0.5, 0), new Vector2(0, 0.5)],
-    segments = 12,
-    phiStart = 0,
-    phiLength = Math.PI * 2,
+    points: [Vector2, Vector2, Vector2] = [new Vector2(0, -0.5), new Vector2(0.5, 0), new Vector2(0, 0.5)],
+    segments: number = 12,
+    phiStart: number = 0,
+    phiLength: number = Math.PI * 2,
   ) {
     super();
 
@@ -154,11 +154,7 @@ class LatheGeometry extends BufferGeometry {
     this.setAttribute('normal', new Float32BufferAttribute(normals, 3));
   }
 
-  static fromJSON(data) {
-    return new LatheGeometry(data.points, data.segments, data.phiStart, data.phiLength);
-  }
-
-  copy(source) {
+  copy(source: LatheGeometry) {
     super.copy(source);
 
     this.parameters = Object.assign({}, source.parameters);
@@ -166,5 +162,3 @@ class LatheGeometry extends BufferGeometry {
     return this;
   }
 }
-
-export { LatheGeometry };

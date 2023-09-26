@@ -2,8 +2,21 @@ import { BufferGeometry } from '../core/BufferGeometry.js';
 import { Float32BufferAttribute } from '../core/BufferAttribute.js';
 import { Vector3 } from '../math/Vector3.js';
 
-class WireframeGeometry extends BufferGeometry {
-  constructor(geometry = null) {
+const isUniqueEdge = (start: Vector3, end: Vector3, edges: Set<string>) => {
+  const hash1 = `${start.x},${start.y},${start.z}-${end.x},${end.y},${end.z}`;
+  const hash2 = `${end.x},${end.y},${end.z}-${start.x},${start.y},${start.z}`; // coincident edge
+
+  if (edges.has(hash1) || edges.has(hash2)) {
+    return false;
+  } else {
+    edges.add(hash1);
+    edges.add(hash2);
+    return true;
+  }
+};
+
+export class WireframeGeometry extends BufferGeometry {
+  constructor(geometry: null | BufferGeometry = null) {
     super();
 
     this.type = 'WireframeGeometry';
@@ -16,7 +29,7 @@ class WireframeGeometry extends BufferGeometry {
       // buffer
 
       const vertices = [];
-      const edges = new Set();
+      const edges = new Set<string>();
 
       // helper variables
 
@@ -50,7 +63,7 @@ class WireframeGeometry extends BufferGeometry {
               start.fromBufferAttribute(position, index1);
               end.fromBufferAttribute(position, index2);
 
-              if (isUniqueEdge(start, end, edges) === true) {
+              if (isUniqueEdge(start, end, edges)) {
                 vertices.push(start.x, start.y, start.z);
                 vertices.push(end.x, end.y, end.z);
               }
@@ -60,7 +73,7 @@ class WireframeGeometry extends BufferGeometry {
       } else {
         // non-indexed BufferGeometry
 
-        const position = geometry.attributes.position;
+        const position = geometry.attributes.position!;
 
         for (let i = 0, l = position.count / 3; i < l; i++) {
           for (let j = 0; j < 3; j++) {
@@ -73,7 +86,7 @@ class WireframeGeometry extends BufferGeometry {
             start.fromBufferAttribute(position, index1);
             end.fromBufferAttribute(position, index2);
 
-            if (isUniqueEdge(start, end, edges) === true) {
+            if (isUniqueEdge(start, end, edges)) {
               vertices.push(start.x, start.y, start.z);
               vertices.push(end.x, end.y, end.z);
             }
@@ -87,7 +100,7 @@ class WireframeGeometry extends BufferGeometry {
     }
   }
 
-  copy(source) {
+  copy(source: WireframeGeometry) {
     super.copy(source);
 
     this.parameters = Object.assign({}, source.parameters);
@@ -95,18 +108,3 @@ class WireframeGeometry extends BufferGeometry {
     return this;
   }
 }
-
-function isUniqueEdge(start, end, edges) {
-  const hash1 = `${start.x},${start.y},${start.z}-${end.x},${end.y},${end.z}`;
-  const hash2 = `${end.x},${end.y},${end.z}-${start.x},${start.y},${start.z}`; // coincident edge
-
-  if (edges.has(hash1) === true || edges.has(hash2) === true) {
-    return false;
-  } else {
-    edges.add(hash1);
-    edges.add(hash2);
-    return true;
-  }
-}
-
-export { WireframeGeometry };

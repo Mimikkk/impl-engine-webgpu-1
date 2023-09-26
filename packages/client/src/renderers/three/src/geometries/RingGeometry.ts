@@ -3,14 +3,14 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js';
 import { Vector2 } from '../math/Vector2.js';
 import { Vector3 } from '../math/Vector3.js';
 
-class RingGeometry extends BufferGeometry {
+export class RingGeometry extends BufferGeometry {
   constructor(
-    innerRadius = 0.5,
-    outerRadius = 1,
-    thetaSegments = 32,
-    phiSegments = 1,
-    thetaStart = 0,
-    thetaLength = Math.PI * 2,
+    innerRadius: number = 0.5,
+    outerRadius: number = 1,
+    thetaSegments: number = 32,
+    phiSegments: number = 1,
+    thetaStart: number = 0,
+    thetaLength: number = Math.PI * 2,
   ) {
     super();
 
@@ -102,18 +102,7 @@ class RingGeometry extends BufferGeometry {
     this.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
   }
 
-  static fromJSON(data) {
-    return new RingGeometry(
-      data.innerRadius,
-      data.outerRadius,
-      data.thetaSegments,
-      data.phiSegments,
-      data.thetaStart,
-      data.thetaLength,
-    );
-  }
-
-  copy(source) {
+  copy(source: RingGeometry) {
     super.copy(source);
 
     this.parameters = Object.assign({}, source.parameters);
@@ -121,5 +110,3 @@ class RingGeometry extends BufferGeometry {
     return this;
   }
 }
-
-export { RingGeometry };

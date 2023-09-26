@@ -3,8 +3,8 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js';
 import { Vector3 } from '../math/Vector3.js';
 import { Vector2 } from '../math/Vector2.js';
 
-class CircleGeometry extends BufferGeometry {
-  constructor(radius = 1, segments = 32, thetaStart = 0, thetaLength = Math.PI * 2) {
+export class CircleGeometry extends BufferGeometry {
+  constructor(radius: number = 1, segments: number = 32, thetaStart: number = 0, thetaLength: number = Math.PI * 2) {
     super();
 
     this.type = 'CircleGeometry';
@@ -72,11 +72,7 @@ class CircleGeometry extends BufferGeometry {
     this.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
   }
 
-  static fromJSON(data) {
-    return new CircleGeometry(data.radius, data.segments, data.thetaStart, data.thetaLength);
-  }
-
-  copy(source) {
+  copy(source: CircleGeometry) {
     super.copy(source);
 
     this.parameters = Object.assign({}, source.parameters);
@@ -84,5 +80,3 @@ class CircleGeometry extends BufferGeometry {
     return this;
   }
 }
-
-export { CircleGeometry };

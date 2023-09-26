@@ -2,15 +2,15 @@ import { BufferGeometry } from '../core/BufferGeometry.js';
 import { Float32BufferAttribute } from '../core/BufferAttribute.js';
 import { Vector3 } from '../math/Vector3.js';
 
-class SphereGeometry extends BufferGeometry {
+export class SphereGeometry extends BufferGeometry {
   constructor(
-    radius = 1,
-    widthSegments = 32,
-    heightSegments = 16,
-    phiStart = 0,
-    phiLength = Math.PI * 2,
-    thetaStart = 0,
-    thetaLength = Math.PI,
+    radius: number = 1,
+    widthSegments: number = 32,
+    heightSegments: number = 16,
+    phiStart: number = 0,
+    phiLength: number = Math.PI * 2,
+    thetaStart: number = 0,
+    thetaLength: number = Math.PI,
   ) {
     super();
 
@@ -109,19 +109,7 @@ class SphereGeometry extends BufferGeometry {
     this.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
   }
 
-  static fromJSON(data) {
-    return new SphereGeometry(
-      data.radius,
-      data.widthSegments,
-      data.heightSegments,
-      data.phiStart,
-      data.phiLength,
-      data.thetaStart,
-      data.thetaLength,
-    );
-  }
-
-  copy(source) {
+  copy(source: SphereGeometry) {
     super.copy(source);
 
     this.parameters = Object.assign({}, source.parameters);
@@ -129,5 +117,3 @@ class SphereGeometry extends BufferGeometry {
     return this;
   }
 }
-
-export { SphereGeometry };

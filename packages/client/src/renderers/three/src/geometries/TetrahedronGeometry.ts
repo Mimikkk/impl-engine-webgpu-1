@@ -1,6 +1,6 @@
 import { PolyhedronGeometry } from './PolyhedronGeometry.js';
 
-class TetrahedronGeometry extends PolyhedronGeometry {
+export class TetrahedronGeometry extends PolyhedronGeometry {
   constructor(radius = 1, detail = 0) {
     const vertices = [1, 1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1];
 
@@ -15,10 +15,4 @@ class TetrahedronGeometry extends PolyhedronGeometry {
       detail: detail,
     };
   }
-
-  static fromJSON(data) {
-    return new TetrahedronGeometry(data.radius, data.detail);
-  }
 }
-
-export { TetrahedronGeometry };

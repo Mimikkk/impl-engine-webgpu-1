@@ -3,16 +3,16 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js';
 import { Vector3 } from '../math/Vector3.js';
 import { Vector2 } from '../math/Vector2.js';
 
-class CylinderGeometry extends BufferGeometry {
+export class CylinderGeometry extends BufferGeometry {
   constructor(
-    radiusTop = 1,
-    radiusBottom = 1,
-    height = 1,
-    radialSegments = 32,
-    heightSegments = 1,
-    openEnded = false,
-    thetaStart = 0,
-    thetaLength = Math.PI * 2,
+    radiusTop: number = 1,
+    radiusBottom: number = 1,
+    height: number = 1,
+    radialSegments: number = 32,
+    heightSegments: number = 1,
+    openEnded: boolean = false,
+    thetaStart: number = 0,
+    thetaLength: number = Math.PI * 2,
   ) {
     super();
 
@@ -36,15 +36,15 @@ class CylinderGeometry extends BufferGeometry {
 
     // buffers
 
-    const indices = [];
-    const vertices = [];
-    const normals = [];
-    const uvs = [];
+    const indices: number[] = [];
+    const vertices: number[] = [];
+    const normals: number[] = [];
+    const uvs: number[] = [];
 
     // helper variables
 
     let index = 0;
-    const indexArray = [];
+    const indexArray: number[][] = [];
     const halfHeight = height / 2;
     let groupStart = 0;
 
@@ -76,7 +76,7 @@ class CylinderGeometry extends BufferGeometry {
       // generate vertices, normals and uvs
 
       for (let y = 0; y <= heightSegments; y++) {
-        const indexRow = [];
+        const indexRow: number[] = [];
 
         const v = y / heightSegments;
 
@@ -149,7 +149,7 @@ class CylinderGeometry extends BufferGeometry {
       groupStart += groupCount;
     }
 
-    function generateCap(top) {
+    function generateCap(top: boolean) {
       // save the index of the first center vertex
       const centerIndexStart = index;
 
@@ -246,20 +246,7 @@ class CylinderGeometry extends BufferGeometry {
     }
   }
 
-  static fromJSON(data) {
-    return new CylinderGeometry(
-      data.radiusTop,
-      data.radiusBottom,
-      data.height,
-      data.radialSegments,
-      data.heightSegments,
-      data.openEnded,
-      data.thetaStart,
-      data.thetaLength,
-    );
-  }
-
-  copy(source) {
+  copy(source: CylinderGeometry) {
     super.copy(source);
 
     this.parameters = Object.assign({}, source.parameters);
@@ -267,5 +254,3 @@ class CylinderGeometry extends BufferGeometry {
     return this;
   }
 }
-
-export { CylinderGeometry };

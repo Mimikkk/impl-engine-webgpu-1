@@ -1,7 +1,7 @@
 import { PolyhedronGeometry } from './PolyhedronGeometry.js';
 
-class DodecahedronGeometry extends PolyhedronGeometry {
-  constructor(radius = 1, detail = 0) {
+export class DodecahedronGeometry extends PolyhedronGeometry {
+  constructor(radius: number = 1, detail: number = 0) {
     const t = (1 + Math.sqrt(5)) / 2;
     const r = 1 / t;
 
@@ -91,10 +91,4 @@ class DodecahedronGeometry extends PolyhedronGeometry {
       detail: detail,
     };
   }
-
-  static fromJSON(data) {
-    return new DodecahedronGeometry(data.radius, data.detail);
-  }
 }
-
-export { DodecahedronGeometry };

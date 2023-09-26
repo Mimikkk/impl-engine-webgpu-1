@@ -9,8 +9,8 @@ const _v1 = new Vector3();
 const _normal = new Vector3();
 const _triangle = new Triangle();
 
-class EdgesGeometry extends BufferGeometry {
-  constructor(geometry = null, thresholdAngle = 1) {
+export class EdgesGeometry extends BufferGeometry {
+  constructor(geometry: any = null, thresholdAngle: number = 1) {
     super();
 
     this.type = 'EdgesGeometry';
@@ -30,11 +30,18 @@ class EdgesGeometry extends BufferGeometry {
       const indexCount = indexAttr ? indexAttr.count : positionAttr.count;
 
       const indexArr = [0, 0, 0];
-      const vertKeys = ['a', 'b', 'c'];
-      const hashes = new Array(3);
+      const vertKeys: ('a' | 'b' | 'c')[] = ['a', 'b', 'c'];
+      const hashes: string[] = new Array(3);
 
-      const edgeData = {};
-      const vertices = [];
+      const edgeData: Record<
+        string,
+        {
+          index0: number;
+          index1: number;
+          normal: Vector3;
+        } | null
+      > = {};
+      const vertices: number[] = [];
       for (let i = 0; i < indexCount; i += 3) {
         if (indexAttr) {
           indexArr[0] = indexAttr.getX(i);
@@ -77,7 +84,7 @@ class EdgesGeometry extends BufferGeometry {
           if (reverseHash in edgeData && edgeData[reverseHash]) {
             // if we found a sibling edge add it into the vertex array if
             // it meets the angle threshold and delete the edge from the map.
-            if (_normal.dot(edgeData[reverseHash].normal) <= thresholdDot) {
+            if (_normal.dot(edgeData[reverseHash]!.normal) <= thresholdDot) {
               vertices.push(v0.x, v0.y, v0.z);
               vertices.push(v1.x, v1.y, v1.z);
             }
@@ -97,7 +104,7 @@ class EdgesGeometry extends BufferGeometry {
       // iterate over all remaining, unmatched edges and add them to the vertex array
       for (const key in edgeData) {
         if (edgeData[key]) {
-          const { index0, index1 } = edgeData[key];
+          const { index0, index1 } = edgeData[key]!;
           _v0.fromBufferAttribute(positionAttr, index0);
           _v1.fromBufferAttribute(positionAttr, index1);
 
@@ -110,7 +117,7 @@ class EdgesGeometry extends BufferGeometry {
     }
   }
 
-  copy(source) {
+  copy(source: EdgesGeometry) {
     super.copy(source);
 
     this.parameters = Object.assign({}, source.parameters);
@@ -118,5 +125,3 @@ class EdgesGeometry extends BufferGeometry {
     return this;
   }
 }
-
-export { EdgesGeometry };

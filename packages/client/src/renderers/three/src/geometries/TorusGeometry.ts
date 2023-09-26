@@ -2,8 +2,14 @@ import { BufferGeometry } from '../core/BufferGeometry.js';
 import { Float32BufferAttribute } from '../core/BufferAttribute.js';
 import { Vector3 } from '../math/Vector3.js';
 
-class TorusGeometry extends BufferGeometry {
-  constructor(radius = 1, tube = 0.4, radialSegments = 12, tubularSegments = 48, arc = Math.PI * 2) {
+export class TorusGeometry extends BufferGeometry {
+  constructor(
+    radius: number = 1,
+    tube: number = 0.4,
+    radialSegments: number = 12,
+    tubularSegments: number = 48,
+    arc: number = Math.PI * 2,
+  ) {
     super();
 
     this.type = 'TorusGeometry';
@@ -88,11 +94,7 @@ class TorusGeometry extends BufferGeometry {
     this.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
   }
 
-  static fromJSON(data) {
-    return new TorusGeometry(data.radius, data.tube, data.radialSegments, data.tubularSegments, data.arc);
-  }
-
-  copy(source) {
+  copy(source: TorusGeometry) {
     super.copy(source);
 
     this.parameters = Object.assign({}, source.parameters);
@@ -100,5 +102,3 @@ class TorusGeometry extends BufferGeometry {
     return this;
   }
 }
-
-export { TorusGeometry };

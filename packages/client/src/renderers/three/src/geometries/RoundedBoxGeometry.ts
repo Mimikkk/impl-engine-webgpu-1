@@ -1,8 +1,15 @@
-import { BoxGeometry, Vector3 } from '../Three.js';
-
+import { Vector3 } from '../math/Vector3.js';
+import { BoxGeometry } from './BoxGeometry.js';
 const _tempNormal = new Vector3();
 
-function getUv(faceDirVector, normal, uvAxis, projectionAxis, radius, sideLength) {
+function getUv(
+  faceDirVector: Vector3,
+  normal: Vector3,
+  uvAxis: 'x' | 'y' | 'z',
+  projectionAxis: 'x' | 'y' | 'z',
+  radius: number,
+  sideLength: number,
+) {
   const totArcLength = (2 * Math.PI * radius) / 4;
 
   // length of the planes between the arcs on each axis
@@ -29,9 +36,9 @@ function getUv(faceDirVector, normal, uvAxis, projectionAxis, radius, sideLength
   }
 }
 
-class RoundedBoxGeometry extends BoxGeometry {
-  constructor(width = 1, height = 1, depth = 1, segments = 2, radius = 0.1) {
-    // ensure segments is odd so we have a plane connecting the rounded corners
+export class RoundedBoxGeometry extends BoxGeometry {
+  constructor(width: number = 1, height: number = 1, depth: number = 1, segments: number = 2, radius: number = 0.1) {
+    // ensure segments is odd, so we have a plane connecting the rounded corners
     segments = segments * 2 + 1;
 
     // ensure radius isn't bigger than shortest side
@@ -56,8 +63,8 @@ class RoundedBoxGeometry extends BoxGeometry {
 
     const box = new Vector3(width, height, depth).divideScalar(2).subScalar(radius);
 
-    const positions = this.attributes.position.array;
-    const normals = this.attributes.normal.array;
+    const positions = this.attributes.position!.array;
+    const normals = this.attributes.normal!.array;
     const uvs = this.attributes.uv.array;
 
     const faceTris = positions.length / 6;
@@ -89,35 +96,30 @@ class RoundedBoxGeometry extends BoxGeometry {
           uvs[j + 0] = getUv(faceDirVector, normal, 'z', 'y', radius, depth);
           uvs[j + 1] = 1.0 - getUv(faceDirVector, normal, 'y', 'z', radius, height);
           break;
-
         case 1: // left
           // generate UVs along Z then Y
           faceDirVector.set(-1, 0, 0);
           uvs[j + 0] = 1.0 - getUv(faceDirVector, normal, 'z', 'y', radius, depth);
           uvs[j + 1] = 1.0 - getUv(faceDirVector, normal, 'y', 'z', radius, height);
           break;
-
         case 2: // top
           // generate UVs along X then Z
           faceDirVector.set(0, 1, 0);
           uvs[j + 0] = 1.0 - getUv(faceDirVector, normal, 'x', 'z', radius, width);
           uvs[j + 1] = getUv(faceDirVector, normal, 'z', 'x', radius, depth);
           break;
-
         case 3: // bottom
           // generate UVs along X then Z
           faceDirVector.set(0, -1, 0);
           uvs[j + 0] = 1.0 - getUv(faceDirVector, normal, 'x', 'z', radius, width);
           uvs[j + 1] = 1.0 - getUv(faceDirVector, normal, 'z', 'x', radius, depth);
           break;
-
         case 4: // front
           // generate UVs along X then Y
           faceDirVector.set(0, 0, 1);
           uvs[j + 0] = 1.0 - getUv(faceDirVector, normal, 'x', 'y', radius, width);
           uvs[j + 1] = 1.0 - getUv(faceDirVector, normal, 'y', 'x', radius, height);
           break;
-
         case 5: // back
           // generate UVs along X then Y
           faceDirVector.set(0, 0, -1);
@@ -128,5 +130,3 @@ class RoundedBoxGeometry extends BoxGeometry {
     }
   }
 }
-
-export { RoundedBoxGeometry };

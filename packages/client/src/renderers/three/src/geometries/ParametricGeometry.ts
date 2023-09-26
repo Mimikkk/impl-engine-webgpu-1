@@ -1,12 +1,13 @@
-/**
- * Parametric Surfaces Geometry
- * based on the brilliant article by @prideout https://prideout.net/blog/old/blog/index.html@p=44.html
- */
+import { BufferGeometry } from '../core/BufferGeometry.js';
+import { Vector3 } from '../math/Vector3.js';
+import { Float32BufferAttribute } from '../core/BufferAttribute.js';
 
-import { BufferGeometry, Float32BufferAttribute, Vector3 } from '../Three.js';
-
-class ParametricGeometry extends BufferGeometry {
-  constructor(func = (u, v, target) => target.set(u, v, Math.cos(u) * Math.sin(v)), slices = 8, stacks = 8) {
+export class ParametricGeometry extends BufferGeometry {
+  constructor(
+    func = (u: number, v: number, target: Vector3) => target.set(u, v, Math.cos(u) * Math.sin(v)),
+    slices = 8,
+    stacks = 8,
+  ) {
     super();
 
     this.type = 'ParametricGeometry';
@@ -19,10 +20,10 @@ class ParametricGeometry extends BufferGeometry {
 
     // buffers
 
-    const indices = [];
-    const vertices = [];
-    const normals = [];
-    const uvs = [];
+    const indices: number[] = [];
+    const vertices: number[] = [];
+    const normals: number[] = [];
+    const uvs: number[] = [];
 
     const EPS = 0.00001;
 
@@ -103,7 +104,7 @@ class ParametricGeometry extends BufferGeometry {
     this.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
   }
 
-  copy(source) {
+  copy(source: ParametricGeometry) {
     super.copy(source);
 
     this.parameters = Object.assign({}, source.parameters);
@@ -111,5 +112,3 @@ class ParametricGeometry extends BufferGeometry {
     return this;
   }
 }
-
-export { ParametricGeometry };
