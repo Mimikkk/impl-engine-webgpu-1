@@ -1,6 +1,7 @@
 import { MathUtils } from './MathUtils.js';
 import { Matrix3 } from './Matrix3.js';
 import { BufferAttribute } from '../core/BufferAttribute.js';
+import { NumberArray } from '../types.js';
 
 export class Vector2 {
   declare ['constructor']: new (x: number, y: number) => this;
@@ -325,7 +326,7 @@ export class Vector2 {
     return v.x === this.x && v.y === this.y;
   }
 
-  fromArray(array: [number, number], offset: number = 0): Vector2 {
+  fromArray(array: NumberArray, offset: number = 0): Vector2 {
     this.x = array[offset];
     this.y = array[offset + 1];
 
