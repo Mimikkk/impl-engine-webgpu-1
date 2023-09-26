@@ -1,17 +1,23 @@
 import {
   Box3,
+  Camera,
   InstancedInterleavedBuffer,
   InterleavedBufferAttribute,
   Line3,
   MathUtils,
   Matrix4,
   Mesh,
+  PerspectiveCamera,
+  Ray,
+  Raycaster,
   Sphere,
+  Vector2,
   Vector3,
   Vector4,
 } from '../Three.js';
-import { LineSegmentsGeometry } from '../lines/LineSegmentsGeometry.js';
-import { LineMaterial } from '../lines/LineMaterial.js';
+import { LineSegmentsGeometry } from './LineSegmentsGeometry.js';
+import { LineMaterial } from './LineMaterial.js';
+import { Intersection } from '../core/Raycaster.js';
 
 const _start = new Vector3();
 const _end = new Vector3();
@@ -29,11 +35,12 @@ const _box = new Box3();
 const _sphere = new Sphere();
 const _clipToWorldVector = new Vector4();
 
-let _ray, _lineWidth;
+let _ray: Ray;
+let _lineWidth: number;
 
 // Returns the margin required to expand by in world space given the distance from the camera,
 // line width, resolution, and camera projection
-function getWorldSpaceHalfWidth(camera, distance, resolution) {
+function getWorldSpaceHalfWidth(camera: Camera, distance: number, resolution: Vector2) {
   // transform into clip space, adjust the x and y values by the pixel width offset, then
   // transform back into world space to get world offset. Note clip space is [-1, 1] so full
   // width does not need to be halved.
@@ -47,7 +54,7 @@ function getWorldSpaceHalfWidth(camera, distance, resolution) {
   return Math.abs(Math.max(_clipToWorldVector.x, _clipToWorldVector.y));
 }
 
-function raycastWorldUnits(lineSegments, intersects) {
+function raycastWorldUnits(lineSegments: LineSegments2, intersects: Intersection[]) {
   const matrixWorld = lineSegments.matrixWorld;
   const geometry = lineSegments.geometry;
   const instanceStart = geometry.attributes.instanceStart;
@@ -69,19 +76,20 @@ function raycastWorldUnits(lineSegments, intersects) {
     if (isInside) {
       intersects.push({
         point,
-        pointOnLine,
+        //@ts-expect-error
+        pointOnLine: pointOnLine!,
         distance: _ray.origin.distanceTo(point),
         object: lineSegments,
         face: null,
         faceIndex: i,
-        uv: null,
-        uv1: null,
+        uv: null!,
+        uv1: null!,
       });
     }
   }
 }
 
-function raycastScreenSpace(lineSegments, camera, intersects) {
+function raycastScreenSpace(lineSegments: LineSegments2, camera: PerspectiveCamera, intersects: Intersection[]) {
   const projectionMatrix = camera.projectionMatrix;
   const material = lineSegments.material;
   const resolution = material.resolution;
@@ -99,7 +107,8 @@ function raycastScreenSpace(lineSegments, camera, intersects) {
   // pick a point 1 unit out along the ray to avoid the ray origin
   // sitting at the camera origin which will cause "w" to be 0 when
   // applying the projection matrix.
-  _ray.at(1, _ssOrigin);
+  //@tw-expect-error
+  _ray.at(1, _ssOrigin as unknown as Vector3);
 
   // ndc space [ - 1.0, 1.0 ]
   _ssOrigin.w = 1;
@@ -112,7 +121,7 @@ function raycastScreenSpace(lineSegments, camera, intersects) {
   _ssOrigin.y *= resolution.y / 2;
   _ssOrigin.z = 0;
 
-  _ssOrigin3.copy(_ssOrigin);
+  _ssOrigin3.copy(_ssOrigin as unknown as Vector3);
 
   _mvMatrix.multiplyMatrices(camera.matrixWorldInverse, matrixWorld);
 
@@ -160,10 +169,10 @@ function raycastScreenSpace(lineSegments, camera, intersects) {
     _end4.y *= resolution.y / 2;
 
     // create 2d segment
-    _line.start.copy(_start4);
+    _line.start.copy(_start4 as unknown as Vector3);
     _line.start.z = 0;
 
-    _line.end.copy(_end4);
+    _line.end.copy(_end4 as unknown as Vector3);
     _line.end.z = 0;
 
     // get closest point on ray to segment
@@ -190,20 +199,29 @@ function raycastScreenSpace(lineSegments, camera, intersects) {
 
       intersects.push({
         point: point,
+        //@ts-expect-error
         pointOnLine: pointOnLine,
         distance: _ray.origin.distanceTo(point),
         object: lineSegments,
         face: null,
         faceIndex: i,
-        uv: null,
-        uv1: null,
+        uv: null!,
+        uv1: null!,
       });
     }
   }
 }
 
-class LineSegments2 extends Mesh {
-  constructor(geometry = new LineSegmentsGeometry(), material = new LineMaterial({ color: Math.random() * 0xffffff })) {
+export class LineSegments2 extends Mesh {
+  isLineSegments2: boolean;
+  type: string | 'LineSegments2';
+  material: LineMaterial;
+  geometry: LineSegmentsGeometry;
+
+  constructor(
+    geometry: LineSegmentsGeometry = new LineSegmentsGeometry(),
+    material: LineMaterial = new LineMaterial({ color: Math.random() * 0xffffff }),
+  ) {
     super(geometry, material);
 
     this.isLineSegments2 = true;
@@ -230,15 +248,15 @@ class LineSegments2 extends Mesh {
 
     const instanceDistanceBuffer = new InstancedInterleavedBuffer(lineDistances, 2, 1); // d0, d1
 
-    geometry.setAttribute('instanceDistanceStart', new InterleavedBufferAttribute(instanceDistanceBuffer, 1, 0)); // d0
-    geometry.setAttribute('instanceDistanceEnd', new InterleavedBufferAttribute(instanceDistanceBuffer, 1, 1)); // d1
+    geometry.setAttribute('instanceDistanceStart', new InterleavedBufferAttribute(instanceDistanceBuffer, 1, 0) as any); // d0
+    geometry.setAttribute('instanceDistanceEnd', new InterleavedBufferAttribute(instanceDistanceBuffer, 1, 1) as any); // d1
 
     return this;
   }
 
-  raycast(raycaster, intersects) {
+  raycast(raycaster: Raycaster, intersects: Intersection[]) {
     const worldUnits = this.material.worldUnits;
-    const camera = raycaster.camera;
+    const camera = raycaster.camera! as PerspectiveCamera;
 
     if (camera === null && !worldUnits) {
       console.error(
@@ -261,14 +279,14 @@ class LineSegments2 extends Mesh {
       geometry.computeBoundingSphere();
     }
 
-    _sphere.copy(geometry.boundingSphere).applyMatrix4(matrixWorld);
+    _sphere.copy(geometry.boundingSphere!).applyMatrix4(matrixWorld);
 
     // increase the sphere bounds by the worst case line screen space width
     let sphereMargin;
     if (worldUnits) {
       sphereMargin = _lineWidth * 0.5;
     } else {
-      const distanceToSphere = Math.max(camera.near, _sphere.distanceToPoint(_ray.origin));
+      const distanceToSphere = Math.max(camera!.near, _sphere.distanceToPoint(_ray.origin));
       sphereMargin = getWorldSpaceHalfWidth(camera, distanceToSphere, material.resolution);
     }
 
@@ -283,7 +301,7 @@ class LineSegments2 extends Mesh {
       geometry.computeBoundingBox();
     }
 
-    _box.copy(geometry.boundingBox).applyMatrix4(matrixWorld);
+    _box.copy(geometry.boundingBox!).applyMatrix4(matrixWorld);
 
     // increase the box bounds by the worst case line width
     let boxMargin;
@@ -307,5 +325,3 @@ class LineSegments2 extends Mesh {
     }
   }
 }
-
-export { LineSegments2 };

@@ -211,4 +211,14 @@ export namespace UniformsLib {
     alphaMapTransform: { value: new Matrix3() },
     alphaTest: { value: 0 },
   };
+
+  export const line = {
+    worldUnits: { value: 1 },
+    linewidth: { value: 1 },
+    resolution: { value: new Vector2(1, 1) },
+    dashOffset: { value: 0 },
+    dashScale: { value: 1 },
+    dashSize: { value: 1 },
+    gapSize: { value: 1 },
+  };
 }

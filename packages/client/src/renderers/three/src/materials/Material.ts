@@ -22,6 +22,7 @@ import type {
   StencilOp,
 } from '../constants.js';
 import { Plane } from '../math/Plane.js';
+import { ColorRepresentation } from '../math/Color.js';
 
 let materialId = 0;
 
@@ -289,6 +290,7 @@ export class Material extends EventDispatcher<'dispose'> {
 
 export namespace Material {
   export interface Parameters {
+    color?: ColorRepresentation;
     alphaHash?: boolean | undefined;
     alphaTest?: number | undefined;
     alphaToCoverage?: boolean | undefined;

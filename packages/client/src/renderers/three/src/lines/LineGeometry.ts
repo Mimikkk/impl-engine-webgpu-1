@@ -1,5 +1,6 @@
 import { LineSegmentsGeometry } from './LineSegmentsGeometry.js';
 import { Line2 } from './Line2.js';
+import { NumberArray } from '../types.js';
 
 export class LineGeometry extends LineSegmentsGeometry {
   declare isLineGeometry: boolean;
@@ -9,7 +10,7 @@ export class LineGeometry extends LineSegmentsGeometry {
     super();
   }
 
-  setPositions(array: number[]) {
+  setPositions(array: NumberArray) {
     // converts [ x1, y1, z1,  x2, y2, z2, ... ] to pairs format
 
     const length = array.length - 3;
@@ -54,7 +55,7 @@ export class LineGeometry extends LineSegmentsGeometry {
   fromLine(line: Line2) {
     const geometry = line.geometry;
 
-    this.setPositions(geometry.attributes.position.array);
+    this.setPositions(geometry.attributes.position!.array);
 
     return this;
   }
