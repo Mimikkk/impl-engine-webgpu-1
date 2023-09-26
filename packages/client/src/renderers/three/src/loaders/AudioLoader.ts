@@ -1,4 +1,4 @@
-import { context } from '../audio/AudioContext.js';
+import { AudioManager } from '../audio/AudioManager.js';
 import { FileLoader } from './FileLoader.js';
 import { Loader } from './Loader.js';
 
@@ -23,7 +23,7 @@ class AudioLoader extends Loader {
           // detaches the buffer when complete, preventing reuse.
           const bufferCopy = buffer.slice(0);
 
-          context.decodeAudioData(
+          AudioManager.context.decodeAudioData(
             bufferCopy,
             function (audioBuffer) {
               onLoad(audioBuffer);
