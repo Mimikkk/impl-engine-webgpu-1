@@ -10,6 +10,9 @@ import { Camera } from '../cameras/Camera.js';
 import { NumberArray } from '../types.js';
 
 export class Vector3 {
+  static is(item?: any): item is Vector3 {
+    return item && item.isVector3;
+  }
   declare ['constructor']: new (x: number, y: number, z: number) => this;
 
   declare isVector3: boolean;

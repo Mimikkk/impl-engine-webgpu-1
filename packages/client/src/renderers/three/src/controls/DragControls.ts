@@ -1,175 +1,189 @@
-import { EventDispatcher, Matrix4, Plane, Raycaster, Vector2, Vector3 } from '../Three.js';
+import { Plane } from '../math/Plane.js';
+import { Intersection, Raycaster } from '../core/Raycaster.js';
+import { Vector2 } from '../math/Vector2.js';
+import { Vector3 } from '../math/Vector3.js';
+import { Matrix4 } from '../math/Matrix4.js';
+import { EventDispatcher } from '../core/EventDispatcher.js';
+import { AnimationMixer } from '../animation/AnimationMixer.js';
+import { Object3D } from '../core/Object3D.js';
+import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js';
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js';
 
-const _plane = new Plane();
-const _raycaster = new Raycaster();
+const plane = new Plane();
+const raycaster = new Raycaster();
 
-const _pointer = new Vector2();
-const _offset = new Vector3();
-const _intersection = new Vector3();
-const _worldPosition = new Vector3();
-const _inverseMatrix = new Matrix4();
+const pointer = new Vector2();
+const offset = new Vector3();
+const intersection = new Vector3();
+const worldPosition = new Vector3();
+const inverseMatrix = new Matrix4();
 
-class DragControls extends EventDispatcher {
-  constructor(_objects, _camera, _domElement) {
+export class DragControls extends EventDispatcher<DragControls.Event['type'], DragControls.Event> {
+  selected: Object3D | null = null;
+  hovered: Object3D | null = null;
+  objects: Object3D[];
+  enabled: boolean;
+  transformGroup: boolean;
+
+  constructor(objects: Object3D[], camera: PerspectiveCamera | OrthographicCamera, canvas: HTMLCanvasElement) {
     super();
 
-    _domElement.style.touchAction = 'none'; // disable touch scroll
+    this.objects = objects;
+    // disable touch scroll
+    canvas.style.touchAction = 'none';
 
-    let _selected = null,
-      _hovered = null;
+    const intersections: Intersection[] = [];
 
-    const _intersections = [];
+    const updatePointer = ({ clientY, clientX }: PointerEvent) => {
+      const { left, top, width, height } = canvas.getBoundingClientRect();
 
-    //
+      pointer.x = ((clientX - left) / width) * 2 - 1;
+      pointer.y = (-(clientY - top) / height) * 2 + 1;
+    };
 
-    const scope = this;
-
-    function activate() {
-      _domElement.addEventListener('pointermove', onPointerMove);
-      _domElement.addEventListener('pointerdown', onPointerDown);
-      _domElement.addEventListener('pointerup', onPointerCancel);
-      _domElement.addEventListener('pointerleave', onPointerCancel);
-    }
-
-    function deactivate() {
-      _domElement.removeEventListener('pointermove', onPointerMove);
-      _domElement.removeEventListener('pointerdown', onPointerDown);
-      _domElement.removeEventListener('pointerup', onPointerCancel);
-      _domElement.removeEventListener('pointerleave', onPointerCancel);
-
-      _domElement.style.cursor = '';
-    }
-
-    function dispose() {
-      deactivate();
-    }
-
-    function getObjects() {
-      return _objects;
-    }
-
-    function getRaycaster() {
-      return _raycaster;
-    }
-
-    function onPointerMove(event) {
-      if (scope.enabled === false) return;
+    const onPointerMove = (event: PointerEvent) => {
+      if (!this.enabled) return;
 
       updatePointer(event);
+      raycaster.setFromCamera(pointer, camera);
 
-      _raycaster.setFromCamera(_pointer, _camera);
-
-      if (_selected) {
-        if (_raycaster.ray.intersectPlane(_plane, _intersection)) {
-          _selected.position.copy(_intersection.sub(_offset).applyMatrix4(_inverseMatrix));
+      if (this.selected) {
+        if (raycaster.ray.intersectPlane(plane, intersection)) {
+          this.selected.position.copy(intersection.sub(offset).applyMatrix4(inverseMatrix));
         }
 
-        scope.dispatchEvent({ type: 'drag', object: _selected });
+        this.dispatchEvent({ type: 'drag', object: this.selected });
 
         return;
       }
 
-      // hover support
-
       if (event.pointerType === 'mouse' || event.pointerType === 'pen') {
-        _intersections.length = 0;
+        intersections.length = 0;
 
-        _raycaster.setFromCamera(_pointer, _camera);
-        _raycaster.intersectObjects(_objects, true, _intersections);
+        raycaster.setFromCamera(pointer, camera);
+        raycaster.intersectObjects(objects, true, intersections);
 
-        if (_intersections.length > 0) {
-          const object = _intersections[0].object;
+        if (intersections.length > 0) {
+          const object = intersections[0].object;
 
-          _plane.setFromNormalAndCoplanarPoint(
-            _camera.getWorldDirection(_plane.normal),
-            _worldPosition.setFromMatrixPosition(object.matrixWorld),
+          plane.setFromNormalAndCoplanarPoint(
+            camera.getWorldDirection(plane.normal),
+            worldPosition.setFromMatrixPosition(object.matrixWorld),
           );
 
-          if (_hovered !== object && _hovered !== null) {
-            scope.dispatchEvent({ type: 'hoveroff', object: _hovered });
+          if (this.hovered !== object && this.hovered !== null) {
+            this.dispatchEvent({ type: 'hoveroff', object: this.hovered });
 
-            _domElement.style.cursor = 'auto';
-            _hovered = null;
+            canvas.style.cursor = 'auto';
+            this.hovered = null;
           }
 
-          if (_hovered !== object) {
-            scope.dispatchEvent({ type: 'hoveron', object: object });
+          if (this.hovered !== object) {
+            this.dispatchEvent({ type: 'hoveron', object: object });
 
-            _domElement.style.cursor = 'pointer';
-            _hovered = object;
+            canvas.style.cursor = 'pointer';
+            this.hovered = object;
           }
         } else {
-          if (_hovered !== null) {
-            scope.dispatchEvent({ type: 'hoveroff', object: _hovered });
+          if (this.hovered !== null) {
+            this.dispatchEvent({ type: 'hoveroff', object: this.hovered });
 
-            _domElement.style.cursor = 'auto';
-            _hovered = null;
+            canvas.style.cursor = 'auto';
+            this.hovered = null;
           }
         }
       }
-    }
+    };
 
-    function onPointerDown(event) {
-      if (scope.enabled === false) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!this.enabled) return;
 
       updatePointer(event);
 
-      _intersections.length = 0;
+      intersections.length = 0;
 
-      _raycaster.setFromCamera(_pointer, _camera);
-      _raycaster.intersectObjects(_objects, true, _intersections);
+      raycaster.setFromCamera(pointer, camera);
+      raycaster.intersectObjects(objects, true, intersections);
 
-      if (_intersections.length > 0) {
-        _selected = scope.transformGroup === true ? _objects[0] : _intersections[0].object;
+      if (intersections.length > 0) {
+        this.selected = this.transformGroup ? objects[0] : intersections[0].object;
 
-        _plane.setFromNormalAndCoplanarPoint(
-          _camera.getWorldDirection(_plane.normal),
-          _worldPosition.setFromMatrixPosition(_selected.matrixWorld),
+        plane.setFromNormalAndCoplanarPoint(
+          camera.getWorldDirection(plane.normal),
+          worldPosition.setFromMatrixPosition(this.selected.matrixWorld),
         );
 
-        if (_raycaster.ray.intersectPlane(_plane, _intersection)) {
-          _inverseMatrix.copy(_selected.parent.matrixWorld).invert();
-          _offset.copy(_intersection).sub(_worldPosition.setFromMatrixPosition(_selected.matrixWorld));
+        if (raycaster.ray.intersectPlane(plane, intersection)) {
+          inverseMatrix.copy(this.selected.parent!.matrixWorld).invert();
+          offset.copy(intersection).sub(worldPosition.setFromMatrixPosition(this.selected.matrixWorld));
         }
 
-        _domElement.style.cursor = 'move';
+        canvas.style.cursor = 'move';
 
-        scope.dispatchEvent({ type: 'dragstart', object: _selected });
+        this.dispatchEvent({ type: 'dragstart', object: this.selected });
       }
-    }
+    };
 
-    function onPointerCancel() {
-      if (scope.enabled === false) return;
+    const onPointerCancel = () => {
+      if (!this.enabled) return;
 
-      if (_selected) {
-        scope.dispatchEvent({ type: 'dragend', object: _selected });
-
-        _selected = null;
+      if (this.selected) {
+        this.dispatchEvent({ type: 'dragend', object: this.selected });
+        this.selected = null;
       }
 
-      _domElement.style.cursor = _hovered ? 'pointer' : 'auto';
-    }
+      canvas.style.cursor = this.hovered ? 'pointer' : 'auto';
+    };
 
-    function updatePointer(event) {
-      const rect = _domElement.getBoundingClientRect();
-
-      _pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      _pointer.y = (-(event.clientY - rect.top) / rect.height) * 2 + 1;
-    }
-
-    activate();
+    this.activate = () => {
+      canvas.addEventListener('pointermove', onPointerMove);
+      canvas.addEventListener('pointerdown', onPointerDown);
+      canvas.addEventListener('pointerup', onPointerCancel);
+      canvas.addEventListener('pointerleave', onPointerCancel);
+    };
+    this.activate();
 
     // API
 
     this.enabled = true;
     this.transformGroup = false;
 
-    this.activate = activate;
-    this.deactivate = deactivate;
-    this.dispose = dispose;
-    this.getObjects = getObjects;
-    this.getRaycaster = getRaycaster;
+    this.deactivate = () => {
+      canvas.removeEventListener('pointermove', onPointerMove);
+      canvas.removeEventListener('pointerdown', onPointerDown);
+      canvas.removeEventListener('pointerup', onPointerCancel);
+      canvas.removeEventListener('pointerleave', onPointerCancel);
+
+      canvas.style.cursor = '';
+    };
+  }
+
+  activate: () => void;
+  deactivate: () => void;
+  dispose(): void {
+    this.deactivate();
+  }
+  get raycaster(): Raycaster {
+    return raycaster;
   }
 }
 
-export { DragControls };
+export namespace DragControls {
+  export interface HoverOnEvent extends EventDispatcher.Event<'hoveron', AnimationMixer> {
+    object: Object3D;
+  }
+  export interface HoverOffEvent extends EventDispatcher.Event<'hoveroff', AnimationMixer> {
+    object: Object3D;
+  }
+  export interface DragEvent extends EventDispatcher.Event<'drag', AnimationMixer> {
+    object: Object3D;
+  }
+  export interface DragStartEvent extends EventDispatcher.Event<'dragstart', AnimationMixer> {
+    object: Object3D;
+  }
+  export interface DragEndEvent extends EventDispatcher.Event<'dragend', AnimationMixer> {
+    object: Object3D;
+  }
+
+  export type Event = HoverOnEvent | HoverOffEvent | DragEvent | DragStartEvent | DragEndEvent;
+}
