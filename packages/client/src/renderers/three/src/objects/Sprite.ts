@@ -9,6 +9,7 @@ import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.j
 import { SpriteMaterial } from '../materials/SpriteMaterial.js';
 import { Intersection, Raycaster } from '../core/Raycaster.js';
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js';
+import { BufferAttribute } from '../core/BufferAttribute.js';
 
 let _geometry: BufferGeometry;
 
@@ -52,8 +53,8 @@ export class Sprite extends Object3D {
       const interleavedBuffer = new InterleavedBuffer(float32Array, 5);
 
       _geometry.setIndex([0, 1, 2, 0, 2, 3]);
-      _geometry.setAttribute('position', new InterleavedBufferAttribute(interleavedBuffer, 3, 0, false));
-      _geometry.setAttribute('uv', new InterleavedBufferAttribute(interleavedBuffer, 2, 3, false));
+      _geometry.setAttribute('position', new InterleavedBufferAttribute(interleavedBuffer, 3, 0, false) as never);
+      _geometry.setAttribute('uv', new InterleavedBufferAttribute(interleavedBuffer, 2, 3, false) as never);
     }
 
     this.geometry = _geometry;

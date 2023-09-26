@@ -4,6 +4,7 @@ import { ColorSpace, SRGBColorSpace } from '../constants.js';
 import { Vector3 } from './Vector3.js';
 import { Matrix3 } from './Matrix3.js';
 import { BufferAttribute } from '../core/BufferAttribute.js';
+import { NumberArray } from '../types.js';
 
 const _colorKeywords = {
   aliceblue: 0xf0f8ff,
@@ -618,7 +619,7 @@ export class Color {
     return c.r === this.r && c.g === this.g && c.b === this.b;
   }
 
-  fromArray(array: number[], offset: number = 0): Color {
+  fromArray(array: NumberArray, offset: number = 0): Color {
     this.r = array[offset];
     this.g = array[offset + 1];
     this.b = array[offset + 2];
@@ -626,7 +627,7 @@ export class Color {
     return this;
   }
 
-  toArray(array: number[] = [], offset: number = 0): number[] {
+  toArray(array: NumberArray = [], offset: number = 0): NumberArray {
     array[offset] = this.r;
     array[offset + 1] = this.g;
     array[offset + 2] = this.b;

@@ -53,7 +53,7 @@ export class Line extends Object3D {
       const positionAttribute = geometry.attributes.position;
       const lineDistances = [0];
 
-      for (let i = 1, l = positionAttribute.count; i < l; i++) {
+      for (let i = 1, l = positionAttribute!.count; i < l; i++) {
         _start.fromBufferAttribute(positionAttribute, i - 1);
         _end.fromBufferAttribute(positionAttribute, i);
 
@@ -79,7 +79,7 @@ export class Line extends Object3D {
 
     if (geometry.boundingSphere === null) geometry.computeBoundingSphere();
 
-    _sphere.copy(geometry.boundingSphere);
+    _sphere.copy(geometry.boundingSphere!);
     _sphere.applyMatrix4(matrixWorld);
     _sphere.radius += threshold;
 
@@ -137,7 +137,7 @@ export class Line extends Object3D {
       }
     } else {
       const start = Math.max(0, drawRange.start);
-      const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
+      const end = Math.min(positionAttribute!.count, drawRange.start + drawRange.count);
 
       for (let i = start, l = end - 1; i < l; i += step) {
         vStart.fromBufferAttribute(positionAttribute, i);

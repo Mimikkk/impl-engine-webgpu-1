@@ -17,6 +17,8 @@ export class Points extends Object3D {
   declare isPoints: true;
   geometry: BufferGeometry;
   material: Material;
+  morphTargetInfluences: number[];
+  morphTargetDictionary: Record<string, number>;
 
   constructor(geometry: BufferGeometry = new BufferGeometry(), material: Material = new PointsMaterial()) {
     super();
@@ -81,7 +83,7 @@ export class Points extends Object3D {
       }
     } else {
       const start = Math.max(0, drawRange.start);
-      const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
+      const end = Math.min(positionAttribute!.count, drawRange.start + drawRange.count);
 
       for (let i = start, l = end; i < l; i++) {
         _position.fromBufferAttribute(positionAttribute, i);

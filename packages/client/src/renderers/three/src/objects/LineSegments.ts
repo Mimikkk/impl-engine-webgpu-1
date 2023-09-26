@@ -29,7 +29,7 @@ export class LineSegments extends Line {
       const positionAttribute = geometry.attributes.position;
       const lineDistances: number[] = [];
 
-      for (let i = 0, l = positionAttribute.count; i < l; i += 2) {
+      for (let i = 0, l = positionAttribute!.count; i < l; i += 2) {
         _start.fromBufferAttribute(positionAttribute, i);
         _end.fromBufferAttribute(positionAttribute, i + 1);
 
