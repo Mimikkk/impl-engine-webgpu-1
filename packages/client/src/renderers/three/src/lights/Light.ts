@@ -2,6 +2,7 @@ import { Object3D } from '../core/Object3D.js';
 import { Color, ColorRepresentation } from '../math/Color.js';
 
 export class Light extends Object3D {
+  declare is: (item?: any) => item is Light;
   declare isLight: boolean;
   declare type: string | 'Light';
   color: Color;

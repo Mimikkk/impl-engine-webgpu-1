@@ -15,6 +15,8 @@ import { Group } from '../objects/Group.js';
 import { Intersection, Raycaster } from './Raycaster.js';
 import { Skeleton } from '../objects/Skeleton.js';
 import Renderer from '../common/Renderer.js';
+import { DispatchEvent } from '../../../webgpu/core/EventDispatcher.js';
+import { Light } from '../lights/Light.js';
 
 let _object3DId = 0;
 
@@ -31,10 +33,10 @@ const _xAxis = new Vector3(1, 0, 0);
 const _yAxis = new Vector3(0, 1, 0);
 const _zAxis = new Vector3(0, 0, 1);
 
-const _addedEvent = { type: 'added' };
-const _removedEvent = { type: 'removed' };
+const _addedEvent = { type: 'added' } as const;
+const _removedEvent = { type: 'removed' } as const;
 
-export class Object3D extends EventDispatcher<'added' | 'removed'> {
+export class Object3D extends EventDispatcher<Object3D.Event['type'], Object3D.Event> {
   static DEFAULT_UP: Vector3 = new Vector3(0, 1, 0);
   static DEFAULT_MATRIX_AUTO_UPDATE: boolean = true;
   static DEFAULT_MATRIX_WORLD_AUTO_UPDATE: boolean = true;
@@ -408,8 +410,8 @@ export class Object3D extends EventDispatcher<'added' | 'removed'> {
     return this.getObjectByProperty('name', name);
   }
 
-  getObjectByProperty(name: string, value: any): Object3D | undefined {
-    if (this[name] === value) return this;
+  getObjectByProperty(name: string, value: any): Object3D | null {
+    if ((this as any)[name] === value) return this;
 
     for (let i = 0, l = this.children.length; i < l; i++) {
       const child = this.children[i];
@@ -420,19 +422,19 @@ export class Object3D extends EventDispatcher<'added' | 'removed'> {
       }
     }
 
-    return undefined;
+    return null;
   }
 
   getObjectsByProperty(name: string, value: any): Object3D[] {
     let result = [];
 
-    if (this[name] === value) result.push(this);
+    if ((this as any)[name] === value) result.push(this);
 
     for (let i = 0, l = this.children.length; i < l; i++) {
       const childResult = this.children[i].getObjectsByProperty(name, value);
 
       if (childResult.length > 0) {
-        result = result.concat(childResult);
+        result = result.concat(childResult as any);
       }
     }
 
@@ -445,7 +447,7 @@ export class Object3D extends EventDispatcher<'added' | 'removed'> {
     return target.setFromMatrixPosition(this.matrixWorld);
   }
 
-  getWorldQuaternion(target: Vector3): Vector3 {
+  getWorldQuaternion(target: Quaternion): Quaternion {
     this.updateWorldMatrix(true, false);
 
     this.matrixWorld.decompose(_position, target, _scale);
@@ -604,3 +606,10 @@ export class Object3D extends EventDispatcher<'added' | 'removed'> {
 }
 Object3D.prototype.isObject3D = true;
 Object3D.prototype.type = 'Object3D';
+
+export namespace Object3D {
+  export interface AddedEvent extends DispatchEvent<'added'> {}
+  export interface RemovedEvent extends DispatchEvent<'removed'> {}
+
+  export type Event = AddedEvent | RemovedEvent;
+}

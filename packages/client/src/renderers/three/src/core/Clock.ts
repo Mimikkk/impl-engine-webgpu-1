@@ -1,10 +1,10 @@
 export class Clock {
   declare ['constructor']: new () => this;
-  declare autoStart: boolean;
-  declare startTime: number;
-  declare oldTime: number;
-  declare elapsedTime: number;
-  declare running: boolean;
+  autoStart: boolean;
+  startTime: number;
+  oldTime: number;
+  elapsedTime: number;
+  running: boolean;
 
   constructor(autoStart: boolean = true) {
     this.autoStart = autoStart;
