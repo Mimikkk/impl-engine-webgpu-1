@@ -17,6 +17,7 @@ import { Matrix3 } from '../math/Matrix3.js';
 import { Quaternion } from '../math/Quaternion.js';
 import { Vector2 } from '../math/Vector2.js';
 import { TypedArray } from '../types.js';
+import { AnimationClip } from '../animation/AnimationClip.js';
 
 let _id = 0;
 
@@ -32,7 +33,7 @@ export class BufferGeometry extends EventDispatcher<'dispose'> {
   id: number;
   uuid: string;
   name: string;
-
+  animations: AnimationClip[];
   type: string;
   index: BufferAttribute | null;
   attributes: Record<string, BufferAttribute> & {

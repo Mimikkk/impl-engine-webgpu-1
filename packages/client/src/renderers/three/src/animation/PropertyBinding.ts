@@ -150,7 +150,7 @@ export class PropertyBinding {
       return root;
 
     if (root.skeleton) {
-      const bone = root.skeleton.getBoneByName(nodeName);
+      const bone = root.skeleton.getBoneByName(nodeName as string);
 
       if (bone !== undefined) return bone;
     }

@@ -16,6 +16,7 @@ export class PropertyMixer {
   _origIndex: number;
   _addIndex: number;
   _workIndex: number;
+  _cacheIndex: number;
 
   constructor(binding: PropertyBinding, typeName: string, valueSize: number) {
     this.binding = binding;

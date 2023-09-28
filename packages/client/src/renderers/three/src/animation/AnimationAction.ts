@@ -63,9 +63,7 @@ export class AnimationAction {
     };
 
     for (let i = 0; i !== nTracks; ++i) {
-      const interpolant = tracks[i].createInterpolant();
-      interpolants[i] = interpolant;
-      interpolant.settings = interpolantSettings;
+      interpolants[i] = tracks[i].createInterpolant();
     }
 
     this._interpolantSettings = interpolantSettings;
@@ -215,8 +213,8 @@ export class AnimationAction {
       this._timeScaleInterpolant = interpolant;
     }
 
-    const times = interpolant.positions,
-      values = interpolant.sampels;
+    const times = interpolant!.positions,
+      values = interpolant!.samples;
 
     times[0] = now;
     times[1] = now + duration;
@@ -243,7 +241,7 @@ export class AnimationAction {
     return this._clip;
   }
   getRoot(): Object3D {
-    return this._localRoot || this._mixer._root;
+    return this._localRoot! || this._mixer._root;
   }
   _update(time: number, deltaTime: number, timeDirection: number, accuIndex: number): void {
     // called by the mixer
@@ -504,7 +502,7 @@ export class AnimationAction {
   _scheduleFading(duration: number, weightNow: number, weightThen: number): AnimationAction {
     const mixer = this._mixer;
     const now = mixer.time;
-    let interpolant = this._weightInterpolant;
+    let interpolant = this._weightInterpolant!;
 
     if (interpolant === null) {
       interpolant = mixer._lendControlInterpolant();

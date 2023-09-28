@@ -66,21 +66,21 @@ export class AnimationClip {
     morphTargetSequence: MorphTarget[],
     fps: number,
     noLoop: boolean,
-  ): AnimationClip {
+  ): AnimationClip | null {
     const numMorphTargets = morphTargetSequence.length;
     const tracks = [];
 
     for (let i = 0; i < numMorphTargets; i++) {
-      let times = [];
-      let values = [];
+      let times: number[] = [];
+      let values: number[] = [];
 
       times.push((i + numMorphTargets - 1) % numMorphTargets, i, (i + 1) % numMorphTargets);
 
       values.push(0, 1, 0);
 
       const order = AnimationUtils.getKeyframeOrder(times);
-      times = AnimationUtils.sortedArray(times, 1, order);
-      values = AnimationUtils.sortedArray(values, 1, order);
+      times = AnimationUtils.sortedArray(times, 1, order) as number[];
+      values = AnimationUtils.sortedArray(values, 1, order) as number[];
 
       // if there is a key at the first frame, duplicate it as the
       // last frame as well for perfect loop.
@@ -100,7 +100,7 @@ export class AnimationClip {
   }
 
   static findByName(objectOrClipArray: Object3D | AnimationClip[], name: string): AnimationClip | null {
-    let clipArray = objectOrClipArray;
+    let clipArray = objectOrClipArray as AnimationClip[];
 
     if (!Array.isArray(objectOrClipArray)) {
       const o = objectOrClipArray;
@@ -121,7 +121,7 @@ export class AnimationClip {
     fps: number,
     noLoop: boolean,
   ): AnimationClip[] {
-    const animationToMorphTargets = {};
+    const animationToMorphTargets: Record<string, MorphTarget[]> = {};
 
     // tested with https://regex101.com/ on trick sequences
     // such flamingo_flyA_003, flamingo_run1_003, crdeath0059
@@ -146,27 +146,28 @@ export class AnimationClip {
       }
     }
 
-    const clips = [];
+    const clips: AnimationClip[] = [];
 
     for (const name in animationToMorphTargets) {
-      clips.push(this.CreateFromMorphTargetSequence(name, animationToMorphTargets[name], fps, noLoop));
+      clips.push(this.CreateFromMorphTargetSequence(name, animationToMorphTargets[name], fps, noLoop)!);
     }
 
     return clips;
   }
 
   // parse the animation.hierarchy format
-  static parseAnimation(animation: any, bones: Bone[]): AnimationClip {
-    if (!animation) {
-      console.error('THREE.AnimationClip: No animation in JSONLoader data.');
-      return null;
-    }
-
-    const addNonemptyTrack = function (trackType, trackName, animationKeys, propertyName, destTracks) {
+  static parseAnimation(animation: any, bones: Bone[]): AnimationClip | null {
+    const addNonemptyTrack = function (
+      trackType: any,
+      trackName: string,
+      animationKeys: any,
+      propertyName: string,
+      destTracks: any,
+    ) {
       // only return track if there are actually keys.
       if (animationKeys.length !== 0) {
-        const times = [];
-        const values = [];
+        const times: number[] = [];
+        const values: number[] = [];
 
         AnimationUtils.flattenJSON(animationKeys, times, values, propertyName);
 
@@ -204,6 +205,7 @@ export class AnimationClip {
         for (k = 0; k < animationKeys.length; k++) {
           if (animationKeys[k].morphTargets) {
             for (let m = 0; m < animationKeys[k].morphTargets.length; m++) {
+              //@ts-expect-error
               morphTargetNames[animationKeys[k].morphTargets[m]] = -1;
             }
           }
@@ -226,16 +228,14 @@ export class AnimationClip {
           tracks.push(new NumberKeyframeTrack('.morphTargetInfluence[' + morphTargetName + ']', times, values));
         }
 
+        //@ts-expect-error
         duration = morphTargetNames.length * fps;
       } else {
         // ...assume skeletal animation
 
         const boneName = '.bones[' + bones[h].name + ']';
-
         addNonemptyTrack(VectorKeyframeTrack, boneName + '.position', animationKeys, 'pos', tracks);
-
         addNonemptyTrack(QuaternionKeyframeTrack, boneName + '.quaternion', animationKeys, 'rot', tracks);
-
         addNonemptyTrack(VectorKeyframeTrack, boneName + '.scale', animationKeys, 'scl', tracks);
       }
     }
@@ -244,9 +244,7 @@ export class AnimationClip {
       return null;
     }
 
-    const clip = new this(clipName, duration, tracks, blendMode);
-
-    return clip;
+    return new this(clipName, duration, tracks, blendMode);
   }
 
   resetDuration(): AnimationClip {

@@ -6,6 +6,7 @@ export interface Interpolant {
   result: NumberArray;
   samples: NumberArray;
   stride: number;
+  __cacheIndex?: number;
 
   evaluate: (timestamp: number) => NumberArray;
   sampleAt: (index: number) => NumberArray;

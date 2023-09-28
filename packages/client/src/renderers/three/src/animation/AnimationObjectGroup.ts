@@ -1,5 +1,6 @@
-import { PropertyBinding } from './PropertyBinding.js';
+import { ParseTrackNameResults, PropertyBinding } from './PropertyBinding.js';
 import { MathUtils } from '../math/MathUtils.js';
+import { Object3D } from '../core/Object3D.js';
 
 /**
  *
@@ -34,13 +35,13 @@ export class AnimationObjectGroup {
   static is = (item: object): item is AnimationObjectGroup => 'isAnimationObjectGroup' in item;
   declare isAnimationObjectGroup: boolean;
   uuid: string;
-  _objects: any[];
+  _objects: Object3D[];
   nCachedObjects_: number;
-  _indicesByUUID: any;
-  _paths: any[];
-  _parsedPaths: any[];
-  _bindings: any[];
-  _bindingsIndicesByPath: any;
+  _indicesByUUID: Record<string, number>;
+  _paths: string[];
+  _parsedPaths: ParseTrackNameResults[];
+  _bindings: PropertyBinding[][];
+  _bindingsIndicesByPath: Record<string, number>;
   stats: {
     bindingsPerObject: number;
     objects: {
@@ -60,7 +61,7 @@ export class AnimationObjectGroup {
     this.nCachedObjects_ = 0; // threshold
     // note: read by PropertyBinding.Composite
 
-    const indices = {};
+    const indices: Record<string, number> = {};
     this._indicesByUUID = indices; // for bookkeeping
 
     for (let i = 0, n = arguments.length; i !== n; ++i) {
@@ -280,7 +281,7 @@ export class AnimationObjectGroup {
 
   // Internal interface used by befriended PropertyBinding.Composite:
 
-  subscribe_(path, parsedPath) {
+  subscribe_(path: string, parsedPath: ParseTrackNameResults) {
     // returns an array of bindings for the given path that is changed
     // according to the contained objects in the group
 
@@ -313,7 +314,7 @@ export class AnimationObjectGroup {
     return bindingsForPath;
   }
 
-  unsubscribe_(path) {
+  unsubscribe_(path: string) {
     // tells the group to forget about a property path and no longer
     // update the array previously obtained with 'subscribe_'
 

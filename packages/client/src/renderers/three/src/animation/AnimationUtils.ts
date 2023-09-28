@@ -1,7 +1,7 @@
 import { Quaternion } from '../math/Quaternion.js';
 import { AdditiveAnimationBlendMode } from '../constants.js';
-import { NumberArray, TypedArray } from '../../../webgpu/core/types.js';
 import { AnimationClip } from './AnimationClip.js';
+import { NumberArray, TypedArray } from '../types.js';
 
 function arraySlice(array: NumberArray, from?: number, to?: number): NumberArray {
   if (isTypedArray(array)) {
@@ -38,7 +38,7 @@ function getKeyframeOrder(times: NumberArray): NumberArray {
 
   return result;
 }
-function sortedArray(values: NumberArray, stride: number, order: number[]): NumberArray {
+function sortedArray(values: NumberArray, stride: number, order: NumberArray): NumberArray {
   const nValues = values.length;
   //@ts-expect-error
   const result = new values.constructor(nValues);
@@ -199,38 +199,42 @@ function makeClipAdditive(
     let referenceOffset = 0;
     const referenceValueSize = referenceTrack.getValueSize();
 
-    if (referenceTrack.createInterpolant.isInterpolantFactoryMethodGLTFCubicSpline) {
+    const interpolant = referenceTrack.createInterpolant();
+
+    //@ts-expect-error
+    if (interpolant.isInterpolantFactoryMethodGLTFCubicSpline) {
       referenceOffset = referenceValueSize / 3;
     }
 
     let targetOffset = 0;
     const targetValueSize = targetTrack.getValueSize();
 
-    if (targetTrack.createInterpolant.isInterpolantFactoryMethodGLTFCubicSpline) {
+    //@ts-expect-error
+    if (interpolant.isInterpolantFactoryMethodGLTFCubicSpline) {
       targetOffset = targetValueSize / 3;
     }
 
     const lastIndex = referenceTrack.times.length - 1;
-    let referenceValue;
+    let referenceValue: number[];
 
     // Find the value to subtract out of the track
     if (referenceTime <= referenceTrack.times[0]) {
       // Reference frame is earlier than the first keyframe, so just use the first keyframe
       const startIndex = referenceOffset;
       const endIndex = referenceValueSize - referenceOffset;
-      referenceValue = arraySlice(referenceTrack.values, startIndex, endIndex);
+      referenceValue = arraySlice(referenceTrack.values, startIndex, endIndex) as number[];
     } else if (referenceTime >= referenceTrack.times[lastIndex]) {
       // Reference frame is after the last keyframe, so just use the last keyframe
       const startIndex = lastIndex * referenceValueSize + referenceOffset;
       const endIndex = startIndex + referenceValueSize - referenceOffset;
-      referenceValue = arraySlice(referenceTrack.values, startIndex, endIndex);
+      referenceValue = arraySlice(referenceTrack.values, startIndex, endIndex) as number[];
     } else {
       // Interpolate to the reference value
       const interpolant = referenceTrack.createInterpolant();
       const startIndex = referenceOffset;
       const endIndex = referenceValueSize - referenceOffset;
       interpolant.evaluate(referenceTime);
-      referenceValue = arraySlice(interpolant.result, startIndex, endIndex);
+      referenceValue = arraySlice(interpolant.result, startIndex, endIndex) as number[];
     }
 
     // Conjugate the quaternion

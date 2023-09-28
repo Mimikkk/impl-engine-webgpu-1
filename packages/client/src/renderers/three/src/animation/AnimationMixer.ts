@@ -1,6 +1,5 @@
 import { AnimationAction } from './AnimationAction.js';
 import { EventDispatcher } from '../core/EventDispatcher.js';
-import { PropertyBinding } from './PropertyBinding.js';
 import { PropertyMixer } from './PropertyMixer.js';
 import { AnimationClip } from './AnimationClip.js';
 import { AnimationBlendMode, NormalAnimationBlendMode } from '../constants.js';
@@ -8,6 +7,7 @@ import { Interpolants } from '../math/interpolants/interpolants.js';
 import { AnimationObjectGroup } from './AnimationObjectGroup.js';
 import { Object3D } from '../core/Object3D.js';
 import { Interpolant } from '../math/interpolants/Interpolant.js';
+import { PropertyBinding } from './PropertyBinding.js';
 
 const _controlInterpolantsResultBuffer = new Float32Array(1);
 
@@ -20,9 +20,25 @@ export class AnimationMixer extends EventDispatcher<AnimationMixer.Event['type']
   _actionsByClip: Record<string, { knownActions: AnimationAction[]; actionByRoot: Record<string, AnimationAction> }>;
   _actions: AnimationAction[];
   _nActiveActions: number;
-  _bindingsByRootAndName: Record<string, Record<string, any>>;
+  _bindingsByRootAndName: Record<string, Record<string, PropertyMixer>>;
   _bindings: PropertyMixer[];
   _nActiveBindings: number;
+  _controlInterpolants: Interpolant[];
+  _nActiveControlInterpolants: number;
+  stats: {
+    actions: {
+      total: number;
+      inUse: number;
+    };
+    bindings: {
+      total: number;
+      inUse: number;
+    };
+    controlInterpolants: {
+      total: number;
+      inUse: number;
+    };
+  };
 
   constructor(root: Root) {
     super();
@@ -75,7 +91,7 @@ export class AnimationMixer extends EventDispatcher<AnimationMixer.Event['type']
     const newAction = new AnimationAction(this, clipObject, optionalRoot as Object3D, blendMode);
 
     this._bindAction(newAction, prototypeAction!);
-    this._addInactiveAction(newAction, clipUuid, rootUuid);
+    this._addInactiveAction(newAction, clipUuid as string, rootUuid);
     return newAction;
   }
   existingAction(clip: string | AnimationClip, optionalRoot?: Root): AnimationAction | null {
@@ -248,7 +264,7 @@ export class AnimationMixer extends EventDispatcher<AnimationMixer.Event['type']
         const path = prototypeAction && prototypeAction._propertyBindings[i].binding.parsedPath;
 
         binding = new PropertyMixer(
-          PropertyBinding.create(root, trackName, path),
+          PropertyBinding.create(root as any, trackName, path) as any,
           track.ValueTypeName,
           track.getValueSize(),
         );
@@ -391,7 +407,7 @@ export class AnimationMixer extends EventDispatcher<AnimationMixer.Event['type']
   _removeInactiveAction(action: AnimationAction) {
     const actions = this._actions,
       lastInactiveAction = actions[actions.length - 1],
-      cacheIndex = action._cacheIndex;
+      cacheIndex = action._cacheIndex!;
 
     lastInactiveAction._cacheIndex = cacheIndex;
     actions[cacheIndex] = lastInactiveAction;
@@ -404,7 +420,7 @@ export class AnimationMixer extends EventDispatcher<AnimationMixer.Event['type']
       actionsForClip = actionsByClip[clipUuid],
       knownActionsForClip = actionsForClip.knownActions,
       lastKnownAction = knownActionsForClip[knownActionsForClip.length - 1],
-      byClipCacheIndex = action._byClipCacheIndex;
+      byClipCacheIndex = action._byClipCacheIndex!;
 
     lastKnownAction._byClipCacheIndex = byClipCacheIndex;
     knownActionsForClip[byClipCacheIndex] = lastKnownAction;
@@ -442,7 +458,7 @@ export class AnimationMixer extends EventDispatcher<AnimationMixer.Event['type']
     //                 a        s
 
     const actions = this._actions,
-      prevIndex = action._cacheIndex,
+      prevIndex = action._cacheIndex!,
       lastActiveIndex = this._nActiveActions++,
       firstInactiveAction = actions[lastActiveIndex];
 
@@ -460,7 +476,7 @@ export class AnimationMixer extends EventDispatcher<AnimationMixer.Event['type']
     //        s        a
 
     const actions = this._actions,
-      prevIndex = action._cacheIndex,
+      prevIndex = action._cacheIndex!,
       firstInactiveIndex = --this._nActiveActions,
       lastActiveAction = actions[firstInactiveIndex];
 
@@ -470,7 +486,7 @@ export class AnimationMixer extends EventDispatcher<AnimationMixer.Event['type']
     lastActiveAction._cacheIndex = prevIndex;
     actions[prevIndex] = lastActiveAction;
   }
-  _addInactiveBinding(binding: PropertyBinding, rootUuid: string, trackName: string) {
+  _addInactiveBinding(binding: PropertyMixer, rootUuid: string, trackName: string) {
     const bindingsByRoot = this._bindingsByRootAndName,
       bindings = this._bindings;
 
@@ -486,9 +502,9 @@ export class AnimationMixer extends EventDispatcher<AnimationMixer.Event['type']
     binding._cacheIndex = bindings.length;
     bindings.push(binding);
   }
-  _removeInactiveBinding(binding: PropertyBinding) {
+  _removeInactiveBinding(binding: PropertyMixer) {
     const bindings = this._bindings,
-      propBinding = binding.binding,
+      propBinding = (binding as any).binding,
       rootUuid = propBinding.rootNode.uuid,
       trackName = propBinding.path,
       bindingsByRoot = this._bindingsByRootAndName,
@@ -506,7 +522,7 @@ export class AnimationMixer extends EventDispatcher<AnimationMixer.Event['type']
       delete bindingsByRoot[rootUuid];
     }
   }
-  _lendBinding(binding: PropertyBinding) {
+  _lendBinding(binding: PropertyMixer) {
     const bindings = this._bindings,
       prevIndex = binding._cacheIndex,
       lastActiveIndex = this._nActiveBindings++,
@@ -518,7 +534,7 @@ export class AnimationMixer extends EventDispatcher<AnimationMixer.Event['type']
     firstInactiveBinding._cacheIndex = prevIndex;
     bindings[prevIndex] = firstInactiveBinding;
   }
-  _takeBackBinding(binding: PropertyBinding) {
+  _takeBackBinding(binding: PropertyMixer) {
     const bindings = this._bindings,
       prevIndex = binding._cacheIndex,
       firstInactiveIndex = --this._nActiveBindings,
@@ -551,7 +567,7 @@ export class AnimationMixer extends EventDispatcher<AnimationMixer.Event['type']
   }
   _takeBackControlInterpolant(interpolant: Interpolant) {
     const interpolants = this._controlInterpolants,
-      prevIndex = interpolant.__cacheIndex,
+      prevIndex = interpolant.__cacheIndex!,
       firstInactiveIndex = --this._nActiveControlInterpolants,
       lastActiveInterpolant = interpolants[firstInactiveIndex];
 

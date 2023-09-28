@@ -21,4 +21,4 @@ export type TypedArrayConstructor =
   | Float64ArrayConstructor;
 
 export type NumberArrayConstructor = TypedArrayConstructor | ArrayConstructor;
-export type NumberArray = TypedArray | Array<number>;
+export type NumberArray = TypedArray | number[];

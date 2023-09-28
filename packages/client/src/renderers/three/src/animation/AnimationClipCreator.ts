@@ -31,9 +31,9 @@ export namespace AnimationClipCreator {
     return new AnimationClip(trackName, period, [track]);
   };
 
-  export const CreateShakeAnimation = (duration: number, shakeScale: number): AnimationClip => {
-    const times = [],
-      values = [],
+  export const CreateShakeAnimation = (duration: number, shakeScale: Vector3): AnimationClip => {
+    const times: number[] = [],
+      values: number[] = [],
       tmp = new Vector3();
 
     for (let i = 0; i < duration * 10; i++) {
@@ -53,8 +53,8 @@ export namespace AnimationClipCreator {
   };
 
   export const CreatePulsationAnimation = (duration: number, pulseScale: number): AnimationClip => {
-    const times = [],
-      values = [],
+    const times: number[] = [],
+      values: number[] = [],
       tmp = new Vector3();
 
     for (let i = 0; i < duration * 10; i++) {
@@ -77,7 +77,7 @@ export namespace AnimationClipCreator {
 
     const trackName = '.visible';
 
-    const track = new BooleanKeyframeTrack(trackName, times, values);
+    const track = new BooleanKeyframeTrack(trackName, times, values as unknown as number[]);
 
     return new AnimationClip(trackName, duration, [track]);
   };
