@@ -1,6 +1,12 @@
-import { Box3, Line3, Plane, Sphere, Triangle, Vector3 } from 'three';
 import { Capsule } from './Capsule.js';
 import { Ray } from './Ray.js';
+import { Object3D } from '../core/Object3D.js';
+import { Vector3 } from './Vector3.js';
+import { Line3 } from './Line3.js';
+import { Plane } from './Plane.js';
+import { Sphere } from './Sphere.js';
+import { Triangle } from './Triangle.js';
+import { Box3 } from './Box3.js';
 
 const _v1 = new Vector3();
 const _v2 = new Vector3();
@@ -10,14 +16,19 @@ const _line2 = new Line3();
 const _sphere = new Sphere();
 const _capsule = new Capsule();
 
-class Octree {
-  constructor(box) {
+export class Octree {
+  triangles: Triangle[];
+  box: Box3;
+  subTrees: Octree[];
+  bounds: Box3;
+
+  constructor(box: Box3) {
     this.triangles = [];
     this.box = box;
     this.subTrees = [];
   }
 
-  addTriangle(triangle) {
+  addTriangle(triangle: Triangle) {
     if (!this.bounds) this.bounds = new Box3();
 
     this.bounds.min.x = Math.min(this.bounds.min.x, triangle.a.x, triangle.b.x, triangle.c.x);
@@ -43,7 +54,7 @@ class Octree {
     return this;
   }
 
-  split(level) {
+  split(level: number) {
     if (!this.box) return;
 
     const subTrees = [];
@@ -156,7 +167,7 @@ class Octree {
     return false;
   }
 
-  triangleSphereIntersect(sphere, triangle) {
+  triangleSphereIntersect(sphere: Sphere, triangle: Triangle) {
     triangle.getPlane(_plane);
 
     if (!sphere.intersectsPlane(_plane)) return false;
@@ -198,7 +209,7 @@ class Octree {
     return false;
   }
 
-  getSphereTriangles(sphere, triangles) {
+  getSphereTriangles(sphere: Sphere, triangles: Triangle[]) {
     for (let i = 0; i < this.subTrees.length; i++) {
       const subTree = this.subTrees[i];
 
@@ -214,7 +225,7 @@ class Octree {
     }
   }
 
-  getCapsuleTriangles(capsule, triangles) {
+  getCapsuleTriangles(capsule: Capsule, triangles: Triangle[]) {
     for (let i = 0; i < this.subTrees.length; i++) {
       const subTree = this.subTrees[i];
 
@@ -230,17 +241,17 @@ class Octree {
     }
   }
 
-  sphereIntersect(sphere) {
+  sphereIntersect(sphere: Sphere) {
     _sphere.copy(sphere);
 
-    const triangles = [];
-    let result,
-      hit = false;
+    const triangles: Triangle[] = [];
+    let hit = false;
 
     this.getSphereTriangles(sphere, triangles);
 
     for (let i = 0; i < triangles.length; i++) {
-      if ((result = this.triangleSphereIntersect(_sphere, triangles[i]))) {
+      const result = this.triangleSphereIntersect(_sphere, triangles[i]);
+      if (result) {
         hit = true;
 
         _sphere.center.add(result.normal.multiplyScalar(result.depth));
@@ -257,17 +268,18 @@ class Octree {
     return false;
   }
 
-  capsuleIntersect(capsule) {
+  capsuleIntersect(capsule: Capsule) {
     _capsule.copy(capsule);
 
-    const triangles = [];
+    const triangles: Triangle[] = [];
     let result,
       hit = false;
 
     this.getCapsuleTriangles(_capsule, triangles);
 
     for (let i = 0; i < triangles.length; i++) {
-      if ((result = this.triangleCapsuleIntersect(_capsule, triangles[i]))) {
+      const result = this.triangleCapsuleIntersect(_capsule, triangles[i]);
+      if (result) {
         hit = true;
 
         _capsule.translate(result.normal.multiplyScalar(result.depth));
@@ -284,10 +296,10 @@ class Octree {
     return false;
   }
 
-  rayIntersect(ray) {
+  rayIntersect(ray: Ray) {
     if (ray.direction.length() === 0) return;
 
-    const triangles = [];
+    const triangles: Triangle[] = [];
     let triangle,
       position,
       distance = 1e100;
@@ -311,22 +323,23 @@ class Octree {
     return distance < 1e100 ? { distance: distance, triangle: triangle, position: position } : false;
   }
 
-  fromGraphNode(group) {
+  fromGraphNode(group: Object3D) {
     group.updateWorldMatrix(true, true);
 
     group.traverse(obj => {
+      //@ts-expect-error
       if (obj.isMesh === true) {
         let geometry,
           isTemp = false;
 
-        if (obj.geometry.index !== null) {
+        if (obj.geometry!.index !== null) {
           isTemp = true;
-          geometry = obj.geometry.toNonIndexed();
+          geometry = obj.geometry!.toNonIndexed();
         } else {
           geometry = obj.geometry;
         }
 
-        const positionAttribute = geometry.getAttribute('position');
+        const positionAttribute = geometry!.getAttribute('position');
 
         for (let i = 0; i < positionAttribute.count; i += 3) {
           const v1 = new Vector3().fromBufferAttribute(positionAttribute, i);
@@ -341,7 +354,7 @@ class Octree {
         }
 
         if (isTemp) {
-          geometry.dispose();
+          geometry!.dispose();
         }
       }
     });
@@ -351,5 +364,3 @@ class Octree {
     return this;
   }
 }
-
-export { Octree };

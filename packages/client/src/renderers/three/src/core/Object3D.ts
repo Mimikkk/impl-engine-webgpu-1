@@ -70,6 +70,7 @@ export class Object3D extends EventDispatcher<Object3D.Event['type'], Object3D.E
   renderOrder: number;
   animations: AnimationClip[];
   userData: Record<string, any>;
+  geometry: BufferGeometry | null;
   customDepthMaterial: Material | undefined;
   customDistanceMaterial: Material | undefined;
 
