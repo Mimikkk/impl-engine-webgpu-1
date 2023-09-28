@@ -1,5 +1,5 @@
 import { Earcut } from './Earcut.js';
-import { Vector2 } from '../../../webgpu/core/Vector2.js';
+import { Vector2 } from '../math/Vector2.js';
 
 export class ShapeUtils {
   // calculate area of the contour polygon

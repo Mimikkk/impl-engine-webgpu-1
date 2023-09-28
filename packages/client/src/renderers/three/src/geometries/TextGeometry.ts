@@ -16,9 +16,26 @@
  */
 
 import { ExtrudeGeometry } from '../Three.js';
+import { Font } from '../loaders/FontLoader.js';
 
-class TextGeometry extends ExtrudeGeometry {
-  constructor(text, parameters = {}) {
+export class TextGeometry extends ExtrudeGeometry {
+  type: string | 'TextGeometry';
+
+  constructor(
+    text: string,
+    parameters: {
+      font?: Font;
+      depth?: number;
+      size?: number;
+      height?: number;
+      curveSegments?: number;
+      bevelEnabled?: boolean;
+      bevelThickness?: number;
+      bevelSize?: number;
+      bevelOffset?: number;
+      bevelSegments?: number;
+    } = {},
+  ) {
     const font = parameters.font;
 
     if (font === undefined) {
@@ -42,5 +59,3 @@ class TextGeometry extends ExtrudeGeometry {
     this.type = 'TextGeometry';
   }
 }
-
-export { TextGeometry };
