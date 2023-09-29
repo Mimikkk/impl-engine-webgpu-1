@@ -1,6 +1,5 @@
 import TempNode from '../core/TempNode.js';
 import { div, mul, sub } from './OperatorNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { addNodeElement, float, nodeObject, nodeProxy, vec3, vec4 } from '../shadernode/ShaderNode.js';
 
 class MathNode extends TempNode {

@@ -11,7 +11,6 @@ import {
   transformedNormalWorld,
 } from '../accessors/NormalNode.js';
 import { positionViewDirection } from '../accessors/PositionNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { float, vec2 } from '../shadernode/ShaderNode.js';
 import { cubeTexture } from '../accessors/CubeTextureNode.js';
 import { reference } from '../accessors/ReferenceNode.js';

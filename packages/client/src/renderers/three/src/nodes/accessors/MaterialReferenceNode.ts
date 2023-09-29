@@ -1,5 +1,4 @@
 import ReferenceNode from './ReferenceNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 
 class MaterialReferenceNode extends ReferenceNode {

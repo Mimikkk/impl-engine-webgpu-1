@@ -4,7 +4,6 @@ import { textureSize } from './TextureSizeNode.js';
 import { colorSpaceToLinear } from '../display/ColorSpaceNode.js';
 import { context } from '../core/ContextNode.js';
 import { expression } from '../code/ExpressionNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { addNodeElement, nodeObject, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
 import { NodeUpdateType } from '../core/constants.js';
 

@@ -1,6 +1,5 @@
 import TempNode from '../core/TempNode.js';
 import { uv } from '../accessors/UVNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { addNodeElement, nodeProxy, tslFn } from '../shadernode/ShaderNode.js';
 import NodeBuilder from '../core/NodeBuilder.js';
 

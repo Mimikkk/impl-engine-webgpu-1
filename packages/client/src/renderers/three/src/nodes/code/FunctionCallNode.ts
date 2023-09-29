@@ -1,5 +1,4 @@
 import TempNode from '../core/TempNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { addNodeElement, nodeArray, nodeObject, nodeObjects } from '../shadernode/ShaderNode.js';
 
 class FunctionCallNode extends TempNode {

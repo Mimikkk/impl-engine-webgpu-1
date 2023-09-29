@@ -1,4 +1,3 @@
-import { addNodeClass } from '../core/Node.js';
 import TempNode from '../core/TempNode.js';
 
 class JoinNode extends TempNode {

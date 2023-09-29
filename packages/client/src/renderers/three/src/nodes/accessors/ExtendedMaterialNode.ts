@@ -5,7 +5,6 @@ import { materialReference } from './MaterialReferenceNode.js';
 import { normalView } from './NormalNode.js';
 import { normalMap } from '../display/NormalMapNode.js';
 import { bumpMap } from '../display/BumpMapNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
 
 class ExtendedMaterialNode extends MaterialNode {

@@ -4,7 +4,6 @@ import { getDistanceAttenuation } from './LightUtils.js';
 import { uniform } from '../core/UniformNode.js';
 import { objectViewPosition } from '../accessors/Object3DNode.js';
 import { positionView } from '../accessors/PositionNode.js';
-import { addNodeClass } from '../core/Node.js';
 
 import { PointLight } from '../../Three.js';
 

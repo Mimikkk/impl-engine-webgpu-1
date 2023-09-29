@@ -4,7 +4,6 @@ import { uniform } from '../core/UniformNode.js';
 import { mix } from '../math/MathNode.js';
 import { normalView } from '../accessors/NormalNode.js';
 import { objectPosition } from '../accessors/Object3DNode.js';
-import { addNodeClass } from '../core/Node.js';
 
 import { Color, HemisphereLight } from '../../Three.js';
 

@@ -1,5 +1,4 @@
 import UniformNode from '../core/UniformNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 
 class BufferNode extends UniformNode {

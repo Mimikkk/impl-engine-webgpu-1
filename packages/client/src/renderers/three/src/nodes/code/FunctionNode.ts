@@ -1,5 +1,4 @@
 import CodeNode from './CodeNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 import NodeBuilder from '../core/NodeBuilder.js';
 

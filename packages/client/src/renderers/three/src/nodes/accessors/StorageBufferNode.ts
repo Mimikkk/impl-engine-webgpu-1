@@ -1,5 +1,4 @@
 import BufferNode from './BufferNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 
 class StorageBufferNode extends BufferNode {

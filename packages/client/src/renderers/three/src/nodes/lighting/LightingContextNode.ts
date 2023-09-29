@@ -1,7 +1,6 @@
 import ContextNode from '../core/ContextNode.js';
 import { add } from '../math/OperatorNode.js';
 import { mix } from '../math/MathNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { addNodeElement, float, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
 
 class LightingContextNode extends ContextNode {

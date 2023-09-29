@@ -1,5 +1,4 @@
 import TempNode from '../core/TempNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { float, mat3, nodeObject, tslFn } from '../shadernode/ShaderNode.js';
 
 import {

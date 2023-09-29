@@ -1,5 +1,4 @@
 import LightingNode from './LightingNode.js';
-import { addNodeClass } from '../core/Node.js';
 
 class AONode extends LightingNode {
   constructor(aoNode = null) {

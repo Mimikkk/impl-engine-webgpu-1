@@ -1,6 +1,5 @@
 import TempNode from '../core/TempNode.js';
 import { texture } from '../accessors/TextureNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { uv } from '../accessors/UVNode.js';
 import { normalView } from '../accessors/NormalNode.js';
 import { positionView } from '../accessors/PositionNode.js';

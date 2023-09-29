@@ -7,7 +7,6 @@ import { positionView } from '../accessors/PositionNode.js';
 import { tangentView } from '../accessors/TangentNode.js';
 import { uv } from '../accessors/UVNode.js';
 import { faceDirection } from './FrontFacingNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { mat3, nodeProxy, tslFn, vec3 } from '../shadernode/ShaderNode.js';
 
 import { ObjectSpaceNormalMap, TangentSpaceNormalMap } from '../../Three.js';

@@ -1,6 +1,5 @@
 import FogNode from './FogNode.js';
 import { positionView } from '../accessors/PositionNode.js';
-import { addNodeClass } from '../core/Node.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
 class FogExp2Node extends FogNode {
