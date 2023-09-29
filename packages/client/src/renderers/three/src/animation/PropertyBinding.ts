@@ -67,10 +67,10 @@ class Composite {
 
 export class PropertyBinding {
   static Composite = Composite;
-  BindingType: Record<string, number>;
-  Versioning: Record<string, number>;
-  GetterByBindingType: GetValue[];
-  SetterByBindingTypeAndVersioning: SetValue[][];
+  declare BindingType: Record<string, number>;
+  declare Versioning: Record<string, number>;
+  declare GetterByBindingType: GetValue[];
+  declare SetterByBindingTypeAndVersioning: SetValue[][];
   path: string;
   parsedPath: ParseTrackNameResults;
   node: any;

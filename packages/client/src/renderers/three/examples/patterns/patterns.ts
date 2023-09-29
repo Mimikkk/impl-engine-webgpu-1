@@ -1,8 +1,7 @@
 import { PerspectiveCamera } from '../../src/cameras/PerspectiveCamera.js';
 import { WebGPURenderer } from '../../src/WebGPURenderer.js';
-import { Renderer } from '../../../webgpu/createRenderer.js';
 
-export const createResizer = (renderer: WebGPURenderer, camera: PerspectiveCamera) => {
+export const withResizer = (renderer: WebGPURenderer, camera: PerspectiveCamera) => {
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -10,11 +9,9 @@ export const createResizer = (renderer: WebGPURenderer, camera: PerspectiveCamer
   });
 };
 
-export const containRenderer = (renderer: Renderer) => {
+export const withRender = (renderer: WebGPURenderer) => {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  const container = document.createElement('div');
-  document.body.appendChild(container);
-  container.appendChild(renderer.domElement);
+  document.body.appendChild(renderer.domElement);
 };

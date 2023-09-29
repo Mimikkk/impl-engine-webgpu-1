@@ -32,4 +32,5 @@ export enum Example {
   TslEditor = 'tsl_editor',
   VideoPanorama = 'video_panorama',
 }
+
 export type ExampleName = keyof typeof Example;
