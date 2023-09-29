@@ -1,29 +1,30 @@
 import CodeNode from './CodeNode.js';
 import { addNodeClass } from '../core/Node.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
+import NodeBuilder from '../core/NodeBuilder.js';
 
 class FunctionNode extends CodeNode {
-  constructor(code = '', includes = [], language = '') {
+  constructor(code = '', includes: any[] = [], language = '') {
     super(code, includes, language);
 
     this.keywords = {};
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     return this.getNodeFunction(builder).type;
   }
 
-  getInputs(builder) {
+  getInputs(builder: NodeBuilder) {
     return this.getNodeFunction(builder).inputs;
   }
 
-  getNodeFunction(builder) {
+  getNodeFunction(builder: NodeBuilder) {
     const nodeData = builder.getDataFromNode(this);
 
     let nodeFunction = nodeData.nodeFunction;
 
     if (nodeFunction === undefined) {
-      nodeFunction = builder.parser.parseFunction(this.code);
+      nodeFunction = builder.parser(this.code);
 
       nodeData.nodeFunction = nodeFunction;
     }
@@ -31,7 +32,7 @@ class FunctionNode extends CodeNode {
     return nodeFunction;
   }
 
-  generate(builder, output) {
+  generate(builder: NodeBuilder, output) {
     super.generate(builder);
 
     const nodeFunction = this.getNodeFunction(builder);
@@ -50,7 +51,7 @@ class FunctionNode extends CodeNode {
     const propertyName = builder.getPropertyName(nodeCode);
 
     let code = this.getNodeFunction(builder).getCode(propertyName);
-
+    console.log({ code });
     const keywords = this.keywords;
     const keywordsProperties = Object.keys(keywords);
 
@@ -75,7 +76,7 @@ class FunctionNode extends CodeNode {
 
 export default FunctionNode;
 
-const nativeFn = (code, includes, language = '') => {
+const nativeFn = (code: string, includes: string, language: string = '') => {
   let functionNode = null;
 
   return (...params) => {
@@ -85,10 +86,10 @@ const nativeFn = (code, includes, language = '') => {
   };
 };
 
-export const glslFn = (code, includes) => nativeFn(code, includes, 'glsl');
-export const wgslFn = (code, includes) => nativeFn(code, includes, 'wgsl');
+export const glslFn = (code: string, includes: string) => nativeFn(code, includes, 'glsl');
+export const wgslFn = (code: string, includes: string) => nativeFn(code, includes, 'wgsl');
 
-export const func = (code, includes) => {
+export const func = (code: string, includes: string) => {
   // @deprecated, r154
 
   console.warn('TSL: func() is deprecated. Use nativeFn(), wgslFn() or glslFn() instead.');

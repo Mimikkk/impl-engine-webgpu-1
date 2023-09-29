@@ -10,16 +10,17 @@ export const NodeUpdateType = {
   OBJECT: 'object',
 };
 
-export const NodeType = {
-  BOOLEAN: 'bool',
-  INTEGER: 'int',
-  FLOAT: 'float',
-  VECTOR2: 'vec2',
-  VECTOR3: 'vec3',
-  VECTOR4: 'vec4',
-  MATRIX3: 'mat3',
-  MATRIX4: 'mat4',
-};
+export enum NodeType {
+  Void = 'void',
+  Boolean = 'bool',
+  Integer = 'int',
+  Float = 'float',
+  Vector2 = 'vec2',
+  Vector3 = 'vec3',
+  Vector4 = 'vec4',
+  Matrix3 = 'mat3',
+  Matrix4 = 'mat4',
+}
 
 export const defaultShaderStages = ['fragment', 'vertex'];
 export const defaultBuildStages = ['construct', 'analyze', 'generate'];

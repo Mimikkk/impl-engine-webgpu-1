@@ -1,12 +1,23 @@
-import NodeFunction from '../core/NodeFunction.js';
-import NodeFunctionInput from '../core/NodeFunctionInput.js';
+import { NodeFunction } from '../core/NodeFunction.js';
+import { NodeFunctionInput } from '../core/NodeFunctionInput.js';
+import { NodeType } from '../core/constants.js';
 
 const declarationRegexp = /^\s*(highp|mediump|lowp)?\s*([a-z_0-9]+)\s*([a-z_0-9]+)?\s*\(([\s\S]*?)\)/i;
 const propertiesRegexp = /[a-z_0-9]+/gi;
 
 const pragmaMain = '#pragma main';
 
-const parse = source => {
+const parse = (
+  source: string,
+): {
+  type: NodeType;
+  inputs: NodeFunctionInput[];
+  name: string;
+  presicion: string;
+  inputsCode: string;
+  blockCode: string;
+  headerCode: string;
+} => {
   source = source.trim();
 
   const pragmaMainIndex = source.indexOf(pragmaMain);
@@ -57,7 +68,7 @@ const parse = source => {
 
       const name = propsMatches[i++][0];
 
-      inputs.push(new NodeFunctionInput(type, name, count, qualifier, isConst));
+      inputs.push(NodeFunctionInput.create({ type, name, count, qualifier, isConst }));
     }
 
     //
@@ -85,8 +96,12 @@ const parse = source => {
   }
 };
 
-class GLSLNodeFunction extends NodeFunction {
-  constructor(source) {
+export class Glsl extends NodeFunction {
+  inputsCode: string;
+  blockCode: string;
+  headerCode: string;
+
+  constructor(source: string) {
     const { type, inputs, name, presicion, inputsCode, blockCode, headerCode } = parse(source);
 
     super(type, inputs, name, presicion);
@@ -102,12 +117,12 @@ class GLSLNodeFunction extends NodeFunction {
     const blockCode = this.blockCode;
 
     if (blockCode !== '') {
-      const { type, inputsCode, headerCode, presicion } = this;
+      const { type, inputsCode, headerCode, precision } = this;
 
       let declarationCode = `${type} ${name} ( ${inputsCode.trim()} )`;
 
-      if (presicion !== '') {
-        declarationCode = `${presicion} ${declarationCode}`;
+      if (precision !== '') {
+        declarationCode = `${precision} ${declarationCode}`;
       }
 
       code = headerCode + declarationCode + blockCode;
@@ -120,5 +135,3 @@ class GLSLNodeFunction extends NodeFunction {
     return code;
   }
 }
-
-export default GLSLNodeFunction;

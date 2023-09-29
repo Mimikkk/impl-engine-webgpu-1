@@ -1,13 +1,27 @@
-class NodeFunctionInput {
-  constructor(type, name, count = null, qualifier = '', isConst = false) {
-    this.type = type;
-    this.name = name;
-    this.count = count;
-    this.qualifier = qualifier;
-    this.isConst = isConst;
-  }
+import type { NodeType } from './constants.js';
+
+export interface NodeFunctionInput {
+  type: NodeType | string;
+  name: string;
+  count: number | null;
+  qualifier: string;
+  isConst: boolean;
 }
 
-NodeFunctionInput.isNodeFunctionInput = true;
+export namespace NodeFunctionInput {
+  export interface Options {
+    type: NodeType | string;
+    name: string;
+    count?: number | null;
+    qualifier?: string;
+    isConst?: boolean;
+  }
 
-export default NodeFunctionInput;
+  export const create = ({
+    type,
+    name,
+    count = null,
+    qualifier = '',
+    isConst = false,
+  }: Options): NodeFunctionInput => ({ type, name, count, qualifier, isConst });
+}

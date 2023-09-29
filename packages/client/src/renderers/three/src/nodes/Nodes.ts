@@ -19,7 +19,7 @@ export { default as NodeBuilder } from './core/NodeBuilder.js';
 export { default as NodeCache } from './core/NodeCache.js';
 export { default as NodeCode } from './core/NodeCode.js';
 export { default as NodeFrame } from './core/NodeFrame.js';
-export { default as NodeFunctionInput } from './core/NodeFunctionInput.js';
+export { NodeFunctionInput } from './core/NodeFunctionInput.js';
 export { default as NodeKeywords } from './core/NodeKeywords.js';
 export { default as NodeUniform } from './core/NodeUniform.js';
 export { default as NodeVar } from './core/NodeVar.js';
@@ -339,7 +339,7 @@ export { default as AnalyticLightNode } from './lighting/AnalyticLightNode.js';
 export { default as CheckerNode, checker } from './procedural/CheckerNode.js';
 
 // parsers
-export { default as GLSLNodeParser } from './parsers/GLSLNodeParser.js'; // @TODO: Move to jsm/renderers/webgl.
+export { Parsers } from './parsers/parsers.js';
 
 // materials
 export * from './materials/Materials.js';

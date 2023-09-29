@@ -22,6 +22,7 @@ import CubeRenderTarget from '../common/CubeRenderTarget.js';
 import { CodeNode, NodeBuilder, NodeMaterial } from './Nodes.js';
 
 import WebGPUNodeParser from './WebGPUNodeParser.js';
+import { Parsers } from './parsers/parsers.js';
 
 const gpuShaderStageLib = {
   vertex: GPUShaderStage.VERTEX,
@@ -102,7 +103,7 @@ fn threejs_repeatWrapping( uv : vec2<f32>, dimension : vec2<u32> ) -> vec2<u32> 
 
 class WebGPUNodeBuilder extends NodeBuilder {
   constructor(object, renderer, scene = null) {
-    super(object, renderer, new WebGPUNodeParser(), scene);
+    super(object, renderer, Parsers.wgsl, scene);
 
     this.uniformsGroup = {};
 

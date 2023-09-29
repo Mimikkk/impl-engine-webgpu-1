@@ -1,16 +1,23 @@
-class NodeFunction {
-  constructor(type, inputs, name = '', presicion = '') {
+import { NodeType } from './constants.js';
+import { NodeFunctionInput } from '../Nodes.js';
+
+export abstract class NodeFunction {
+  type: NodeType | string;
+  inputs: NodeFunctionInput[];
+  name: string;
+  precision: string;
+
+  protected constructor(
+    type: NodeType | string,
+    inputs: NodeFunctionInput[],
+    name: string = '',
+    precision: string = '',
+  ) {
     this.type = type;
     this.inputs = inputs;
     this.name = name;
-    this.presicion = presicion;
+    this.precision = precision;
   }
 
-  getCode(/*name = this.name*/) {
-    console.warn('Abstract function.');
-  }
+  abstract getCode(name: string): string;
 }
-
-NodeFunction.isNodeFunction = true;
-
-export default NodeFunction;

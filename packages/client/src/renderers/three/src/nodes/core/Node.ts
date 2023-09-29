@@ -7,7 +7,7 @@ const NodeClasses = new Map();
 let _nodeId = 0;
 
 class Node extends EventDispatcher {
-  constructor(nodeType = null) {
+  constructor(nodeType: string | null = null) {
     super();
 
     this.nodeType = nodeType;
