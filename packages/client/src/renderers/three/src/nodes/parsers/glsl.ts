@@ -13,7 +13,7 @@ const parse = (
   type: NodeType | string;
   inputs: NodeFunctionInput[];
   name: string;
-  presicion: string;
+  precision: string;
   inputsCode: string;
   blockCode: string;
   headerCode: string;
@@ -21,67 +21,57 @@ const parse = (
   source = source.trim();
 
   const pragmaMainIndex = source.indexOf(pragmaMain);
-
   const mainCode = pragmaMainIndex !== -1 ? source.slice(pragmaMainIndex + pragmaMain.length) : source;
-
   const declaration = mainCode.match(declarationRegexp);
 
-  if (declaration?.length === 5) {
-    const inputsCode = declaration[4];
-    const propsMatches = [];
+  if (declaration?.length !== 5) throw Error('FunctionNode: Function is not a GLSL code.');
 
-    let nameMatch = null;
+  const inputsCode = declaration[4];
+  const propsMatches = [];
 
-    while ((nameMatch = propertiesRegexp.exec(inputsCode)) !== null) {
-      propsMatches.push(nameMatch);
-    }
-    const inputs = [];
+  let nameMatch = null;
 
-    let i = 0;
-    while (i < propsMatches.length) {
-      const isConst = propsMatches[i][0] === 'const';
-      if (isConst) i++;
-
-      let qualifier = propsMatches[i][0];
-      if (qualifier === 'in' || qualifier === 'out' || qualifier === 'inout') {
-        i++;
-      } else qualifier = '';
-
-      const type = propsMatches[i++][0];
-
-      let count: number | null = Number.parseInt(propsMatches[i][0]);
-
-      if (!Number.isNaN(count)) i++;
-      else count = null;
-
-      const name = propsMatches[i++][0];
-
-      inputs.push(NodeFunctionInput.create({ type, name, count, qualifier, isConst }));
-    }
-
-    //
-
-    const blockCode = mainCode.substring(declaration[0].length);
-
-    const name = declaration[3] !== undefined ? declaration[3] : '';
-    const type = declaration[2];
-
-    const presicion = declaration[1] !== undefined ? declaration[1] : '';
-
-    const headerCode = pragmaMainIndex !== -1 ? source.slice(0, pragmaMainIndex) : '';
-
-    return {
-      type,
-      inputs,
-      name,
-      presicion,
-      inputsCode,
-      blockCode,
-      headerCode,
-    };
-  } else {
-    throw new Error('FunctionNode: Function is not a GLSL code.');
+  while ((nameMatch = propertiesRegexp.exec(inputsCode)) !== null) {
+    propsMatches.push(nameMatch);
   }
+  const inputs = [];
+
+  let i = 0;
+  while (i < propsMatches.length) {
+    const isConst = propsMatches[i][0] === 'const';
+    if (isConst) i++;
+
+    let qualifier = propsMatches[i][0];
+    if (qualifier === 'in' || qualifier === 'out' || qualifier === 'inout') {
+      i++;
+    } else qualifier = '';
+
+    const type = propsMatches[i++][0];
+
+    let count: number | null = Number.parseInt(propsMatches[i][0]);
+
+    if (!Number.isNaN(count)) i++;
+    else count = null;
+
+    const name = propsMatches[i++][0];
+    inputs.push(NodeFunctionInput.create({ type, name, count, qualifier, isConst }));
+  }
+
+  const blockCode = mainCode.substring(declaration[0].length);
+  const precision = declaration[1] ?? '';
+  const type = declaration[2];
+  const name = declaration[3] ?? '';
+  const headerCode = pragmaMainIndex !== -1 ? source.slice(0, pragmaMainIndex) : '';
+
+  return {
+    type,
+    inputs,
+    name,
+    precision,
+    inputsCode,
+    blockCode,
+    headerCode,
+  };
 };
 
 export class Glsl extends NodeFunction {
@@ -90,9 +80,9 @@ export class Glsl extends NodeFunction {
   headerCode: string;
 
   constructor(source: string) {
-    const { type, inputs, name, presicion, inputsCode, blockCode, headerCode } = parse(source);
+    const { type, inputs, name, precision, inputsCode, blockCode, headerCode } = parse(source);
 
-    super(type, inputs, name, presicion);
+    super(type, inputs, name, precision);
 
     this.inputsCode = inputsCode;
     this.blockCode = blockCode;
@@ -100,26 +90,16 @@ export class Glsl extends NodeFunction {
   }
 
   getCode(name = this.name) {
-    let code;
-
     const blockCode = this.blockCode;
 
     if (blockCode !== '') {
       const { type, inputsCode, headerCode, precision } = this;
-
       let declarationCode = `${type} ${name} ( ${inputsCode.trim()} )`;
+      if (precision !== '') declarationCode = `${precision} ${declarationCode}`;
 
-      if (precision !== '') {
-        declarationCode = `${precision} ${declarationCode}`;
-      }
-
-      code = headerCode + declarationCode + blockCode;
-    } else {
-      // interface function
-
-      code = '';
+      return headerCode + declarationCode + blockCode;
     }
 
-    return code;
+    return '';
   }
 }

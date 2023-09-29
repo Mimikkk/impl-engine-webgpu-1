@@ -21,8 +21,7 @@ const parse = (
   source = source.trim();
 
   const declaration = source.match(declarationRegexp);
-
-  if (!(declaration !== null && declaration.length === 4)) throw Error('FunctionNode: Function is not a WGSL code.');
+  if (declaration?.length !== 4) throw Error('Invalid wgsl code.');
 
   const inputsCode = declaration[2];
   const propsMatches = [];
@@ -30,14 +29,13 @@ const parse = (
   let nameMatch = null;
   while ((nameMatch = propertiesRegexp.exec(inputsCode)) !== null) propsMatches.push(nameMatch);
 
-  const inputs = [];
+  const inputs: NodeFunctionInput[] = [];
 
   let i = 0;
   while (i < propsMatches.length) {
     const name = propsMatches[i++][0];
     let type = propsMatches[i++][0];
-
-    type = wgslTypeLib[type as keyof typeof wgslTypeLib] || type;
+    type = wgslTypeLib[type as keyof typeof wgslTypeLib] ?? type;
 
     if (i < propsMatches.length && /^[fui]\d{2}$/.test(propsMatches[i][0])) i++;
 
@@ -45,9 +43,8 @@ const parse = (
   }
 
   const blockCode = source.substring(declaration[0].length);
-
-  const name = declaration[1] !== undefined ? declaration[1] : '';
-  const type = declaration[3] || 'void';
+  const name = declaration[1] ?? '';
+  const type = declaration[3] ?? 'void';
 
   return { type, inputs, name, inputsCode, blockCode };
 };
