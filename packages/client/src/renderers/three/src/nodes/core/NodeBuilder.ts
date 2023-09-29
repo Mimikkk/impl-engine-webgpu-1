@@ -133,11 +133,11 @@ class NodeBuilder {
       const updateType = node.getUpdateType();
       const updateBeforeType = node.getUpdateBeforeType();
 
-      if (updateType !== NodeUpdateType.NONE) {
+      if (updateType !== NodeUpdateType.None) {
         this.updateNodes.push(node);
       }
 
-      if (updateBeforeType !== NodeUpdateType.NONE) {
+      if (updateBeforeType !== NodeUpdateType.None) {
         this.updateBeforeNodes.push(node);
       }
 

@@ -9,7 +9,7 @@ class TimerNode extends UniformNode {
     this.scope = scope;
     this.scale = scale;
 
-    this.updateType = NodeUpdateType.FRAME;
+    this.updateType = NodeUpdateType.Frame;
   }
 
   /*

@@ -15,7 +15,7 @@ class SkinningNode extends Node {
 
     this.skinnedMesh = skinnedMesh;
 
-    this.updateType = NodeUpdateType.OBJECT;
+    this.updateType = NodeUpdateType.Object;
 
     //
 

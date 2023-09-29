@@ -16,7 +16,7 @@ class ReferenceNode extends Node {
 
     this.node = null;
 
-    this.updateType = NodeUpdateType.OBJECT;
+    this.updateType = NodeUpdateType.Object;
 
     this.setNodeType(uniformType);
   }

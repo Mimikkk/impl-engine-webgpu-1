@@ -1,5 +1,4 @@
 import UniformNode from './UniformNode.js';
-import { addNodeClass } from './Node.js';
 
 class ArrayUniformNode extends UniformNode {
   constructor(nodes = []) {

@@ -1,22 +1,24 @@
 import Node from '../core/Node.js';
+import NodeBuilder from '../core/NodeBuilder.js';
 
 class ArrayElementNode extends Node {
-  // @TODO: If extending from TempNode it breaks webgpu_compute
+  node: Node;
+  index: Node;
 
-  constructor(node, indexNode) {
+  constructor(node: Node, indexNode: Node) {
     super();
 
     this.node = node;
-    this.indexNode = indexNode;
+    this.index = indexNode;
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     return this.node.getNodeType(builder);
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const nodeSnippet = this.node.build(builder);
-    const indexSnippet = this.indexNode.build(builder, 'uint');
+    const indexSnippet = this.index.build(builder, 'uint');
 
     return `${nodeSnippet}[ ${indexSnippet} ]`;
   }

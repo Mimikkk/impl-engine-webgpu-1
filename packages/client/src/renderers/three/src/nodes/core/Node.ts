@@ -1,17 +1,25 @@
 import { EventDispatcher, MathUtils } from '../../Three.js';
-import { NodeUpdateType } from './constants.js';
+import { NodeType, NodeUpdateType } from './constants.js';
 import { getCacheKey, getNodeChildren } from './NodeUtils.js';
+import NodeBuilder from './NodeBuilder.js';
+import NodeFrame from './NodeFrame.js';
 
 let _nodeId = 0;
 
-class Node extends EventDispatcher {
+class Node extends EventDispatcher<'dispose'> {
+  nodeType: string | null;
+  updateType: NodeUpdateType;
+  updateBeforeType: NodeUpdateType;
+  uuid: string;
+  isNode: boolean;
+
   constructor(nodeType: string | null = null) {
     super();
 
     this.nodeType = nodeType;
 
-    this.updateType = NodeUpdateType.NONE;
-    this.updateBeforeType = NodeUpdateType.NONE;
+    this.updateType = NodeUpdateType.None;
+    this.updateBeforeType = NodeUpdateType.None;
 
     this.uuid = MathUtils.generateUUID();
 
@@ -24,7 +32,7 @@ class Node extends EventDispatcher {
     return this.constructor.name;
   }
 
-  isGlobal(/*builder*/) {
+  isGlobal(builder: NodeBuilder) {
     return false;
   }
 
@@ -58,7 +66,7 @@ class Node extends EventDispatcher {
     return getCacheKey(this);
   }
 
-  getHash(/*builder*/) {
+  getHash(builder: NodeBuilder) {
     return this.uuid;
   }
 
@@ -70,18 +78,18 @@ class Node extends EventDispatcher {
     return this.updateBeforeType;
   }
 
-  getNodeType(/*builder*/) {
+  getNodeType(builder: NodeBuilder) {
     return this.nodeType;
   }
 
-  getReference(builder) {
+  getReference(builder: NodeBuilder) {
     const hash = this.getHash(builder);
     const nodeFromHash = builder.getNodeFromHash(hash);
 
     return nodeFromHash || this;
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const nodeProperties = builder.getNodeProperties(this);
 
     for (const { childNode } of this.getChildren()) {
@@ -92,7 +100,7 @@ class Node extends EventDispatcher {
     return null;
   }
 
-  analyze(builder) {
+  analyze(builder: NodeBuilder) {
     const nodeData = builder.getDataFromNode(this);
     nodeData.dependenciesCount = nodeData.dependenciesCount === undefined ? 1 : nodeData.dependenciesCount + 1;
 
@@ -109,7 +117,7 @@ class Node extends EventDispatcher {
     }
   }
 
-  generate(builder, output) {
+  generate(builder: NodeBuilder, output: NodeType) {
     const { outputNode } = builder.getNodeProperties(this);
 
     if (outputNode && outputNode.isNode === true) {
@@ -117,15 +125,15 @@ class Node extends EventDispatcher {
     }
   }
 
-  updateBefore(/*frame*/) {
+  updateBefore(frame: NodeFrame) {
     console.warn('Abstract function.');
   }
 
-  update(/*frame*/) {
+  update(frame: NodeFrame) {
     console.warn('Abstract function.');
   }
 
-  build(builder, output = null) {
+  build(builder: NodeBuilder, output: NodeType | null = null) {
     const refNode = this.getReference(builder);
 
     if (this !== refNode) {

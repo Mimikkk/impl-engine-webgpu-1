@@ -25,20 +25,20 @@ class NodeFrame {
   updateBeforeNode(node) {
     const updateType = node.getUpdateBeforeType();
 
-    if (updateType === NodeUpdateType.FRAME) {
+    if (updateType === NodeUpdateType.Frame) {
       if (this.frameBeforeMap.get(node) !== this.frameId) {
         this.frameBeforeMap.set(node, this.frameId);
 
         node.updateBefore(this);
       }
-    } else if (updateType === NodeUpdateType.RENDER) {
+    } else if (updateType === NodeUpdateType.Render) {
       if (this.renderBeforeMap.get(node) !== this.renderId || this.frameBeforeMap.get(node) !== this.frameId) {
         this.renderBeforeMap.set(node, this.renderId);
         this.frameBeforeMap.set(node, this.frameId);
 
         node.updateBefore(this);
       }
-    } else if (updateType === NodeUpdateType.OBJECT) {
+    } else if (updateType === NodeUpdateType.Object) {
       node.updateBefore(this);
     }
   }
@@ -46,20 +46,20 @@ class NodeFrame {
   updateNode(node) {
     const updateType = node.getUpdateType();
 
-    if (updateType === NodeUpdateType.FRAME) {
+    if (updateType === NodeUpdateType.Frame) {
       if (this.frameMap.get(node) !== this.frameId) {
         this.frameMap.set(node, this.frameId);
 
         node.update(this);
       }
-    } else if (updateType === NodeUpdateType.RENDER) {
+    } else if (updateType === NodeUpdateType.Render) {
       if (this.renderMap.get(node) !== this.renderId || this.frameMap.get(node) !== this.frameId) {
         this.renderMap.set(node, this.renderId);
         this.frameMap.set(node, this.frameId);
 
         node.update(this);
       }
-    } else if (updateType === NodeUpdateType.OBJECT) {
+    } else if (updateType === NodeUpdateType.Object) {
       node.update(this);
     }
   }

@@ -1,5 +1,4 @@
 import InputNode from './InputNode.js';
-import { addNodeClass } from './Node.js';
 import { getConstNodeType, nodeObject } from '../shadernode/ShaderNode.js';
 
 class UniformNode extends InputNode {

@@ -37,10 +37,10 @@ class VaryingNode extends Node {
       nodeVarying.name = name;
     }
 
-    const propertyName = builder.getPropertyName(nodeVarying, NodeShaderStage.VERTEX);
+    const propertyName = builder.getPropertyName(nodeVarying, NodeShaderStage.Vertex);
 
     // force node run in vertex stage
-    builder.flowNodeFromShaderStage(NodeShaderStage.VERTEX, node, type, propertyName);
+    builder.flowNodeFromShaderStage(NodeShaderStage.Vertex, node, type, propertyName);
 
     return builder.getPropertyName(nodeVarying);
   }
