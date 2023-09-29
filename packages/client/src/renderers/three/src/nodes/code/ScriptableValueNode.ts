@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { arrayBufferToBase64, base64ToArrayBuffer } from '../core/NodeUtils.js';
 import { addNodeElement, float, nodeProxy } from '../shadernode/ShaderNode.js';
 import { EventDispatcher } from '../../Three.js';
@@ -84,5 +84,3 @@ export default ScriptableValueNode;
 export const scriptableValue = nodeProxy(ScriptableValueNode);
 
 addNodeElement('scriptableValue', scriptableValue);
-
-addNodeClass(ScriptableValueNode);

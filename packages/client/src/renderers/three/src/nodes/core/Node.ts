@@ -2,8 +2,6 @@ import { EventDispatcher, MathUtils } from '../../Three.js';
 import { NodeUpdateType } from './constants.js';
 import { getCacheKey, getNodeChildren } from './NodeUtils.js';
 
-const NodeClasses = new Map();
-
 let _nodeId = 0;
 
 class Node extends EventDispatcher {
@@ -195,19 +193,3 @@ class Node extends EventDispatcher {
 }
 
 export default Node;
-
-export function addNodeClass(nodeClass) {
-  if (typeof nodeClass !== 'function' || !nodeClass.name)
-    throw new Error(`Node class ${nodeClass.name} is not a class`);
-  if (NodeClasses.has(nodeClass.name)) throw new Error(`Redefinition of node class ${nodeClass.name}`);
-
-  NodeClasses.set(nodeClass.name, nodeClass);
-}
-
-export function createNodeFromType(type) {
-  const Class = NodeClasses.get(type);
-
-  if (Class !== undefined) {
-    return new Class();
-  }
-}

@@ -24,5 +24,3 @@ export default FogRangeNode;
 export const rangeFog = nodeProxy(FogRangeNode);
 
 addNodeElement('rangeFog', rangeFog);
-
-addNodeClass(FogRangeNode);

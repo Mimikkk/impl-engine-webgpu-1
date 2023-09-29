@@ -37,5 +37,3 @@ class JoinNode extends TempNode {
 }
 
 export default JoinNode;
-
-addNodeClass(JoinNode);

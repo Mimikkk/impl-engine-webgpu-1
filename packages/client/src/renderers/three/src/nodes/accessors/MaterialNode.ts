@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { reference } from './ReferenceNode.js';
 import { materialReference } from './MaterialReferenceNode.js';
 import { float, nodeImmutable } from '../shadernode/ShaderNode.js';
@@ -189,5 +189,3 @@ export const materialSheenRoughness = nodeImmutable(MaterialNode, MaterialNode.S
 export const materialIridescence = nodeImmutable(MaterialNode, MaterialNode.IRIDESCENCE);
 export const materialIridescenceIOR = nodeImmutable(MaterialNode, MaterialNode.IRIDESCENCE_IOR);
 export const materialIridescenceThickness = nodeImmutable(MaterialNode, MaterialNode.IRIDESCENCE_THICKNESS);
-
-addNodeClass(MaterialNode);

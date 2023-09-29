@@ -31,5 +31,3 @@ class EquirectUVNode extends TempNode {
 export default EquirectUVNode;
 
 export const equirectUV = nodeProxy(EquirectUVNode);
-
-addNodeClass(EquirectUVNode);

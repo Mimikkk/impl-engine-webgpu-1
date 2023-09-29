@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
 import { reference } from './ReferenceNode.js';
 
@@ -35,5 +35,3 @@ export default SceneNode;
 
 export const backgroundBlurriness = nodeImmutable(SceneNode, SceneNode.BACKGROUND_BLURRINESS);
 export const backgroundIntensity = nodeImmutable(SceneNode, SceneNode.BACKGROUND_INTENSITY);
-
-addNodeClass(SceneNode);

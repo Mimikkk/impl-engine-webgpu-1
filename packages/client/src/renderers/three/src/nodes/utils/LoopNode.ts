@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { expression } from '../code/ExpressionNode.js';
 import { bypass } from '../core/BypassNode.js';
 import { context as contextNode } from '../core/ContextNode.js';
@@ -146,5 +146,3 @@ export default LoopNode;
 export const loop = (...params) => nodeObject(new LoopNode(nodeArray(params, 'int')));
 
 addNodeElement('loop', (returns, ...params) => bypass(returns, loop(...params)));
-
-addNodeClass(LoopNode);

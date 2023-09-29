@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
 class RemapNode extends Node {
@@ -32,5 +32,3 @@ export const remapClamp = nodeProxy(RemapNode);
 
 addNodeElement('remap', remap);
 addNodeElement('remapClamp', remapClamp);
-
-addNodeClass(RemapNode);

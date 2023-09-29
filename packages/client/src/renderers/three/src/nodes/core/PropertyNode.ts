@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from './Node.js';
+import Node from './Node.js';
 import { nodeImmutable, nodeObject } from '../shadernode/ShaderNode.js';
 
 class PropertyNode extends Node {
@@ -45,5 +45,3 @@ export const iridescenceThickness = nodeImmutable(PropertyNode, 'float', 'Irides
 export const specularColor = nodeImmutable(PropertyNode, 'color', 'SpecularColor');
 export const shininess = nodeImmutable(PropertyNode, 'float', 'Shininess');
 export const output = nodeImmutable(PropertyNode, 'vec4', 'Output');
-
-addNodeClass(PropertyNode);

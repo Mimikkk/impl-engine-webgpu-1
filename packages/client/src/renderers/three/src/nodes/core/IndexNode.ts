@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from './Node.js';
+import Node from './Node.js';
 import { varying } from './VaryingNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
 
@@ -46,5 +46,3 @@ export default IndexNode;
 
 export const vertexIndex = nodeImmutable(IndexNode, IndexNode.VERTEX);
 export const instanceIndex = nodeImmutable(IndexNode, IndexNode.INSTANCE);
-
-addNodeClass(IndexNode);

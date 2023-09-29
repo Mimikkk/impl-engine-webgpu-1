@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { instancedBufferAttribute, instancedDynamicBufferAttribute } from './BufferAttributeNode.js';
 import { normalLocal } from './NormalNode.js';
 import { positionLocal } from './PositionNode.js';
@@ -60,5 +60,3 @@ class InstanceNode extends Node {
 export default InstanceNode;
 
 export const instance = nodeProxy(InstanceNode);
-
-addNodeClass(InstanceNode);

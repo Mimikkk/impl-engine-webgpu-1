@@ -76,5 +76,3 @@ export const luminance = (color, luma = lumaCoeffs) => dot(color, luma);
 addNodeElement('saturation', saturation);
 addNodeElement('vibrance', vibrance);
 addNodeElement('hue', hue);
-
-addNodeClass(ColorAdjustmentNode);

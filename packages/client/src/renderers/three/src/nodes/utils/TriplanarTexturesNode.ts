@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { add } from '../math/OperatorNode.js';
 import { normalWorld } from '../accessors/NormalNode.js';
 import { positionWorld } from '../accessors/PositionNode.js';
@@ -59,5 +59,3 @@ export const triplanarTextures = nodeProxy(TriplanarTexturesNode);
 export const triplanarTexture = (...params) => triplanarTextures(...params);
 
 addNodeElement('triplanarTexture', triplanarTexture);
-
-addNodeClass(TriplanarTexturesNode);

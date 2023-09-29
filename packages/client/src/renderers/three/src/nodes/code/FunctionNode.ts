@@ -96,5 +96,3 @@ export const func = (code: string, includes: string) => {
 
   return nodeObject(new FunctionNode(code, includes));
 };
-
-addNodeClass(FunctionNode);

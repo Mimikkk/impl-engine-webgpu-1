@@ -80,5 +80,3 @@ export default TextureBicubicNode;
 export const textureBicubic = nodeProxy(TextureBicubicNode);
 
 addNodeElement('bicubic', textureBicubic);
-
-addNodeClass(TextureBicubicNode);

@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { cameraProjectionMatrix } from './CameraNode.js';
 import { modelViewMatrix } from './ModelNode.js';
 import { positionLocal } from './PositionNode.js';
@@ -19,5 +19,3 @@ class ModelViewProjectionNode extends Node {
 export default ModelViewProjectionNode;
 
 export const modelViewProjection = nodeProxy(ModelViewProjectionNode);
-
-addNodeClass(ModelViewProjectionNode);

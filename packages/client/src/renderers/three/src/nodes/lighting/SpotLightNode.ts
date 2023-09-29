@@ -75,5 +75,3 @@ class SpotLightNode extends AnalyticLightNode {
 export default SpotLightNode;
 
 addLightNode(SpotLight, SpotLightNode);
-
-addNodeClass(SpotLightNode);

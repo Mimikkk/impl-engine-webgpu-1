@@ -17,5 +17,3 @@ class StorageBufferNode extends BufferNode {
 export default StorageBufferNode;
 
 export const storage = (value, type, count) => nodeObject(new StorageBufferNode(value, type, count));
-
-addNodeClass(StorageBufferNode);

@@ -30,5 +30,3 @@ class DirectionalLightNode extends AnalyticLightNode {
 export default DirectionalLightNode;
 
 addLightNode(DirectionalLight, DirectionalLightNode);
-
-addNodeClass(DirectionalLightNode);

@@ -163,5 +163,3 @@ class AnalyticLightNode extends LightingNode {
 }
 
 export default AnalyticLightNode;
-
-addNodeClass(AnalyticLightNode);

@@ -34,5 +34,3 @@ export default RotateUVNode;
 export const rotateUV = nodeProxy(RotateUVNode);
 
 addNodeElement('rotateUV', rotateUV);
-
-addNodeClass(RotateUVNode);

@@ -10,7 +10,7 @@ const pragmaMain = '#pragma main';
 const parse = (
   source: string,
 ): {
-  type: NodeType;
+  type: NodeType | string;
   inputs: NodeFunctionInput[];
   name: string;
   presicion: string;
@@ -26,9 +26,7 @@ const parse = (
 
   const declaration = mainCode.match(declarationRegexp);
 
-  if (declaration !== null && declaration.length === 5) {
-    // tokenizer
-
+  if (declaration?.length === 5) {
     const inputsCode = declaration[4];
     const propsMatches = [];
 
@@ -37,33 +35,23 @@ const parse = (
     while ((nameMatch = propertiesRegexp.exec(inputsCode)) !== null) {
       propsMatches.push(nameMatch);
     }
-
-    // parser
-
     const inputs = [];
 
     let i = 0;
-
     while (i < propsMatches.length) {
       const isConst = propsMatches[i][0] === 'const';
-
-      if (isConst === true) {
-        i++;
-      }
+      if (isConst) i++;
 
       let qualifier = propsMatches[i][0];
-
       if (qualifier === 'in' || qualifier === 'out' || qualifier === 'inout') {
         i++;
-      } else {
-        qualifier = '';
-      }
+      } else qualifier = '';
 
       const type = propsMatches[i++][0];
 
-      let count = Number.parseInt(propsMatches[i][0]);
+      let count: number | null = Number.parseInt(propsMatches[i][0]);
 
-      if (Number.isNaN(count) === false) i++;
+      if (!Number.isNaN(count)) i++;
       else count = null;
 
       const name = propsMatches[i++][0];

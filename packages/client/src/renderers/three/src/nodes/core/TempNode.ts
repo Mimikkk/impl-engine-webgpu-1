@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from './Node.js';
+import Node from './Node.js';
 
 class TempNode extends Node {
   constructor(type) {
@@ -45,5 +45,3 @@ class TempNode extends Node {
 }
 
 export default TempNode;
-
-addNodeClass(TempNode);

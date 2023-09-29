@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { uv } from '../accessors/UVNode.js';
 import { float, nodeProxy, vec2 } from '../shadernode/ShaderNode.js';
 
@@ -31,5 +31,3 @@ class SpriteSheetUVNode extends Node {
 export default SpriteSheetUVNode;
 
 export const spritesheetUV = nodeProxy(SpriteSheetUVNode);
-
-addNodeClass(SpriteSheetUVNode);

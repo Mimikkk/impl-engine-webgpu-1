@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from './Node.js';
+import Node from './Node.js';
 import { assign } from '../math/OperatorNode.js';
 import { bypass } from '../core/BypassNode.js';
 import { expression } from '../code/ExpressionNode.js';
@@ -73,5 +73,3 @@ class StackNode extends Node {
 export default StackNode;
 
 export const stack = nodeProxy(StackNode);
-
-addNodeClass(StackNode);

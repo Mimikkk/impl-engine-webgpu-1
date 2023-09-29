@@ -152,5 +152,3 @@ const createIrradianceContext = normalWorldNode => {
 };
 
 export default EnvironmentNode;
-
-addNodeClass(EnvironmentNode);

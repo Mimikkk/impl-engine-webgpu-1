@@ -283,5 +283,3 @@ addNodeElement('smoothstep', smoothstepElement);
 addNodeElement('faceForward', faceForward);
 addNodeElement('difference', difference);
 addNodeElement('saturate', saturate);
-
-addNodeClass(MathNode);

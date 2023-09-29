@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { nodeImmutable, nodeProxy } from '../shadernode/ShaderNode.js';
 import { cameraFar, cameraNear } from '../accessors/CameraNode.js';
 import { positionView } from '../accessors/PositionNode.js';
@@ -55,5 +55,3 @@ export default ViewportDepthNode;
 
 export const depth = nodeImmutable(ViewportDepthNode, ViewportDepthNode.DEPTH);
 export const depthTexture = nodeProxy(ViewportDepthNode, ViewportDepthNode.DEPTH_TEXTURE);
-
-addNodeClass(ViewportDepthNode);

@@ -63,5 +63,3 @@ class BumpMapNode extends TempNode {
 export default BumpMapNode;
 
 export const bumpMap = nodeProxy(BumpMapNode);
-
-addNodeClass(BumpMapNode);

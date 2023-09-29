@@ -74,5 +74,3 @@ addNodeElement('burn', burn);
 addNodeElement('dodge', dodge);
 addNodeElement('overlay', overlay);
 addNodeElement('screen', screen);
-
-addNodeClass(BlendModeNode);

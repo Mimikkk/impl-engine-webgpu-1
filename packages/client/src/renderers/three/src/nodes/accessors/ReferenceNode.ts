@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { NodeUpdateType } from '../core/constants.js';
 import { uniform } from '../core/UniformNode.js';
 import { texture } from './TextureNode.js';
@@ -52,5 +52,3 @@ class ReferenceNode extends Node {
 export default ReferenceNode;
 
 export const reference = (name, type, object) => nodeObject(new ReferenceNode(name, type, object));
-
-addNodeClass(ReferenceNode);

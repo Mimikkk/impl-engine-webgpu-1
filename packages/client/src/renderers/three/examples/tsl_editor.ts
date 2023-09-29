@@ -116,15 +116,6 @@ output = vec4( finalColor, opacity );
         nodeBuilder.build();
 
         showCode();
-
-        // extra debug info
-
-        /*const style = 'background-color: #333; color: white; font-style: italic; border: 2px solid #777; font-size: 22px;';
-
-                 console.log( '%c  [ WGSL ] Vertex Shader      ', style );
-                 console.log( nodeBuilder.vertexShader );
-                 console.log( '%c  [ WGSL ] Fragment Shader    ', style );
-                 console.log( nodeBuilder.fragmentShader );*/
       } catch (e) {
         result.setValue('Error: ' + e.message);
       }

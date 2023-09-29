@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from './Node.js';
+import Node from './Node.js';
 import NodeCache from './NodeCache.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
@@ -34,5 +34,3 @@ export default CacheNode;
 export const cache = nodeProxy(CacheNode);
 
 addNodeElement('cache', cache);
-
-addNodeClass(CacheNode);

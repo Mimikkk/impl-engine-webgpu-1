@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
 import NodeBuilder from '../core/NodeBuilder.js';
 
@@ -39,4 +39,3 @@ export const code = nodeProxy(CodeNode);
 export const js = (src: string, includes: CodeNodeInclude[]) => code(src, includes, 'js');
 export const wgsl = (src: string, includes: CodeNodeInclude[]) => code(src, includes, 'wgsl');
 export const glsl = (src: string, includes: CodeNodeInclude[]) => code(src, includes, 'glsl');
-addNodeClass(CodeNode);

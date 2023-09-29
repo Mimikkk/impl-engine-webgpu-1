@@ -25,5 +25,3 @@ export default FogExp2Node;
 export const densityFog = nodeProxy(FogExp2Node);
 
 addNodeElement('densityFog', densityFog);
-
-addNodeClass(FogExp2Node);

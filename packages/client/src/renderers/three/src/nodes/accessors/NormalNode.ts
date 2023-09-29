@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { attribute } from '../core/AttributeNode.js';
 import { varying } from '../core/VaryingNode.js';
 import { property } from '../core/PropertyNode.js';
@@ -58,5 +58,3 @@ export const normalWorld = nodeImmutable(NormalNode, NormalNode.WORLD);
 export const transformedNormalView = property('vec3', 'TransformedNormalView');
 export const transformedNormalWorld = transformedNormalView.transformDirection(cameraViewMatrix).normalize();
 export const transformedClearcoatNormalView = property('vec3', 'TransformedClearcoatNormalView');
-
-addNodeClass(NormalNode);

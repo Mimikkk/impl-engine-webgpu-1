@@ -24,5 +24,3 @@ export const modelWorldMatrix = nodeImmutable(ModelNode, ModelNode.WORLD_MATRIX)
 export const modelPosition = nodeImmutable(ModelNode, ModelNode.POSITION);
 export const modelScale = nodeImmutable(ModelNode, ModelNode.SCALE);
 export const modelViewPosition = nodeImmutable(ModelNode, ModelNode.VIEW_POSITION);
-
-addNodeClass(ModelNode);

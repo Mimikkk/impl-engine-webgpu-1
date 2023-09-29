@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import { NodeUpdateType } from '../core/constants.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
 import { uniform } from '../core/UniformNode.js';
@@ -50,5 +50,3 @@ class MorphNode extends Node {
 export default MorphNode;
 
 export const morph = nodeProxy(MorphNode);
-
-addNodeClass(MorphNode);

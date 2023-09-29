@@ -114,5 +114,3 @@ export default ToneMappingNode;
 
 export const toneMapping = (mapping, exposure, color) =>
   nodeObject(new ToneMappingNode(mapping, nodeObject(exposure), nodeObject(color)));
-
-addNodeClass(ToneMappingNode);

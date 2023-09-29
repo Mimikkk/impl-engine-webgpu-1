@@ -1,4 +1,4 @@
-import Node, { addNodeClass } from '../core/Node.js';
+import Node from '../core/Node.js';
 import ArrayElementNode from '../utils/ArrayElementNode.js';
 import ConvertNode from '../utils/ConvertNode.js';
 import JoinNode from '../utils/JoinNode.js';
@@ -264,8 +264,6 @@ export const tslFn = jsFunc => {
     return shaderNode.call(...params);
   };
 };
-
-addNodeClass(ShaderNode);
 
 // types
 // @TODO: Maybe export from ConstNode.js?

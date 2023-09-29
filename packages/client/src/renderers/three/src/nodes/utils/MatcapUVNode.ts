@@ -20,5 +20,3 @@ class MatcapUVNode extends TempNode {
 export default MatcapUVNode;
 
 export const matcapUV = nodeImmutable(MatcapUVNode);
-
-addNodeClass(MatcapUVNode);

@@ -39,5 +39,3 @@ export const colorToDirection = nodeProxy(PackingNode, PackingNode.COLOR_TO_DIRE
 
 addNodeElement('directionToColor', directionToColor);
 addNodeElement('colorToDirection', colorToDirection);
-
-addNodeClass(PackingNode);
