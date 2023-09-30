@@ -1,7 +1,7 @@
 import { Node } from '../core/Node.js';
 import { reference } from './ReferenceNode.js';
 import { materialReference } from './MaterialReferenceNode.js';
-import { float } from '../shadernode/ShaderNode.js';
+import { float, nodeImmutable } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 import { NodeType } from '../core/constants.js';
 
@@ -136,23 +136,23 @@ export namespace MaterialNode {
 }
 
 export namespace MaterialNodes {
-  export const alphaTest = new MaterialNode(MaterialNode.Scope.AlphaTest);
-  export const color = new MaterialNode(MaterialNode.Scope.Color);
-  export const opacity = new MaterialNode(MaterialNode.Scope.Opacity);
-  export const specularColor = new MaterialNode(MaterialNode.Scope.SpecularColor);
-  export const shininess = new MaterialNode(MaterialNode.Scope.Shininess);
-  export const specular = new MaterialNode(MaterialNode.Scope.Specular);
-  export const specularStrength = new MaterialNode(MaterialNode.Scope.SpecularStrength);
-  export const reflectivity = new MaterialNode(MaterialNode.Scope.Reflectivity);
-  export const roughness = new MaterialNode(MaterialNode.Scope.Roughness);
-  export const metalness = new MaterialNode(MaterialNode.Scope.Metalness);
-  export const clearcoat = new MaterialNode(MaterialNode.Scope.Clearcoat);
-  export const clearcoatRoughness = new MaterialNode(MaterialNode.Scope.ClearcoatRoughness);
-  export const emissive = new MaterialNode(MaterialNode.Scope.Emissive);
-  export const rotation = new MaterialNode(MaterialNode.Scope.Rotation);
-  export const sheen = new MaterialNode(MaterialNode.Scope.Sheen);
-  export const sheenRoughness = new MaterialNode(MaterialNode.Scope.SheenRoughness);
-  export const iridescence = new MaterialNode(MaterialNode.Scope.Iridescence);
-  export const iridescenceIor = new MaterialNode(MaterialNode.Scope.IridescenceIor);
-  export const iridescenceThickness = new MaterialNode(MaterialNode.Scope.IridescenceThickness);
+  export const alphaTest = nodeImmutable(MaterialNode, MaterialNode.Scope.AlphaTest);
+  export const color = nodeImmutable(MaterialNode, MaterialNode.Scope.Color);
+  export const opacity = nodeImmutable(MaterialNode, MaterialNode.Scope.Opacity);
+  export const specularColor = nodeImmutable(MaterialNode, MaterialNode.Scope.SpecularColor);
+  export const shininess = nodeImmutable(MaterialNode, MaterialNode.Scope.Shininess);
+  export const specular = nodeImmutable(MaterialNode, MaterialNode.Scope.Specular);
+  export const specularStrength = nodeImmutable(MaterialNode, MaterialNode.Scope.SpecularStrength);
+  export const reflectivity = nodeImmutable(MaterialNode, MaterialNode.Scope.Reflectivity);
+  export const roughness = nodeImmutable(MaterialNode, MaterialNode.Scope.Roughness);
+  export const metalness = nodeImmutable(MaterialNode, MaterialNode.Scope.Metalness);
+  export const clearcoat = nodeImmutable(MaterialNode, MaterialNode.Scope.Clearcoat);
+  export const clearcoatRoughness = nodeImmutable(MaterialNode, MaterialNode.Scope.ClearcoatRoughness);
+  export const emissive = nodeImmutable(MaterialNode, MaterialNode.Scope.Emissive);
+  export const rotation = nodeImmutable(MaterialNode, MaterialNode.Scope.Rotation);
+  export const sheen = nodeImmutable(MaterialNode, MaterialNode.Scope.Sheen);
+  export const sheenRoughness = nodeImmutable(MaterialNode, MaterialNode.Scope.SheenRoughness);
+  export const iridescence = nodeImmutable(MaterialNode, MaterialNode.Scope.Iridescence);
+  export const iridescenceIor = nodeImmutable(MaterialNode, MaterialNode.Scope.IridescenceIor);
+  export const iridescenceThickness = nodeImmutable(MaterialNode, MaterialNode.Scope.IridescenceThickness);
 }
