@@ -1,8 +1,8 @@
 import { Node } from '../core/Node.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
-import TextureNode from './TextureNode.js';
+import { TextureNode } from './TextureNode.js';
 import { NodeType } from '../core/constants.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 class TextureSizeNode extends Node {
   isTextureSizeNode: boolean = true;

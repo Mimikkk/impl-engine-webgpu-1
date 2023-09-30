@@ -185,7 +185,7 @@ export { SkinningNode, skinning } from './accessors/SkinningNode.js';
 export { SceneNode, SceneNodes } from './accessors/SceneNode.js';
 export { StorageBufferNode, storage } from './accessors/StorageBufferNode.js';
 export { TangentNode, TangentNodes } from './accessors/TangentNode.js';
-export { default as TextureNode, texture, textureLevel, sampler } from './accessors/TextureNode.js';
+export { TextureNode, texture, textureLevel, sampler } from './accessors/TextureNode.js';
 export { UVNode, uv } from './accessors/UVNode.js';
 export { default as UserDataNode, userData } from './accessors/UserDataNode.js';
 

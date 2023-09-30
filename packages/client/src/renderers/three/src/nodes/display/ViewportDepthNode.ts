@@ -4,8 +4,7 @@ import { CameraNodes } from '../accessors/CameraNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
 import { viewportDepthTexture } from './ViewportDepthTextureNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
-
-import TextureNode from '../accessors/TextureNode.js';
+import { TextureNode } from '../accessors/TextureNode.js';
 
 export class ViewportDepthNode extends Node {
   isViewportDepthNode: boolean = true;

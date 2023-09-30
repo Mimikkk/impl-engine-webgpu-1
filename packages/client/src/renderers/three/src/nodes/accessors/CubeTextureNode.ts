@@ -1,5 +1,5 @@
-import TextureNode from './TextureNode.js';
-import UniformNode from '../core/UniformNode.js';
+import { TextureNode } from './TextureNode.js';
+import { UniformNode } from '../core/UniformNode.js';
 import { reflectVector } from './ReflectVectorNode.js';
 import { addNodeElement, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';

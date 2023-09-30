@@ -1,4 +1,4 @@
-import TextureNode from '../accessors/TextureNode.js';
+import { TextureNode } from '../accessors/TextureNode.js';
 import { NodeUpdateType } from '../core/constants.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 import { viewportTopLeft } from './ViewportNode.js';
@@ -6,7 +6,7 @@ import { FramebufferTexture, LinearMipmapLinearFilter, Vector2 } from '../../Thr
 
 const _size = new Vector2();
 
-class ViewportTextureNode extends TextureNode {
+export class ViewportTextureNode extends TextureNode {
   constructor(uvNode = viewportTopLeft, levelNode = null, framebufferTexture = null) {
     if (framebufferTexture === null) {
       framebufferTexture = new FramebufferTexture();

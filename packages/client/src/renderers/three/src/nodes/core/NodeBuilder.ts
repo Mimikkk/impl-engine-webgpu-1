@@ -360,7 +360,7 @@ export class NodeBuilder {
     return type === 'void' || type === 'property' || type === 'sampler' || type === 'texture' || type === 'cubeTexture';
   }
 
-  needsColorSpaceToLinear(/*texture*/) {
+  needsColorSpaceToLinear(texture: any) {
     return false;
   }
 

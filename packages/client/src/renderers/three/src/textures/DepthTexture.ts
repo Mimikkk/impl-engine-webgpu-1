@@ -1,16 +1,24 @@
 import { Texture } from './Texture.js';
-import { DepthFormat, DepthStencilFormat, NearestFilter, UnsignedInt248Type, UnsignedIntType } from '../constants.js';
 import {
   DeepTexturePixelFormat,
+  DepthFormat,
+  DepthStencilFormat,
   MagnificationTextureFilter,
   Mapping,
   MinificationTextureFilter,
+  NearestFilter,
   TextureComparisonFunction,
   TextureDataType,
+  UnsignedInt248Type,
+  UnsignedIntType,
   Wrapping,
 } from '../constants.js';
 
 export class DepthTexture extends Texture {
+  static is(value: any): value is DepthTexture {
+    return value && value.isDepthTexture;
+  }
+
   isDepthTexture: true;
   compareFunction: TextureComparisonFunction | null;
 
