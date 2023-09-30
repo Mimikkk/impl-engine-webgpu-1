@@ -27,7 +27,7 @@ class SkinningNode extends Node {
     this.boneMatricesNode = buffer(skinnedMesh.skeleton.boneMatrices, 'mat4', skinnedMesh.skeleton.bones.length);
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const { skinIndexNode, skinWeightNode, bindMatrixNode, bindMatrixInverseNode, boneMatricesNode } = this;
 
     const boneMatX = boneMatricesNode.element(skinIndexNode.x);

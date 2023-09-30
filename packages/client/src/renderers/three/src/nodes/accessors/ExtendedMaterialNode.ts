@@ -23,7 +23,7 @@ class ExtendedMaterialNode extends MaterialNode {
     return type || super.getNodeType(builder);
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const material = builder.material;
     const scope = this.scope;
 

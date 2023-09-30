@@ -83,7 +83,7 @@ class NodeMaterial extends ShaderMaterial {
     this.construct(builder);
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     // < VERTEX STAGE >
 
     builder.addStack();

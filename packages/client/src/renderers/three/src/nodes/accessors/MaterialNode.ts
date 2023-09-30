@@ -30,7 +30,7 @@ class MaterialNode extends Node {
     return textureRefNode;
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const material = builder.context.material;
     const scope = this.scope;
 

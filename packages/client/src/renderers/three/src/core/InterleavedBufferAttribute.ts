@@ -9,10 +9,14 @@ import { InstancedInterleavedBuffer } from './InstancedInterleavedBuffer.js';
 const _vector = new Vector3();
 
 export class InterleavedBufferAttribute {
+  static is(item: any): item is InterleavedBufferAttribute {
+    return item?.isInterleavedBufferAttribute;
+  }
   name: string;
   data: InterleavedBuffer | InstancedInterleavedBuffer;
   itemSize: number;
   offset: number;
+  stride: number;
   normalized: boolean;
   declare isInterleavedBufferAttribute: boolean;
 

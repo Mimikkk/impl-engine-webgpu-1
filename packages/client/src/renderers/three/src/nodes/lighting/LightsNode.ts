@@ -21,7 +21,7 @@ class LightsNode extends Node {
     return this.lightNodes.length > 0;
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const lightNodes = this.lightNodes;
 
     for (const lightNode of lightNodes) {

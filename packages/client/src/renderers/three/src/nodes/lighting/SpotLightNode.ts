@@ -38,7 +38,7 @@ class SpotLightNode extends AnalyticLightNode {
     return smoothstep(coneCosNode, penumbraCosNode, angleCosine);
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     super.construct(builder);
 
     const lightingModel = builder.context.lightingModel;

@@ -4,6 +4,9 @@ import { InterleavedBufferAttribute } from './InterleavedBufferAttribute.js';
 import { TypedArray } from '../types.js';
 
 export class InterleavedBuffer {
+  static is(item: any): item is InterleavedBuffer {
+    return item?.isInterleavedBuffer;
+  }
   declare ['constructor']: new (array: TypedArray, stride: number) => this;
   declare isInterleavedBuffer: true;
   declare array: TypedArray;

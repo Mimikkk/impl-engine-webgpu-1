@@ -86,7 +86,7 @@ class ToneMappingNode extends TempNode {
     return cacheKey;
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const colorNode = this.colorNode || builder.context.color;
     const toneMapping = this.toneMapping;
 

@@ -3,7 +3,7 @@ import ArrayElementNode from '../utils/ArrayElementNode.js';
 import ConvertNode from '../utils/ConvertNode.js';
 import JoinNode from '../utils/JoinNode.js';
 import SplitNode from '../utils/SplitNode.js';
-import ConstNode from '../core/ConstNode.js';
+import { ConstNode } from '../core/ConstNode.js';
 import { getValueFromType, getValueType } from '../core/NodeUtils.js';
 
 const NodeElements = new Map<string, Node>();
@@ -141,7 +141,7 @@ class ShaderNodeInternal extends Node {
     return outputNode ? outputNode.getNodeType(builder) : super.getNodeType(builder);
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     builder.addStack();
 
     builder.stack.outputNode = nodeObject(this._jsFunc(builder.stack, builder));

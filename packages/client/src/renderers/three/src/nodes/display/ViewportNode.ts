@@ -36,7 +36,7 @@ class ViewportNode extends Node {
     renderer.getDrawingBufferSize(resolution);
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const scope = this.scope;
 
     if (scope === ViewportNode.COORDINATE) return;

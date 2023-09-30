@@ -16,7 +16,7 @@ class LightingContextNode extends ContextNode {
     return 'vec3';
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const { lightingModel, backdropNode, backdropAlphaNode } = this;
 
     const context = (this.context = {}); // reset context

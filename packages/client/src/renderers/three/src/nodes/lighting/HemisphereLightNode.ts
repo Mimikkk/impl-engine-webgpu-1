@@ -27,7 +27,7 @@ class HemisphereLightNode extends AnalyticLightNode {
     this.groundColorNode.value.copy(light.groundColor).multiplyScalar(light.intensity);
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const { colorNode, groundColorNode, lightDirectionNode } = this;
 
     const dotNL = normalView.dot(lightDirectionNode);

@@ -8,7 +8,7 @@ class MaterialReferenceNode extends ReferenceNode {
     this.material = material;
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const material = this.material !== null ? this.material : builder.material;
 
     this.node.value = material[this.property];

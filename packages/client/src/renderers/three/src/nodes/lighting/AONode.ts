@@ -7,7 +7,7 @@ class AONode extends LightingNode {
     this.aoNode = aoNode;
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const aoIntensity = 1;
     const aoNode = this.aoNode.x.sub(1.0).mul(aoIntensity).add(1.0);
 

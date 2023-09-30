@@ -24,7 +24,7 @@ class PointLightNode extends AnalyticLightNode {
     this.decayExponentNode.value = light.decay;
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const { colorNode, cutoffDistanceNode, decayExponentNode, light } = this;
 
     const lightingModel = builder.context.lightingModel;

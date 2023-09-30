@@ -54,7 +54,7 @@ class TextureNode extends UniformNode {
     return this;
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const properties = builder.getNodeProperties(this);
 
     //

@@ -127,7 +127,7 @@ class AnalyticLightNode extends LightingNode {
     }
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     if (this.light.castShadow) this.constructShadow(builder);
   }
 

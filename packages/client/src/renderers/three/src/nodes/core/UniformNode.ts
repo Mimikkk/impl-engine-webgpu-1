@@ -1,6 +1,6 @@
-import InputNode from './InputNode.js';
+import { InputNode } from './InputNode.js';
 import { getConstNodeType, nodeObject } from '../shadernode/ShaderNode.js';
-import NodeBuilder from './NodeBuilder.js';
+import { NodeBuilder } from './NodeBuilder.js';
 
 class UniformNode extends InputNode {
   isUniformNode: boolean;

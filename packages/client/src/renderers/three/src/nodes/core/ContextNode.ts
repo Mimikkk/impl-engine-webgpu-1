@@ -16,7 +16,7 @@ class ContextNode extends Node {
     return this.node.getNodeType(builder);
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const previousContext = builder.getContext();
 
     builder.setContext({ ...builder.context, ...this.context });

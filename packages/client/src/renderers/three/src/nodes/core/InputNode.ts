@@ -3,8 +3,12 @@ import { Node } from './Node.js';
 import { getValueType } from './NodeUtils.js';
 import { NodeBuilder, NodeType } from '../Nodes.js';
 
-class InputNode extends Node {
-  constructor(value: any, nodeType = null) {
+export class InputNode extends Node {
+  isInputNode: boolean = true;
+  value: any;
+  precision: string | null;
+
+  constructor(value: any, nodeType: NodeType | null = null) {
     super(nodeType);
 
     this.isInputNode = true;
@@ -25,7 +29,7 @@ class InputNode extends Node {
     return this.getNodeType(builder);
   }
 
-  setPrecision(precision) {
+  setPrecision(precision: string) {
     this.precision = precision;
 
     return this;
@@ -35,5 +39,3 @@ class InputNode extends Node {
     console.warn('Abstract function.');
   }
 }
-
-export default InputNode;

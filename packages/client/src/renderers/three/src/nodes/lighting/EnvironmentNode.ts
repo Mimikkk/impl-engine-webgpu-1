@@ -24,7 +24,7 @@ class EnvironmentNode extends LightingNode {
     this.envNode = envNode;
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     let envNode = this.envNode;
     const properties = builder.getNodeProperties(this);
 

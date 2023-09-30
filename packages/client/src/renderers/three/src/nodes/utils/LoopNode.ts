@@ -42,7 +42,7 @@ class LoopNode extends Node {
     return returnsNode ? returnsNode.getNodeType(builder) : 'void';
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     // construct properties
 
     this.getProperties(builder);

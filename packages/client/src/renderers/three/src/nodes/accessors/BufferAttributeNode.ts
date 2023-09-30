@@ -1,36 +1,50 @@
-import InputNode from '../core/InputNode.js';
+import { InputNode } from '../core/InputNode.js';
 import { varying } from '../core/VaryingNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
-import { DynamicDrawUsage, InterleavedBuffer, InterleavedBufferAttribute, StaticDrawUsage } from '../../Three.js';
+import {
+  DynamicDrawUsage,
+  InterleavedBuffer,
+  InterleavedBufferAttribute,
+  StaticDrawUsage,
+  Usage,
+} from '../../Three.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NumberArray } from '../../types.js';
+import { NodeType } from '../core/constants.js';
 
-class BufferAttributeNode extends InputNode {
-  constructor(value, bufferType, bufferStride = 0, bufferOffset = 0) {
+export class BufferAttributeNode extends InputNode {
+  isBufferNode: boolean = true;
+
+  bufferType: NodeType;
+  bufferStride: number;
+  bufferOffset: number;
+  usage: Usage = StaticDrawUsage;
+  instanced: boolean = false;
+  attribute: InterleavedBufferAttribute;
+
+  constructor(value: NumberArray, bufferType: NodeType, bufferStride: number = 0, bufferOffset: number = 0) {
     super(value, bufferType);
-
-    this.isBufferNode = true;
-
     this.bufferType = bufferType;
     this.bufferStride = bufferStride;
     this.bufferOffset = bufferOffset;
-
-    this.usage = StaticDrawUsage;
-    this.instanced = false;
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const type = this.getNodeType(builder);
     const array = this.value;
     const itemSize = builder.getTypeLength(type);
     const stride = this.bufferStride || itemSize;
     const offset = this.bufferOffset;
 
-    const buffer = array.isInterleavedBuffer === true ? array : new InterleavedBuffer(array, stride);
+    const buffer = InterleavedBuffer.is(array) ? array : new InterleavedBuffer(array as any, stride);
     const bufferAttribute = new InterleavedBufferAttribute(buffer, itemSize, offset);
 
     buffer.setUsage(this.usage);
 
     this.attribute = bufferAttribute;
-    this.attribute.isInstancedBufferAttribute = this.instanced; // @TODO: Add a possible: InstancedInterleavedBufferAttribute
+    //@ts-expect-error
+    this.attribute.isInstancedBufferAttribute = this.instanced;
+    return null;
   }
 
   generate(builder: NodeBuilder) {
@@ -56,27 +70,31 @@ class BufferAttributeNode extends InputNode {
     return 'bufferAttribute';
   }
 
-  setUsage(value) {
+  setUsage(value: Usage) {
     this.usage = value;
 
     return this;
   }
 
-  setInstanced(value) {
+  setInstanced(value: boolean) {
     this.instanced = value;
 
     return this;
   }
 }
 
-export default BufferAttributeNode;
+export namespace BufferAttributeNodes {
+  export const normal = (array: NumberArray, type: NodeType, stride: number = 0, offset: number = 0) =>
+    nodeObject(new BufferAttributeNode(array, type, stride, offset));
 
-export const bufferAttribute = (array, type, stride, offset) =>
-  nodeObject(new BufferAttributeNode(array, type, stride, offset));
-export const dynamicBufferAttribute = (array, type, stride, offset) =>
-  bufferAttribute(array, type, stride, offset).setUsage(DynamicDrawUsage);
+  export const dynamic = (array: NumberArray, type: NodeType, stride: number = 0, offset: number = 0) =>
+    normal(array, type, stride, offset).setUsage(DynamicDrawUsage);
 
-export const instancedBufferAttribute = (array, type, stride, offset) =>
-  bufferAttribute(array, type, stride, offset).setInstanced(true);
-export const instancedDynamicBufferAttribute = (array, type, stride, offset) =>
-  dynamicBufferAttribute(array, type, stride, offset).setInstanced(true);
+  export namespace instanced {
+    export const normal = (array: NumberArray, type: NodeType, stride: number = 0, offset: number = 0) =>
+      BufferAttributeNodes.normal(array, type, stride, offset).setInstanced(true);
+
+    export const dynamic = (array: NumberArray, type: NodeType, stride: number = 0, offset: number = 0) =>
+      BufferAttributeNodes.dynamic(array, type, stride, offset).setInstanced(true);
+  }
+}

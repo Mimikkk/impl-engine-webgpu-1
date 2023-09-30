@@ -46,7 +46,7 @@ class NormalMapNode extends TempNode {
     this.normalMapType = TangentSpaceNormalMap;
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const { normalMapType, scaleNode } = this;
 
     let normalMap = this.node.mul(2.0).sub(1.0);

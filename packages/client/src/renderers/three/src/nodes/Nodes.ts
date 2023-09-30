@@ -9,7 +9,7 @@ export { default as ArrayUniformNode /* @TODO: arrayUniform */ } from './core/Ar
 export { default as AttributeNode, attribute } from './core/AttributeNode.js';
 export { default as BypassNode, bypass } from './core/BypassNode.js';
 export { default as CacheNode, cache } from './core/CacheNode.js';
-export { default as ConstNode } from './core/ConstNode.js';
+export { ConstNode } from './core/ConstNode.js';
 export { default as ContextNode, context, label } from './core/ContextNode.js';
 export { default as IndexNode, vertexIndex, instanceIndex } from './core/IndexNode.js';
 export { default as LightingModel } from './core/LightingModel.js';
@@ -152,13 +152,7 @@ export * from './shadernode/ShaderNode.js';
 
 // accessors
 export { BitangentNode } from './accessors/BitangentNode.js';
-export {
-  default as BufferAttributeNode,
-  bufferAttribute,
-  dynamicBufferAttribute,
-  instancedBufferAttribute,
-  instancedDynamicBufferAttribute,
-} from './accessors/BufferAttributeNode.js';
+export { BufferAttributeNode } from './accessors/BufferAttributeNode.js';
 export { default as BufferNode, buffer } from './accessors/BufferNode.js';
 export {
   default as CameraNode,

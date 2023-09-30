@@ -3,7 +3,7 @@ import { NodeUpdateType } from '../core/constants.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
 import { uniform } from '../core/UniformNode.js';
 import { reference } from './ReferenceNode.js';
-import { bufferAttribute } from './BufferAttributeNode.js';
+import { BufferAttributeNodes } from './BufferAttributeNode.js';
 import { positionLocal } from './PositionNode.js';
 
 class MorphNode extends Node {
@@ -25,14 +25,14 @@ class MorphNode extends Node {
     for (let i = 0; i < attributes.length; i++) {
       const attribute = attributes[i];
 
-      const bufferAttrib = bufferAttribute(attribute.array, 'vec3');
+      const bufferAttrib = BufferAttributeNodes.normal(attribute.array, 'vec3');
       const influence = reference(i, 'float', mesh.morphTargetInfluences);
 
       builder.stack.assign(assignNode, assignNode.add(bufferAttrib.mul(influence)));
     }
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     this.constructAttribute(builder, 'position');
   }
 

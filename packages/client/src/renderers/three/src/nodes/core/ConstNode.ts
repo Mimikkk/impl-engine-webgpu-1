@@ -1,6 +1,6 @@
-import InputNode from './InputNode.js';
+import { InputNode } from './InputNode.js';
 
-class ConstNode extends InputNode {
+export class ConstNode extends InputNode {
   constructor(value, nodeType = null) {
     super(value, nodeType);
 
@@ -17,5 +17,3 @@ class ConstNode extends InputNode {
     return builder.format(this.generateConst(builder), type, output);
   }
 }
-
-export default ConstNode;
