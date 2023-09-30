@@ -1,5 +1,5 @@
-import { transformedNormalView } from '../../accessors/NormalNode.js';
-import { positionViewDirection } from '../../accessors/PositionNode.js';
+import { NormalNodes } from '../../accessors/NormalNode.js';
+import { PositionNodes } from '../../accessors/PositionNode.js';
 import { sheen, sheenRoughness } from '../../core/PropertyNode.js';
 import { float, tslFn } from '../../shadernode/ShaderNode.js';
 
@@ -25,11 +25,11 @@ const V_Neubelt = (dotNV, dotNL) => {
 };
 
 const BRDF_Sheen = tslFn(({ lightDirection }) => {
-  const halfDir = lightDirection.add(positionViewDirection).normalize();
+  const halfDir = lightDirection.add(PositionNodes.directional.view).normalize();
 
-  const dotNL = transformedNormalView.dot(lightDirection).clamp();
-  const dotNV = transformedNormalView.dot(positionViewDirection).clamp();
-  const dotNH = transformedNormalView.dot(halfDir).clamp();
+  const dotNL = NormalNodes.transformed.view.dot(lightDirection).clamp();
+  const dotNV = NormalNodes.transformed.view.dot(PositionNodes.directional.view).clamp();
+  const dotNH = NormalNodes.transformed.view.dot(halfDir).clamp();
 
   const D = D_Charlie(sheenRoughness, dotNH);
   const V = V_Neubelt(dotNV, dotNL);

@@ -5,8 +5,8 @@ import { attribute } from '../core/AttributeNode.js';
 import { uniform } from '../core/UniformNode.js';
 import { add } from '../math/OperatorNode.js';
 import { buffer } from './BufferNode.js';
-import { normalLocal } from './NormalNode.js';
-import { positionLocal } from './PositionNode.js';
+import { NormalNodes } from './NormalNode.js';
+import { PositionNodes } from './PositionNode.js';
 import { tangentLocal } from './TangentNode.js';
 
 class SkinningNode extends Node {
@@ -37,7 +37,7 @@ class SkinningNode extends Node {
 
     // POSITION
 
-    const skinVertex = bindMatrixNode.mul(positionLocal);
+    const skinVertex = bindMatrixNode.mul(PositionNodes.local);
 
     const skinned = add(
       boneMatX.mul(skinWeightNode.x).mul(skinVertex),
@@ -59,12 +59,12 @@ class SkinningNode extends Node {
 
     skinMatrix = bindMatrixInverseNode.mul(skinMatrix).mul(bindMatrixNode);
 
-    const skinNormal = skinMatrix.transformDirection(normalLocal).xyz;
+    const skinNormal = skinMatrix.transformDirection(NormalNodes.local).xyz;
 
     // ASSIGNS
 
-    builder.stack.assign(positionLocal, skinPosition);
-    builder.stack.assign(normalLocal, skinNormal);
+    builder.stack.assign(PositionNodes.local, skinPosition);
+    builder.stack.assign(NormalNodes.local, skinNormal);
 
     if (builder.hasGeometryAttribute('tangent')) {
       builder.stack.assign(tangentLocal, skinNormal);

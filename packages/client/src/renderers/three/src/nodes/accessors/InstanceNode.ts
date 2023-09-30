@@ -1,7 +1,7 @@
 import { Node } from '../core/Node.js';
 import { BufferAttributeNodes } from './BufferAttributeNode.js';
-import { normalLocal } from './NormalNode.js';
-import { positionLocal } from './PositionNode.js';
+import { NormalNodes } from './NormalNode.js';
+import { PositionNodes } from './PositionNode.js';
 import { mat3, mat4, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
 import { DynamicDrawUsage, InstancedInterleavedBuffer, InstancedMesh } from '../../Three.js';
 import { Matrix4NodeUniform } from '../../common/nodes/NodeUniform.js';
@@ -44,20 +44,20 @@ class InstanceNode extends Node {
 
     // POSITION
 
-    const instancePosition = instanceMatrixNode!.mul(positionLocal).xyz;
+    const instancePosition = instanceMatrixNode!.mul(PositionNodes.local).xyz;
 
     // NORMAL
 
     const m = mat3(instanceMatrixNode[0].xyz, instanceMatrixNode[1].xyz, instanceMatrixNode[2].xyz);
 
-    const transformedNormal = normalLocal.div(vec3(m[0].dot(m[0]), m[1].dot(m[1]), m[2].dot(m[2])));
+    const transformedNormal = NormalNodes.local.div(vec3(m[0].dot(m[0]), m[1].dot(m[1]), m[2].dot(m[2])));
 
     const instanceNormal = m.mul(transformedNormal).xyz;
 
     // ASSIGNS
 
-    builder.stack.assign(positionLocal, instancePosition);
-    builder.stack.assign(normalLocal, instanceNormal);
+    builder.stack.assign(PositionNodes.local, instancePosition);
+    builder.stack.assign(NormalNodes.local, instanceNormal);
 
     return null;
   }

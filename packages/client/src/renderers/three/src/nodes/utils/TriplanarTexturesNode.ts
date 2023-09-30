@@ -1,7 +1,7 @@
 import { Node } from '../core/Node.js';
 import { add } from '../math/OperatorNode.js';
-import { normalWorld } from '../accessors/NormalNode.js';
-import { positionWorld } from '../accessors/PositionNode.js';
+import { NormalNodes } from '../accessors/NormalNode.js';
+import { PositionNodes } from '../accessors/PositionNode.js';
 import { texture } from '../accessors/TextureNode.js';
 import { addNodeElement, float, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
 
@@ -11,8 +11,8 @@ class TriplanarTexturesNode extends Node {
     textureYNode = null,
     textureZNode = null,
     scaleNode = float(1),
-    positionNode = positionWorld,
-    normalNode = normalWorld,
+    positionNode = PositionNodes.world,
+    normalNode = NormalNodes.world,
   ) {
     super('vec4');
 

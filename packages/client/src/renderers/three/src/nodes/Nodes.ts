@@ -1,11 +1,8 @@
-// @TODO: We can simplify "export { default as SomeNode, other, exports } from '...'" to just "export * from '...'" if we will use only named exports
-// this will also solve issues like "import TempNode from '../core/Node.js'"
-
 // constants
 export * from './core/constants.js';
 
 // core
-export { default as ArrayUniformNode /* @TODO: arrayUniform */ } from './core/ArrayUniformNode.js';
+export { default as ArrayUniformNode } from './core/ArrayUniformNode.js';
 export { default as AttributeNode, attribute } from './core/AttributeNode.js';
 export { default as BypassNode, bypass } from './core/BypassNode.js';
 export { default as CacheNode, cache } from './core/CacheNode.js';
@@ -178,27 +175,10 @@ export { MorphNode, morph } from './accessors/MorphNode.js';
 export { default as TextureBicubicNode, textureBicubic } from './accessors/TextureBicubicNode.js';
 export { ModelNode } from './accessors/ModelNode.js';
 export { ModelViewProjectionNode, modelViewProjection } from './accessors/ModelViewProjectionNode.js';
-export {
-  default as NormalNode,
-  normalGeometry,
-  normalLocal,
-  normalView,
-  normalWorld,
-  transformedNormalView,
-  transformedNormalWorld,
-  transformedClearcoatNormalView,
-} from './accessors/NormalNode.js';
-export { Object3DNode } from './accessors/Object3DNode.js';
+export { NormalNode, NormalNodes } from './accessors/NormalNode.js';
+export { Object3DNode, Object3DNodes } from './accessors/Object3DNode.js';
 export { default as PointUVNode, pointUV } from './accessors/PointUVNode.js';
-export {
-  default as PositionNode,
-  positionGeometry,
-  positionLocal,
-  positionWorld,
-  positionWorldDirection,
-  positionView,
-  positionViewDirection,
-} from './accessors/PositionNode.js';
+export { PositionNode, PositionNodes } from './accessors/PositionNode.js';
 export { default as ReferenceNode, reference } from './accessors/ReferenceNode.js';
 export { default as ReflectVectorNode, reflectVector } from './accessors/ReflectVectorNode.js';
 export { default as SkinningNode, skinning } from './accessors/SkinningNode.js';

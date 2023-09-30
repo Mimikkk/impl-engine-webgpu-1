@@ -4,7 +4,7 @@ import { nodeProxy } from '../shadernode/ShaderNode.js';
 import { uniform, UniformNode } from '../core/UniformNode.js';
 import { reference } from './ReferenceNode.js';
 import { BufferAttributeNodes } from './BufferAttributeNode.js';
-import PositionNode, { positionLocal } from './PositionNode.js';
+import { PositionNode, PositionNodes } from './PositionNode.js';
 import { Mesh } from '../../objects/Mesh.js';
 import NodeBuilder from '../core/NodeBuilder.js';
 
@@ -21,7 +21,7 @@ export class MorphNode extends Node {
     this.updateType = NodeUpdateType.Object;
   }
 
-  constructAttribute(builder: NodeBuilder, name: string, assignNode: PositionNode = positionLocal) {
+  constructAttribute(builder: NodeBuilder, name: string, assignNode: PositionNode = PositionNodes.local) {
     const mesh = this.mesh;
     const attributes = mesh.geometry.morphAttributes[name];
 

@@ -1,5 +1,5 @@
-import { transformedNormalView } from '../../accessors/NormalNode.js';
-import { positionViewDirection } from '../../accessors/PositionNode.js';
+import { NormalNodes } from '../../accessors/NormalNode.js';
+import { PositionNodes } from '../../accessors/PositionNode.js';
 import { tslFn, vec2, vec4 } from '../../shadernode/ShaderNode.js';
 
 // Analytical approximation of the DFG LUT, one half of the
@@ -9,7 +9,7 @@ import { tslFn, vec2, vec4 } from '../../shadernode/ShaderNode.js';
 const DFGApprox = tslFn(inputs => {
   const { roughness } = inputs;
 
-  const dotNV = inputs.dotNV || transformedNormalView.dot(positionViewDirection).clamp(); // @ TODO: Move to core dotNV
+  const dotNV = inputs.dotNV || NormalNodes.transformed.view.dot(PositionNodes.directional.view).clamp(); // @ TODO: Move to core dotNV
 
   const c0 = vec4(-1, -0.0275, -0.572, 0.022);
 

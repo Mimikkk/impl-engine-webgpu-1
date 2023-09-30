@@ -7,10 +7,11 @@ import { nodeImmutable } from '../shadernode/ShaderNode.js';
 import NodeBuilder from '../core/NodeBuilder.js';
 import { NodeType } from '../core/constants.js';
 
-class PositionNode extends Node {
-  constructor(scope = PositionNode.LOCAL) {
-    super(NodeType.Vector3);
+export class PositionNode extends Node {
+  scope: PositionNode.Scope;
 
+  constructor(scope: PositionNode.Scope) {
+    super(NodeType.Vector3);
     this.scope = scope;
   }
 
@@ -18,49 +19,52 @@ class PositionNode extends Node {
     return true;
   }
 
-  getHash(builder: NodeBuilder) {
+  getHash() {
     return `position-${this.scope}`;
   }
 
-  generate(builder: NodeBuilder) {
-    const scope = this.scope;
-
-    let outputNode = null;
-
-    if (scope === PositionNode.GEOMETRY) {
-      outputNode = attribute('position', 'vec3');
-    } else if (scope === PositionNode.LOCAL) {
-      outputNode = varying(positionGeometry);
-    } else if (scope === PositionNode.WORLD) {
-      const vertexPositionNode = ModelNodes.worldMatrix.mul(positionLocal);
-      outputNode = varying(vertexPositionNode);
-    } else if (scope === PositionNode.VIEW) {
-      const vertexPositionNode = ModelNodes.viewMatrix.mul(positionLocal);
-      outputNode = varying(vertexPositionNode);
-    } else if (scope === PositionNode.VIEW_DIRECTION) {
-      const vertexPositionNode = positionView.negate();
-      outputNode = normalize(varying(vertexPositionNode));
-    } else if (scope === PositionNode.WORLD_DIRECTION) {
-      const vertexPositionNode = positionLocal.transformDirection(ModelNodes.worldMatrix);
-      outputNode = normalize(varying(vertexPositionNode));
+  fromScope() {
+    switch (this.scope) {
+      case PositionNode.Scope.Geometry:
+        return attribute('position', NodeType.Vector3);
+      case PositionNode.Scope.Local:
+        return varying(PositionNodes.geometry);
+      case PositionNode.Scope.World:
+        return varying(ModelNodes.worldMatrix.mul(PositionNodes.local));
+      case PositionNode.Scope.View:
+        return varying(ModelNodes.viewMatrix.mul(PositionNodes.local));
+      case PositionNode.Scope.ViewDirection:
+        return normalize(varying(PositionNodes.view.negate()));
+      case PositionNode.Scope.WorldDirection:
+        return normalize(varying(PositionNodes.local.transformDirection(ModelNodes.worldMatrix)));
+      default:
+        throw Error(`PositionNode: Invalid scope ${this.scope}`);
     }
+  }
 
-    return outputNode.build(builder, this.getNodeType(builder));
+  generate(builder: NodeBuilder) {
+    return this.fromScope().build(builder, this.getNodeType(builder));
   }
 }
 
-PositionNode.GEOMETRY = 'geometry';
-PositionNode.LOCAL = 'local';
-PositionNode.WORLD = 'world';
-PositionNode.WORLD_DIRECTION = 'worldDirection';
-PositionNode.VIEW = 'view';
-PositionNode.VIEW_DIRECTION = 'viewDirection';
+export namespace PositionNode {
+  export enum Scope {
+    Geometry = 'geometry',
+    World = 'world',
+    Local = 'local',
+    View = 'view',
+    ViewDirection = 'viewDirection',
+    WorldDirection = 'worldDirection',
+  }
+}
+export namespace PositionNodes {
+  export const geometry = nodeImmutable(PositionNode, PositionNode.Scope.Geometry);
+  export const local = nodeImmutable(PositionNode, PositionNode.Scope.Local);
+  export const world = nodeImmutable(PositionNode, PositionNode.Scope.World);
+  export const view = nodeImmutable(PositionNode, PositionNode.Scope.View);
 
-export default PositionNode;
-
-export const positionGeometry = nodeImmutable(PositionNode, PositionNode.GEOMETRY);
-export const positionLocal = nodeImmutable(PositionNode, PositionNode.LOCAL);
-export const positionWorld = nodeImmutable(PositionNode, PositionNode.WORLD);
-export const positionWorldDirection = nodeImmutable(PositionNode, PositionNode.WORLD_DIRECTION);
-export const positionView = nodeImmutable(PositionNode, PositionNode.VIEW);
-export const positionViewDirection = nodeImmutable(PositionNode, PositionNode.VIEW_DIRECTION);
+  export namespace directional {
+    export const world = nodeImmutable(PositionNode, PositionNode.Scope.WorldDirection);
+    export const view = nodeImmutable(PositionNode, PositionNode.Scope.ViewDirection);
+  }
+}

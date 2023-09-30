@@ -4,9 +4,8 @@ import { uniform } from '../core/UniformNode.js';
 import { vec3 } from '../shadernode/ShaderNode.js';
 import { reference } from '../accessors/ReferenceNode.js';
 import { texture } from '../accessors/TextureNode.js';
-import { positionWorld } from '../accessors/PositionNode.js';
-import { normalWorld } from '../accessors/NormalNode.js';
-//import { add } from '../math/OperatorNode.js';
+import { PositionNodes } from '../accessors/PositionNode.js';
+import { NormalNodes } from '../accessors/NormalNode.js';
 import { Color, DepthTexture, LessCompare, NearestFilter } from '../../Three.js';
 
 let depthMaterial = null;
@@ -55,7 +54,7 @@ class AnalyticLightNode extends LightingNode {
       const bias = reference('bias', 'float', shadow);
       const normalBias = reference('normalBias', 'float', shadow);
 
-      let shadowCoord = uniform(shadow.matrix).mul(positionWorld.add(normalWorld.mul(normalBias)));
+      let shadowCoord = uniform(shadow.matrix).mul(PositionNodes.world.add(NormalNodes.world.mul(normalBias)));
       shadowCoord = shadowCoord.xyz.div(shadowCoord.w);
 
       const frustumTest = shadowCoord.x
@@ -81,39 +80,39 @@ class AnalyticLightNode extends LightingNode {
 
       // PCFShadowMap
       /*
-      const mapSize = reference( 'mapSize', 'vec2', shadow );
-      const radius = reference( 'radius', 'float', shadow );
+       const mapSize = reference( 'mapSize', 'vec2', shadow );
+       const radius = reference( 'radius', 'float', shadow );
 
-      const texelSize = vec2( 1 ).div( mapSize );
-      const dx0 = texelSize.x.negate().mul( radius );
-      const dy0 = texelSize.y.negate().mul( radius );
-      const dx1 = texelSize.x.mul( radius );
-      const dy1 = texelSize.y.mul( radius );
-      const dx2 = dx0.mul( 2 );
-      const dy2 = dy0.mul( 2 );
-      const dx3 = dx1.mul( 2 );
-      const dy3 = dy1.mul( 2 );
+       const texelSize = vec2( 1 ).div( mapSize );
+       const dx0 = texelSize.x.negate().mul( radius );
+       const dy0 = texelSize.y.negate().mul( radius );
+       const dx1 = texelSize.x.mul( radius );
+       const dy1 = texelSize.y.mul( radius );
+       const dx2 = dx0.mul( 2 );
+       const dy2 = dy0.mul( 2 );
+       const dx3 = dx1.mul( 2 );
+       const dy3 = dy1.mul( 2 );
 
-      shadowNode = add(
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx0, dy0 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( 0, dy0 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx1, dy0 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx2, dy2 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( 0, dy2 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx3, dy2 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx0, 0 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx2, 0 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy, shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx3, 0 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx1, 0 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx2, dy3 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( 0, dy3 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx3, dy3 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx0, dy1 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( 0, dy1 ) ), shadowCoord.z ),
-        textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx1, dy1 ) ), shadowCoord.z )
-      ).mul( 1 / 17 );
-      */
+       shadowNode = add(
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx0, dy0 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( 0, dy0 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx1, dy0 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx2, dy2 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( 0, dy2 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx3, dy2 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx0, 0 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx2, 0 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy, shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx3, 0 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx1, 0 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx2, dy3 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( 0, dy3 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx3, dy3 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx0, dy1 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( 0, dy1 ) ), shadowCoord.z ),
+       textureCompare( depthTexture, shadowCoord.xy.add( vec2( dx1, dy1 ) ), shadowCoord.z )
+       ).mul( 1 / 17 );
+       */
       //
 
       this.rtt = rtt;

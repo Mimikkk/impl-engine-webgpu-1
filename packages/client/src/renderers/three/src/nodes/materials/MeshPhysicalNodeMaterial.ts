@@ -1,5 +1,5 @@
 import { addNodeMaterial } from './NodeMaterial.js';
-import { transformedClearcoatNormalView } from '../accessors/NormalNode.js';
+import { NormalNodes } from '../accessors/NormalNode.js';
 import {
   clearcoat,
   clearcoatRoughness,
@@ -24,6 +24,7 @@ import PhysicalLightingModel from '../functions/PhysicalLightingModel.js';
 import MeshStandardNodeMaterial from './MeshStandardNodeMaterial.js';
 
 import { MeshPhysicalMaterial } from '../../Three.js';
+import NodeBuilder from '../core/NodeBuilder.js';
 
 const defaultValues = new MeshPhysicalMaterial();
 
@@ -106,7 +107,7 @@ class MeshPhysicalNodeMaterial extends MeshStandardNodeMaterial {
       ? vec3(this.clearcoatNormalNode)
       : ExtendedMaterialNodes.clearcoatNormal;
 
-    builder.stack.assign(transformedClearcoatNormalView, clearcoatNormalNode);
+    builder.stack.assign(NormalNodes.transformed.clearcoat, clearcoatNormalNode);
   }
 
   copy(source) {

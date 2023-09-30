@@ -5,9 +5,9 @@ import { diffuseColor, output } from '../core/PropertyNode.js';
 import { ExtendedMaterialNodes } from '../accessors/ExtendedMaterialNode.js';
 import { materialAlphaTest, materialColor, materialEmissive, materialOpacity } from '../accessors/MaterialNode.js';
 import { modelViewProjection } from '../accessors/ModelViewProjectionNode.js';
-import { transformedNormalView } from '../accessors/NormalNode.js';
+import { NormalNodes } from '../accessors/NormalNode.js';
 import { instance } from '../accessors/InstanceNode.js';
-import { positionLocal, positionView } from '../accessors/PositionNode.js';
+import { PositionNodes } from '../accessors/PositionNode.js';
 import { skinning } from '../accessors/SkinningNode.js';
 import { morph } from '../accessors/MorphNode.js';
 import { texture } from '../accessors/TextureNode.js';
@@ -147,7 +147,7 @@ class NodeMaterial extends ShaderMaterial {
     }
 
     if (this.positionNode !== null) {
-      builder.stack.assign(positionLocal, this.positionNode);
+      builder.stack.assign(PositionNodes.local, this.positionNode);
     }
 
     builder.context.vertex = builder.removeStack();
@@ -190,15 +190,15 @@ class NodeMaterial extends ShaderMaterial {
     // NORMAL VIEW
 
     if (this.flatShading === true) {
-      const fdx = dFdx(positionView);
-      const fdy = dFdy(positionView.negate()); // use -positionView ?
+      const fdx = dFdx(PositionNodes.view);
+      const fdy = dFdy(PositionNodes.view.negate()); // use -positionView ?
       const normalNode = fdx.cross(fdy).normalize();
 
-      stack.assign(transformedNormalView, normalNode);
+      stack.assign(NormalNodes.transformed.view, normalNode);
     } else {
       const normalNode = this.normalNode ? vec3(this.normalNode) : ExtendedMaterialNodes.normal;
 
-      stack.assign(transformedNormalView, normalNode);
+      stack.assign(NormalNodes.transformed.view, normalNode);
     }
   }
 

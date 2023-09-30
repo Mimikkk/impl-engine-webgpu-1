@@ -1,13 +1,14 @@
 import { Node } from '../core/Node.js';
 import { CameraNodes } from './CameraNode.js';
-import { transformedNormalView } from './NormalNode.js';
-import { positionViewDirection } from './PositionNode.js';
+import { NormalNodes } from './NormalNode.js';
+import { PositionNodes } from './PositionNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
 class ReflectVectorNode extends Node {
   constructor() {
-    super('vec3');
+    super(NodeType.Vector3);
   }
 
   getHash(builder: NodeBuilder) {
@@ -15,7 +16,7 @@ class ReflectVectorNode extends Node {
   }
 
   construct() {
-    const reflectView = positionViewDirection.negate().reflect(transformedNormalView);
+    const reflectView = PositionNodes.directional.view.negate().reflect(NormalNodes.transformed.view);
 
     return reflectView.transformDirection(CameraNodes.matrix.view);
   }

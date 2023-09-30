@@ -2,8 +2,8 @@ import { TempNode } from '../core/TempNode.js';
 import { add } from '../math/OperatorNode.js';
 import { BitangentNodes } from '../accessors/BitangentNode.js';
 import { ModelNodes } from '../accessors/ModelNode.js';
-import { normalView } from '../accessors/NormalNode.js';
-import { positionView } from '../accessors/PositionNode.js';
+import { NormalNodes } from '../accessors/NormalNode.js';
+import { PositionNodes } from '../accessors/PositionNode.js';
 import { tangentView } from '../accessors/TangentNode.js';
 import { uv } from '../accessors/UVNode.js';
 import { faceDirection } from './FrontFacingNode.js';
@@ -67,8 +67,8 @@ class NormalMapNode extends TempNode {
         outputNode = TBNViewMatrix.mul(normalMap).normalize();
       } else {
         outputNode = perturbNormal2Arb({
-          eye_pos: positionView,
-          surf_norm: normalView,
+          eye_pos: PositionNodes.view,
+          surf_norm: NormalNodes.view,
           mapN: normalMap,
           uv: uv(),
         });
@@ -83,4 +83,4 @@ export default NormalMapNode;
 
 export const normalMap = nodeProxy(NormalMapNode);
 
-export const TBNViewMatrix = mat3(tangentView, BitangentNodes.view, normalView);
+export const TBNViewMatrix = mat3(tangentView, BitangentNodes.view, NormalNodes.view);

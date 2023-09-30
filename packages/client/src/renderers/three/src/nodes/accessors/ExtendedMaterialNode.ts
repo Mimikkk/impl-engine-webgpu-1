@@ -1,6 +1,6 @@
 import { MaterialNode } from './MaterialNode.js';
 import { materialReference } from './MaterialReferenceNode.js';
-import { normalView } from './NormalNode.js';
+import { NormalNodes } from './NormalNode.js';
 import { normalMap } from '../display/NormalMapNode.js';
 import { bumpMap } from '../display/BumpMapNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
@@ -34,7 +34,7 @@ export class ExtendedMaterialNode extends MaterialNode {
         } else if (material.bumpMap) {
           return bumpMap(material.bumpMap, materialReference('bumpScale', NodeType.Float));
         } else {
-          return normalView;
+          return NormalNodes.view;
         }
       case ExtendedMaterialNode.Scope.ClearcoatNormal:
         return material.clearcoatNormalMap
@@ -42,7 +42,7 @@ export class ExtendedMaterialNode extends MaterialNode {
               this.getTexture('clearcoatNormalMap'),
               materialReference('clearcoatNormalScale', NodeType.Vector2),
             )
-          : normalView;
+          : NormalNodes.view;
       default:
         return super.construct(builder);
     }

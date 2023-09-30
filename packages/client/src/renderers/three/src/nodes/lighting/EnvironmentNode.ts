@@ -5,12 +5,8 @@ import { clearcoatRoughness, roughness } from '../core/PropertyNode.js';
 import { equirectUV } from '../utils/EquirectUVNode.js';
 import { specularMIPLevel } from '../utils/SpecularMIPLevelNode.js';
 import { CameraNodes } from '../accessors/CameraNode.js';
-import {
-  transformedClearcoatNormalView,
-  transformedNormalView,
-  transformedNormalWorld,
-} from '../accessors/NormalNode.js';
-import { positionViewDirection } from '../accessors/PositionNode.js';
+import { NormalNodes } from '../accessors/NormalNode.js';
+import { PositionNodes } from '../accessors/PositionNode.js';
 import { float, vec2 } from '../shadernode/ShaderNode.js';
 import { cubeTexture } from '../accessors/CubeTextureNode.js';
 import { reference } from '../accessors/ReferenceNode.js';
@@ -50,8 +46,10 @@ class EnvironmentNode extends LightingNode {
 
     const intensity = reference('envMapIntensity', 'float', builder.material); // @TODO: Add materialEnvIntensity in MaterialNode
 
-    const radiance = context(envNode, createRadianceContext(roughness, transformedNormalView)).mul(intensity);
-    const irradiance = context(envNode, createIrradianceContext(transformedNormalWorld)).mul(Math.PI).mul(intensity);
+    const radiance = context(envNode, createRadianceContext(roughness, NormalNodes.transformed.view)).mul(intensity);
+    const irradiance = context(envNode, createIrradianceContext(NormalNodes.transformed.world))
+      .mul(Math.PI)
+      .mul(intensity);
 
     const isolateRadiance = cache(radiance);
 
@@ -68,7 +66,7 @@ class EnvironmentNode extends LightingNode {
     if (clearcoatRadiance) {
       const clearcoatRadianceContext = context(
         envNode,
-        createRadianceContext(clearcoatRoughness, transformedClearcoatNormalView),
+        createRadianceContext(clearcoatRoughness, NormalNodes.transformed.clearcoat),
       ).mul(intensity);
       const isolateClearcoatRadiance = cache(clearcoatRadianceContext);
 
@@ -91,7 +89,7 @@ const createRadianceContext = (roughnessNode, normalViewNode) => {
       let node = null;
 
       if (reflectVec === null) {
-        reflectVec = positionViewDirection.negate().reflect(normalViewNode);
+        reflectVec = PositionNodes.directional.view.negate().reflect(normalViewNode);
         reflectVec = roughnessNode.mul(roughnessNode).mix(reflectVec, normalViewNode).normalize();
         reflectVec = reflectVec.transformDirection(CameraNodes.matrix.view);
       }

@@ -2,7 +2,7 @@ import { Node } from '../core/Node.js';
 import { varying } from '../core/VaryingNode.js';
 import { normalize } from '../math/MathNode.js';
 import { CameraNodes } from './CameraNode.js';
-import { normalGeometry, normalLocal, normalView, normalWorld, transformedNormalView } from './NormalNode.js';
+import { NormalNodes } from './NormalNode.js';
 import { tangentGeometry, tangentLocal, tangentView, tangentWorld, transformedTangentView } from './TangentNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
@@ -24,13 +24,13 @@ export class BitangentNode extends Node {
   fromScope() {
     switch (this.scope) {
       case BitangentNode.Scope.Geometry:
-        return normalGeometry.cross(tangentGeometry);
+        return NormalNodes.geometry.cross(tangentGeometry);
       case BitangentNode.Scope.Local:
-        return normalLocal.cross(tangentLocal);
+        return NormalNodes.local.cross(tangentLocal);
       case BitangentNode.Scope.View:
-        return normalView.cross(tangentView);
+        return NormalNodes.view.cross(tangentView);
       case BitangentNode.Scope.World:
-        return normalWorld.cross(tangentWorld);
+        return NormalNodes.world.cross(tangentWorld);
     }
   }
 
@@ -57,7 +57,7 @@ export namespace BitangentNodes {
   export const world = nodeImmutable(BitangentNode, BitangentNode.Scope.World);
 
   export namespace transformed {
-    export const view = normalize(transformedNormalView.cross(transformedTangentView).mul(tangentGeometry.w));
+    export const view = normalize(NormalNodes.transformed.view.cross(transformedTangentView).mul(tangentGeometry.w));
     export const world = normalize(view.transformDirection(CameraNodes.matrix.view));
   }
 }

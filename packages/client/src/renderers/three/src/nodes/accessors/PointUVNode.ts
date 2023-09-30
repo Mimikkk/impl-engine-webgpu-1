@@ -1,15 +1,16 @@
 import { Node } from '../core/Node.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
+import { NodeType } from '../core/constants.js';
 
 class PointUVNode extends Node {
-  constructor() {
-    super('vec2');
+  isPointUVNode: boolean = true;
 
-    this.isPointUVNode = true;
+  constructor() {
+    super(NodeType.Vector2);
   }
 
-  generate(builder: NodeBuilder) {
-    return 'vec2( gl_PointCoord.x, 1.0 - gl_PointCoord.y )';
+  generate() {
+    return 'vec2(gl_PointCoord.x, 1.0 - gl_PointCoord.y)';
   }
 }
 

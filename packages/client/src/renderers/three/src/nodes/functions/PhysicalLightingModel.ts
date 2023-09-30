@@ -18,8 +18,8 @@ import {
   sheenRoughness,
   specularColor,
 } from '../core/PropertyNode.js';
-import { transformedClearcoatNormalView, transformedNormalView } from '../accessors/NormalNode.js';
-import { positionViewDirection } from '../accessors/PositionNode.js';
+import { NormalNodes } from '../accessors/NormalNode.js';
+import { PositionNodes } from '../accessors/PositionNode.js';
 import { float, mat3, vec3 } from '../shadernode/ShaderNode.js';
 import { cond } from '../math/CondNode.js';
 import { mix, smoothstep } from '../math/MathNode.js';
@@ -86,9 +86,9 @@ const evalIridescence = (outsideIOR, eta2, cosTheta1, thinFilmThickness, baseF0)
   const cosTheta2Sq = float(1).sub(sinTheta2Sq);
   /*if ( cosTheta2Sq < 0.0 ) {
 
-      return vec3( 1.0 );
+   return vec3( 1.0 );
 
-  }*/
+   }*/
 
   const cosTheta2 = cosTheta2Sq.sqrt();
 
@@ -189,7 +189,7 @@ class PhysicalLightingModel extends LightingModel {
       this.clearcoatRadiance = vec3().temp();
       this.clearcoatSpecular = vec3().temp();
 
-      const dotNVcc = transformedClearcoatNormalView.dot(positionViewDirection).clamp();
+      const dotNVcc = NormalNodes.transformed.clearcoat.dot(PositionNodes.directional.view).clamp();
 
       const Fcc = F_Schlick({
         dotVH: dotNVcc,
@@ -217,7 +217,7 @@ class PhysicalLightingModel extends LightingModel {
     }
 
     if (this.iridescence === true) {
-      const dotNVi = transformedNormalView.dot(positionViewDirection).clamp();
+      const dotNVi = NormalNodes.transformed.view.dot(PositionNodes.directional.view).clamp();
 
       this.iridescenceFresnel = evalIridescence(
         float(1.0),
@@ -252,7 +252,7 @@ class PhysicalLightingModel extends LightingModel {
   }
 
   direct({ lightDirection, lightColor, reflectedLight }) {
-    const dotNL = transformedNormalView.dot(lightDirection).clamp();
+    const dotNL = NormalNodes.transformed.view.dot(lightDirection).clamp();
     const irradiance = dotNL.mul(lightColor);
 
     if (this.sheen === true) {
@@ -260,7 +260,7 @@ class PhysicalLightingModel extends LightingModel {
     }
 
     if (this.clearcoat === true) {
-      const dotNLcc = transformedClearcoatNormalView.dot(lightDirection).clamp();
+      const dotNLcc = NormalNodes.transformed.clearcoat.dot(lightDirection).clamp();
       const ccIrradiance = dotNLcc.mul(lightColor);
 
       this.clearcoatSpecular.addAssign(
@@ -270,7 +270,7 @@ class PhysicalLightingModel extends LightingModel {
             f0: clearcoatF0,
             f90: clearcoatF90,
             roughness: clearcoatRoughness,
-            normalView: transformedClearcoatNormalView,
+            normalView: NormalNodes.transformed.clearcoat,
           }),
         ),
       );
@@ -299,12 +299,15 @@ class PhysicalLightingModel extends LightingModel {
   indirectSpecular({ radiance, iblIrradiance, reflectedLight }) {
     if (this.sheen === true) {
       this.sheenSpecular.addAssign(
-        iblIrradiance.mul(sheen, IBLSheenBRDF(transformedNormalView, positionViewDirection, sheenRoughness)),
+        iblIrradiance.mul(
+          sheen,
+          IBLSheenBRDF(NormalNodes.transformed.view, PositionNodes.directional.view, sheenRoughness),
+        ),
       );
     }
 
     if (this.clearcoat === true) {
-      const dotNVcc = transformedClearcoatNormalView.dot(positionViewDirection).clamp();
+      const dotNVcc = NormalNodes.transformed.clearcoat.dot(PositionNodes.directional.view).clamp();
 
       const clearcoatEnv = EnvironmentBRDF({
         dotNV: dotNVcc,
@@ -335,7 +338,7 @@ class PhysicalLightingModel extends LightingModel {
   }
 
   ambientOcclusion({ ambientOcclusion, reflectedLight }) {
-    const dotNV = transformedNormalView.dot(positionViewDirection).clamp(); // @ TODO: Move to core dotNV
+    const dotNV = NormalNodes.transformed.view.dot(PositionNodes.directional.view).clamp(); // @ TODO: Move to core dotNV
 
     const aoNV = dotNV.add(ambientOcclusion);
     const aoExp = roughness.mul(-16.0).oneMinus().negate().exp2();

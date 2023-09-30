@@ -1,8 +1,8 @@
 import { TempNode } from '../core/TempNode.js';
 import { texture } from '../accessors/TextureNode.js';
 import { uv } from '../accessors/UVNode.js';
-import { normalView } from '../accessors/NormalNode.js';
-import { positionView } from '../accessors/PositionNode.js';
+import { NormalNodes } from '../accessors/NormalNode.js';
+import { PositionNodes } from '../accessors/PositionNode.js';
 import { faceDirection } from './FrontFacingNode.js';
 import { nodeProxy, tslFn, vec2 } from '../shadernode/ShaderNode.js';
 
@@ -52,8 +52,8 @@ class BumpMapNode extends TempNode {
     const dHdxy = dHdxy_fwd({ bumpTexture: this.texture, bumpScale });
 
     return perturbNormalArb({
-      surf_pos: positionView.negate(),
-      surf_norm: normalView,
+      surf_pos: PositionNodes.view.negate(),
+      surf_norm: NormalNodes.view,
       dHdxy,
     });
   }

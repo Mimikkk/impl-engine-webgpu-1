@@ -1,9 +1,9 @@
 import { TempNode } from '../core/TempNode.js';
-import { positionWorldDirection } from '../accessors/PositionNode.js';
+import { PositionNodes } from '../accessors/PositionNode.js';
 import { nodeProxy, vec2 } from '../shadernode/ShaderNode.js';
 
 class EquirectUVNode extends TempNode {
-  constructor(dirNode = positionWorldDirection) {
+  constructor(dirNode = PositionNodes.directional.world) {
     super('vec2');
 
     this.dirNode = dirNode;

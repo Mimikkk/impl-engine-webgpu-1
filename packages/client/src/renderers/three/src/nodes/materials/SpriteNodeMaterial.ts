@@ -3,7 +3,7 @@ import { uniform } from '../core/UniformNode.js';
 import { CameraNodes } from '../accessors/CameraNode.js';
 import { materialRotation } from '../accessors/MaterialNode.js';
 import { ModelNodes } from '../accessors/ModelNode.js';
-import { positionLocal } from '../accessors/PositionNode.js';
+import { PositionNodes } from '../accessors/PositionNode.js';
 import { float, vec2, vec3, vec4 } from '../shadernode/ShaderNode.js';
 
 import { SpriteMaterial } from '../../Three.js';
@@ -40,7 +40,7 @@ class SpriteNodeMaterial extends NodeMaterial {
 
     const { positionNode, rotationNode, scaleNode } = this;
 
-    const vertex = positionLocal;
+    const vertex = PositionNodes.local;
 
     let mvPosition = ModelNodes.viewMatrix.mul(vec3(positionNode || 0));
 

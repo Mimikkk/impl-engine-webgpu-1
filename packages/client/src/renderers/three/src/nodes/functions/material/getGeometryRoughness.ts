@@ -1,8 +1,8 @@
-import { normalGeometry } from '../../accessors/NormalNode.js';
+import { NormalNodes } from '../../accessors/NormalNode.js';
 import { tslFn } from '../../shadernode/ShaderNode.js';
 
 const getGeometryRoughness = tslFn(() => {
-  const dxy = normalGeometry.dFdx().abs().max(normalGeometry.dFdy().abs());
+  const dxy = NormalNodes.geometry.dFdx().abs().max(NormalNodes.geometry.dFdy().abs());
   const geometryRoughness = dxy.x.max(dxy.y).max(dxy.z);
 
   return geometryRoughness;
