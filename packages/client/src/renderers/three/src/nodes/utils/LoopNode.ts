@@ -3,26 +3,30 @@ import { expression } from '../code/ExpressionNode.js';
 import { bypass } from '../core/BypassNode.js';
 import { context as contextNode } from '../core/ContextNode.js';
 import { addNodeElement, nodeArray, nodeObject } from '../shadernode/ShaderNode.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
 class LoopNode extends Node {
+  params: any;
+
   constructor(params = []) {
     super();
 
     this.params = params;
   }
 
-  getVarName(index) {
-    return String.fromCharCode('i'.charCodeAt() + index);
+  getVarName(index: number) {
+    return String.fromCharCode('i'.charCodeAt(0) + index);
   }
 
-  getProperties(builder) {
+  getProperties(builder: NodeBuilder) {
     const properties = builder.getNodeProperties(this);
 
     if (properties.stackNode !== undefined) return properties;
 
     //
 
-    const inputs = {};
+    const inputs: Record<string, any> = {};
 
     for (let i = 0, l = this.params.length - 1; i < l; i++) {
       const prop = this.getVarName(i);
@@ -36,7 +40,7 @@ class LoopNode extends Node {
     return properties;
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     const { returnsNode } = this.getProperties(builder);
 
     return returnsNode ? returnsNode.getNodeType(builder) : 'void';
@@ -127,7 +131,7 @@ class LoopNode extends Node {
       builder.addFlowCode((i === 0 ? '\n' : '') + builder.tab + forSnippet + ' {\n\n').addFlowTab();
     }
 
-    const stackSnippet = contextNode(stackNode, context).build(builder, 'void');
+    const stackSnippet = contextNode(stackNode, context).build(builder, NodeType.Void);
 
     builder.removeFlowTab().addFlowCode('\n' + builder.tab + stackSnippet);
 
@@ -143,6 +147,6 @@ class LoopNode extends Node {
 
 export default LoopNode;
 
-export const loop = (...params) => nodeObject(new LoopNode(nodeArray(params, 'int')));
+export const loop = (...params: any[]) => nodeObject(new LoopNode(nodeArray(params, NodeType.Integer)));
 
-addNodeElement('loop', (returns, ...params) => bypass(returns, loop(...params)));
+addNodeElement('loop', (returns: any, ...params: any[]) => bypass(returns, loop(...params)));

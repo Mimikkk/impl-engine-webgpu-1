@@ -29,7 +29,9 @@ class InstanceNode extends Node {
       const buffer = new InstancedInterleavedBuffer(instanceAttribute.array, 16, 1);
 
       const bufferFn =
-        instanceAttribute.usage === DynamicDrawUsage ? BufferAttributeNodes.dynamic : BufferAttributeNodes.normal;
+        instanceAttribute.usage === DynamicDrawUsage
+          ? BufferAttributeNodes.instanced.dynamic
+          : BufferAttributeNodes.instanced.normal;
 
       const instanceBuffers = [
         bufferFn(buffer, NodeType.Vector4, 16, 0),

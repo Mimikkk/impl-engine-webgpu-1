@@ -7,6 +7,7 @@ import { ConstNode } from '../core/ConstNode.js';
 import { getValueFromType, getValueType } from '../core/NodeUtils.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 import StackNode from '../core/StackNode.js';
+import { NodeType } from '../core/constants.js';
 
 const NodeElements = new Map<string, Node>();
 
@@ -243,9 +244,9 @@ export function ShaderNode(jsFunc: any) {
   return new Proxy(new ShaderNodeInternal(jsFunc), shaderNodeHandler);
 }
 
-export const nodeObject = (val, altType = null) => ShaderNodeObject(val, altType);
-export const nodeObjects = (val, altType = null) => new ShaderNodeObjects(val, altType);
-export const nodeArray = (val, altType = null) => new ShaderNodeArray(val, altType);
+export const nodeObject = (val, altType: NodeType | null = null) => ShaderNodeObject(val, altType);
+export const nodeObjects = (val, altType: NodeType | null = null) => new ShaderNodeObjects(val, altType);
+export const nodeArray = (val, altType: NodeType | null = null) => new ShaderNodeArray(val, altType);
 export const nodeProxy = (...params) => new ShaderNodeProxy(...params);
 export const nodeImmutable = (...params) => new ShaderNodeImmutable(...params);
 
