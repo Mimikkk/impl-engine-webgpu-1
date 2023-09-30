@@ -4,7 +4,7 @@ import { addLightNode } from './LightsNode.js';
 import { getDistanceAttenuation } from './LightUtils.js';
 import { uniform } from '../core/UniformNode.js';
 import { smoothstep } from '../math/MathNode.js';
-import { objectViewPosition } from '../accessors/Object3DNode.js';
+import { Object3DNodes } from '../accessors/Object3DNode.js';
 import { positionView } from '../accessors/PositionNode.js';
 
 import { SpotLight } from '../../Three.js';
@@ -45,7 +45,7 @@ class SpotLightNode extends AnalyticLightNode {
 
     const { colorNode, cutoffDistanceNode, decayExponentNode, light } = this;
 
-    const lVector = objectViewPosition(light).sub(positionView); // @TODO: Add it into LightNode
+    const lVector = Object3DNodes.viewPosition(light).sub(positionView); // @TODO: Add it into LightNode
 
     const lightDirection = lVector.normalize();
     const angleCos = lightDirection.dot(lightTargetDirection(light));

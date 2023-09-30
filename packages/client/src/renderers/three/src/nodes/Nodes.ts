@@ -154,16 +154,7 @@ export * from './shadernode/ShaderNode.js';
 export { BitangentNode } from './accessors/BitangentNode.js';
 export { BufferAttributeNode } from './accessors/BufferAttributeNode.js';
 export { BufferNode, buffer } from './accessors/BufferNode.js';
-export {
-  default as CameraNode,
-  cameraProjectionMatrix,
-  cameraViewMatrix,
-  cameraNormalMatrix,
-  cameraWorldMatrix,
-  cameraPosition,
-  cameraNear,
-  cameraFar,
-} from './accessors/CameraNode.js';
+export { CameraNode } from './accessors/CameraNode.js';
 export { default as CubeTextureNode, cubeTexture } from './accessors/CubeTextureNode.js';
 export { default as ExtendedMaterialNode, materialNormal } from './accessors/ExtendedMaterialNode.js';
 export { default as InstanceNode, instance } from './accessors/InstanceNode.js';
@@ -206,16 +197,7 @@ export {
   transformedNormalWorld,
   transformedClearcoatNormalView,
 } from './accessors/NormalNode.js';
-export {
-  default as Object3DNode,
-  objectDirection,
-  objectViewMatrix,
-  objectNormalMatrix,
-  objectWorldMatrix,
-  objectPosition,
-  objectScale,
-  objectViewPosition,
-} from './accessors/Object3DNode.js';
+export { Object3DNode } from './accessors/Object3DNode.js';
 export { default as PointUVNode, pointUV } from './accessors/PointUVNode.js';
 export {
   default as PositionNode,

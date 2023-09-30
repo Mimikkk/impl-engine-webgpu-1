@@ -1,6 +1,26 @@
 import { NodeUpdateType } from './constants.js';
+import Renderer from '../../common/Renderer.js';
+import MaterialNode from '../accessors/MaterialNode.js';
+import { Object3DNode } from '../accessors/Object3DNode.js';
+import SceneNode from '../accessors/SceneNode.js';
+import { Camera } from '../../cameras/Camera.js';
 
 class NodeFrame {
+  time: number;
+  deltaTime: number;
+  frameId: number;
+  renderId: number;
+  startTime: number | null;
+  frameMap: WeakMap<any, any>;
+  frameBeforeMap: WeakMap<any, any>;
+  renderMap: WeakMap<any, any>;
+  renderBeforeMap: WeakMap<any, any>;
+  renderer: Renderer | null;
+  material: MaterialNode | null;
+  camera: Camera | null;
+  object: Object3DNode | null;
+  scene: SceneNode | null;
+
   constructor() {
     this.time = 0;
     this.deltaTime = 0;

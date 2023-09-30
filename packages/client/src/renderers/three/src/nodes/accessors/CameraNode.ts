@@ -1,8 +1,8 @@
-import Object3DNode from './Object3DNode.js';
+import { Object3DNode } from './Object3DNode.js';
 import { label } from '../core/ContextNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
 
-class CameraNode extends Object3DNode {
+export class CameraNode extends Object3DNode {
   constructor(scope = CameraNode.POSITION) {
     super(scope);
   }
@@ -52,9 +52,24 @@ class CameraNode extends Object3DNode {
   }
 }
 
+export namespace CameraNode {
+  export enum Scope {
+    POSITION = 'position',
+    VIEW_MATRIX = 'viewMatrix',
+    PROJECTION_MATRIX = 'projectionMatrix',
+    NORMAL_MATRIX = 'normalMatrix',
+  }
+}
+
 CameraNode.PROJECTION_MATRIX = 'projectionMatrix';
 CameraNode.NEAR = 'near';
 CameraNode.FAR = 'far';
+
+export namespace CameraNodes {
+  export const ProjectionMatrix = CameraNode.PROJECTION_MATRIX;
+  export const Near = CameraNode.NEAR;
+  export const Far = CameraNode.FAR;
+}
 
 export default CameraNode;
 

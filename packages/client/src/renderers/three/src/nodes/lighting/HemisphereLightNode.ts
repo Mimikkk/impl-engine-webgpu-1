@@ -3,7 +3,7 @@ import { addLightNode } from './LightsNode.js';
 import { uniform } from '../core/UniformNode.js';
 import { mix } from '../math/MathNode.js';
 import { normalView } from '../accessors/NormalNode.js';
-import { objectPosition } from '../accessors/Object3DNode.js';
+import { Object3DNodes } from '../accessors/Object3DNode.js';
 
 import { Color, HemisphereLight } from '../../Three.js';
 
@@ -11,7 +11,7 @@ class HemisphereLightNode extends AnalyticLightNode {
   constructor(light = null) {
     super(light);
 
-    this.lightPositionNode = objectPosition(light);
+    this.lightPositionNode = Object3DNodes.position(light);
     this.lightDirectionNode = this.lightPositionNode.normalize();
 
     this.groundColorNode = uniform(new Color());

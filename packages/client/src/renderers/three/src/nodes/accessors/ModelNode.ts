@@ -1,4 +1,4 @@
-import Object3DNode from './Object3DNode.js';
+import { Object3DNode } from './Object3DNode.js';
 import { label } from '../core/ContextNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
 

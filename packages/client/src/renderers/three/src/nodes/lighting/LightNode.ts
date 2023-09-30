@@ -1,6 +1,6 @@
 import { Node } from '../core/Node.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
-import { objectPosition } from '../accessors/Object3DNode.js';
+import { Object3DNodes } from '../accessors/Object3DNode.js';
 import { cameraViewMatrix } from '../accessors/CameraNode.js';
 
 class LightNode extends Node {
@@ -17,7 +17,9 @@ class LightNode extends Node {
     let output = null;
 
     if (scope === LightNode.TARGET_DIRECTION) {
-      output = cameraViewMatrix.transformDirection(objectPosition(light).sub(objectPosition(light.target)));
+      output = cameraViewMatrix.transformDirection(
+        Object3DNodes.position(light).sub(Object3DNodes.position(light.target)),
+      );
     }
 
     return output;

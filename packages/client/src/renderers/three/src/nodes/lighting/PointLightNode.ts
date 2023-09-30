@@ -2,7 +2,7 @@ import AnalyticLightNode from './AnalyticLightNode.js';
 import { addLightNode } from './LightsNode.js';
 import { getDistanceAttenuation } from './LightUtils.js';
 import { uniform } from '../core/UniformNode.js';
-import { objectViewPosition } from '../accessors/Object3DNode.js';
+import { Object3DNodes } from '../accessors/Object3DNode.js';
 import { positionView } from '../accessors/PositionNode.js';
 
 import { PointLight } from '../../Three.js';
@@ -29,7 +29,7 @@ class PointLightNode extends AnalyticLightNode {
 
     const lightingModel = builder.context.lightingModel;
 
-    const lVector = objectViewPosition(light).sub(positionView); // @TODO: Add it into LightNode
+    const lVector = Object3DNodes.viewPosition(light).sub(positionView); // @TODO: Add it into LightNode
 
     const lightDirection = lVector.normalize();
     const lightDistance = lVector.length();
