@@ -26,7 +26,7 @@ class MeshStandardNodeMaterial extends NodeMaterial {
     this.setValues(parameters);
   }
 
-  constructLightingModel(/*builder*/) {
+  constructLightingModel(builder: NodeBuilder) {
     return new PhysicalLightingModel(false, false); // ( clearcoat, sheen ) -> standard
   }
 

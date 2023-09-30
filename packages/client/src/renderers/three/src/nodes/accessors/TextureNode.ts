@@ -23,17 +23,17 @@ class TextureNode extends UniformNode {
     this.setUpdateMatrix(uvNode === null);
   }
 
-  getUniformHash(/*builder*/) {
+  getUniformHash(builder: NodeBuilder) {
     return this.value.uuid;
   }
 
-  getNodeType(/*builder*/) {
+  getNodeType(builder: NodeBuilder) {
     if (this.value.isDepthTexture === true) return 'float';
 
     return 'vec4';
   }
 
-  getInputType(/*builder*/) {
+  getInputType(builder: NodeBuilder) {
     return 'texture';
   }
 

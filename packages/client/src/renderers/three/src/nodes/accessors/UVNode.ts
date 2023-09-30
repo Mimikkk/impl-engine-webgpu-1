@@ -10,7 +10,7 @@ class UVNode extends AttributeNode {
     this.index = index;
   }
 
-  getAttributeName(/*builder*/) {
+  getAttributeName(builder: NodeBuilder) {
     const index = this.index;
 
     return 'uv' + (index > 0 ? index : '');

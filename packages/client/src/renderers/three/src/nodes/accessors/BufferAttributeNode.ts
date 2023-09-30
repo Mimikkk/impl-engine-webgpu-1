@@ -33,7 +33,7 @@ class BufferAttributeNode extends InputNode {
     this.attribute.isInstancedBufferAttribute = this.instanced; // @TODO: Add a possible: InstancedInterleavedBufferAttribute
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const nodeType = this.getNodeType(builder);
 
     const nodeUniform = builder.getBufferAttributeFromNode(this, nodeType);
@@ -52,7 +52,7 @@ class BufferAttributeNode extends InputNode {
     return output;
   }
 
-  getInputType(/*builder*/) {
+  getInputType(builder: NodeBuilder) {
     return 'bufferAttribute';
   }
 

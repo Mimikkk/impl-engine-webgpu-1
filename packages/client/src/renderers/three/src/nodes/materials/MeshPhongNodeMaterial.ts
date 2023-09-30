@@ -24,7 +24,7 @@ class MeshPhongNodeMaterial extends NodeMaterial {
     this.setValues(parameters);
   }
 
-  constructLightingModel(/*builder*/) {
+  constructLightingModel(builder: NodeBuilder) {
     return new PhongLightingModel();
   }
 

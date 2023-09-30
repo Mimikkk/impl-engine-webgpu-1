@@ -11,7 +11,7 @@ class BufferNode extends UniformNode {
     this.bufferCount = bufferCount;
   }
 
-  getInputType(/*builder*/) {
+  getInputType(builder: NodeBuilder) {
     return 'buffer';
   }
 }

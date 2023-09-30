@@ -38,11 +38,11 @@ class AttributeNode extends Node {
     return this;
   }
 
-  getAttributeName(/*builder*/) {
+  getAttributeName(builder: NodeBuilder) {
     return this._attributeName;
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const attributeName = this.getAttributeName(builder);
     const nodeType = this.getNodeType(builder);
     const geometryAttribute = builder.hasGeometryAttribute(attributeName);

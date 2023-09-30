@@ -67,7 +67,7 @@ class Object3DNode extends Node {
     }
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const scope = this.scope;
 
     if (scope === Object3DNode.WORLD_MATRIX || scope === Object3DNode.VIEW_MATRIX) {

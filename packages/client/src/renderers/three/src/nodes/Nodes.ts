@@ -151,15 +151,7 @@ export {
 export * from './shadernode/ShaderNode.js';
 
 // accessors
-export {
-  default as BitangentNode,
-  bitangentGeometry,
-  bitangentLocal,
-  bitangentView,
-  bitangentWorld,
-  transformedBitangentView,
-  transformedBitangentWorld,
-} from './accessors/BitangentNode.js';
+export { BitangentNode } from './accessors/BitangentNode.js';
 export {
   default as BufferAttributeNode,
   bufferAttribute,

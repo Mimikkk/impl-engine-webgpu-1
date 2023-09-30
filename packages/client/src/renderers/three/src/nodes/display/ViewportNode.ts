@@ -65,7 +65,7 @@ class ViewportNode extends Node {
     return output;
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     if (this.scope === ViewportNode.COORDINATE) {
       return builder.getFragCoord();
     }

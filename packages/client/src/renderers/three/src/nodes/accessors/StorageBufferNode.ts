@@ -8,7 +8,7 @@ class StorageBufferNode extends BufferNode {
     this.isStorageBufferNode = true;
   }
 
-  getInputType(/*builder*/) {
+  getInputType(builder: NodeBuilder) {
     return 'storageBuffer';
   }
 }

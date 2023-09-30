@@ -16,11 +16,11 @@ class PositionNode extends Node {
     return true;
   }
 
-  getHash(/*builder*/) {
+  getHash(builder: NodeBuilder) {
     return `position-${this.scope}`;
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const scope = this.scope;
 
     let outputNode = null;

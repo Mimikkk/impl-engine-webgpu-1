@@ -12,7 +12,7 @@ class LightingContextNode extends ContextNode {
     this.backdropAlphaNode = backdropAlphaNode;
   }
 
-  getNodeType(/*builder*/) {
+  getNodeType(builder: NodeBuilder) {
     return 'vec3';
   }
 
@@ -70,7 +70,7 @@ class LightingContextNode extends ContextNode {
     return super.construct(builder);
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const { context } = this;
     const type = this.getNodeType(builder);
 

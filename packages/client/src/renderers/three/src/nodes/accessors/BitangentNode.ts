@@ -5,53 +5,58 @@ import { cameraViewMatrix } from './CameraNode.js';
 import { normalGeometry, normalLocal, normalView, normalWorld, transformedNormalView } from './NormalNode.js';
 import { tangentGeometry, tangentLocal, tangentView, tangentWorld, transformedTangentView } from './TangentNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
+import NodeBuilder from '../core/NodeBuilder.js';
 
-class BitangentNode extends Node {
-  constructor(scope = BitangentNode.LOCAL) {
+export class BitangentNode extends Node {
+  scope: BitangentNode.Scope;
+
+  constructor(scope = BitangentNode.Scope.Local) {
     super('vec3');
 
     this.scope = scope;
   }
 
-  getHash(/*builder*/) {
+  getHash() {
     return `bitangent-${this.scope}`;
   }
 
-  generate(builder) {
-    const scope = this.scope;
-
-    let crossNormalTangent;
-
-    if (scope === BitangentNode.GEOMETRY) {
-      crossNormalTangent = normalGeometry.cross(tangentGeometry);
-    } else if (scope === BitangentNode.LOCAL) {
-      crossNormalTangent = normalLocal.cross(tangentLocal);
-    } else if (scope === BitangentNode.VIEW) {
-      crossNormalTangent = normalView.cross(tangentView);
-    } else if (scope === BitangentNode.WORLD) {
-      crossNormalTangent = normalWorld.cross(tangentWorld);
+  fromScope() {
+    switch (this.scope) {
+      case BitangentNode.Scope.Geometry:
+        return normalGeometry.cross(tangentGeometry);
+      case BitangentNode.Scope.Local:
+        return normalLocal.cross(tangentLocal);
+      case BitangentNode.Scope.View:
+        return normalView.cross(tangentView);
+      case BitangentNode.Scope.World:
+        return normalWorld.cross(tangentWorld);
     }
+  }
 
-    const vertexNode = crossNormalTangent.mul(tangentGeometry.w).xyz;
+  generate(builder: NodeBuilder) {
+    const vertexNode = this.fromScope().mul(tangentGeometry.w).xyz;
 
-    const outputNode = normalize(varying(vertexNode));
-
-    return outputNode.build(builder, this.getNodeType(builder));
+    return normalize(varying(vertexNode)).build(builder, this.getNodeType(builder));
   }
 }
 
-BitangentNode.GEOMETRY = 'geometry';
-BitangentNode.LOCAL = 'local';
-BitangentNode.VIEW = 'view';
-BitangentNode.WORLD = 'world';
+export namespace BitangentNode {
+  export enum Scope {
+    Geometry = 'geometry',
+    Local = 'local',
+    View = 'view',
+    World = 'world',
+  }
+}
 
-export default BitangentNode;
+export namespace BitangentNodes {
+  export const geometry = nodeImmutable(BitangentNode, BitangentNode.Scope.Geometry);
+  export const local = nodeImmutable(BitangentNode, BitangentNode.Scope.Local);
+  export const view = nodeImmutable(BitangentNode, BitangentNode.Scope.View);
+  export const world = nodeImmutable(BitangentNode, BitangentNode.Scope.World);
 
-export const bitangentGeometry = nodeImmutable(BitangentNode, BitangentNode.GEOMETRY);
-export const bitangentLocal = nodeImmutable(BitangentNode, BitangentNode.LOCAL);
-export const bitangentView = nodeImmutable(BitangentNode, BitangentNode.VIEW);
-export const bitangentWorld = nodeImmutable(BitangentNode, BitangentNode.WORLD);
-export const transformedBitangentView = normalize(
-  transformedNormalView.cross(transformedTangentView).mul(tangentGeometry.w),
-);
-export const transformedBitangentWorld = normalize(transformedBitangentView.transformDirection(cameraViewMatrix));
+  export namespace transformed {
+    export const view = normalize(transformedNormalView.cross(transformedTangentView).mul(tangentGeometry.w));
+    export const world = normalize(view.transformDirection(cameraViewMatrix));
+  }
+}

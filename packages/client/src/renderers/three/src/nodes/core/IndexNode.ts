@@ -12,7 +12,7 @@ class IndexNode extends Node {
     this.isInstanceIndexNode = true;
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const nodeType = this.getNodeType(builder);
     const scope = this.scope;
 

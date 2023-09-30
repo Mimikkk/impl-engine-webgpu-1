@@ -48,7 +48,7 @@ class LoopNode extends Node {
     this.getProperties(builder);
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const properties = this.getProperties(builder);
 
     const context = { tempWrite: false };

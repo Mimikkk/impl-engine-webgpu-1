@@ -18,11 +18,11 @@ class NormalNode extends Node {
     return true;
   }
 
-  getHash(/*builder*/) {
+  getHash(builder: NodeBuilder) {
     return `normal-${this.scope}`;
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const scope = this.scope;
 
     let outputNode = null;

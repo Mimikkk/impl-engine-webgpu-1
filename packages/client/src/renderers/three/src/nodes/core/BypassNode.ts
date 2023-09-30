@@ -16,7 +16,7 @@ class BypassNode extends Node {
     return this.outputNode.getNodeType(builder);
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const snippet = this.callNode.build(builder, 'void');
 
     if (snippet !== '') {

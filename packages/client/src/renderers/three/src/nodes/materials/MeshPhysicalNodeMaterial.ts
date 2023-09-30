@@ -57,7 +57,7 @@ class MeshPhysicalNodeMaterial extends MeshStandardNodeMaterial {
     this.setValues(parameters);
   }
 
-  constructLightingModel(/*builder*/) {
+  constructLightingModel(builder: NodeBuilder) {
     return new PhysicalLightingModel(); // @TODO: Optimize shader using parameters.
   }
 

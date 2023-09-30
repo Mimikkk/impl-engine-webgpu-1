@@ -14,7 +14,7 @@ class ViewportDepthNode extends Node {
     this.isViewportDepthNode = true;
   }
 
-  construct(/*builder*/) {
+  construct(builder: NodeBuilder) {
     const { scope } = this;
 
     let node = null;

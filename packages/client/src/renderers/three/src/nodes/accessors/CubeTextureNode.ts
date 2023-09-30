@@ -10,7 +10,7 @@ class CubeTextureNode extends TextureNode {
     this.isCubeTextureNode = true;
   }
 
-  getInputType(/*builder*/) {
+  getInputType(builder: NodeBuilder) {
     return 'cubeTexture';
   }
 

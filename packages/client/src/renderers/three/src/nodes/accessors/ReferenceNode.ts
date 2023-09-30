@@ -44,7 +44,7 @@ class ReferenceNode extends Node {
     this.node.value = object[property];
   }
 
-  construct(/*builder*/) {
+  construct(builder: NodeBuilder) {
     return this.node;
   }
 }

@@ -26,7 +26,7 @@ class AnalyticLightNode extends LightingNode {
     this.colorNode = uniform(this.color);
   }
 
-  getHash(/*builder*/) {
+  getHash(builder: NodeBuilder) {
     return this.light.uuid;
   }
 

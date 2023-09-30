@@ -14,7 +14,7 @@ class TangentNode extends Node {
     this.scope = scope;
   }
 
-  getHash(/*builder*/) {
+  getHash(builder: NodeBuilder) {
     return `tangent-${this.scope}`;
   }
 
@@ -28,7 +28,7 @@ class TangentNode extends Node {
     return 'vec3';
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const scope = this.scope;
 
     let outputNode = null;

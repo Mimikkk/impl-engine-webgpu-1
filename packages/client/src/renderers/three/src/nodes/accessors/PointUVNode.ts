@@ -8,7 +8,7 @@ class PointUVNode extends Node {
     this.isPointUVNode = true;
   }
 
-  generate(/*builder*/) {
+  generate(builder: NodeBuilder) {
     return 'vec2( gl_PointCoord.x, 1.0 - gl_PointCoord.y )';
   }
 }

@@ -182,7 +182,7 @@ class NodeMaterial extends ShaderMaterial {
     }
   }
 
-  constructVariants(/*builder*/) {
+  constructVariants(builder: NodeBuilder) {
     // Interface function.
   }
 
@@ -240,7 +240,7 @@ class NodeMaterial extends ShaderMaterial {
     return lightsNode;
   }
 
-  constructLightingModel(/*builder*/) {
+  constructLightingModel(builder: NodeBuilder) {
     // Interface function.
   }
 

@@ -39,7 +39,7 @@ class CameraNode extends Object3DNode {
     }
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const scope = this.scope;
 
     if (scope === CameraNode.PROJECTION_MATRIX) {

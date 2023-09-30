@@ -1,6 +1,6 @@
 import { TempNode } from '../core/TempNode.js';
 import { add } from '../math/OperatorNode.js';
-import { bitangentView } from '../accessors/BitangentNode.js';
+import { BitangentNodes } from '../accessors/BitangentNode.js';
 import { modelNormalMatrix } from '../accessors/ModelNode.js';
 import { normalView } from '../accessors/NormalNode.js';
 import { positionView } from '../accessors/PositionNode.js';
@@ -82,4 +82,4 @@ export default NormalMapNode;
 
 export const normalMap = nodeProxy(NormalMapNode);
 
-export const TBNViewMatrix = mat3(tangentView, bitangentView, normalView);
+export const TBNViewMatrix = mat3(tangentView, BitangentNodes.view, normalView);
