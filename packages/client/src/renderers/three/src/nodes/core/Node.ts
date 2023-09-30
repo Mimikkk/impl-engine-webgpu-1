@@ -81,7 +81,7 @@ export class Node extends EventDispatcher<'dispose'> {
     return this.updateBeforeType;
   }
 
-  getNodeType(builder: NodeBuilder, output: string | null = null) {
+  getNodeType(builder: NodeBuilder, output?: string) {
     return this.nodeType;
   }
 
@@ -114,7 +114,7 @@ export class Node extends EventDispatcher<'dispose'> {
     }
   }
 
-  generate(builder: NodeBuilder, output: NodeType = NodeType.Void): string | undefined {
+  generate(builder: NodeBuilder, output?: NodeType): string | undefined {
     const { outputNode } = builder.getNodeProperties(this);
 
     if (outputNode?.isNode) return outputNode.build(builder, output);
@@ -128,7 +128,7 @@ export class Node extends EventDispatcher<'dispose'> {
     console.warn('Abstract function.');
   }
 
-  build(builder: NodeBuilder, output: NodeType = NodeType.Void) {
+  build(builder: NodeBuilder, output?: NodeType) {
     const refNode = this.getReference(builder);
 
     if (this !== refNode) {
