@@ -66,8 +66,6 @@ export class ComputeNode extends Node {
   }
 }
 
-export default ComputeNode;
-
 export const compute = (node: Node, count: number, workgroupSize: number[]) =>
   nodeObject(new ComputeNode(nodeObject(node), count, workgroupSize));
 

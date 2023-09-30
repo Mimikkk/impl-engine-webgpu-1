@@ -224,10 +224,10 @@ export { FogExp2Node } from './fog/FogExp2Node.js';
 export { FogNodes } from './fog/FogNodes.js';
 
 // geometry
-export { default as RangeNode, range } from './geometry/RangeNode.js';
+export { RangeNode, range } from './geometry/RangeNode.js';
 
 // gpgpu
-export { default as ComputeNode, compute } from './gpgpu/ComputeNode.js';
+export { ComputeNode, compute } from './gpgpu/ComputeNode.js';
 
 // lighting
 export { default as LightNode, lightTargetDirection } from './lighting/LightNode.js';
@@ -266,8 +266,8 @@ export { default as V_GGX_SmithCorrelated } from './functions/BSDF/V_GGX_SmithCo
 
 export { getDistanceAttenuation } from './lighting/LightUtils.js';
 
-export { default as getGeometryRoughness } from './functions/material/getGeometryRoughness.js';
-export { default as getRoughness } from './functions/material/getRoughness.js';
+export { getGeometryRoughness } from './functions/material/getGeometryRoughness.js';
+export { getRoughness } from './functions/material/getRoughness.js';
 
-export { default as PhongLightingModel } from './functions/PhongLightingModel.js';
+export { PhongLightingModel } from './functions/PhongLightingModel.js';
 export { default as PhysicalLightingModel } from './functions/PhysicalLightingModel.js';

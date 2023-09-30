@@ -2,7 +2,7 @@ import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
 import { PropertyNodes } from '../core/PropertyNode.js';
 import { mix } from '../math/MathNode.js';
 import { MaterialNodes } from '../accessors/MaterialNode.js';
-import getRoughness from '../functions/material/getRoughness.js';
+import { getRoughness } from '../functions/material/getRoughness.js';
 import PhysicalLightingModel from '../functions/PhysicalLightingModel.js';
 import { float, vec3, vec4 } from '../shadernode/ShaderNode.js';
 

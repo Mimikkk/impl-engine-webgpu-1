@@ -2,7 +2,7 @@ import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
 import { PropertyNodes } from '../core/PropertyNode.js';
 import { MaterialNodes } from '../accessors/MaterialNode.js';
 import { float } from '../shadernode/ShaderNode.js';
-import PhongLightingModel from '../functions/PhongLightingModel.js';
+import { PhongLightingModel } from '../functions/PhongLightingModel.js';
 
 import { MeshPhongMaterial } from '../../Three.js';
 import NodeBuilder from '../core/NodeBuilder.js';

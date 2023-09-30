@@ -1,13 +1,16 @@
-class LightingModel {
-  init(/*input, stack, builder*/) {}
+import StackNode from './StackNode.js';
+import NodeBuilder from './NodeBuilder.js';
 
-  direct(/*input, stack, builder*/) {}
+abstract class LightingModel {
+  init(input: any, stack: StackNode, builder: NodeBuilder) {}
 
-  indirectDiffuse(/*input, stack, builder*/) {}
+  direct(input: any, stack: StackNode, builder: NodeBuilder) {}
 
-  indirectSpecular(/*input, stack, builder*/) {}
+  indirectDiffuse(input: any, stack: StackNode, builder: NodeBuilder) {}
 
-  ambientOcclusion(/*input, stack, builder*/) {}
+  indirectSpecular(input: any, stack: StackNode, builder: NodeBuilder) {}
+
+  ambientOcclusion(input: any, stack: StackNode, builder: NodeBuilder) {}
 }
 
 export default LightingModel;

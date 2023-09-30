@@ -29,14 +29,15 @@ const BRDF_BlinnPhong = tslFn(({ lightDirection }) => {
   return F.mul(G).mul(D);
 });
 
-class PhongLightingModel extends LightingModel {
-  constructor(specular = true) {
-    super();
+export class PhongLightingModel extends LightingModel {
+  specular: boolean;
 
+  constructor(specular: boolean = true) {
+    super();
     this.specular = specular;
   }
 
-  direct({ lightDirection, lightColor, reflectedLight }) {
+  direct({ lightDirection, lightColor, reflectedLight }: any) {
     const dotNL = NormalNodes.transformed.view.dot(lightDirection).clamp();
     const irradiance = dotNL.mul(lightColor);
 
@@ -44,18 +45,16 @@ class PhongLightingModel extends LightingModel {
       irradiance.mul(BRDF_Lambert({ diffuseColor: PropertyNodes.diffuseColor.rgb })),
     );
 
-    if (this.specular === true) {
+    if (this.specular) {
       reflectedLight.directSpecular.addAssign(
         irradiance.mul(BRDF_BlinnPhong({ lightDirection })).mul(MaterialNodes.specularStrength),
       );
     }
   }
 
-  indirectDiffuse({ irradiance, reflectedLight }) {
+  indirectDiffuse({ irradiance, reflectedLight }: any) {
     reflectedLight.indirectDiffuse.addAssign(
       irradiance.mul(BRDF_Lambert({ diffuseColor: PropertyNodes.diffuseColor })),
     );
   }
 }
-
-export default PhongLightingModel;

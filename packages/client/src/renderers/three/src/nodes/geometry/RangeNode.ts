@@ -11,7 +11,7 @@ import { NodeType } from '../core/constants.js';
 let min: Vector4 | null = null;
 let max: Vector4 | null = null;
 
-class RangeNode extends Node {
+export class RangeNode extends Node {
   minNode: Node;
   maxNode: Node;
 
@@ -83,7 +83,5 @@ class RangeNode extends Node {
     return output;
   }
 }
-
-export default RangeNode;
 
 export const range = nodeProxy(RangeNode);
