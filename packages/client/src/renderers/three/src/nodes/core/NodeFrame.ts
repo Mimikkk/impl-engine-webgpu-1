@@ -1,9 +1,10 @@
 import { NodeUpdateType } from './constants.js';
 import Renderer from '../../common/Renderer.js';
-import MaterialNode from '../accessors/MaterialNode.js';
-import { Object3DNode } from '../accessors/Object3DNode.js';
-import SceneNode from '../accessors/SceneNode.js';
 import { Camera } from '../../cameras/Camera.js';
+import { Object3D } from '../../core/Object3D.js';
+import { Scene } from '../../scenes/Scene.js';
+import { Material } from '../../materials/Material.js';
+import { Node } from './Node.js';
 
 export class NodeFrame {
   time: number;
@@ -16,10 +17,11 @@ export class NodeFrame {
   renderMap: WeakMap<any, any>;
   renderBeforeMap: WeakMap<any, any>;
   renderer: Renderer | null;
-  material: MaterialNode | null;
+  material: Material | null;
   camera: Camera | null;
-  object: Object3DNode | null;
-  scene: SceneNode | null;
+  object: Object3D | null;
+  scene: Scene | null;
+  lastTime: number | undefined;
 
   constructor() {
     this.time = 0;
@@ -42,7 +44,7 @@ export class NodeFrame {
     this.scene = null;
   }
 
-  updateBeforeNode(node) {
+  updateBeforeNode(node: Node) {
     const updateType = node.getUpdateBeforeType();
 
     if (updateType === NodeUpdateType.Frame) {
@@ -63,7 +65,7 @@ export class NodeFrame {
     }
   }
 
-  updateNode(node) {
+  updateNode(node: Node) {
     const updateType = node.getUpdateType();
 
     if (updateType === NodeUpdateType.Frame) {

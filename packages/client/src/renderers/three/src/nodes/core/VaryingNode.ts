@@ -24,8 +24,6 @@ class VaryingNode extends Node {
   }
 
   getNodeType(builder: NodeBuilder) {
-    // VaryingNode is auto type
-
     return this.node.getNodeType(builder);
   }
 

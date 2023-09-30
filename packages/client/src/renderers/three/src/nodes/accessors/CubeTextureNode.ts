@@ -4,7 +4,7 @@ import { reflectVector } from './ReflectVectorNode.js';
 import { addNodeElement, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 
-import UVNode from './UVNode.js';
+import { UVNode } from './UVNode.js';
 import { Node } from '../core/Node.js';
 
 class CubeTextureNode extends TextureNode {

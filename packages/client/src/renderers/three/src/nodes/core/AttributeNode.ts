@@ -2,19 +2,23 @@ import { Node } from './Node.js';
 
 import { varying } from './VaryingNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
+import { NodeType } from './constants.js';
+import NodeBuilder from './NodeBuilder.js';
 
 class AttributeNode extends Node {
-  constructor(attributeName, nodeType = null) {
+  _attributeName: string | null;
+
+  constructor(attributeName: string | null, nodeType: NodeType | null = null) {
     super(nodeType);
 
     this._attributeName = attributeName;
   }
 
-  getHash(builder) {
-    return this.getAttributeName(builder);
+  getHash(builder: NodeBuilder) {
+    return this.getAttributeName(builder)!;
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     const attributeName = this.getAttributeName(builder);
 
     let nodeType = super.getNodeType(builder);
@@ -32,7 +36,7 @@ class AttributeNode extends Node {
     return nodeType;
   }
 
-  setAttributeName(attributeName) {
+  setAttributeName(attributeName: string) {
     this._attributeName = attributeName;
 
     return this;
@@ -70,4 +74,4 @@ class AttributeNode extends Node {
 
 export default AttributeNode;
 
-export const attribute = (name, nodeType) => nodeObject(new AttributeNode(name, nodeType));
+export const attribute = (name: string, nodeType: NodeType) => nodeObject(new AttributeNode(name, nodeType));
