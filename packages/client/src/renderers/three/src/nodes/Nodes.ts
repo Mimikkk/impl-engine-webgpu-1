@@ -34,7 +34,8 @@ export { NodeUtils };
 
 // math
 export {
-  default as MathNode,
+  MathNode,
+  MathNodes,
   EPSILON,
   INFINITY,
   radians,

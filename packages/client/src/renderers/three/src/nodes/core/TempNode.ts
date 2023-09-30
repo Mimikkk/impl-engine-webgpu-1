@@ -1,22 +1,22 @@
 import { Node } from './Node.js';
 import { NodeBuilder } from './NodeBuilder.js';
+import { NodeType } from './constants.js';
 
 export class TempNode extends Node {
   static is(item: any): item is TempNode {
     return item?.isTempNode;
   }
-  isTempNode: boolean;
+  isTempNode: boolean = true;
 
-  constructor(type: string) {
+  constructor(type: NodeType | null = null) {
     super(type);
-    this.isTempNode = true;
   }
 
   hasDependencies(builder: NodeBuilder) {
     return builder.getDataFromNode(this).dependenciesCount > 1;
   }
 
-  build(builder: NodeBuilder, output: string | null = null) {
+  build(builder: NodeBuilder, output?: NodeType) {
     const buildStage = builder.getBuildStage();
 
     if (buildStage === 'generate') {

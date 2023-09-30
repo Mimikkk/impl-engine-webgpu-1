@@ -1,8 +1,10 @@
 import { TempNode } from '../core/TempNode.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
+import NodeBuilder from '../core/NodeBuilder.js';
+import { MathNode } from './MathNode.js';
 
 class OperatorNode extends TempNode {
-  constructor(op, aNode, bNode, ...params) {
+  constructor(op: string, aNode: MathNode, bNode: MathNode, ...params) {
     super();
 
     this.op = op;
@@ -13,7 +15,6 @@ class OperatorNode extends TempNode {
       for (let i = 0; i < params.length; i++) {
         finalBNode = new OperatorNode(op, finalBNode, params[i]);
       }
-
       bNode = finalBNode;
     }
 
@@ -21,7 +22,7 @@ class OperatorNode extends TempNode {
     this.bNode = bNode;
   }
 
-  hasDependencies(builder) {
+  hasDependencies(builder: NodeBuilder) {
     return this.op !== '=' ? super.hasDependencies(builder) : false;
   }
 

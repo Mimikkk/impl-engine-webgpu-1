@@ -23,6 +23,7 @@ import {
 
 import { stack } from './StackNode.js';
 import { maxMipLevel } from '../utils/MaxMipLevelNode.js';
+import { BuildStageOption } from 'three/examples/jsm/nodes/core/NodeBuilder.js';
 
 const typeFromLength = new Map([
   [2, 'vec2'],
@@ -737,7 +738,7 @@ export class NodeBuilder {
     this.buildStage = buildStage;
   }
 
-  getBuildStage() {
+  getBuildStage(): BuildStageOption {
     return this.buildStage;
   }
 

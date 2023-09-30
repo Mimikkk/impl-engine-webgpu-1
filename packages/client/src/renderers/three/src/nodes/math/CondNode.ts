@@ -37,7 +37,7 @@ export class CondNode extends Node {
 
     const needsProperty =
       ifNode.getNodeType(builder) !== 'void' || (elseNode && elseNode.getNodeType(builder) !== 'void');
-    const nodeProperty = needsProperty ? PropertyNodes.property(type).build(builder) : '';
+    const nodeProperty = needsProperty ? PropertyNodes.property(type!).build(builder) : '';
 
     const nodeSnippet = contextNode(this.condNode /*, context*/).build(builder, 'bool');
 

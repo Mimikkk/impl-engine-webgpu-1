@@ -10,7 +10,7 @@ export class Node extends EventDispatcher<'dispose'> {
   static is(node: any): node is Node {
     return node?.isNode;
   }
-  nodeType: string | null;
+  nodeType: NodeType | null;
   updateType: NodeUpdateType;
   updateBeforeType: NodeUpdateType;
   uuid: string;
