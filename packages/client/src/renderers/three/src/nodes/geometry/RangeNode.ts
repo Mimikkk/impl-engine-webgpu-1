@@ -6,6 +6,7 @@ import { float, nodeProxy } from '../shadernode/ShaderNode.js';
 
 import { MathUtils, Vector4 } from '../../Three.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
 let min: Vector4 | null = null;
 let max: Vector4 | null = null;
@@ -74,7 +75,7 @@ class RangeNode extends Node {
 
       const nodeType = this.getNodeType(builder);
 
-      output = buffer(array, 'vec4', object.count).element(instanceIndex).convert(nodeType);
+      output = buffer(array, NodeType.Vector4, object.count).element(instanceIndex).convert(nodeType);
     } else {
       output = float(0);
     }
