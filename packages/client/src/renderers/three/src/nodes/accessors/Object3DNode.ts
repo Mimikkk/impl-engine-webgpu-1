@@ -10,7 +10,7 @@ import NodeFrame from '../core/NodeFrame.js';
 export class Object3DNode extends Node {
   scope: Object3DNode.Scope;
   object3d: Object3D | null;
-  _uniformNode: UniformNode;
+  uniformNode: UniformNode;
 
   constructor(scope: Object3DNode.Scope = Object3DNode.Scope.ViewMatrix, object3d: Object3D) {
     super();
@@ -20,7 +20,7 @@ export class Object3DNode extends Node {
 
     this.updateType = NodeUpdateType.Object;
 
-    this._uniformNode = uniform(null, undefined) as any;
+    this.uniformNode = uniform(null, undefined) as any;
   }
 
   getNodeType() {
@@ -40,54 +40,41 @@ export class Object3DNode extends Node {
 
   update(frame: NodeFrame) {
     const object = this.object3d!;
-    const uniformNode = this._uniformNode;
-    const scope = this.scope;
+    const uniformNode = this.uniformNode;
 
-    if (scope === Object3DNode.Scope.ViewMatrix) {
-      uniformNode.value = object.modelViewMatrix;
-    } else if (scope === Object3DNode.Scope.NormalMatrix) {
-      uniformNode.value = object.normalMatrix;
-    } else if (scope === Object3DNode.Scope.WorldMatrix) {
-      uniformNode.value = object.matrixWorld;
-    } else if (scope === Object3DNode.Scope.Position) {
-      uniformNode.value = uniformNode.value || new Vector3();
-
-      uniformNode.value.setFromMatrixPosition(object.matrixWorld);
-    } else if (scope === Object3DNode.Scope.Scale) {
-      uniformNode.value = uniformNode.value || new Vector3();
-
-      uniformNode.value.setFromMatrixScale(object.matrixWorld);
-    } else if (scope === Object3DNode.Scope.Direction) {
-      uniformNode.value = uniformNode.value || new Vector3();
-
-      object.getWorldDirection(uniformNode.value);
-    } else if (scope === Object3DNode.Scope.ViewPosition) {
-      const camera = frame.camera;
-
-      uniformNode.value = uniformNode.value || new Vector3();
-      uniformNode.value.setFromMatrixPosition(object.matrixWorld);
-
-      uniformNode.value.applyMatrix4(camera!.matrixWorldInverse);
+    switch (this.scope) {
+      case Object3DNode.Scope.WorldMatrix:
+        uniformNode.value = object.matrixWorld;
+        break;
+      case Object3DNode.Scope.ViewMatrix:
+        uniformNode.value = object.modelViewMatrix;
+        break;
+      case Object3DNode.Scope.NormalMatrix:
+        uniformNode.value = object.normalMatrix;
+        break;
+      case Object3DNode.Scope.Position:
+        uniformNode.value ??= new Vector3();
+        uniformNode.value.setFromMatrixPosition(object.matrixWorld);
+        break;
+      case Object3DNode.Scope.Scale:
+        uniformNode.value ??= new Vector3();
+        uniformNode.value.setFromMatrixScale(object.matrixWorld);
+        break;
+      case Object3DNode.Scope.Direction:
+        uniformNode.value ??= new Vector3();
+        object.getWorldDirection(uniformNode.value);
+        break;
+      case Object3DNode.Scope.ViewPosition:
+        uniformNode.value ??= new Vector3();
+        uniformNode.value.setFromMatrixPosition(object.matrixWorld);
+        uniformNode.value.applyMatrix4(frame.camera!.matrixWorldInverse);
+        break;
     }
   }
 
   generate(builder: NodeBuilder) {
-    const scope = this.scope;
-
-    if (scope === Object3DNode.Scope.WorldMatrix || scope === Object3DNode.Scope.ViewMatrix) {
-      this._uniformNode.nodeType = 'mat4';
-    } else if (scope === Object3DNode.Scope.NormalMatrix) {
-      this._uniformNode.nodeType = 'mat3';
-    } else if (
-      scope === Object3DNode.Scope.Position ||
-      scope === Object3DNode.Scope.ViewPosition ||
-      scope === Object3DNode.Scope.Direction ||
-      scope === Object3DNode.Scope.Scale
-    ) {
-      this._uniformNode.nodeType = 'vec3';
-    }
-
-    return this._uniformNode.build(builder);
+    this.uniformNode.nodeType = this.getNodeType();
+    return this.uniformNode.build(builder);
   }
 }
 

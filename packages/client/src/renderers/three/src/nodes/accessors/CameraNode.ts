@@ -21,7 +21,7 @@ export class CameraNode extends Object3DNode {
 
   update(frame) {
     const camera = frame.camera;
-    const uniformNode = this._uniformNode;
+    const uniformNode = this.uniformNode;
     const scope = this.scope;
 
     if (scope === CameraNode.VIEW_MATRIX) {
@@ -43,9 +43,9 @@ export class CameraNode extends Object3DNode {
     const scope = this.scope;
 
     if (scope === CameraNode.PROJECTION_MATRIX) {
-      this._uniformNode.nodeType = 'mat4';
+      this.uniformNode.nodeType = 'mat4';
     } else if (scope === CameraNode.NEAR || scope === CameraNode.FAR) {
-      this._uniformNode.nodeType = 'float';
+      this.uniformNode.nodeType = 'float';
     }
 
     return super.generate(builder);
