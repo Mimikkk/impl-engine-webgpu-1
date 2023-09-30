@@ -1,6 +1,6 @@
 import { NormalNodes } from '../../accessors/NormalNode.js';
 import { PositionNodes } from '../../accessors/PositionNode.js';
-import { sheen, sheenRoughness } from '../../core/PropertyNode.js';
+import { PropertyNodes } from '../../core/PropertyNode.js';
 import { float, tslFn } from '../../shadernode/ShaderNode.js';
 
 // https://github.com/google/filament/blob/master/shaders/src/brdf.fs
@@ -31,10 +31,10 @@ const BRDF_Sheen = tslFn(({ lightDirection }) => {
   const dotNV = NormalNodes.transformed.view.dot(PositionNodes.directional.view).clamp();
   const dotNH = NormalNodes.transformed.view.dot(halfDir).clamp();
 
-  const D = D_Charlie(sheenRoughness, dotNH);
+  const D = D_Charlie(PropertyNodes.sheenRoughness, dotNH);
   const V = V_Neubelt(dotNV, dotNL);
 
-  return sheen.mul(D).mul(V);
+  return PropertyNodes.sheen.mul(D).mul(V);
 });
 
 export default BRDF_Sheen;

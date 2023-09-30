@@ -1,7 +1,7 @@
 import { Node } from '../core/Node.js';
 import { attribute } from '../core/AttributeNode.js';
 import { varying } from '../core/VaryingNode.js';
-import { property } from '../core/PropertyNode.js';
+import { PropertyNodes } from '../core/PropertyNode.js';
 import { normalize } from '../math/MathNode.js';
 import { CameraNodes } from './CameraNode.js';
 import { ModelNodes } from './ModelNode.js';
@@ -63,8 +63,8 @@ export namespace NormalNodes {
   export const world = nodeImmutable(NormalNode, NormalNode.Scope.World);
 
   export namespace transformed {
-    export const view = property(NodeType.Vector3, 'TransformedNormalView');
+    export const view = PropertyNodes.property(NodeType.Vector3, 'TransformedNormalView');
     export const world = view.transformDirection(CameraNodes.matrix.view).normalize();
-    export const clearcoat = property(NodeType.Vector3, 'TransformedClearcoatNormalView');
+    export const clearcoat = PropertyNodes.property(NodeType.Vector3, 'TransformedClearcoatNormalView');
   }
 }

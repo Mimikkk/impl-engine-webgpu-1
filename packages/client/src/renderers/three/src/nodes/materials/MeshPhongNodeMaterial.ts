@@ -1,5 +1,5 @@
 import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
-import { shininess, specularColor } from '../core/PropertyNode.js';
+import { PropertyNodes } from '../core/PropertyNode.js';
 import { MaterialNodes } from '../accessors/MaterialNode.js';
 import { float } from '../shadernode/ShaderNode.js';
 import PhongLightingModel from '../functions/PhongLightingModel.js';
@@ -34,13 +34,13 @@ class MeshPhongNodeMaterial extends NodeMaterial {
 
     const shininessNode = (this.shininessNode ? float(this.shininessNode) : MaterialNodes.shininess).max(1e-4); // to prevent pow( 0.0, 0.0 )
 
-    stack.assign(shininess, shininessNode);
+    stack.assign(PropertyNodes.shininess, shininessNode);
 
     // SPECULAR COLOR
 
     const specularNode = this.specularNode || MaterialNodes.specularColor;
 
-    stack.assign(specularColor, specularNode);
+    stack.assign(PropertyNodes.specularColor, specularNode);
   }
 
   copy(source) {

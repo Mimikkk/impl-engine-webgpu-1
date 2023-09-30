@@ -1,8 +1,9 @@
 import { Node } from '../core/Node.js';
-import { property } from '../core/PropertyNode.js';
+import { PropertyNodes } from '../core/PropertyNode.js';
 import { context as contextNode } from '../core/ContextNode.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
 export class CondNode extends Node {
   condNode: Node;
@@ -17,15 +18,15 @@ export class CondNode extends Node {
     this.elseNode = elseNode;
   }
 
-  getNodeType(builder: NodeBuilder) {
+  getNodeType(builder: NodeBuilder): NodeType | null {
     const ifType = this.ifNode.getNodeType(builder);
 
     if (this.elseNode) {
       const elseType = this.elseNode.getNodeType(builder);
-      if (builder.getTypeLength(elseType) > builder.getTypeLength(ifType)) return elseType;
+      if (builder.getTypeLength(elseType) > builder.getTypeLength(ifType)) return elseType as NodeType;
     }
 
-    return ifType;
+    return ifType as NodeType;
   }
 
   generate(builder: NodeBuilder) {
@@ -36,7 +37,7 @@ export class CondNode extends Node {
 
     const needsProperty =
       ifNode.getNodeType(builder) !== 'void' || (elseNode && elseNode.getNodeType(builder) !== 'void');
-    const nodeProperty = needsProperty ? property(type).build(builder) : '';
+    const nodeProperty = needsProperty ? PropertyNodes.property(type).build(builder) : '';
 
     const nodeSnippet = contextNode(this.condNode /*, context*/).build(builder, 'bool');
 

@@ -6,18 +6,7 @@ import F_Schlick from './BSDF/F_Schlick.js';
 import Schlick_to_F0 from './BSDF/Schlick_to_F0.js';
 import BRDF_Sheen from './BSDF/BRDF_Sheen.js';
 import LightingModel from '../core/LightingModel.js';
-import {
-  clearcoat,
-  clearcoatRoughness,
-  diffuseColor,
-  iridescence,
-  iridescenceIOR,
-  iridescenceThickness,
-  roughness,
-  sheen,
-  sheenRoughness,
-  specularColor,
-} from '../core/PropertyNode.js';
+import { PropertyNodes } from '../core/PropertyNode.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
 import { float, mat3, vec3 } from '../shadernode/ShaderNode.js';
@@ -199,8 +188,8 @@ class PhysicalLightingModel extends LightingModel {
 
       const outgoingLight = reflectedLight.total;
       const clearcoatLight = outgoingLight
-        .mul(clearcoat.mul(Fcc).oneMinus())
-        .add(this.clearcoatSpecular.mul(clearcoat));
+        .mul(PropertyNodes.clearcoat.mul(Fcc).oneMinus())
+        .add(this.clearcoatSpecular.mul(PropertyNodes.clearcoat));
 
       outgoingLight.assign(clearcoatLight);
     }
@@ -210,7 +199,11 @@ class PhysicalLightingModel extends LightingModel {
 
       const outgoingLight = reflectedLight.total;
 
-      const sheenEnergyComp = sheen.r.max(sheen.g).max(sheen.b).mul(0.157).oneMinus();
+      const sheenEnergyComp = PropertyNodes.sheen.r
+        .max(PropertyNodes.sheen.g)
+        .max(PropertyNodes.sheen.b)
+        .mul(0.157)
+        .oneMinus();
       const sheenLight = outgoingLight.mul(sheenEnergyComp).add(this.sheenSpecular);
 
       outgoingLight.assign(sheenLight);
@@ -221,10 +214,10 @@ class PhysicalLightingModel extends LightingModel {
 
       this.iridescenceFresnel = evalIridescence(
         float(1.0),
-        iridescenceIOR,
+        PropertyNodes.iridescenceIOR,
         dotNVi,
-        iridescenceThickness,
-        specularColor,
+        PropertyNodes.iridescenceThickness,
+        PropertyNodes.specularColor,
       );
       this.iridescenceF0 = Schlick_to_F0({ f: this.iridescenceFresnel, f90: 1.0, dotVH: dotNVi });
     }
@@ -235,16 +228,18 @@ class PhysicalLightingModel extends LightingModel {
   // http://www.jcgt.org/published/0008/01/03/
 
   computeMultiscattering(singleScatter, multiScatter, specularF90 = float(1)) {
-    const fab = DFGApprox({ roughness });
+    const fab = DFGApprox({ roughness: PropertyNodes.roughness });
 
-    const Fr = this.iridescenceF0 ? iridescence.mix(specularColor, this.iridescenceF0) : specularColor;
+    const Fr = this.iridescenceF0
+      ? PropertyNodes.iridescence.mix(PropertyNodes.specularColor, this.iridescenceF0)
+      : PropertyNodes.specularColor;
 
     const FssEss = Fr.mul(fab.x).add(specularF90.mul(fab.y));
 
     const Ess = fab.x.add(fab.y);
     const Ems = Ess.oneMinus();
 
-    const Favg = specularColor.add(specularColor.oneMinus().mul(0.047619)); // 1/21
+    const Favg = PropertyNodes.specularColor.add(PropertyNodes.specularColor.oneMinus().mul(0.047619)); // 1/21
     const Fms = FssEss.mul(Favg).div(Ems.mul(Favg).oneMinus());
 
     singleScatter.addAssign(FssEss);
@@ -269,22 +264,24 @@ class PhysicalLightingModel extends LightingModel {
             lightDirection,
             f0: clearcoatF0,
             f90: clearcoatF90,
-            roughness: clearcoatRoughness,
+            roughness: PropertyNodes.clearcoatRoughness,
             normalView: NormalNodes.transformed.clearcoat,
           }),
         ),
       );
     }
 
-    reflectedLight.directDiffuse.addAssign(irradiance.mul(BRDF_Lambert({ diffuseColor: diffuseColor.rgb })));
+    reflectedLight.directDiffuse.addAssign(
+      irradiance.mul(BRDF_Lambert({ diffuseColor: PropertyNodes.diffuseColor.rgb })),
+    );
 
     reflectedLight.directSpecular.addAssign(
       irradiance.mul(
         BRDF_GGX({
           lightDirection,
-          f0: specularColor,
+          f0: PropertyNodes.specularColor,
           f90: 1,
-          roughness,
+          roughness: PropertyNodes.roughness,
           iridescence: this.iridescence,
           iridescenceFresnel: this.iridescenceFresnel,
         }),
@@ -293,15 +290,17 @@ class PhysicalLightingModel extends LightingModel {
   }
 
   indirectDiffuse({ irradiance, reflectedLight }) {
-    reflectedLight.indirectDiffuse.addAssign(irradiance.mul(BRDF_Lambert({ diffuseColor })));
+    reflectedLight.indirectDiffuse.addAssign(
+      irradiance.mul(BRDF_Lambert({ diffuseColor: PropertyNodes.diffuseColor })),
+    );
   }
 
   indirectSpecular({ radiance, iblIrradiance, reflectedLight }) {
     if (this.sheen === true) {
       this.sheenSpecular.addAssign(
         iblIrradiance.mul(
-          sheen,
-          IBLSheenBRDF(NormalNodes.transformed.view, PositionNodes.directional.view, sheenRoughness),
+          PropertyNodes.sheen,
+          IBLSheenBRDF(NormalNodes.transformed.view, PositionNodes.directional.view, PropertyNodes.sheenRoughness),
         ),
       );
     }
@@ -313,7 +312,7 @@ class PhysicalLightingModel extends LightingModel {
         dotNV: dotNVcc,
         specularColor: clearcoatF0,
         specularF90: clearcoatF90,
-        roughness: clearcoatRoughness,
+        roughness: PropertyNodes.clearcoatRoughness,
       });
 
       this.clearcoatSpecular.addAssign(this.clearcoatRadiance.mul(clearcoatEnv));
@@ -329,7 +328,9 @@ class PhysicalLightingModel extends LightingModel {
 
     const totalScattering = singleScattering.add(multiScattering);
 
-    const diffuse = diffuseColor.mul(totalScattering.r.max(totalScattering.g).max(totalScattering.b).oneMinus());
+    const diffuse = PropertyNodes.diffuseColor.mul(
+      totalScattering.r.max(totalScattering.g).max(totalScattering.b).oneMinus(),
+    );
 
     reflectedLight.indirectSpecular.addAssign(radiance.mul(singleScattering));
     reflectedLight.indirectSpecular.addAssign(multiScattering.mul(cosineWeightedIrradiance));
@@ -341,7 +342,7 @@ class PhysicalLightingModel extends LightingModel {
     const dotNV = NormalNodes.transformed.view.dot(PositionNodes.directional.view).clamp(); // @ TODO: Move to core dotNV
 
     const aoNV = dotNV.add(ambientOcclusion);
-    const aoExp = roughness.mul(-16.0).oneMinus().negate().exp2();
+    const aoExp = PropertyNodes.roughness.mul(-16.0).oneMinus().negate().exp2();
 
     const aoNode = ambientOcclusion.sub(aoNV.pow(aoExp).oneMinus()).clamp();
 

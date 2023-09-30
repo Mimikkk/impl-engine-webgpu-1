@@ -1,7 +1,7 @@
 import { LinearSRGBColorSpace, Material, NoColorSpace, ShaderMaterial } from '../../Three.js';
 import { getCacheKey } from '../core/NodeUtils.js';
 import { attribute } from '../core/AttributeNode.js';
-import { diffuseColor, output } from '../core/PropertyNode.js';
+import { PropertyNodes } from '../core/PropertyNode.js';
 import { ExtendedMaterialNodes } from '../accessors/ExtendedMaterialNode.js';
 import { MaterialNodes } from '../accessors/MaterialNode.js';
 import { modelViewProjection } from '../accessors/ModelViewProjectionNode.js';
@@ -106,11 +106,11 @@ class NodeMaterial extends ShaderMaterial {
 
       const outgoingLightNode = this.constructLighting(builder);
 
-      outputNode = this.constructOutput(builder, vec4(outgoingLightNode, diffuseColor.a));
+      outputNode = this.constructOutput(builder, vec4(outgoingLightNode, PropertyNodes.diffuseColor.a));
 
       // OUTPUT NODE
 
-      builder.stack.assign(output, outputNode);
+      builder.stack.assign(PropertyNodes.output, outputNode);
 
       //
 
@@ -166,19 +166,19 @@ class NodeMaterial extends ShaderMaterial {
 
     // COLOR
 
-    stack.assign(diffuseColor, colorNode);
+    stack.assign(PropertyNodes.diffuseColor, colorNode);
 
     // OPACITY
 
     const opacityNode = this.opacityNode ? float(this.opacityNode) : MaterialNodes.opacity;
-    stack.assign(diffuseColor.a, diffuseColor.a.mul(opacityNode));
+    stack.assign(PropertyNodes.diffuseColor.a, PropertyNodes.diffuseColor.a.mul(opacityNode));
 
     // ALPHA TEST
 
     if (this.alphaTestNode !== null || this.alphaTest > 0) {
       const alphaTestNode = this.alphaTestNode !== null ? float(this.alphaTestNode) : MaterialNodes.alphaTest;
 
-      stack.add(diffuseColor.a.lessThanEqual(alphaTestNode).discard());
+      stack.add(PropertyNodes.diffuseColor.a.lessThanEqual(alphaTestNode).discard());
     }
   }
 
@@ -254,7 +254,7 @@ class NodeMaterial extends ShaderMaterial {
 
     const lightsNode = lights ? this.constructLights(builder) : null;
 
-    let outgoingLightNode = diffuseColor.rgb;
+    let outgoingLightNode = PropertyNodes.diffuseColor.rgb;
 
     if (lightsNode && lightsNode.hasLight !== false) {
       const lightingModelNode = this.constructLightingModel(builder);

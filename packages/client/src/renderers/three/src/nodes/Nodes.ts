@@ -21,16 +21,7 @@ export { default as NodeKeywords } from './core/NodeKeywords.js';
 export { default as NodeUniform } from './core/NodeUniform.js';
 export { default as NodeVar } from './core/NodeVar.js';
 export { default as NodeVarying } from './core/NodeVarying.js';
-export {
-  default as PropertyNode,
-  property,
-  output,
-  diffuseColor,
-  roughness,
-  metalness,
-  specularColor,
-  shininess,
-} from './core/PropertyNode.js';
+export { PropertyNode, PropertyNodes } from './core/PropertyNode.js';
 export { default as StackNode, stack } from './core/StackNode.js';
 export { default as TempNode } from './core/TempNode.js';
 export { default as UniformNode, uniform } from './core/UniformNode.js';

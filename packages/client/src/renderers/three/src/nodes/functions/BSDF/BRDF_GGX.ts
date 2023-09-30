@@ -3,7 +3,7 @@ import V_GGX_SmithCorrelated from './V_GGX_SmithCorrelated.js';
 import D_GGX from './D_GGX.js';
 import { NormalNodes } from '../../accessors/NormalNode.js';
 import { PositionNodes } from '../../accessors/PositionNode.js';
-import { iridescence } from '../../core/PropertyNode.js';
+import { PropertyNodes } from '../../core/PropertyNode.js';
 import { tslFn } from '../../shadernode/ShaderNode.js';
 
 // GGX Distribution, Schlick Fresnel, GGX_SmithCorrelated Visibility
@@ -24,7 +24,7 @@ const BRDF_GGX = tslFn(inputs => {
   let F = F_Schlick({ f0, f90, dotVH });
 
   if (iridescenceFresnel) {
-    F = iridescence.mix(F, iridescenceFresnel);
+    F = PropertyNodes.iridescence.mix(F, iridescenceFresnel);
   }
 
   const V = V_GGX_SmithCorrelated({ alpha, dotNL, dotNV });

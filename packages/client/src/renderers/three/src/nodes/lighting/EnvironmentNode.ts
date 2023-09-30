@@ -1,7 +1,7 @@
 import LightingNode from './LightingNode.js';
 import { cache } from '../core/CacheNode.js';
 import { context } from '../core/ContextNode.js';
-import { clearcoatRoughness, roughness } from '../core/PropertyNode.js';
+import { PropertyNodes } from '../core/PropertyNode.js';
 import { equirectUV } from '../utils/EquirectUVNode.js';
 import { specularMIPLevel } from '../utils/SpecularMIPLevelNode.js';
 import { CameraNodes } from '../accessors/CameraNode.js';
@@ -46,7 +46,9 @@ class EnvironmentNode extends LightingNode {
 
     const intensity = reference('envMapIntensity', 'float', builder.material); // @TODO: Add materialEnvIntensity in MaterialNode
 
-    const radiance = context(envNode, createRadianceContext(roughness, NormalNodes.transformed.view)).mul(intensity);
+    const radiance = context(envNode, createRadianceContext(PropertyNodes.roughness, NormalNodes.transformed.view)).mul(
+      intensity,
+    );
     const irradiance = context(envNode, createIrradianceContext(NormalNodes.transformed.world))
       .mul(Math.PI)
       .mul(intensity);
@@ -66,7 +68,7 @@ class EnvironmentNode extends LightingNode {
     if (clearcoatRadiance) {
       const clearcoatRadianceContext = context(
         envNode,
-        createRadianceContext(clearcoatRoughness, NormalNodes.transformed.clearcoat),
+        createRadianceContext(PropertyNodes.clearcoatRoughness, NormalNodes.transformed.clearcoat),
       ).mul(intensity);
       const isolateClearcoatRadiance = cache(clearcoatRadianceContext);
 
