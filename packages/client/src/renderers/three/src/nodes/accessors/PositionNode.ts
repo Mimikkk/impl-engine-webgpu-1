@@ -4,7 +4,8 @@ import { varying } from '../core/VaryingNode.js';
 import { normalize } from '../math/MathNode.js';
 import { ModelNodes } from './ModelNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+
 import { NodeType } from '../core/constants.js';
 
 export class PositionNode extends Node {

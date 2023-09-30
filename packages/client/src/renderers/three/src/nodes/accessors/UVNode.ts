@@ -1,6 +1,7 @@
 import AttributeNode from '../core/AttributeNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+
 import { NodeType } from '../core/constants.js';
 
 export class UVNode extends AttributeNode {

@@ -6,7 +6,8 @@ import { normalize } from '../math/MathNode.js';
 import { CameraNodes } from './CameraNode.js';
 import { ModelNodes } from './ModelNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+
 import { NodeType } from '../core/constants.js';
 
 export class NormalNode extends Node {

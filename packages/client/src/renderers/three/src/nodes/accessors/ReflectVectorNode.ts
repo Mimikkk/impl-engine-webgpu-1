@@ -3,7 +3,6 @@ import { CameraNodes } from './CameraNode.js';
 import { NormalNodes } from './NormalNode.js';
 import { PositionNodes } from './PositionNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
-import { NodeBuilder } from '../core/NodeBuilder.js';
 import { NodeType } from '../core/constants.js';
 
 class ReflectVectorNode extends Node {
@@ -11,7 +10,7 @@ class ReflectVectorNode extends Node {
     super(NodeType.Vector3);
   }
 
-  getHash(builder: NodeBuilder) {
+  getHash() {
     return 'reflectVector';
   }
 

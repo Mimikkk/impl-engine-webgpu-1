@@ -5,7 +5,8 @@ import { PositionNodes } from './PositionNode.js';
 import { mat3, mat4, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
 import { DynamicDrawUsage, InstancedInterleavedBuffer, InstancedMesh } from '../../Three.js';
 import { Matrix4NodeUniform } from '../../common/nodes/NodeUniform.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+
 import { NodeType } from '../core/constants.js';
 
 class InstanceNode extends Node {

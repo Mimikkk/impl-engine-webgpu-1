@@ -1,14 +1,6 @@
 import DataMap from './DataMap.js';
 import { BackSide, Color, Mesh, SphereGeometry } from '../Three.js';
-import {
-  backgroundBlurriness,
-  backgroundIntensity,
-  context,
-  modelViewProjection,
-  NodeMaterial,
-  NormalNodes,
-  vec4,
-} from '../nodes/Nodes.js';
+import { context, modelViewProjection, NodeMaterial, NormalNodes, SceneNodes, vec4 } from '../nodes/Nodes.js';
 
 let _clearAlpha;
 const _clearColor = new Color();
@@ -54,8 +46,8 @@ class Background extends DataMap {
         this.backgroundMeshNode = context(backgroundNode, {
           // @TODO: Add Texture2D support using node context
           getUVNode: () => NormalNodes.world,
-          getSamplerLevelNode: () => backgroundBlurriness,
-        }).mul(backgroundIntensity);
+          getSamplerLevelNode: () => SceneNodes.blurriness,
+        }).mul(SceneNodes.intensity);
 
         let viewProj = modelViewProjection();
         viewProj = vec4(viewProj.x, viewProj.y, viewProj.w, viewProj.w);

@@ -1,37 +1,39 @@
 import { Node } from '../core/Node.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
 import { reference } from './ReferenceNode.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+import { Scene } from '../../scenes/Scene.js';
 
-class SceneNode extends Node {
-  constructor(scope = SceneNode.BACKGROUND_BLURRINESS, scene = null) {
+export class SceneNode extends Node {
+  scope: SceneNode.Scope;
+  scene: Scene | null;
+
+  constructor(scope: SceneNode.Scope, scene: Scene | null = null) {
     super();
-
     this.scope = scope;
     this.scene = scene;
   }
 
   construct(builder: NodeBuilder) {
-    const scope = this.scope;
-    const scene = this.scene !== null ? this.scene : builder.scene;
+    const scene = this?.scene ?? builder.scene;
 
-    let output;
-
-    if (scope === SceneNode.BACKGROUND_BLURRINESS) {
-      output = reference('backgroundBlurriness', 'float', scene);
-    } else if (scope === SceneNode.BACKGROUND_INTENSITY) {
-      output = reference('backgroundIntensity', 'float', scene);
-    } else {
-      console.error('THREE.SceneNode: Unknown scope:', scope);
+    switch (this.scope) {
+      case SceneNode.Scope.BackgroundBlurriness:
+        return reference('backgroundBlurriness', 'float', scene);
+      case SceneNode.Scope.BackgroundIntensity:
+        return reference('backgroundIntensity', 'float', scene);
     }
-
-    return output;
   }
 }
 
-SceneNode.BACKGROUND_BLURRINESS = 'backgroundBlurriness';
-SceneNode.BACKGROUND_INTENSITY = 'backgroundIntensity';
+export namespace SceneNode {
+  export enum Scope {
+    BackgroundBlurriness = 'backgroundBlurriness',
+    BackgroundIntensity = 'backgroundIntensity',
+  }
+}
 
-export default SceneNode;
-
-export const backgroundBlurriness = nodeImmutable(SceneNode, SceneNode.BACKGROUND_BLURRINESS);
-export const backgroundIntensity = nodeImmutable(SceneNode, SceneNode.BACKGROUND_INTENSITY);
+export namespace SceneNodes {
+  export const blurriness = nodeImmutable(SceneNode, SceneNode.Scope.BackgroundBlurriness);
+  export const intensity = nodeImmutable(SceneNode, SceneNode.Scope.BackgroundIntensity);
+}

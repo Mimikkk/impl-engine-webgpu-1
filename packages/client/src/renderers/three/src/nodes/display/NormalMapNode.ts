@@ -10,7 +10,7 @@ import { faceDirection } from './FrontFacingNode.js';
 import { mat3, nodeProxy, tslFn, vec3 } from '../shadernode/ShaderNode.js';
 
 import { ObjectSpaceNormalMap, TangentSpaceNormalMap } from '../../Three.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 // Normal Mapping Without Precomputed Tangents
 // http://www.thetenthplanet.de/archives/1180

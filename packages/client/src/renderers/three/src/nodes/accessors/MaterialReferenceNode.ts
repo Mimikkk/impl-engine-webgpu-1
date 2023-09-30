@@ -2,7 +2,8 @@ import ReferenceNode from './ReferenceNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 import { Material } from '../../materials/Material.js';
 import { NodeType } from '../core/constants.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+
 import NodeFrame from '../core/NodeFrame.js';
 
 class MaterialReferenceNode extends ReferenceNode {

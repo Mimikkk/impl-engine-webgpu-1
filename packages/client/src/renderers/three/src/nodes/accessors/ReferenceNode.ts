@@ -3,7 +3,8 @@ import { NodeUpdateType } from '../core/constants.js';
 import { uniform } from '../core/UniformNode.js';
 import { texture } from './TextureNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+
 import NodeFrame from '../core/NodeFrame.js';
 
 class ReferenceNode extends Node {
@@ -49,7 +50,7 @@ class ReferenceNode extends Node {
     this.node!.value = object[property];
   }
 
-  construct(builder: NodeBuilder): Node | null {
+  construct(): Node | null {
     return this.node;
   }
 }

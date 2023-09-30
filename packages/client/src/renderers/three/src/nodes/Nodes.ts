@@ -182,7 +182,7 @@ export { PositionNode, PositionNodes } from './accessors/PositionNode.js';
 export { default as ReferenceNode, reference } from './accessors/ReferenceNode.js';
 export { default as ReflectVectorNode, reflectVector } from './accessors/ReflectVectorNode.js';
 export { default as SkinningNode, skinning } from './accessors/SkinningNode.js';
-export { default as SceneNode, backgroundBlurriness, backgroundIntensity } from './accessors/SceneNode.js';
+export { SceneNode, SceneNodes } from './accessors/SceneNode.js';
 export { StorageBufferNode, storage } from './accessors/StorageBufferNode.js';
 export {
   default as TangentNode,

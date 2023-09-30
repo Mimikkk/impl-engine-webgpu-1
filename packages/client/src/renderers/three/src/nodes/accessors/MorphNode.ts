@@ -6,7 +6,7 @@ import { reference } from './ReferenceNode.js';
 import { BufferAttributeNodes } from './BufferAttributeNode.js';
 import { PositionNode, PositionNodes } from './PositionNode.js';
 import { Mesh } from '../../objects/Mesh.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 export class MorphNode extends Node {
   mesh: Mesh;
