@@ -1,77 +1,78 @@
 import { TempNode } from '../core/TempNode.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 import NodeBuilder from '../core/NodeBuilder.js';
-import { MathNode } from './MathNode.js';
+import { NodeType } from '../core/constants.js';
+import { Node } from '../core/Node.js';
 
-class OperatorNode extends TempNode {
-  constructor(op: string, aNode: MathNode, bNode: MathNode, ...params) {
+export enum Operation {
+  Add = '+',
+  Sub = '-',
+  Mul = '*',
+  Div = '/',
+  Remainder = '%',
+  Equal = '==',
+  Assign = '=',
+  LessThan = '<',
+  GreaterThan = '>',
+  LessThanEqual = '<=',
+  GreaterThanEqual = '>=',
+  And = '&&',
+  Or = '||',
+  Xor = '^^',
+  BitAnd = '&',
+  BitOr = '|',
+  BitXor = '^',
+  ShiftLeft = '<<',
+  ShiftRight = '>>',
+}
+
+export class OperatorNode extends TempNode {
+  operator: string;
+  aNode: Node;
+  bNode: Node;
+
+  constructor(op: string, aNode: Node, bNode: Node, ...params: Node[]) {
     super();
 
-    this.op = op;
+    for (let node of params) bNode = new OperatorNode(op, bNode, node);
 
-    if (params.length > 0) {
-      let finalBNode = bNode;
-
-      for (let i = 0; i < params.length; i++) {
-        finalBNode = new OperatorNode(op, finalBNode, params[i]);
-      }
-      bNode = finalBNode;
-    }
-
+    this.operator = op;
     this.aNode = aNode;
     this.bNode = bNode;
   }
 
   hasDependencies(builder: NodeBuilder) {
-    return this.op !== '=' ? super.hasDependencies(builder) : false;
+    return this.operator !== '=' && super.hasDependencies(builder);
   }
 
-  getNodeType(builder, output) {
-    const op = this.op;
-
+  getNodeType(builder: NodeBuilder, output?: NodeType) {
+    const op = this.operator;
     const aNode = this.aNode;
     const bNode = this.bNode;
 
     const typeA = aNode.getNodeType(builder);
     const typeB = bNode.getNodeType(builder);
 
-    if (typeA === 'void' || typeB === 'void') {
-      return 'void';
-    } else if (op === '=' || op === '%') {
-      return typeA;
-    } else if (op === '&' || op === '|' || op === '^' || op === '>>' || op === '<<') {
-      return builder.getIntegerType(typeA);
-    } else if (op === '==' || op === '&&' || op === '||' || op === '^^') {
-      return 'bool';
-    } else if (op === '<' || op === '>' || op === '<=' || op === '>=') {
+    if (typeA === 'void' || typeB === 'void') return 'void';
+    if (op === '=' || op === '%') return typeA;
+    if (op === '&' || op === '|' || op === '^' || op === '>>' || op === '<<') return builder.getIntegerType(typeA);
+    if (op === '==' || op === '&&' || op === '||' || op === '^^') return 'bool';
+    if (op === '<' || op === '>' || op === '<=' || op === '>=') {
       const typeLength = output
         ? builder.getTypeLength(output)
         : Math.max(builder.getTypeLength(typeA), builder.getTypeLength(typeB));
 
       return typeLength > 1 ? `bvec${typeLength}` : 'bool';
-    } else {
-      if (typeA === 'float' && builder.isMatrix(typeB)) {
-        return typeB;
-      } else if (builder.isMatrix(typeA) && builder.isVector(typeB)) {
-        // matrix x vector
-
-        return builder.getVectorFromMatrix(typeA);
-      } else if (builder.isVector(typeA) && builder.isMatrix(typeB)) {
-        // vector x matrix
-
-        return builder.getVectorFromMatrix(typeB);
-      } else if (builder.getTypeLength(typeB) > builder.getTypeLength(typeA)) {
-        // anytype x anytype: use the greater length vector
-
-        return typeB;
-      }
-
-      return typeA;
     }
+    if (typeA === 'float' && builder.isMatrix(typeB)) return typeB;
+    if (builder.isMatrix(typeA) && builder.isVector(typeB)) return builder.getVectorFromMatrix(typeA);
+    if (builder.isVector(typeA) && builder.isMatrix(typeB)) return builder.getVectorFromMatrix(typeB);
+    if (builder.getTypeLength(typeB) > builder.getTypeLength(typeA)) return typeB;
+    return typeA;
   }
 
-  generate(builder, output) {
-    const op = this.op;
+  generate(builder: NodeBuilder, output?: NodeType) {
+    const op = this.operator;
 
     const aNode = this.aNode;
     const bNode = this.bNode;
@@ -120,7 +121,7 @@ class OperatorNode extends TempNode {
 
     if (output !== 'void') {
       if (op === '=') {
-        builder.addLineFlowCode(`${a} ${this.op} ${b}`);
+        builder.addLineFlowCode(`${a} ${this.operator} ${b}`);
 
         return a;
       } else if (op === '<' && outputLength > 1) {
@@ -132,15 +133,35 @@ class OperatorNode extends TempNode {
       } else if (op === '>=' && outputLength > 1) {
         return builder.format(`${builder.getMethod('greaterThanEqual')}( ${a}, ${b} )`, type, output);
       } else {
-        return builder.format(`( ${a} ${this.op} ${b} )`, type, output);
+        return builder.format(`( ${a} ${this.operator} ${b} )`, type, output);
       }
     } else if (typeA !== 'void') {
-      return builder.format(`${a} ${this.op} ${b}`, type, output);
+      return builder.format(`${a} ${this.operator} ${b}`, type, output);
     }
   }
 }
 
-export default OperatorNode;
+export namespace OperatorNodes {
+  export const add = nodeProxy(OperatorNode, '+');
+  export const sub = nodeProxy(OperatorNode, '-');
+  export const mul = nodeProxy(OperatorNode, '*');
+  export const div = nodeProxy(OperatorNode, '/');
+  export const remainder = nodeProxy(OperatorNode, '%');
+  export const equal = nodeProxy(OperatorNode, '==');
+  export const assign = nodeProxy(OperatorNode, '=');
+  export const lessThan = nodeProxy(OperatorNode, '<');
+  export const greaterThan = nodeProxy(OperatorNode, '>');
+  export const lessThanEqual = nodeProxy(OperatorNode, '<=');
+  export const greaterThanEqual = nodeProxy(OperatorNode, '>=');
+  export const and = nodeProxy(OperatorNode, '&&');
+  export const or = nodeProxy(OperatorNode, '||');
+  export const xor = nodeProxy(OperatorNode, '^^');
+  export const bitAnd = nodeProxy(OperatorNode, '&');
+  export const bitOr = nodeProxy(OperatorNode, '|');
+  export const bitXor = nodeProxy(OperatorNode, '^');
+  export const shiftLeft = nodeProxy(OperatorNode, '<<');
+  export const shiftRight = nodeProxy(OperatorNode, '>>');
+}
 
 export const add = nodeProxy(OperatorNode, '+');
 export const sub = nodeProxy(OperatorNode, '-');

@@ -5,10 +5,12 @@ import JoinNode from '../utils/JoinNode.js';
 import SplitNode from '../utils/SplitNode.js';
 import { ConstNode } from '../core/ConstNode.js';
 import { getValueFromType, getValueType } from '../core/NodeUtils.js';
+import NodeBuilder from '../core/NodeBuilder.js';
+import StackNode from '../core/StackNode.js';
 
 const NodeElements = new Map<string, Node>();
 
-export function addNodeElement(name: string, nodeElement: Node): void {
+export function addNodeElement(name: string, nodeElement: Node | any): void {
   if (NodeElements.has(name)) throw new Error(`Redefinition of node element ${name}`);
   if (typeof nodeElement !== 'function') throw new Error(`Node element ${name} is not a function`);
 
@@ -129,13 +131,13 @@ class ShaderNodeInternal extends Node {
     this._jsFunc = jsFunc;
   }
 
-  call(inputs, stack, builder) {
+  call(inputs: any, stack: StackNode, builder: NodeBuilder) {
     inputs = nodeObjects(inputs);
 
     return nodeObject(this._jsFunc(inputs, stack, builder));
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     const { outputNode } = builder.getNodeProperties(this);
 
     return outputNode ? outputNode.getNodeType(builder) : super.getNodeType(builder);

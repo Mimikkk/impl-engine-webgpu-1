@@ -1,7 +1,7 @@
 import { TempNode } from '../core/TempNode.js';
-import { div, mul, sub } from './OperatorNode.js';
+import { div, mul, sub, OperatorNodes } from './OperatorNode.js';
 import { addNodeElement, float, nodeObject, nodeProxy, vec3, vec4 } from '../shadernode/ShaderNode.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 import { NodeType } from '../core/constants.js';
 
 export enum UnaryMathNode {

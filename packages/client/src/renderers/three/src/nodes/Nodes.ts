@@ -90,7 +90,8 @@ export {
   faceForward,
 } from './math/MathNode.js';
 export {
-  default as OperatorNode,
+  OperatorNode,
+  OperatorNodes,
   add,
   sub,
   mul,
