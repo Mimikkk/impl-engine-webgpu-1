@@ -7,59 +7,66 @@ import { CameraNodes } from './CameraNode.js';
 import { ModelNodes } from './ModelNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
-class TangentNode extends Node {
-  constructor(scope = TangentNode.LOCAL) {
+export class TangentNode extends Node {
+  scope: TangentNode.Scope;
+
+  constructor(scope: TangentNode.Scope) {
     super();
-
     this.scope = scope;
   }
 
-  getHash(builder: NodeBuilder) {
+  getHash() {
     return `tangent-${this.scope}`;
   }
 
   getNodeType() {
-    const scope = this.scope;
-
-    if (scope === TangentNode.GEOMETRY) {
-      return 'vec4';
+    switch (this.scope) {
+      case TangentNode.Scope.Geometry:
+        return 'vec4';
+      case TangentNode.Scope.Local:
+      case TangentNode.Scope.View:
+      case TangentNode.Scope.World:
+        return 'vec3';
     }
+  }
 
-    return 'vec3';
+  fromScope() {
+    switch (this.scope) {
+      case TangentNode.Scope.Geometry:
+        return attribute('tangent', NodeType.Vector4);
+      case TangentNode.Scope.Local:
+        return varying(TangentNodes.geometry.xyz);
+      case TangentNode.Scope.View:
+        return normalize(varying(ModelNodes.viewMatrix.mul(TangentNodes.local).xyz));
+      case TangentNode.Scope.World:
+        return normalize(varying(TangentNodes.view.transformDirection(CameraNodes.matrix.view)));
+    }
   }
 
   generate(builder: NodeBuilder) {
-    const scope = this.scope;
-
-    let outputNode = null;
-
-    if (scope === TangentNode.GEOMETRY) {
-      outputNode = attribute('tangent', 'vec4');
-    } else if (scope === TangentNode.LOCAL) {
-      outputNode = varying(tangentGeometry.xyz);
-    } else if (scope === TangentNode.VIEW) {
-      const vertexNode = ModelNodes.viewMatrix.mul(tangentLocal).xyz;
-      outputNode = normalize(varying(vertexNode));
-    } else if (scope === TangentNode.WORLD) {
-      const vertexNode = tangentView.transformDirection(CameraNodes.matrix.view);
-      outputNode = normalize(varying(vertexNode));
-    }
-
-    return outputNode.build(builder, this.getNodeType(builder));
+    return this.fromScope().build(builder, this.getNodeType());
   }
 }
 
-TangentNode.GEOMETRY = 'geometry';
-TangentNode.LOCAL = 'local';
-TangentNode.VIEW = 'view';
-TangentNode.WORLD = 'world';
+export namespace TangentNode {
+  export enum Scope {
+    Geometry = 'geometry',
+    Local = 'local',
+    View = 'view',
+    World = 'world',
+  }
+}
 
-export default TangentNode;
+export namespace TangentNodes {
+  export const geometry = nodeImmutable(TangentNode, TangentNode.Scope.Geometry);
+  export const local = nodeImmutable(TangentNode, TangentNode.Scope.Local);
+  export const view = nodeImmutable(TangentNode, TangentNode.Scope.View);
+  export const world = nodeImmutable(TangentNode, TangentNode.Scope.World);
 
-export const tangentGeometry = nodeImmutable(TangentNode, TangentNode.GEOMETRY);
-export const tangentLocal = nodeImmutable(TangentNode, TangentNode.LOCAL);
-export const tangentView = nodeImmutable(TangentNode, TangentNode.VIEW);
-export const tangentWorld = nodeImmutable(TangentNode, TangentNode.WORLD);
-export const transformedTangentView = temp(tangentView, 'TransformedTangentView');
-export const transformedTangentWorld = normalize(transformedTangentView.transformDirection(CameraNodes.matrix.view));
+  export namespace transformed {
+    export const view = temp(TangentNodes.view, 'TransformedTangentView');
+    export const world = normalize(transformed.view.transformDirection(CameraNodes.matrix.view));
+  }
+}

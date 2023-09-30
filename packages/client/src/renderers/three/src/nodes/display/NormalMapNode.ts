@@ -4,7 +4,7 @@ import { BitangentNodes } from '../accessors/BitangentNode.js';
 import { ModelNodes } from '../accessors/ModelNode.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
-import { tangentView } from '../accessors/TangentNode.js';
+import { TangentNodes } from '../accessors/TangentNode.js';
 import { uv } from '../accessors/UVNode.js';
 import { faceDirection } from './FrontFacingNode.js';
 import { mat3, nodeProxy, tslFn, vec3 } from '../shadernode/ShaderNode.js';
@@ -83,4 +83,4 @@ export default NormalMapNode;
 
 export const normalMap = nodeProxy(NormalMapNode);
 
-export const TBNViewMatrix = mat3(tangentView, BitangentNodes.view, NormalNodes.view);
+export const TBNViewMatrix = mat3(TangentNodes.view, BitangentNodes.view, NormalNodes.view);

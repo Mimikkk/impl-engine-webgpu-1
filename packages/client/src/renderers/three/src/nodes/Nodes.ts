@@ -181,18 +181,10 @@ export { default as PointUVNode, pointUV } from './accessors/PointUVNode.js';
 export { PositionNode, PositionNodes } from './accessors/PositionNode.js';
 export { default as ReferenceNode, reference } from './accessors/ReferenceNode.js';
 export { default as ReflectVectorNode, reflectVector } from './accessors/ReflectVectorNode.js';
-export { default as SkinningNode, skinning } from './accessors/SkinningNode.js';
+export { SkinningNode, skinning } from './accessors/SkinningNode.js';
 export { SceneNode, SceneNodes } from './accessors/SceneNode.js';
 export { StorageBufferNode, storage } from './accessors/StorageBufferNode.js';
-export {
-  default as TangentNode,
-  tangentGeometry,
-  tangentLocal,
-  tangentView,
-  tangentWorld,
-  transformedTangentView,
-  transformedTangentWorld,
-} from './accessors/TangentNode.js';
+export { TangentNode, TangentNodes } from './accessors/TangentNode.js';
 export { default as TextureNode, texture, textureLevel, sampler } from './accessors/TextureNode.js';
 export { UVNode, uv } from './accessors/UVNode.js';
 export { default as UserDataNode, userData } from './accessors/UserDataNode.js';

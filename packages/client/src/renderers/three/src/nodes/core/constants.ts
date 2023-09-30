@@ -20,6 +20,12 @@ export enum NodeType {
   Vector4 = 'vec4',
   Matrix3 = 'mat3',
   Matrix4 = 'mat4',
+  UnsignedVector2 = 'uvec2',
+  UnsignedVector3 = 'uvec3',
+  UnsignedVector4 = 'uvec4',
+  UnsignedInteger = 'uint',
+  UnsignedMatrix3 = 'umat3',
+  UnsignedMatrix4 = 'umat4',
 }
 
 export const defaultBuildStages = ['construct', 'analyze', 'generate'];
