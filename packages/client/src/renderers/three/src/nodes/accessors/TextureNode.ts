@@ -84,7 +84,6 @@ export class TextureNode extends UniformNode {
 
     properties.uvNode = uvNode;
     properties.levelNode = levelNode ? builder.context.getMIPLevelAlgorithmNode(this, levelNode) : null;
-    return null;
   }
 
   generate(builder: NodeBuilder, output: string | null) {

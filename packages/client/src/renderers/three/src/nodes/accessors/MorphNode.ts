@@ -39,7 +39,6 @@ export class MorphNode extends Node {
 
   construct(builder: NodeBuilder) {
     this.constructAttribute(builder, 'position');
-    return null;
   }
 
   update() {

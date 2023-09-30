@@ -99,7 +99,7 @@ export class Node extends EventDispatcher<'dispose'> {
       nodeProperties['_node' + childNode.id] = childNode;
     }
 
-    return null;
+    return;
   }
 
   analyze(builder: NodeBuilder) {

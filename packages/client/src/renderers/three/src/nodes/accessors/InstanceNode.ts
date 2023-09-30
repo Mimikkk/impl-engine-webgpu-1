@@ -59,8 +59,6 @@ class InstanceNode extends Node {
 
     builder.stack.assign(PositionNodes.local, instancePosition);
     builder.stack.assign(NormalNodes.local, instanceNormal);
-
-    return null;
   }
 }
 

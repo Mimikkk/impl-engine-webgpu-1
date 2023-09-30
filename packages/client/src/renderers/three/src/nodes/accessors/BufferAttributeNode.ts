@@ -44,7 +44,6 @@ export class BufferAttributeNode extends InputNode {
     this.attribute = bufferAttribute;
     //@ts-expect-error
     this.attribute.isInstancedBufferAttribute = this.instanced;
-    return null;
   }
 
   generate(builder: NodeBuilder) {
