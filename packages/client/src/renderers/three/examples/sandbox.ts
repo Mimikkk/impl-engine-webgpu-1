@@ -6,10 +6,10 @@ import {
   LineBasicNodeMaterial,
   MeshBasicNodeMaterial,
   mix,
-  normalLocal,
+  NormalNodes,
   oscSine,
   PointsNodeMaterial,
-  positionLocal,
+  PositionNodes,
   texture,
   timerLocal,
   uv,
@@ -85,10 +85,10 @@ async function init() {
 
   const displaceY = texture(textureDisplace).x.mul(0.25);
 
-  const displace = normalLocal.mul(displaceY);
+  const displace = NormalNodes.local.mul(displaceY);
 
   materialSphere.colorNode = displaceY;
-  materialSphere.positionNode = positionLocal.add(displace);
+  materialSphere.positionNode = PositionNodes.local.add(displace);
 
   const sphere = new THREE.Mesh(geometrySphere, materialSphere);
   sphere.position.set(-2, -1, 0);
@@ -130,7 +130,7 @@ async function init() {
   const geometryPoints = new THREE.BufferGeometry().setFromPoints(points);
   const materialPoints = new PointsNodeMaterial();
 
-  materialPoints.colorNode = positionLocal.mul(3);
+  materialPoints.colorNode = PositionNodes.local.mul(3);
 
   const pointCloud = new THREE.Points(geometryPoints, materialPoints);
   pointCloud.position.set(2, -1, 0);
