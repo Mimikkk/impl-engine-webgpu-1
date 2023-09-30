@@ -1,4 +1,4 @@
-import TempNode from '../core/TempNode.js';
+import { TempNode } from '../core/TempNode.js';
 import { transformedNormalView } from '../accessors/NormalNode.js';
 import { positionViewDirection } from '../accessors/PositionNode.js';
 import { nodeImmutable, vec2, vec3 } from '../shadernode/ShaderNode.js';

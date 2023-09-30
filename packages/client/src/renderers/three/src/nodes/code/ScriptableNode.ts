@@ -1,21 +1,24 @@
-import Node from '../core/Node.js';
+import { Node } from '../core/Node.js';
 import { scriptableValue } from './ScriptableValueNode.js';
 import { addNodeElement, float, nodeProxy } from '../shadernode/ShaderNode.js';
 
 class Resources extends Map {
-  get(key, callback = null, ...params) {
+  get<T>(key: string, callback: null | ((...params: any[]) => T) = null, ...params: any[]): T | null {
     if (this.has(key)) return super.get(key);
 
-    if (callback !== null) {
+    if (callback) {
       const value = callback(...params);
       this.set(key, value);
       return value;
     }
+    return null;
   }
 }
 
 class Parameters {
-  constructor(scriptableNode) {
+  scriptableNode: ScriptableNode;
+
+  constructor(scriptableNode: ScriptableNode) {
     this.scriptableNode = scriptableNode;
   }
 
@@ -27,21 +30,30 @@ class Parameters {
     return this.scriptableNode.getLayout();
   }
 
-  getInputLayout(id) {
+  getInputLayout(id: string) {
     return this.scriptableNode.getInputLayout(id);
   }
 
-  get(name) {
-    const param = this.parameters[name];
-    const value = param ? param.getValue() : null;
-
-    return value;
+  get(name: string) {
+    return this.scriptableNode.parameters[name]?.getValue() ?? null;
   }
 }
 
 export const global = new Resources();
 
-class ScriptableNode extends Node {
+export class ScriptableNode extends Node {
+  parameters: any;
+  codeNode: any;
+  _local: any;
+  _output: any;
+  _outputs: any;
+  _source: any;
+  _method: any;
+  _object: any;
+  _value: any;
+  _needsOutputUpdate: any;
+  isScriptableNode: boolean;
+
   constructor(codeNode = null, parameters = {}) {
     super();
 
@@ -334,8 +346,6 @@ class ScriptableNode extends Node {
     this._output.refresh();
   }
 }
-
-export default ScriptableNode;
 
 export const scriptable = nodeProxy(ScriptableNode);
 

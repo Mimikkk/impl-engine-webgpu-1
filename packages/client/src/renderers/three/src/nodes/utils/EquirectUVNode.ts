@@ -1,4 +1,4 @@
-import TempNode from '../core/TempNode.js';
+import { TempNode } from '../core/TempNode.js';
 import { positionWorldDirection } from '../accessors/PositionNode.js';
 import { nodeProxy, vec2 } from '../shadernode/ShaderNode.js';
 

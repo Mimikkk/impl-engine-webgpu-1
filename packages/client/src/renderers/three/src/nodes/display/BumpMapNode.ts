@@ -1,4 +1,4 @@
-import TempNode from '../core/TempNode.js';
+import { TempNode } from '../core/TempNode.js';
 import { texture } from '../accessors/TextureNode.js';
 import { uv } from '../accessors/UVNode.js';
 import { normalView } from '../accessors/NormalNode.js';

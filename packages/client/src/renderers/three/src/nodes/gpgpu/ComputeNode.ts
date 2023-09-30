@@ -1,4 +1,4 @@
-import Node from '../core/Node.js';
+import { Node } from '../core/Node.js';
 import { NodeUpdateType } from '../core/constants.js';
 import { addNodeElement, nodeObject } from '../shadernode/ShaderNode.js';
 

@@ -1,4 +1,4 @@
-import TempNode from '../core/TempNode.js';
+import { TempNode } from '../core/TempNode.js';
 import { div, mul, sub } from './OperatorNode.js';
 import { addNodeElement, float, nodeObject, nodeProxy, vec3, vec4 } from '../shadernode/ShaderNode.js';
 

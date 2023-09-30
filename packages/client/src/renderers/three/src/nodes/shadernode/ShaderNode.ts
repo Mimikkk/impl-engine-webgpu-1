@@ -1,4 +1,4 @@
-import Node from '../core/Node.js';
+import { Node } from '../core/Node.js';
 import ArrayElementNode from '../utils/ArrayElementNode.js';
 import ConvertNode from '../utils/ConvertNode.js';
 import JoinNode from '../utils/JoinNode.js';
@@ -241,7 +241,7 @@ export function ShaderNode(jsFunc) {
   return new Proxy(new ShaderNodeInternal(jsFunc), shaderNodeHandler);
 }
 
-export const nodeObject = (val, altType = null) => /* new */ ShaderNodeObject(val, altType);
+export const nodeObject = (val, altType = null) => ShaderNodeObject(val, altType);
 export const nodeObjects = (val, altType = null) => new ShaderNodeObjects(val, altType);
 export const nodeArray = (val, altType = null) => new ShaderNodeArray(val, altType);
 export const nodeProxy = (...params) => new ShaderNodeProxy(...params);

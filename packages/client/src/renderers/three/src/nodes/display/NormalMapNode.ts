@@ -1,4 +1,4 @@
-import TempNode from '../core/TempNode.js';
+import { TempNode } from '../core/TempNode.js';
 import { add } from '../math/OperatorNode.js';
 import { bitangentView } from '../accessors/BitangentNode.js';
 import { modelNormalMatrix } from '../accessors/ModelNode.js';

@@ -43,13 +43,52 @@ const typeFromArray = new Map([
 
 const isNonPaddingElementArray = new Set([Int32Array, Uint32Array, Float32Array]);
 
-const toFloat = value => {
-  value = Number(value);
+const toFloat = (value: string | number) => {
+  value = +value;
 
   return value + (value % 1 ? '' : '.0');
 };
 
-class NodeBuilder {
+export class NodeBuilder {
+  object: any;
+  material: any;
+  geometry: any;
+  renderer: any;
+  parser: any;
+  scene: any;
+  nodes: any[];
+  updateNodes: any[];
+  updateBeforeNodes: any[];
+  hashNodes: any;
+  lightsNode: any;
+  environmentNode: any;
+  fogNode: any;
+  toneMappingNode: any;
+  vertexShader: any;
+  fragmentShader: any;
+  computeShader: any;
+  flowNodes: any;
+  flowCode: any;
+  uniforms: any;
+  codes: any;
+  bindings: any;
+  bindingsOffset: any;
+  bindingsArray: any;
+  attributes: any[];
+  bufferAttributes: any[];
+  varyings: any[];
+  vars: any;
+  flow: any;
+  chaining: any[];
+  stack: any;
+  tab: string;
+  context: any;
+  cache: any;
+  globalCache: any;
+  flowsData: any;
+  shaderStage: any;
+  buildStage: any;
+
   constructor(object, renderer, parser, scene = null) {
     this.object = object;
     this.material = (object && object.material) || null;
@@ -149,12 +188,12 @@ class NodeBuilder {
 
   addChain(node) {
     /*
-    if ( this.chaining.indexOf( node ) !== - 1 ) {
+     if ( this.chaining.indexOf( node ) !== - 1 ) {
 
-      console.warn( 'Recursive node: ', node );
+     console.warn( 'Recursive node: ', node );
 
-    }
-    */
+     }
+     */
 
     this.chaining.push(node);
   }

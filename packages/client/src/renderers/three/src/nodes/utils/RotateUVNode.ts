@@ -1,4 +1,4 @@
-import TempNode from '../core/TempNode.js';
+import { TempNode } from '../core/TempNode.js';
 import { addNodeElement, nodeProxy, vec2 } from '../shadernode/ShaderNode.js';
 
 class RotateUVNode extends TempNode {

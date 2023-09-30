@@ -6,7 +6,7 @@ import NodeFrame from './NodeFrame.js';
 
 let _nodeId = 0;
 
-class Node extends EventDispatcher<'dispose'> {
+export class Node extends EventDispatcher<'dispose'> {
   nodeType: string | null;
   updateType: NodeUpdateType;
   updateBeforeType: NodeUpdateType;
@@ -133,7 +133,7 @@ class Node extends EventDispatcher<'dispose'> {
     console.warn('Abstract function.');
   }
 
-  build(builder: NodeBuilder, output: NodeType | null = null) {
+  build(builder: NodeBuilder, output: string | null = null) {
     const refNode = this.getReference(builder);
 
     if (this !== refNode) {

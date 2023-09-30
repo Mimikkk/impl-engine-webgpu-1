@@ -1,9 +1,9 @@
-import Node from '../core/Node.js';
+import { Node } from '../core/Node.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 import { NodeType } from '../core/constants.js';
 
-class ExpressionNode extends Node {
+export class ExpressionNode extends Node {
   snippet: string;
 
   constructor(snippet: string = '', nodeType: string = 'void') {
@@ -23,7 +23,5 @@ class ExpressionNode extends Node {
     }
   }
 }
-
-export default ExpressionNode;
 
 export const expression = nodeProxy(ExpressionNode);

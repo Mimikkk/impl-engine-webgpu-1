@@ -1,4 +1,4 @@
-import TempNode from '../core/TempNode.js';
+import { TempNode } from '../core/TempNode.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
 class PosterizeNode extends TempNode {

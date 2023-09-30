@@ -1,4 +1,4 @@
-import Node from '../core/Node.js';
+import { Node } from '../core/Node.js';
 import { NodeUpdateType } from '../core/constants.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
 import { attribute } from '../core/AttributeNode.js';

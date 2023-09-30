@@ -1,27 +1,30 @@
-import Node from '../core/Node.js';
-import { arrayBufferToBase64, base64ToArrayBuffer } from '../core/NodeUtils.js';
+import { Node } from '../core/Node.js';
 import { addNodeElement, float, nodeProxy } from '../shadernode/ShaderNode.js';
 import { EventDispatcher } from '../../Three.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
-class ScriptableValueNode extends Node {
-  constructor(value = null) {
+export class ScriptableValueNode extends Node {
+  _value: any;
+  _cache: any;
+  inputType: any;
+  outputType: any;
+  events: any;
+  isScriptableValueNode: boolean;
+
+  constructor(value: any = null) {
     super();
 
-    this._value = value;
     this._cache = null;
 
     this.inputType = null;
-    this.outpuType = null;
+    this.outputType = null;
 
     this.events = new EventDispatcher();
 
     this.isScriptableValueNode = true;
-  }
 
-  get isScriptableOutputNode() {
-    return this.outputType !== null;
+    this._value = value;
   }
-
   get value() {
     return this._value;
   }
@@ -40,6 +43,10 @@ class ScriptableValueNode extends Node {
     this.events.dispatchEvent({ type: 'change' });
 
     this.refresh();
+  }
+
+  get isScriptableOutputNode() {
+    return this.outputType !== null;
   }
 
   refresh() {
@@ -70,7 +77,7 @@ class ScriptableValueNode extends Node {
     return this._cache || value;
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     return this.value && this.value.isNode ? this.value.getNodeType(builder) : 'float';
   }
 
@@ -78,8 +85,6 @@ class ScriptableValueNode extends Node {
     return this.value && this.value.isNode ? this.value : float();
   }
 }
-
-export default ScriptableValueNode;
 
 export const scriptableValue = nodeProxy(ScriptableValueNode);
 

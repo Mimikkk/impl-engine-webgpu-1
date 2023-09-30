@@ -1,4 +1,4 @@
-import TempNode from '../core/TempNode.js';
+import { TempNode } from '../core/TempNode.js';
 import { EPSILON } from '../math/MathNode.js';
 import { addNodeElement, nodeProxy, tslFn, vec3 } from '../shadernode/ShaderNode.js';
 

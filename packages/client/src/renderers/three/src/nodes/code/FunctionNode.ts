@@ -1,9 +1,11 @@
-import CodeNode from './CodeNode.js';
+import { CodeNode } from './CodeNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
-class FunctionNode extends CodeNode {
-  constructor(code = '', includes: any[] = [], language = '') {
+export class FunctionNode extends CodeNode {
+  keywords: Record<string, CodeNode>;
+
+  constructor(code: string = '', includes: CodeNode.Include[] = [], language: 'wgsl' | 'glsl') {
     super(code, includes, language);
 
     this.keywords = {};
@@ -31,7 +33,7 @@ class FunctionNode extends CodeNode {
     return nodeFunction;
   }
 
-  generate(builder: NodeBuilder, output) {
+  generate(builder: NodeBuilder, output: any) {
     super.generate(builder);
 
     const nodeFunction = this.getNodeFunction(builder);
@@ -57,7 +59,7 @@ class FunctionNode extends CodeNode {
     if (keywordsProperties.length > 0) {
       for (const property of keywordsProperties) {
         const propertyRegExp = new RegExp(`\\b${property}\\b`, 'g');
-        const nodeProperty = keywords[property].build(builder, 'property');
+        const nodeProperty = keywords[property as keyof typeof keywords].build(builder, 'property');
 
         code = code.replace(propertyRegExp, nodeProperty);
       }
@@ -73,25 +75,15 @@ class FunctionNode extends CodeNode {
   }
 }
 
-export default FunctionNode;
+const nativeFn = (code: string, includes: CodeNode.Include[], language: string = '') => {
+  let functionNode: FunctionNode | null = null;
 
-const nativeFn = (code: string, includes: string, language: string = '') => {
-  let functionNode = null;
+  return (...params: any[]) => {
+    if (!functionNode) functionNode = nodeObject(new FunctionNode(code, includes, language));
 
-  return (...params) => {
-    if (functionNode === null) functionNode = nodeObject(new FunctionNode(code, includes, language));
-
-    return functionNode.call(...params);
+    return functionNode!.call(...params);
   };
 };
 
-export const glslFn = (code: string, includes: string) => nativeFn(code, includes, 'glsl');
-export const wgslFn = (code: string, includes: string) => nativeFn(code, includes, 'wgsl');
-
-export const func = (code: string, includes: string) => {
-  // @deprecated, r154
-
-  console.warn('TSL: func() is deprecated. Use nativeFn(), wgslFn() or glslFn() instead.');
-
-  return nodeObject(new FunctionNode(code, includes));
-};
+export const glslFn = (code: string, includes: CodeNode.Include[]) => nativeFn(code, includes, 'glsl');
+export const wgslFn = (code: string, includes: CodeNode.Include[]) => nativeFn(code, includes, 'wgsl');

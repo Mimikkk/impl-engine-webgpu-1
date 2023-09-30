@@ -1,7 +1,7 @@
 import Listener = EventDispatcher.Listener;
 import Event = EventDispatcher.Event;
 
-export abstract class EventDispatcher<T extends string, E extends Event<T, unknown> = Event<T, any>> {
+export class EventDispatcher<T extends string, E extends Event<T, unknown> = Event<T, any>> {
   listeners: Record<T, EventDispatcher.Listener<T, this>[]> = {} as Record<T, Listener<T, this>[]>;
 
   addEventListener(type: T, listener: Listener<T, this>): void {

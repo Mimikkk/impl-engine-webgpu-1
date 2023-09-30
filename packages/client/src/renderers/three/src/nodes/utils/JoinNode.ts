@@ -1,4 +1,4 @@
-import TempNode from '../core/TempNode.js';
+import { TempNode } from '../core/TempNode.js';
 
 class JoinNode extends TempNode {
   constructor(nodes = [], nodeType = null) {

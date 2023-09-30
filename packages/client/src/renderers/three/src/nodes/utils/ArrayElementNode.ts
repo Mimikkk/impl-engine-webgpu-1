@@ -1,5 +1,5 @@
-import Node from '../core/Node.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { Node } from '../core/Node.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 class ArrayElementNode extends Node {
   node: Node;

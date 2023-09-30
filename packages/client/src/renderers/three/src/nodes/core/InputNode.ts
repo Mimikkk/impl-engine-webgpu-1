@@ -1,8 +1,9 @@
 import Node from './Node.js';
-import { arrayBufferToBase64, getValueFromType, getValueType } from './NodeUtils.js';
+import { getValueType } from './NodeUtils.js';
+import { NodeBuilder, NodeType } from '../Nodes.js';
 
 class InputNode extends Node {
-  constructor(value, nodeType = null) {
+  constructor(value: any, nodeType = null) {
     super(nodeType);
 
     this.isInputNode = true;
@@ -11,7 +12,7 @@ class InputNode extends Node {
     this.precision = null;
   }
 
-  getNodeType(/*builder*/) {
+  getNodeType(builder: NodeBuilder) {
     if (this.nodeType === null) {
       return getValueType(this.value);
     }
@@ -19,7 +20,7 @@ class InputNode extends Node {
     return this.nodeType;
   }
 
-  getInputType(builder) {
+  getInputType(builder: NodeBuilder) {
     return this.getNodeType(builder);
   }
 
@@ -29,7 +30,7 @@ class InputNode extends Node {
     return this;
   }
 
-  generate(/*builder, output*/) {
+  generate(builder: NodeBuilder, output: NodeType) {
     console.warn('Abstract function.');
   }
 }

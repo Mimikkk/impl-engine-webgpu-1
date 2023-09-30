@@ -1,4 +1,4 @@
-import Node from '../core/Node.js';
+import { Node } from '../core/Node.js';
 import { maxMipLevel } from './MaxMipLevelNode.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
 

@@ -1,4 +1,4 @@
-import Node from '../core/Node.js';
+import { Node } from '../core/Node.js';
 import { add } from '../math/OperatorNode.js';
 import { normalWorld } from '../accessors/NormalNode.js';
 import { positionWorld } from '../accessors/PositionNode.js';
