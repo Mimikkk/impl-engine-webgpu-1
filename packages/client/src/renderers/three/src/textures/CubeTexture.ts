@@ -11,6 +11,9 @@ import {
 } from '../constants.js';
 
 export class CubeTexture extends Texture {
+  static is(value: any): value is CubeTexture {
+    return value?.isCubeTexture;
+  }
   declare isCubeTexture: true;
 
   constructor(

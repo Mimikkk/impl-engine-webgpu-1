@@ -6,6 +6,7 @@ import { NodeBuilder } from '../core/NodeBuilder.js';
 
 import { UVNode } from './UVNode.js';
 import { Node } from '../core/Node.js';
+import { CubeTexture } from '../../textures/CubeTexture.js';
 
 class CubeTextureNode extends TextureNode {
   isCubeTextureNode: boolean = true;
@@ -31,7 +32,7 @@ class CubeTextureNode extends TextureNode {
 
     const texture = this.value;
 
-    if (!texture || texture.isCubeTexture !== true) {
+    if (!CubeTexture.is(texture)) {
       throw new Error('CubeTextureNode: Need a three.js cube texture.');
     }
 
