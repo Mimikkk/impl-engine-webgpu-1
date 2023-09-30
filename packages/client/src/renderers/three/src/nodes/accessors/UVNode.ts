@@ -18,4 +18,4 @@ export class UVNode extends AttributeNode {
   }
 }
 
-export const uv = (index: number) => nodeObject(new UVNode(index));
+export const uv = (index: number = 0) => nodeObject(new UVNode(index));

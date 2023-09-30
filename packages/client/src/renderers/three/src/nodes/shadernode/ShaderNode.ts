@@ -237,7 +237,7 @@ export const getConstNodeType = value =>
 
 // shader node base
 
-export function ShaderNode(jsFunc) {
+export function ShaderNode(jsFunc: any) {
   return new Proxy(new ShaderNodeInternal(jsFunc), shaderNodeHandler);
 }
 
@@ -252,16 +252,16 @@ export const shader = jsFunc => {
 
   console.warn('TSL: shader() is deprecated. Use tslFn() instead.');
 
-  return new ShaderNode(jsFunc);
+  return new (ShaderNode as any)(jsFunc);
 };
 
-export const tslFn = jsFunc => {
-  let shaderNode = null;
+export const tslFn = (jsFunc: (...args: any[]) => any) => {
+  let shaderNode: ((...args: any[]) => any) | null = null;
 
-  return (...params) => {
-    if (shaderNode === null) shaderNode = new ShaderNode(jsFunc);
+  return (...params: any[]) => {
+    if (shaderNode === null) shaderNode = new (ShaderNode as any)(jsFunc);
 
-    return shaderNode.call(...params);
+    return shaderNode!.call(params[0], ...params.slice(1));
   };
 };
 

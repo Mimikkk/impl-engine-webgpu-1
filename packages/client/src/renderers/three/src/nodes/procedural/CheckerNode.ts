@@ -1,9 +1,10 @@
 import { TempNode } from '../core/TempNode.js';
-import { uv } from '../accessors/UVNode.js';
+import { uv, UVNode } from '../accessors/UVNode.js';
 import { addNodeElement, nodeProxy, tslFn } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
-const checkerShaderNode = tslFn(inputs => {
+const checkerShaderNode = tslFn((inputs: any) => {
   const uv = inputs.uv.mul(2.0);
 
   const cx = uv.x.floor();
@@ -13,9 +14,11 @@ const checkerShaderNode = tslFn(inputs => {
   return result.sign();
 });
 
-class CheckerNode extends TempNode {
-  constructor(uvNode = uv()) {
-    super('float');
+export class CheckerNode extends TempNode {
+  uvNode: UVNode;
+
+  constructor(uvNode: UVNode = uv()) {
+    super(NodeType.Float);
 
     this.uvNode = uvNode;
   }
@@ -24,8 +27,6 @@ class CheckerNode extends TempNode {
     return checkerShaderNode({ uv: this.uvNode }).build(builder);
   }
 }
-
-export default CheckerNode;
 
 export const checker = nodeProxy(CheckerNode);
 
