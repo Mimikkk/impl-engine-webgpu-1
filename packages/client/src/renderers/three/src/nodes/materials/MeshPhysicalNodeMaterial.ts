@@ -9,7 +9,7 @@ import {
   sheen,
   sheenRoughness,
 } from '../core/PropertyNode.js';
-import { materialClearcoatNormal } from '../accessors/ExtendedMaterialNode.js';
+import { ExtendedMaterialNodes } from '../accessors/ExtendedMaterialNode.js';
 import {
   materialClearcoat,
   materialClearcoatRoughness,
@@ -102,7 +102,9 @@ class MeshPhysicalNodeMaterial extends MeshStandardNodeMaterial {
 
     // CLEARCOAT NORMAL
 
-    const clearcoatNormalNode = this.clearcoatNormalNode ? vec3(this.clearcoatNormalNode) : materialClearcoatNormal;
+    const clearcoatNormalNode = this.clearcoatNormalNode
+      ? vec3(this.clearcoatNormalNode)
+      : ExtendedMaterialNodes.clearcoatNormal;
 
     builder.stack.assign(transformedClearcoatNormalView, clearcoatNormalNode);
   }

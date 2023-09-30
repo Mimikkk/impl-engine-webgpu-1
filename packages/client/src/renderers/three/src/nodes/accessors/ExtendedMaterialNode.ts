@@ -1,13 +1,12 @@
-// @TODO: Is this needed? Can it be moved in MaterialNode?
-
-import MaterialNode from './MaterialNode.js';
+import { MaterialNode } from './MaterialNode.js';
 import { materialReference } from './MaterialReferenceNode.js';
 import { normalView } from './NormalNode.js';
 import { normalMap } from '../display/NormalMapNode.js';
 import { bumpMap } from '../display/BumpMapNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
-class ExtendedMaterialNode extends MaterialNode {
+export class ExtendedMaterialNode extends MaterialNode {
   constructor(scope) {
     super(scope);
   }
@@ -16,7 +15,7 @@ class ExtendedMaterialNode extends MaterialNode {
     const scope = this.scope;
     let type = null;
 
-    if (scope === ExtendedMaterialNode.NORMAL || scope === ExtendedMaterialNode.CLEARCOAT_NORMAL) {
+    if (scope === ExtendedMaterialNode.Scope.Normal || scope === ExtendedMaterialNode.Scope.ClearcoatNormal) {
       type = 'vec3';
     }
 
@@ -29,7 +28,7 @@ class ExtendedMaterialNode extends MaterialNode {
 
     let node = null;
 
-    if (scope === ExtendedMaterialNode.NORMAL) {
+    if (scope === ExtendedMaterialNode.Scope.Normal) {
       if (material.normalMap) {
         node = normalMap(this.getTexture('normalMap'), materialReference('normalScale', 'vec2'));
       } else if (material.bumpMap) {
@@ -37,7 +36,7 @@ class ExtendedMaterialNode extends MaterialNode {
       } else {
         node = normalView;
       }
-    } else if (scope === ExtendedMaterialNode.CLEARCOAT_NORMAL) {
+    } else if (scope === ExtendedMaterialNode.Scope.ClearcoatNormal) {
       node = material.clearcoatNormalMap
         ? normalMap(this.getTexture('clearcoatNormalMap'), materialReference('clearcoatNormalScale', 'vec2'))
         : normalView;
@@ -47,10 +46,14 @@ class ExtendedMaterialNode extends MaterialNode {
   }
 }
 
-ExtendedMaterialNode.NORMAL = 'normal';
-ExtendedMaterialNode.CLEARCOAT_NORMAL = 'clearcoatNormal';
+export namespace ExtendedMaterialNode {
+  export enum Scope {
+    Normal = 'normal',
+    ClearcoatNormal = 'clearcoatNormal',
+  }
+}
 
-export default ExtendedMaterialNode;
-
-export const materialNormal = nodeImmutable(ExtendedMaterialNode, ExtendedMaterialNode.NORMAL);
-export const materialClearcoatNormal = nodeImmutable(ExtendedMaterialNode, ExtendedMaterialNode.CLEARCOAT_NORMAL);
+export namespace ExtendedMaterialNodes {
+  export const normal = nodeImmutable(ExtendedMaterialNode, ExtendedMaterialNode.Scope.Normal);
+  export const clearcoatNormal = nodeImmutable(ExtendedMaterialNode, ExtendedMaterialNode.Scope.ClearcoatNormal);
+}

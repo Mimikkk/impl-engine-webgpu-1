@@ -2,12 +2,16 @@ import TextureNode from './TextureNode.js';
 import UniformNode from '../core/UniformNode.js';
 import { reflectVector } from './ReflectVectorNode.js';
 import { addNodeElement, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+
+import UVNode from './UVNode.js';
+import { Node } from '../core/Node.js';
 
 class CubeTextureNode extends TextureNode {
-  constructor(value, uvNode = null, levelNode = null) {
-    super(value, uvNode, levelNode);
+  isCubeTextureNode: boolean = true;
 
-    this.isCubeTextureNode = true;
+  constructor(value: any, uvNode: UVNode | null = null, levelNode: Node | null = null) {
+    super(value, uvNode, levelNode);
   }
 
   getInputType(builder: NodeBuilder) {
@@ -18,9 +22,11 @@ class CubeTextureNode extends TextureNode {
     return reflectVector;
   }
 
-  setUpdateMatrix(/*updateMatrix*/) {} // Ignore .updateMatrix for CubeTextureNode
+  setUpdateMatrix(updateMatrix: boolean) {
+    return this;
+  }
 
-  generate(builder, output) {
+  generate(builder: NodeBuilder, output: string | null) {
     const { uvNode, levelNode } = builder.getNodeProperties(this);
 
     const texture = this.value;
@@ -48,11 +54,10 @@ class CubeTextureNode extends TextureNode {
 
         propertyName = builder.getPropertyName(nodeVar);
 
-        let snippet = null;
+        let snippet: any;
 
-        if (levelNode && levelNode.isNode === true) {
+        if (levelNode?.isNode) {
           const levelSnippet = levelNode.build(builder, 'float');
-
           snippet = builder.getTextureLevel(this, textureProperty, uvSnippet, levelSnippet);
         } else {
           snippet = builder.getTexture(this, textureProperty, uvSnippet);

@@ -5,7 +5,7 @@ import { instanceIndex } from '../core/IndexNode.js';
 import { float, nodeProxy } from '../shadernode/ShaderNode.js';
 
 import { MathUtils, Vector4 } from '../../Three.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 let min: Vector4 | null = null;
 let max: Vector4 | null = null;

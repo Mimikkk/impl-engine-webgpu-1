@@ -261,11 +261,11 @@ export class NodeBuilder {
     return false;
   }
 
-  getTexture(/* texture, textureProperty, uvSnippet */) {
+  getTexture(texture: any, textureProperty: any, uvSnippet: any) {
     console.warn('Abstract function.');
   }
 
-  getTextureLevel(/* texture, textureProperty, uvSnippet, levelSnippet */) {
+  getTextureLevel(texture: any, textureProperty: any, uvSnippet: any, levelSnippet: any) {
     console.warn('Abstract function.');
   }
 

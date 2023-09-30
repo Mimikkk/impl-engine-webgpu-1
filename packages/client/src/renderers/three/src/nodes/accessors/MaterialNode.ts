@@ -3,7 +3,7 @@ import { reference } from './ReferenceNode.js';
 import { materialReference } from './MaterialReferenceNode.js';
 import { float, nodeImmutable } from '../shadernode/ShaderNode.js';
 
-class MaterialNode extends Node {
+export class MaterialNode extends Node {
   constructor(scope) {
     super();
 

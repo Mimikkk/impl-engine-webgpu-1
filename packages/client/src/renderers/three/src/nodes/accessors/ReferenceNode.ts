@@ -3,9 +3,17 @@ import { NodeUpdateType } from '../core/constants.js';
 import { uniform } from '../core/UniformNode.js';
 import { texture } from './TextureNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
+import NodeBuilder from '../core/NodeBuilder.js';
+import NodeFrame from '../core/NodeFrame.js';
 
 class ReferenceNode extends Node {
-  constructor(property, uniformType, object = null) {
+  property: string;
+  uniformType: string;
+  object: any | null;
+  node: Node | null;
+  updateType: NodeUpdateType;
+
+  constructor(property: string, uniformType: string, object: any | null = null) {
     super();
 
     this.property = property;
@@ -21,34 +29,31 @@ class ReferenceNode extends Node {
     this.setNodeType(uniformType);
   }
 
-  setNodeType(uniformType) {
-    let node = null;
-
+  setNodeType(uniformType: string) {
     if (uniformType === 'texture') {
-      node = texture(null);
+      this.node = texture(null);
     } else {
-      node = uniform(uniformType);
+      this.node = uniform(uniformType);
     }
-
-    this.node = node;
   }
 
-  getNodeType(builder) {
-    return this.node.getNodeType(builder);
+  getNodeType(builder: NodeBuilder) {
+    return this.node!.getNodeType(builder);
   }
 
-  update(frame) {
+  update(frame: NodeFrame) {
     const object = this.object !== null ? this.object : frame.object;
     const property = this.property;
 
-    this.node.value = object[property];
+    //@ts-expect-error
+    this.node!.value = object[property];
   }
 
-  construct(builder: NodeBuilder) {
+  construct(builder: NodeBuilder): Node | null {
     return this.node;
   }
 }
 
 export default ReferenceNode;
 
-export const reference = (name, type, object) => nodeObject(new ReferenceNode(name, type, object));
+export const reference = (name: string, type: string, object: any) => nodeObject(new ReferenceNode(name, type, object));

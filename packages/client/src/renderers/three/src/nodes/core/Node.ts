@@ -89,14 +89,13 @@ export class Node extends EventDispatcher<'dispose'> {
     return nodeFromHash || this;
   }
 
-  construct(builder: NodeBuilder) {
+  construct(builder: NodeBuilder): Node | null {
     const nodeProperties = builder.getNodeProperties(this);
 
     for (const { childNode } of this.getChildren()) {
       nodeProperties['_node' + childNode.id] = childNode;
     }
 
-    // return a outputNode if exists
     return null;
   }
 

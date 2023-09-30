@@ -1,8 +1,8 @@
 import { LinearSRGBColorSpace, Material, NoColorSpace, ShaderMaterial } from '../../Three.js';
-import { getCacheKey, getNodeChildren } from '../core/NodeUtils.js';
+import { getCacheKey } from '../core/NodeUtils.js';
 import { attribute } from '../core/AttributeNode.js';
 import { diffuseColor, output } from '../core/PropertyNode.js';
-import { materialNormal } from '../accessors/ExtendedMaterialNode.js';
+import { ExtendedMaterialNodes } from '../accessors/ExtendedMaterialNode.js';
 import { materialAlphaTest, materialColor, materialEmissive, materialOpacity } from '../accessors/MaterialNode.js';
 import { modelViewProjection } from '../accessors/ModelViewProjectionNode.js';
 import { transformedNormalView } from '../accessors/NormalNode.js';
@@ -196,7 +196,7 @@ class NodeMaterial extends ShaderMaterial {
 
       stack.assign(transformedNormalView, normalNode);
     } else {
-      const normalNode = this.normalNode ? vec3(this.normalNode) : materialNormal;
+      const normalNode = this.normalNode ? vec3(this.normalNode) : ExtendedMaterialNodes.normal;
 
       stack.assign(transformedNormalView, normalNode);
     }

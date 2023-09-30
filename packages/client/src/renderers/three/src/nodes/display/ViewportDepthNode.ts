@@ -3,7 +3,8 @@ import { nodeImmutable, nodeProxy } from '../shadernode/ShaderNode.js';
 import { CameraNodes } from '../accessors/CameraNode.js';
 import { positionView } from '../accessors/PositionNode.js';
 import { viewportDepthTexture } from './ViewportDepthTextureNode.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+
 import TextureNode from '../accessors/TextureNode.js';
 
 export class ViewportDepthNode extends Node {

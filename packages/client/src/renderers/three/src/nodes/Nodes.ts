@@ -156,7 +156,7 @@ export { BufferAttributeNode } from './accessors/BufferAttributeNode.js';
 export { BufferNode, buffer } from './accessors/BufferNode.js';
 export { CameraNode } from './accessors/CameraNode.js';
 export { default as CubeTextureNode, cubeTexture } from './accessors/CubeTextureNode.js';
-export { default as ExtendedMaterialNode, materialNormal } from './accessors/ExtendedMaterialNode.js';
+export { ExtendedMaterialNode } from './accessors/ExtendedMaterialNode.js';
 export { default as InstanceNode, instance } from './accessors/InstanceNode.js';
 export {
   default as MaterialNode,

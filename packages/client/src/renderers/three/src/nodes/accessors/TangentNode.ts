@@ -6,7 +6,7 @@ import { normalize } from '../math/MathNode.js';
 import { CameraNodes } from './CameraNode.js';
 import { modelViewMatrix } from './ModelNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 class TangentNode extends Node {
   constructor(scope = TangentNode.LOCAL) {

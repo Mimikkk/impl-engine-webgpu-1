@@ -5,7 +5,7 @@ import { CameraNodes } from './CameraNode.js';
 import { normalGeometry, normalLocal, normalView, normalWorld, transformedNormalView } from './NormalNode.js';
 import { tangentGeometry, tangentLocal, tangentView, tangentWorld, transformedTangentView } from './TangentNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 export class BitangentNode extends Node {
   scope: BitangentNode.Scope;

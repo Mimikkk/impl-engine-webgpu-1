@@ -4,7 +4,8 @@ import { uniform, UniformNode } from '../core/UniformNode.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
 
 import { Object3D, Vector3 } from '../../Three.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+
 import { NodeFrame } from '../core/NodeFrame.js';
 
 export class Object3DNode extends Node {

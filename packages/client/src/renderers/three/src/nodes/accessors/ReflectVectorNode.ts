@@ -3,7 +3,7 @@ import { CameraNodes } from './CameraNode.js';
 import { transformedNormalView } from './NormalNode.js';
 import { positionViewDirection } from './PositionNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 class ReflectVectorNode extends Node {
   constructor() {
