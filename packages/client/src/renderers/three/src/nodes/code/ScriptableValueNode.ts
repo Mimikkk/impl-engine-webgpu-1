@@ -46,7 +46,7 @@ export class ScriptableValueNode extends Node {
   }
 
   get isScriptableOutputNode() {
-    return this.outputType !== null;
+    return !!this.outputType;
   }
 
   refresh() {

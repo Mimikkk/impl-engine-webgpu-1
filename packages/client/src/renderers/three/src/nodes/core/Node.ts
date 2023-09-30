@@ -7,6 +7,9 @@ import NodeFrame from './NodeFrame.js';
 let _nodeId = 0;
 
 export class Node extends EventDispatcher<'dispose'> {
+  static is(node: any): node is Node {
+    return node?.isNode;
+  }
   nodeType: string | null;
   updateType: NodeUpdateType;
   updateBeforeType: NodeUpdateType;
@@ -104,24 +107,17 @@ export class Node extends EventDispatcher<'dispose'> {
     nodeData.dependenciesCount = nodeData.dependenciesCount === undefined ? 1 : nodeData.dependenciesCount + 1;
 
     if (nodeData.dependenciesCount === 1) {
-      // node flow children
-
       const nodeProperties = builder.getNodeProperties(this);
-
       for (const childNode of Object.values(nodeProperties)) {
-        if (childNode && childNode.isNode === true) {
-          childNode.build(builder);
-        }
+        if (Node.is(childNode)) childNode.build(builder);
       }
     }
   }
 
-  generate(builder: NodeBuilder, output: NodeType) {
+  generate(builder: NodeBuilder, output: NodeType = NodeType.Void): string | undefined {
     const { outputNode } = builder.getNodeProperties(this);
 
-    if (outputNode && outputNode.isNode === true) {
-      return outputNode.build(builder, output);
-    }
+    if (outputNode?.isNode) return outputNode.build(builder, output);
   }
 
   updateBefore(frame: NodeFrame) {
@@ -132,7 +128,7 @@ export class Node extends EventDispatcher<'dispose'> {
     console.warn('Abstract function.');
   }
 
-  build(builder: NodeBuilder, output: string | null = null) {
+  build(builder: NodeBuilder, output: NodeType = NodeType.Void) {
     const refNode = this.getReference(builder);
 
     if (this !== refNode) {
@@ -165,9 +161,7 @@ export class Node extends EventDispatcher<'dispose'> {
         }
 
         for (const childNode of Object.values(properties)) {
-          if (childNode && childNode.isNode === true) {
-            childNode.build(builder);
-          }
+          if (Node.is(childNode)) childNode.build(builder);
         }
       }
     } else if (buildStage === 'analyze') {
@@ -181,7 +175,7 @@ export class Node extends EventDispatcher<'dispose'> {
 
         result = nodeData.snippet;
 
-        if (result === undefined /*|| builder.context.tempRead === false*/) {
+        if (result === undefined) {
           result = this.generate(builder) || '';
 
           nodeData.snippet = result;

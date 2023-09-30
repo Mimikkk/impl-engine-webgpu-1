@@ -21,7 +21,7 @@ export class CodeNode extends Node {
     this.includes = includes;
   }
 
-  generate(builder: NodeBuilder) {
+  generate(builder: NodeBuilder, output: NodeType = NodeType.Void) {
     const includes = this.includes;
 
     for (const include of includes) include.build(builder);

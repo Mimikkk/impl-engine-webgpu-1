@@ -30,6 +30,7 @@ export enum NodeType {
   Texture = 'texture',
   Color = 'color',
   Code = 'code',
+  Property = 'property',
 }
 
 export enum NodeLanguage {

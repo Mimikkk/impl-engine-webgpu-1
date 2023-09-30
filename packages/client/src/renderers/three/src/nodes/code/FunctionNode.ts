@@ -1,7 +1,7 @@
 import { CodeNode } from './CodeNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
-import { NodeLanguage } from '../core/constants.js';
+import { NodeLanguage, NodeType } from '../core/constants.js';
 
 export class FunctionNode extends CodeNode {
   keywords: Record<string, CodeNode>;
@@ -34,7 +34,7 @@ export class FunctionNode extends CodeNode {
     return nodeFunction;
   }
 
-  generate(builder: NodeBuilder, output: any) {
+  generate(builder: NodeBuilder, output: NodeType) {
     super.generate(builder);
 
     const nodeFunction = this.getNodeFunction(builder);
@@ -59,7 +59,7 @@ export class FunctionNode extends CodeNode {
     if (keywordsProperties.length > 0) {
       for (const property of keywordsProperties) {
         const propertyRegExp = new RegExp(`\\b${property}\\b`, 'g');
-        const nodeProperty = keywords[property as keyof typeof keywords].build(builder, 'property');
+        const nodeProperty = keywords[property as keyof typeof keywords].build(builder, NodeType.Property);
 
         code = code.replace(propertyRegExp, nodeProperty);
       }
@@ -67,7 +67,7 @@ export class FunctionNode extends CodeNode {
 
     nodeCode.code = code;
 
-    if (output === 'property') {
+    if (output === NodeType.Property) {
       return propertyName;
     } else {
       return builder.format(`${propertyName}()`, type, output);

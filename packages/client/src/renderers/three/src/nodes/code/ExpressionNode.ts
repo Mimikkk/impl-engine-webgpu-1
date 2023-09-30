@@ -16,10 +16,10 @@ export class ExpressionNode extends Node {
     const type = this.getNodeType(builder);
     const snippet = this.snippet;
 
-    if (type === 'void') {
+    if (type === NodeType.Void) {
       builder.addLineFlowCode(snippet);
     } else {
-      return builder.format(`( ${snippet} )`, type, output);
+      return builder.format(`(${snippet})`, type, output);
     }
   }
 }

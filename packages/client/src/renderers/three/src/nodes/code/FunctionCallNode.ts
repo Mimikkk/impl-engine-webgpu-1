@@ -61,8 +61,8 @@ export class FunctionCallNode extends TempNode {
   }
 }
 
-export const call = (func, ...params) => {
-  params = params.length > 1 || (params[0] && params[0].isNode === true) ? nodeArray(params) : nodeObjects(params[0]);
+export const call = (func: any, ...params: any[]) => {
+  params = params[0]?.isNode ? nodeArray(params) : nodeObjects(params[0]);
 
   return nodeObject(new FunctionCallNode(nodeObject(func), params));
 };
