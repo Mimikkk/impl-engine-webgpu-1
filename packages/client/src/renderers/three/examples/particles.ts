@@ -3,7 +3,7 @@ import {
   attribute,
   color,
   mix,
-  positionLocal,
+  PositionNodes,
   range,
   SpriteNodeMaterial,
   texture,
@@ -49,13 +49,13 @@ function init() {
 
   const life = lifeTime.div(lifeRange);
 
-  const fakeLightEffect = positionLocal.y.oneMinus().max(0.2);
+  const fakeLightEffect = PositionNodes.local.y.oneMinus().max(0.2);
 
   const textureNode = texture(map, uv().rotateUV(timer.mul(rotateRange)));
 
   const opacityNode = textureNode.a.mul(life.oneMinus());
 
-  const smokeColor = mix(color(0x2c1501), color(0x222222), positionLocal.y.mul(3).clamp());
+  const smokeColor = mix(color(0x2c1501), color(0x222222), PositionNodes.local.y.mul(3).clamp());
 
   // create particles
 
