@@ -159,7 +159,7 @@ export { MaterialNode, MaterialNodes } from './accessors/MaterialNode.js';
 export { default as MaterialReferenceNode, materialReference } from './accessors/MaterialReferenceNode.js';
 export { MorphNode, morph } from './accessors/MorphNode.js';
 export { TextureBicubicNode, textureBicubic } from './accessors/TextureBicubicNode.js';
-export { ModelNode } from './accessors/ModelNode.js';
+export { ModelNode, ModelNodes } from './accessors/ModelNode.js';
 export { ModelViewProjectionNode, modelViewProjection } from './accessors/ModelViewProjectionNode.js';
 export { NormalNode, NormalNodes } from './accessors/NormalNode.js';
 export { Object3DNode, Object3DNodes } from './accessors/Object3DNode.js';
@@ -227,9 +227,10 @@ export { ScriptableNode, scriptable, global } from './code/ScriptableNode.js';
 export { ScriptableValueNode, scriptableValue } from './code/ScriptableValueNode.js';
 
 // fog
-export { default as FogNode, fog } from './fog/FogNode.js';
-export { default as FogRangeNode, rangeFog } from './fog/FogRangeNode.js';
-export { default as FogExp2Node, densityFog } from './fog/FogExp2Node.js';
+export { FogNode } from './fog/FogNode.js';
+export { FogRangeNode } from './fog/FogRangeNode.js';
+export { FogExp2Node } from './fog/FogExp2Node.js';
+export { FogNodes } from './fog/FogNodes.js';
 
 // geometry
 export { default as RangeNode, range } from './geometry/RangeNode.js';

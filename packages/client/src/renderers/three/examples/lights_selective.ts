@@ -1,5 +1,5 @@
 import * as THREE from '../src/Three.js';
-import { color, lights, MeshStandardNodeMaterial, normalMap, rangeFog, texture } from '../src/nodes/Nodes.js';
+import { color, lights, MeshStandardNodeMaterial, normalMap, FogNodes, texture } from '../src/nodes/Nodes.js';
 
 import createStats from '../src/libs/stats.module.js';
 

@@ -5,7 +5,7 @@ import {
   depth,
   depthTexture,
   MeshBasicNodeMaterial,
-  modelScale,
+  ModelNodes,
   toneMapping,
   uv,
   viewportMipTexture,
@@ -79,7 +79,7 @@ function init() {
 
   const bicubicMaterial = new MeshBasicNodeMaterial();
   bicubicMaterial.backdropNode = viewportMipTexture().bicubic(5); // @TODO: Move to alpha value [ 0, 1 ]
-  bicubicMaterial.backdropAlphaNode = checker(uv().mul(3).mul(modelScale.xy));
+  bicubicMaterial.backdropAlphaNode = checker(uv().mul(3).mul(ModelNodes.scale.xy));
   bicubicMaterial.opacityNode = bicubicMaterial.backdropAlphaNode;
   bicubicMaterial.transparent = true;
   bicubicMaterial.side = THREE.DoubleSide;

@@ -34,7 +34,6 @@ class MeshStandardNodeMaterial extends NodeMaterial {
     // METALNESS
 
     const metalnessNode = this.metalnessNode ? float(this.metalnessNode) : MaterialNodes.metalness;
-
     stack.assign(metalness, metalnessNode);
 
     // ROUGHNESS

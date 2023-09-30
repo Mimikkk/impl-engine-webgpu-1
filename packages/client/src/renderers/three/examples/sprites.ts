@@ -1,5 +1,5 @@
 import * as THREE from '../src/Three.js';
-import { color, rangeFog, SpriteNodeMaterial, texture, userData, uv } from '../src/nodes/Nodes.js';
+import { color, FogNodes, SpriteNodeMaterial, texture, userData, uv } from '../src/nodes/Nodes.js';
 
 import WebGPURenderer from '../src/WebGPURenderer.js';
 
@@ -22,7 +22,7 @@ function init() {
   camera.position.z = 1500;
 
   scene = new THREE.Scene();
-  scene.fogNode = rangeFog(color(0x0000ff), 1500, 2100);
+  scene.fogNode = FogNodes.range(color(0x0000ff), 1500, 2100);
 
   // create sprites
 

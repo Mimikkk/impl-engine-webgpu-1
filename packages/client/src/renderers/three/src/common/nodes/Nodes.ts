@@ -2,11 +2,10 @@ import DataMap from '../DataMap.js';
 import { EquirectangularReflectionMapping, EquirectangularRefractionMapping, NoToneMapping } from '../../Three.js';
 import {
   cubeTexture,
-  densityFog,
   equirectUV,
+  FogNodes,
   NodeFrame,
   NormalNodes,
-  rangeFog,
   reference,
   texture,
   toneMapping,
@@ -172,9 +171,9 @@ class Nodes extends DataMap {
         let fogNode = null;
 
         if (fog.isFogExp2) {
-          fogNode = densityFog(reference('color', 'color', fog), reference('density', 'float', fog));
+          fogNode = FogNodes.density(reference('color', 'color', fog), reference('density', 'float', fog));
         } else if (fog.isFog) {
-          fogNode = rangeFog(
+          fogNode = FogNodes.range(
             reference('color', 'color', fog),
             reference('near', 'float', fog),
             reference('far', 'float', fog),

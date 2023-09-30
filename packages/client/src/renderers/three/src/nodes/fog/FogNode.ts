@@ -1,5 +1,5 @@
 import { Node } from '../core/Node.js';
-import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
+import { NodeType } from '../core/constants.js';
 
 export class FogNode extends Node {
   isFogNode: boolean = true;
@@ -7,7 +7,7 @@ export class FogNode extends Node {
   factorNode?: Node;
 
   constructor(colorNode: Node, factorNode?: Node) {
-    super('float');
+    super(NodeType.Float);
 
     this.isFogNode = true;
     this.colorNode = colorNode;
@@ -18,13 +18,7 @@ export class FogNode extends Node {
     return this.mix(outputNode, this.colorNode);
   }
 
-  construct(): Node | undefined {
+  construct() {
     return this.factorNode;
   }
 }
-
-export default FogNode;
-
-export const fog = nodeProxy(FogNode);
-
-addNodeElement('fog', fog);

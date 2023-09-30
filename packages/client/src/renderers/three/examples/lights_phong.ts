@@ -1,15 +1,5 @@
 import * as THREE from '../src/Three.js';
-import {
-  checker,
-  color,
-  lights,
-  MeshPhongNodeMaterial,
-  mix,
-  normalMap,
-  rangeFog,
-  texture,
-  uv,
-} from '../src/nodes/Nodes.js';
+import { checker, color, lights, MeshPhongNodeMaterial, mix, normalMap, texture, uv } from '../src/nodes/Nodes.js';
 
 import createStats from '../src/libs/stats.module.js';
 
@@ -17,6 +7,7 @@ import { OrbitControls } from '../src/controls/OrbitControls.js';
 import { TeapotGeometry } from '../src/geometries/TeapotGeometry.js';
 
 import WebGPURenderer from '../src/WebGPURenderer.js';
+import { FogNodes } from '../src/nodes/fog/FogNodes.js';
 
 let camera, scene, renderer, light1, light2, light3, light4, stats, controls;
 
@@ -27,7 +18,7 @@ function init() {
   camera.position.z = 7;
 
   scene = new THREE.Scene();
-  scene.fogNode = rangeFog(color(0xff00ff), 8, 30);
+  scene.fogNode = FogNodes.range(color(0xff00ff), 8, 30);
 
   const sphereGeometry = new THREE.SphereGeometry(0.1, 16, 8);
 
