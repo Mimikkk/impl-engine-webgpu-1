@@ -70,8 +70,6 @@ export class SkinningNode extends Node {
     builder.stack.assign(PositionNodes.local, skinPosition);
     builder.stack.assign(NormalNodes.local, skinNormal);
     if (builder.hasGeometryAttribute('tangent')) builder.stack.assign(TangentNodes.local, skinNormal);
-
-    return null;
   }
 
   update() {
