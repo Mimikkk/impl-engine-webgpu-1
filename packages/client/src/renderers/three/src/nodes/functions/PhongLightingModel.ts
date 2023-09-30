@@ -1,6 +1,6 @@
-import LightingModel from '../core/LightingModel.js';
-import F_Schlick from './BSDF/F_Schlick.js';
-import BRDF_Lambert from './BSDF/BRDF_Lambert.js';
+import { LightingModel } from '../core/LightingModel.js';
+import { F_Schlick } from './BSDF/F_Schlick.js';
+import { BRDF_Lambert } from './BSDF/BRDF_Lambert.js';
 import { PropertyNodes } from '../core/PropertyNode.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
 import { MaterialNodes } from '../accessors/MaterialNode.js';

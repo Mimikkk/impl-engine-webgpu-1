@@ -1,13 +1,13 @@
-import F_Schlick from './F_Schlick.js';
-import V_GGX_SmithCorrelated from './V_GGX_SmithCorrelated.js';
-import D_GGX from './D_GGX.js';
+import { F_Schlick } from './F_Schlick.js';
+import { V_GGX_SmithCorrelated } from './V_GGX_SmithCorrelated.js';
+import { D_GGX } from './D_GGX.js';
 import { NormalNodes } from '../../accessors/NormalNode.js';
 import { PositionNodes } from '../../accessors/PositionNode.js';
 import { PropertyNodes } from '../../core/PropertyNode.js';
 import { tslFn } from '../../shadernode/ShaderNode.js';
 
 // GGX Distribution, Schlick Fresnel, GGX_SmithCorrelated Visibility
-const BRDF_GGX = tslFn(inputs => {
+export const BRDF_GGX = tslFn(inputs => {
   const { lightDirection, f0, f90, roughness, iridescenceFresnel } = inputs;
 
   const normalView = inputs.normalView || NormalNodes.transformed.view;
@@ -31,6 +31,4 @@ const BRDF_GGX = tslFn(inputs => {
   const D = D_GGX({ alpha, dotNH });
 
   return F.mul(V).mul(D);
-}); // validated
-
-export default BRDF_GGX;
+});

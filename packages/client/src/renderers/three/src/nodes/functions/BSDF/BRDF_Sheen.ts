@@ -4,7 +4,7 @@ import { PropertyNodes } from '../../core/PropertyNode.js';
 import { float, tslFn } from '../../shadernode/ShaderNode.js';
 
 // https://github.com/google/filament/blob/master/shaders/src/brdf.fs
-const D_Charlie = (roughness, dotNH) => {
+export const D_Charlie = (roughness, dotNH) => {
   const alpha = roughness.pow2();
 
   // Estevez and Kulla 2017, "Production Friendly Microfacet Sheen BRDF"
@@ -19,12 +19,12 @@ const D_Charlie = (roughness, dotNH) => {
 };
 
 // https://github.com/google/filament/blob/master/shaders/src/brdf.fs
-const V_Neubelt = (dotNV, dotNL) => {
+export const V_Neubelt = (dotNV, dotNL) => {
   // Neubelt and Pettineo 2013, "Crafting a Next-gen Material Pipeline for The Order: 1886"
   return float(1.0).div(float(4.0).mul(dotNL.add(dotNV).sub(dotNL.mul(dotNV))));
 };
 
-const BRDF_Sheen = tslFn(({ lightDirection }) => {
+export const BRDF_Sheen = tslFn(({ lightDirection }) => {
   const halfDir = lightDirection.add(PositionNodes.directional.view).normalize();
 
   const dotNL = NormalNodes.transformed.view.dot(lightDirection).clamp();
@@ -36,5 +36,3 @@ const BRDF_Sheen = tslFn(({ lightDirection }) => {
 
   return PropertyNodes.sheen.mul(D).mul(V);
 });
-
-export default BRDF_Sheen;

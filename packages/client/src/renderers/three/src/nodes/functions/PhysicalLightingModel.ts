@@ -1,11 +1,11 @@
-import BRDF_Lambert from './BSDF/BRDF_Lambert.js';
-import BRDF_GGX from './BSDF/BRDF_GGX.js';
-import DFGApprox from './BSDF/DFGApprox.js';
-import EnvironmentBRDF from './BSDF/EnvironmentBRDF.js';
-import F_Schlick from './BSDF/F_Schlick.js';
-import Schlick_to_F0 from './BSDF/Schlick_to_F0.js';
-import BRDF_Sheen from './BSDF/BRDF_Sheen.js';
-import LightingModel from '../core/LightingModel.js';
+import { BRDF_Lambert } from './BSDF/BRDF_Lambert.js';
+import { BRDF_GGX } from './BSDF/BRDF_GGX.js';
+import { DFGApprox } from './BSDF/DFGApprox.js';
+import { EnvironmentBRDF } from './BSDF/EnvironmentBRDF.js';
+import { F_Schlick } from './BSDF/F_Schlick.js';
+import { Schlick_to_F0 } from './BSDF/Schlick_to_F0.js';
+import { BRDF_Sheen } from './BSDF/BRDF_Sheen.js';
+import { LightingModel } from '../core/LightingModel.js';
 import { PropertyNodes } from '../core/PropertyNode.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
@@ -156,9 +156,7 @@ const IBLSheenBRDF = (normal, viewDir, roughness) => {
 const clearcoatF0 = vec3(0.04);
 const clearcoatF90 = vec3(1);
 
-//
-
-class PhysicalLightingModel extends LightingModel {
+export class PhysicalLightingModel extends LightingModel {
   constructor(clearcoat = true, sheen = true, iridescence = true) {
     super();
 
@@ -351,5 +349,3 @@ class PhysicalLightingModel extends LightingModel {
     reflectedLight.indirectSpecular.mulAssign(aoNode);
   }
 }
-
-export default PhysicalLightingModel;

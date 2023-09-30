@@ -1,7 +1,7 @@
 import StackNode from './StackNode.js';
 import NodeBuilder from './NodeBuilder.js';
 
-abstract class LightingModel {
+export abstract class LightingModel {
   init(input: any, stack: StackNode, builder: NodeBuilder) {}
 
   direct(input: any, stack: StackNode, builder: NodeBuilder) {}
@@ -12,5 +12,3 @@ abstract class LightingModel {
 
   ambientOcclusion(input: any, stack: StackNode, builder: NodeBuilder) {}
 }
-
-export default LightingModel;

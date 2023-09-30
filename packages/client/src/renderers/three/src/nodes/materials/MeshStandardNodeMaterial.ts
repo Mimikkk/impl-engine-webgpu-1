@@ -3,7 +3,7 @@ import { PropertyNodes } from '../core/PropertyNode.js';
 import { mix } from '../math/MathNode.js';
 import { MaterialNodes } from '../accessors/MaterialNode.js';
 import { getRoughness } from '../functions/material/getRoughness.js';
-import PhysicalLightingModel from '../functions/PhysicalLightingModel.js';
+import { PhysicalLightingModel } from '../functions/PhysicalLightingModel.js';
 import { float, vec3, vec4 } from '../shadernode/ShaderNode.js';
 
 import { MeshStandardMaterial } from '../../Three.js';
@@ -11,7 +11,7 @@ import NodeBuilder from '../core/NodeBuilder.js';
 
 const defaultValues = new MeshStandardMaterial();
 
-class MeshStandardNodeMaterial extends NodeMaterial {
+export class MeshStandardNodeMaterial extends NodeMaterial {
   constructor(parameters) {
     super();
 
@@ -67,7 +67,5 @@ class MeshStandardNodeMaterial extends NodeMaterial {
     return super.copy(source);
   }
 }
-
-export default MeshStandardNodeMaterial;
 
 addNodeMaterial(MeshStandardNodeMaterial);

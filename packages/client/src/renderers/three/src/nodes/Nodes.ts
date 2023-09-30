@@ -9,7 +9,7 @@ export { default as CacheNode, cache } from './core/CacheNode.js';
 export { ConstNode } from './core/ConstNode.js';
 export { default as ContextNode, context, label } from './core/ContextNode.js';
 export { default as IndexNode, vertexIndex, instanceIndex } from './core/IndexNode.js';
-export { default as LightingModel } from './core/LightingModel.js';
+export { LightingModel } from './core/LightingModel.js';
 export { default as Node } from './core/Node.js';
 export { default as NodeAttribute } from './core/NodeAttribute.js';
 export { default as NodeBuilder } from './core/NodeBuilder.js';
@@ -257,12 +257,12 @@ export * from './materials/Materials.js';
 export * from './materialx/MaterialXNodes.js';
 
 // functions
-export { default as BRDF_GGX } from './functions/BSDF/BRDF_GGX.js';
-export { default as BRDF_Lambert } from './functions/BSDF/BRDF_Lambert.js';
-export { default as D_GGX } from './functions/BSDF/D_GGX.js';
-export { default as DFGApprox } from './functions/BSDF/DFGApprox.js';
-export { default as F_Schlick } from './functions/BSDF/F_Schlick.js';
-export { default as V_GGX_SmithCorrelated } from './functions/BSDF/V_GGX_SmithCorrelated.js';
+export { BRDF_GGX } from './functions/BSDF/BRDF_GGX.js';
+export { BRDF_Lambert } from './functions/BSDF/BRDF_Lambert.js';
+export { D_GGX } from './functions/BSDF/D_GGX.js';
+export { DFGApprox } from './functions/BSDF/DFGApprox.js';
+export { F_Schlick } from './functions/BSDF/F_Schlick.js';
+export { V_GGX_SmithCorrelated } from './functions/BSDF/V_GGX_SmithCorrelated.js';
 
 export { getDistanceAttenuation } from './lighting/LightUtils.js';
 
@@ -270,4 +270,4 @@ export { getGeometryRoughness } from './functions/material/getGeometryRoughness.
 export { getRoughness } from './functions/material/getRoughness.js';
 
 export { PhongLightingModel } from './functions/PhongLightingModel.js';
-export { default as PhysicalLightingModel } from './functions/PhysicalLightingModel.js';
+export { PhysicalLightingModel } from './functions/PhysicalLightingModel.js';

@@ -4,15 +4,15 @@ import { PropertyNodes } from '../core/PropertyNode.js';
 import { ExtendedMaterialNodes } from '../accessors/ExtendedMaterialNode.js';
 import { MaterialNodes } from '../accessors/MaterialNode.js';
 import { float, vec3 } from '../shadernode/ShaderNode.js';
-import PhysicalLightingModel from '../functions/PhysicalLightingModel.js';
-import MeshStandardNodeMaterial from './MeshStandardNodeMaterial.js';
+import { PhysicalLightingModel } from '../functions/PhysicalLightingModel.js';
+import { MeshStandardNodeMaterial } from './MeshStandardNodeMaterial.js';
 
 import { MeshPhysicalMaterial } from '../../Three.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 
 const defaultValues = new MeshPhysicalMaterial();
 
-class MeshPhysicalNodeMaterial extends MeshStandardNodeMaterial {
+export class MeshPhysicalNodeMaterial extends MeshStandardNodeMaterial {
   constructor(parameters) {
     super();
 
@@ -117,7 +117,5 @@ class MeshPhysicalNodeMaterial extends MeshStandardNodeMaterial {
     return super.copy(source);
   }
 }
-
-export default MeshPhysicalNodeMaterial;
 
 addNodeMaterial(MeshPhysicalNodeMaterial);
