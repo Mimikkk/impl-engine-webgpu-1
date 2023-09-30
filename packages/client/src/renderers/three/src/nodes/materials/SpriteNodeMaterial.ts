@@ -2,7 +2,7 @@ import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
 import { uniform } from '../core/UniformNode.js';
 import { CameraNodes } from '../accessors/CameraNode.js';
 import { materialRotation } from '../accessors/MaterialNode.js';
-import { modelViewMatrix, modelWorldMatrix } from '../accessors/ModelNode.js';
+import { ModelNodes } from '../accessors/ModelNode.js';
 import { positionLocal } from '../accessors/PositionNode.js';
 import { float, vec2, vec3, vec4 } from '../shadernode/ShaderNode.js';
 
@@ -42,9 +42,9 @@ class SpriteNodeMaterial extends NodeMaterial {
 
     const vertex = positionLocal;
 
-    let mvPosition = modelViewMatrix.mul(vec3(positionNode || 0));
+    let mvPosition = ModelNodes.viewMatrix.mul(vec3(positionNode || 0));
 
-    let scale = vec2(modelWorldMatrix[0].xyz.length(), modelWorldMatrix[1].xyz.length());
+    let scale = vec2(ModelNodes.worldMatrix[0].xyz.length(), ModelNodes.worldMatrix[1].xyz.length());
 
     if (scaleNode !== null) {
       scale = scale.mul(scaleNode);

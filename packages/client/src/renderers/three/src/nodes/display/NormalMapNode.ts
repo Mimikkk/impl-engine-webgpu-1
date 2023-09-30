@@ -1,7 +1,7 @@
 import { TempNode } from '../core/TempNode.js';
 import { add } from '../math/OperatorNode.js';
 import { BitangentNodes } from '../accessors/BitangentNode.js';
-import { modelNormalMatrix } from '../accessors/ModelNode.js';
+import { ModelNodes } from '../accessors/ModelNode.js';
 import { normalView } from '../accessors/NormalNode.js';
 import { positionView } from '../accessors/PositionNode.js';
 import { tangentView } from '../accessors/TangentNode.js';
@@ -10,6 +10,7 @@ import { faceDirection } from './FrontFacingNode.js';
 import { mat3, nodeProxy, tslFn, vec3 } from '../shadernode/ShaderNode.js';
 
 import { ObjectSpaceNormalMap, TangentSpaceNormalMap } from '../../Three.js';
+import NodeBuilder from '../core/NodeBuilder.js';
 
 // Normal Mapping Without Precomputed Tangents
 // http://www.thetenthplanet.de/archives/1180
@@ -58,7 +59,7 @@ class NormalMapNode extends TempNode {
     let outputNode = null;
 
     if (normalMapType === ObjectSpaceNormalMap) {
-      outputNode = modelNormalMatrix.mul(normalMap).normalize();
+      outputNode = ModelNodes.normalMatrix.mul(normalMap).normalize();
     } else if (normalMapType === TangentSpaceNormalMap) {
       const tangent = builder.hasGeometryAttribute('tangent');
 

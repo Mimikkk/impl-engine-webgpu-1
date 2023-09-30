@@ -44,7 +44,7 @@ export class UniformNode extends InputNode {
 
 export default UniformNode;
 
-export const uniform = (arg1: any, arg2: any) => {
+export const uniform = (arg1: any, arg2?: any) => {
   const nodeType = getConstNodeType(arg2 || arg1);
 
   const value = arg1 && arg1.isNode ? (arg1.node && arg1.node.value) || arg1.value : arg1;

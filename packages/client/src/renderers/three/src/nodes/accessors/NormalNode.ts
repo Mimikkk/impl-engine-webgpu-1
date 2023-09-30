@@ -4,7 +4,7 @@ import { varying } from '../core/VaryingNode.js';
 import { property } from '../core/PropertyNode.js';
 import { normalize } from '../math/MathNode.js';
 import { CameraNodes } from './CameraNode.js';
-import { modelNormalMatrix } from './ModelNode.js';
+import { ModelNodes } from './ModelNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
 
 class NormalNode extends Node {
@@ -32,7 +32,7 @@ class NormalNode extends Node {
     } else if (scope === NormalNode.LOCAL) {
       outputNode = varying(normalGeometry);
     } else if (scope === NormalNode.VIEW) {
-      const vertexNode = modelNormalMatrix.mul(normalLocal);
+      const vertexNode = ModelNodes.normalMatrix.mul(normalLocal);
       outputNode = normalize(varying(vertexNode));
     } else if (scope === NormalNode.WORLD) {
       const vertexNode = normalView.transformDirection(CameraNodes.matrix.view);

@@ -174,18 +174,9 @@ export {
   materialSheenRoughness,
 } from './accessors/MaterialNode.js';
 export { default as MaterialReferenceNode, materialReference } from './accessors/MaterialReferenceNode.js';
-export { default as MorphNode, morph } from './accessors/MorphNode.js';
+export { MorphNode, morph } from './accessors/MorphNode.js';
 export { default as TextureBicubicNode, textureBicubic } from './accessors/TextureBicubicNode.js';
-export {
-  default as ModelNode,
-  modelDirection,
-  modelViewMatrix,
-  modelNormalMatrix,
-  modelWorldMatrix,
-  modelPosition,
-  modelViewPosition,
-  modelScale,
-} from './accessors/ModelNode.js';
+export { ModelNode } from './accessors/ModelNode.js';
 export { ModelViewProjectionNode, modelViewProjection } from './accessors/ModelViewProjectionNode.js';
 export {
   default as NormalNode,
@@ -222,8 +213,8 @@ export {
   transformedTangentView,
   transformedTangentWorld,
 } from './accessors/TangentNode.js';
-export { default as TextureNode, texture, /*textureLevel,*/ sampler } from './accessors/TextureNode.js';
-export { default as UVNode, uv } from './accessors/UVNode.js';
+export { default as TextureNode, texture, textureLevel, sampler } from './accessors/TextureNode.js';
+export { UVNode, uv } from './accessors/UVNode.js';
 export { default as UserDataNode, userData } from './accessors/UserDataNode.js';
 
 // display

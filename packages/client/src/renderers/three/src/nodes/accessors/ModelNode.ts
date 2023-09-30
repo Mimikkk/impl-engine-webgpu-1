@@ -1,25 +1,27 @@
 import { Object3DNode } from './Object3DNode.js';
 import { label } from '../core/ContextNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
+import NodeFrame from '../core/NodeFrame.js';
 
-class ModelNode extends Object3DNode {
-  constructor(scope = ModelNode.VIEW_MATRIX) {
+export class ModelNode extends Object3DNode {
+  constructor(scope: Object3DNode.Scope = ModelNode.Scope.ViewMatrix) {
     super(scope);
   }
 
-  update(frame) {
+  update(frame: NodeFrame) {
     this.object3d = frame.object;
-
     super.update(frame);
   }
 }
 
-export default ModelNode;
+export namespace ModelNodes {
+  export const direction = nodeImmutable(ModelNode, Object3DNode.Scope.Direction);
 
-export const modelDirection = nodeImmutable(ModelNode, ModelNode.DIRECTION);
-export const modelViewMatrix = label(nodeImmutable(ModelNode, ModelNode.VIEW_MATRIX), 'modelViewMatrix');
-export const modelNormalMatrix = nodeImmutable(ModelNode, ModelNode.NORMAL_MATRIX);
-export const modelWorldMatrix = nodeImmutable(ModelNode, ModelNode.WORLD_MATRIX);
-export const modelPosition = nodeImmutable(ModelNode, ModelNode.POSITION);
-export const modelScale = nodeImmutable(ModelNode, ModelNode.SCALE);
-export const modelViewPosition = nodeImmutable(ModelNode, ModelNode.VIEW_POSITION);
+  export const viewPosition = nodeImmutable(ModelNode, Object3DNode.Scope.ViewPosition);
+  export const viewMatrix = label(nodeImmutable(ModelNode, Object3DNode.Scope.ViewMatrix), 'modelViewMatrix');
+  export const worldMatrix = nodeImmutable(ModelNode, Object3DNode.Scope.WorldMatrix);
+  export const normalMatrix = nodeImmutable(ModelNode, Object3DNode.Scope.NormalMatrix);
+
+  export const position = nodeImmutable(ModelNode, Object3DNode.Scope.Position);
+  export const scale = nodeImmutable(ModelNode, Object3DNode.Scope.Scale);
+}

@@ -1,14 +1,19 @@
 import { Node } from '../core/Node.js';
-import { NodeUpdateType } from '../core/constants.js';
+import { NodeType, NodeUpdateType } from '../core/constants.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
-import { uniform } from '../core/UniformNode.js';
+import { uniform, UniformNode } from '../core/UniformNode.js';
 import { reference } from './ReferenceNode.js';
 import { BufferAttributeNodes } from './BufferAttributeNode.js';
-import { positionLocal } from './PositionNode.js';
+import PositionNode, { positionLocal } from './PositionNode.js';
+import { Mesh } from '../../objects/Mesh.js';
+import NodeBuilder from '../core/NodeBuilder.js';
 
-class MorphNode extends Node {
-  constructor(mesh) {
-    super('void');
+export class MorphNode extends Node {
+  mesh: Mesh;
+  morphBaseInfluence: UniformNode;
+
+  constructor(mesh: Mesh) {
+    super(NodeType.Void);
 
     this.mesh = mesh;
     this.morphBaseInfluence = uniform(1);
@@ -16,7 +21,7 @@ class MorphNode extends Node {
     this.updateType = NodeUpdateType.Object;
   }
 
-  constructAttribute(builder, name, assignNode = positionLocal) {
+  constructAttribute(builder: NodeBuilder, name: string, assignNode: PositionNode = positionLocal) {
     const mesh = this.mesh;
     const attributes = mesh.geometry.morphAttributes[name];
 
@@ -34,6 +39,7 @@ class MorphNode extends Node {
 
   construct(builder: NodeBuilder) {
     this.constructAttribute(builder, 'position');
+    return null;
   }
 
   update() {
@@ -46,7 +52,5 @@ class MorphNode extends Node {
     }
   }
 }
-
-export default MorphNode;
 
 export const morph = nodeProxy(MorphNode);

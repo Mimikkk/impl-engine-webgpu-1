@@ -3,14 +3,19 @@ import { BufferAttributeNodes } from './BufferAttributeNode.js';
 import { normalLocal } from './NormalNode.js';
 import { positionLocal } from './PositionNode.js';
 import { mat3, mat4, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
-import { DynamicDrawUsage, InstancedInterleavedBuffer } from '../../Three.js';
+import { DynamicDrawUsage, InstancedInterleavedBuffer, InstancedMesh } from '../../Three.js';
+import { Matrix4NodeUniform } from '../../common/nodes/NodeUniform.js';
+import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
 class InstanceNode extends Node {
-  constructor(instanceMesh) {
-    super('void');
+  instanceMesh: InstancedMesh;
+  instanceMatrixNode: Matrix4NodeUniform | null;
+
+  constructor(instanceMesh: InstancedMesh) {
+    super(NodeType.Void);
 
     this.instanceMesh = instanceMesh;
-
     this.instanceMatrixNode = null;
   }
 
@@ -26,11 +31,10 @@ class InstanceNode extends Node {
         instanceAttribute.usage === DynamicDrawUsage ? BufferAttributeNodes.dynamic : BufferAttributeNodes.normal;
 
       const instanceBuffers = [
-        // F.Signature -> bufferAttribute( array, type, stride, offset )
-        bufferFn(buffer, 'vec4', 16, 0),
-        bufferFn(buffer, 'vec4', 16, 4),
-        bufferFn(buffer, 'vec4', 16, 8),
-        bufferFn(buffer, 'vec4', 16, 12),
+        bufferFn(buffer, NodeType.Vector4, 16, 0),
+        bufferFn(buffer, NodeType.Vector4, 16, 4),
+        bufferFn(buffer, NodeType.Vector4, 16, 8),
+        bufferFn(buffer, NodeType.Vector4, 16, 12),
       ];
 
       instanceMatrixNode = mat4(...instanceBuffers);
@@ -40,7 +44,7 @@ class InstanceNode extends Node {
 
     // POSITION
 
-    const instancePosition = instanceMatrixNode.mul(positionLocal).xyz;
+    const instancePosition = instanceMatrixNode!.mul(positionLocal).xyz;
 
     // NORMAL
 
@@ -54,6 +58,8 @@ class InstanceNode extends Node {
 
     builder.stack.assign(positionLocal, instancePosition);
     builder.stack.assign(normalLocal, instanceNormal);
+
+    return null;
   }
 }
 

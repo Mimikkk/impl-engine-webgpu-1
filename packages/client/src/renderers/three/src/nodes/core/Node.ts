@@ -13,7 +13,7 @@ export class Node extends EventDispatcher<'dispose'> {
   uuid: string;
   isNode: boolean;
 
-  constructor(nodeType: string | null = null) {
+  constructor(nodeType: NodeType | null = null) {
     super();
 
     this.nodeType = nodeType;

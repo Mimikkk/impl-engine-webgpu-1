@@ -6,12 +6,13 @@ import { normalGeometry, normalLocal, normalView, normalWorld, transformedNormal
 import { tangentGeometry, tangentLocal, tangentView, tangentWorld, transformedTangentView } from './TangentNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
 export class BitangentNode extends Node {
   scope: BitangentNode.Scope;
 
   constructor(scope: BitangentNode.Scope = BitangentNode.Scope.Local) {
-    super('vec3');
+    super(NodeType.Vector3);
 
     this.scope = scope;
   }

@@ -84,17 +84,17 @@ export class BufferAttributeNode extends InputNode {
 }
 
 export namespace BufferAttributeNodes {
-  export const normal = (array: NumberArray, type: NodeType, stride: number = 0, offset: number = 0) =>
+  export const normal = (array: any | NumberArray, type: NodeType, stride: number = 0, offset: number = 0) =>
     nodeObject(new BufferAttributeNode(array, type, stride, offset));
 
-  export const dynamic = (array: NumberArray, type: NodeType, stride: number = 0, offset: number = 0) =>
+  export const dynamic = (array: any | NumberArray, type: NodeType, stride: number = 0, offset: number = 0) =>
     normal(array, type, stride, offset).setUsage(DynamicDrawUsage);
 
   export namespace instanced {
-    export const normal = (array: NumberArray, type: NodeType, stride: number = 0, offset: number = 0) =>
+    export const normal = (array: any | NumberArray, type: NodeType, stride: number = 0, offset: number = 0) =>
       BufferAttributeNodes.normal(array, type, stride, offset).setInstanced(true);
 
-    export const dynamic = (array: NumberArray, type: NodeType, stride: number = 0, offset: number = 0) =>
+    export const dynamic = (array: any | NumberArray, type: NodeType, stride: number = 0, offset: number = 0) =>
       BufferAttributeNodes.dynamic(array, type, stride, offset).setInstanced(true);
   }
 }
