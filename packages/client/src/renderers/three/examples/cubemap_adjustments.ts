@@ -2,10 +2,8 @@ import * as THREE from '../src/Three.js';
 import {
   cubeTexture,
   mix,
-  normalWorld,
-  positionLocal,
-  positionWorld,
-  positionWorldDirection,
+  NormalNodes,
+  PositionNodes,
   reference,
   reflectVector,
   toneMapping,
@@ -78,7 +76,7 @@ function init() {
       positionNode.y.add(mixNode).clamp(),
     );
 
-    const proceduralEnv = mix(mixCubeMaps, normalWorld, proceduralNode);
+    const proceduralEnv = mix(mixCubeMaps, NormalNodes.world, proceduralNode);
 
     const intensityFilter = proceduralEnv.mul(intensityNode);
     const hueFilter = intensityFilter.hue(hueNode);
@@ -87,9 +85,9 @@ function init() {
 
   const blurNode = uniform(0);
 
-  scene.environmentNode = getEnvironmentNode(reflectVector, positionWorld);
+  scene.environmentNode = getEnvironmentNode(reflectVector, PositionNodes.world);
 
-  scene.backgroundNode = getEnvironmentNode(positionWorldDirection, positionLocal).context({
+  scene.backgroundNode = getEnvironmentNode(PositionNodes.directional.world, PositionNodes.local).context({
     getSamplerLevelNode: () => blurNode,
   });
 

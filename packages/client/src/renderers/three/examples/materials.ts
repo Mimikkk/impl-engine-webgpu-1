@@ -8,12 +8,9 @@ import {
   js,
   loop,
   MeshBasicNodeMaterial,
-  normalLocal,
-  normalView,
-  normalWorld,
+  NormalNodes,
   oscSine,
-  positionLocal,
-  positionWorld,
+  PositionNodes,
   string,
   texture,
   triplanarTexture,
@@ -77,27 +74,27 @@ function init() {
 
   // PositionLocal
   material = new MeshBasicNodeMaterial();
-  material.colorNode = positionLocal;
+  material.colorNode = PositionNodes.local;
   materials.push(material);
 
   // PositionWorld
   material = new MeshBasicNodeMaterial();
-  material.colorNode = positionWorld;
+  material.colorNode = PositionNodes.world;
   materials.push(material);
 
   // NormalLocal
   material = new MeshBasicNodeMaterial();
-  material.colorNode = normalLocal;
+  material.colorNode = NormalNodes.local;
   materials.push(material);
 
   // NormalWorld
   material = new MeshBasicNodeMaterial();
-  material.colorNode = normalWorld;
+  material.colorNode = NormalNodes.world;
   materials.push(material);
 
   // NormalView
   material = new MeshBasicNodeMaterial();
-  material.colorNode = normalView;
+  material.colorNode = NormalNodes.view;
   materials.push(material);
 
   // Texture

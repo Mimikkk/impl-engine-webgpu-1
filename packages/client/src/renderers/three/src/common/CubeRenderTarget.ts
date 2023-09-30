@@ -11,7 +11,7 @@ import {
 } from '../Three.js';
 import { equirectUV } from '../nodes/utils/EquirectUVNode.js';
 import { texture as TSL_Texture } from '../nodes/accessors/TextureNode.js';
-import { positionWorldDirection } from '../nodes/accessors/PositionNode.js';
+import { PositionNodes } from '../nodes/accessors/PositionNode.js';
 import { createNodeMaterialFromType } from '../nodes/materials/NodeMaterial.js';
 
 // @TODO: Consider rename WebGLCubeRenderTarget to just CubeRenderTarget
@@ -38,7 +38,7 @@ class CubeRenderTarget extends WebGLCubeRenderTarget {
 
     const geometry = new BoxGeometry(5, 5, 5);
 
-    const uvNode = equirectUV(positionWorldDirection);
+    const uvNode = equirectUV(PositionNodes.directional.world);
 
     const material = createNodeMaterialFromType('MeshBasicNodeMaterial');
     material.colorNode = TSL_Texture(texture, uvNode, 0);

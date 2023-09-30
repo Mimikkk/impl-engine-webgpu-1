@@ -6,7 +6,7 @@ import {
   context,
   modelViewProjection,
   NodeMaterial,
-  normalWorld,
+  NormalNodes,
   vec4,
 } from '../nodes/Nodes.js';
 
@@ -53,7 +53,7 @@ class Background extends DataMap {
       if (backgroundMesh === null) {
         this.backgroundMeshNode = context(backgroundNode, {
           // @TODO: Add Texture2D support using node context
-          getUVNode: () => normalWorld,
+          getUVNode: () => NormalNodes.world,
           getSamplerLevelNode: () => backgroundBlurriness,
         }).mul(backgroundIntensity);
 

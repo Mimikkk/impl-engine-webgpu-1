@@ -5,7 +5,7 @@ import {
   densityFog,
   equirectUV,
   NodeFrame,
-  normalWorld,
+  NormalNodes,
   rangeFog,
   reference,
   texture,
@@ -127,7 +127,7 @@ class Nodes extends DataMap {
     }
   }
 
-  updateBackground(scene) {
+  updateBackground(scene: any) {
     const sceneData = this.get(scene);
     const background = scene.background;
 
@@ -136,7 +136,7 @@ class Nodes extends DataMap {
         let backgroundNode = null;
 
         if (background.isCubeTexture === true) {
-          backgroundNode = cubeTexture(background, normalWorld);
+          backgroundNode = cubeTexture(background, NormalNodes.world);
         } else if (background.isTexture === true) {
           let nodeUV = null;
 

@@ -1,6 +1,6 @@
 import { FogNode } from './FogNode.js';
 import { smoothstep } from '../math/MathNode.js';
-import { positionView } from '../accessors/PositionNode.js';
+import { PositionNodes } from '../accessors/PositionNode.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 import { Node } from '../core/Node.js';
 
@@ -19,7 +19,7 @@ export class FogRangeNode extends FogNode {
   }
 
   construct(): Node | null {
-    return smoothstep(this.nearNode, this.farNode, positionView.z.negate());
+    return smoothstep(this.nearNode, this.farNode, PositionNodes.view.z.negate());
   }
 }
 

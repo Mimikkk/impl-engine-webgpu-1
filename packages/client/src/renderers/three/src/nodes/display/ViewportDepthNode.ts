@@ -1,7 +1,7 @@
 import { Node } from '../core/Node.js';
 import { nodeImmutable, nodeProxy } from '../shadernode/ShaderNode.js';
 import { CameraNodes } from '../accessors/CameraNode.js';
-import { positionView } from '../accessors/PositionNode.js';
+import { PositionNodes } from '../accessors/PositionNode.js';
 import { viewportDepthTexture } from './ViewportDepthTextureNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 
@@ -25,7 +25,7 @@ export class ViewportDepthNode extends Node {
     let node = null;
 
     if (scope === ViewportDepthNode.Scope.Depth) {
-      node = viewZToOrthographicDepth(positionView.z, CameraNodes.near, CameraNodes.far);
+      node = viewZToOrthographicDepth(PositionNodes.view.z, CameraNodes.near, CameraNodes.far);
     } else if (scope === ViewportDepthNode.Scope.DepthTexture) {
       const texture = this.textureNode || viewportDepthTexture();
 
