@@ -10,7 +10,7 @@ import NodeBuilder from '../core/NodeBuilder.js';
 export class BitangentNode extends Node {
   scope: BitangentNode.Scope;
 
-  constructor(scope = BitangentNode.Scope.Local) {
+  constructor(scope: BitangentNode.Scope = BitangentNode.Scope.Local) {
     super('vec3');
 
     this.scope = scope;
