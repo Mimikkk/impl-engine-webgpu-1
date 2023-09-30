@@ -12,8 +12,6 @@ export enum NodeUpdateType {
 
 export enum NodeType {
   Void = 'void',
-  Texture = 'texture',
-  Color = 'color',
   Boolean = 'bool',
   Integer = 'int',
   Float = 'float',
@@ -28,6 +26,16 @@ export enum NodeType {
   UnsignedInteger = 'uint',
   UnsignedMatrix3 = 'umat3',
   UnsignedMatrix4 = 'umat4',
+
+  Texture = 'texture',
+  Color = 'color',
+  Code = 'code',
+}
+
+export enum NodeLanguage {
+  Js = 'javascript',
+  Glsl = 'glsl',
+  Wgsl = 'wgsl',
 }
 
 export const defaultBuildStages = ['construct', 'analyze', 'generate'];

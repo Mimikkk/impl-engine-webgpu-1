@@ -1,5 +1,6 @@
 import * as THREE from '../src/Three.js';
 import * as Nodes from '../src/nodes/Nodes.js';
+import { NodeLanguage } from '../src/nodes/Nodes.js';
 
 import WebGPURenderer from '../src/WebGPURenderer.js';
 import WGSLNodeBuilder from '../src/nodes/WebGPUNodeBuilder.js';
@@ -47,7 +48,7 @@ function init() {
     const options = {
       shader: 'fragment',
       outputColorSpace: THREE.LinearSRGBColorSpace,
-      output: 'WGSL',
+      output: NodeLanguage.Wgsl,
       preview: true,
     };
 
@@ -91,7 +92,7 @@ output = vec4( finalColor, opacity );
 
     const result = window.monaco.editor.create(resultDOM, {
       value: '',
-      language: 'wgsl',
+      language: NodeLanguage.Wgsl,
       theme: 'vs-dark',
       automaticLayout: true,
       readOnly: true,

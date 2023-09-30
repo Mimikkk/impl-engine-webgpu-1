@@ -5,7 +5,6 @@ import {
   color,
   float,
   global,
-  js,
   loop,
   MeshBasicNodeMaterial,
   NormalNodes,
@@ -28,6 +27,7 @@ import WebGPURenderer from '../src/WebGPURenderer.js';
 import { TeapotGeometry } from '../src/geometries/TeapotGeometry.js';
 
 import createStats from '../src/libs/stats.module.js';
+import { CodeNodes } from '../src/nodes/code/CodeNode.js';
 
 let stats;
 
@@ -219,7 +219,8 @@ function init() {
   global.set('THREE', THREE);
   global.set('TSL', Nodes);
 
-  const asyncNode = js(`
+  const asyncNode = CodeNodes.js(
+    `
 
 					layout = {
 						outputType: 'node'
@@ -251,9 +252,11 @@ function init() {
 
 					}
 
-				`).scriptable();
+				`,
+  ).scriptable();
 
-  const scriptableNode = js(`
+  const scriptableNode = CodeNodes.js(
+    `
 
 					layout = {
 						outputType: 'node',
@@ -303,7 +306,8 @@ function init() {
 
 					output = { helloWorld };
 
-				`).scriptable();
+				`,
+  ).scriptable();
 
   scriptableNode.setParameter('source', texture(uvTexture).xyz);
   scriptableNode.setParameter('contrast', asyncNode);

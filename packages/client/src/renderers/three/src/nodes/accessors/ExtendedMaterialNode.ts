@@ -7,10 +7,13 @@ import { nodeImmutable } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 import { NodeType } from '../core/constants.js';
 
+// TODO - merge with MaterialNode
 export class ExtendedMaterialNode extends MaterialNode {
+  //@ts-expect-error
   declare scope: ExtendedMaterialNode.Scope;
 
   constructor(scope: ExtendedMaterialNode.Scope) {
+    //@ts-expect-error
     super(scope);
   }
 

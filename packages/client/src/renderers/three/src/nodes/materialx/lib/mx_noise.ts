@@ -1,10 +1,10 @@
-import { glsl } from '../../code/CodeNode.js';
+import { CodeNodes } from '../../code/CodeNode.js';
 import { glslFn } from '../../code/FunctionNode.js';
 
 // Original shader code from:
 // https://github.com/AcademySoftwareFoundation/MaterialX/blob/main/libraries/stdlib/genglsl/lib/mx_noise.glsl
 
-export const mx_noise = glsl(`float mx_select(bool b, float t, float f)
+export const mx_noise = CodeNodes.glsl(`float mx_select(bool b, float t, float f)
 {
     return b ? t : f;
 }

@@ -1,16 +1,20 @@
 import { Node } from '../core/Node.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeLanguage, NodeType } from '../core/constants.js';
 
 export class CodeNode extends Node {
-  static is = (node: Node): node is CodeNode => 'isCodeNode' in node;
+  static is(node: any): node is CodeNode {
+    return node?.isCodeNode;
+  }
   isCodeNode: true = true;
   includes: CodeNode.Include[];
   language: string;
   code: string;
 
-  constructor(code = '', includes: CodeNode.Include[] = [], language = '') {
-    super('code');
+  constructor(code: string, includes: CodeNode.Include[], language: NodeLanguage) {
+    console.log({ code, includes, language });
+    super(NodeType.Code);
 
     this.code = code;
     this.language = language;
@@ -35,7 +39,9 @@ export namespace CodeNode {
   }
 }
 
-export const code = nodeProxy(CodeNode);
-export const js = (src: string, includes: CodeNode.Include[]) => code(src, includes, 'js');
-export const wgsl = (src: string, includes: CodeNode.Include[]) => code(src, includes, 'wgsl');
-export const glsl = (src: string, includes: CodeNode.Include[]) => code(src, includes, 'glsl');
+export namespace CodeNodes {
+  export const code = nodeProxy(CodeNode);
+  export const js = (src: string, includes: CodeNode.Include[] = []) => code(src, includes, NodeLanguage.Js);
+  export const wgsl = (src: string, includes: CodeNode.Include[] = []) => code(src, includes, NodeLanguage.Wgsl);
+  export const glsl = (src: string, includes: CodeNode.Include[] = []) => code(src, includes, NodeLanguage.Glsl);
+}

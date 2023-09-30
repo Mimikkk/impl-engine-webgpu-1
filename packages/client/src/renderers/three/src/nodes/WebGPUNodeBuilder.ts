@@ -19,9 +19,8 @@ import { getStrideLength, getVectorLength } from '../common/BufferUtils.js';
 
 import CubeRenderTarget from '../common/CubeRenderTarget.js';
 
-import { CodeNode, NodeBuilder, NodeMaterial } from './Nodes.js';
+import { CodeNodes, NodeBuilder, NodeMaterial } from './Nodes.js';
 
-import WebGPUNodeParser from './WebGPUNodeParser.js';
 import { Parsers } from './parsers/parsers.js';
 
 const gpuShaderStageLib = {
@@ -76,21 +75,26 @@ const wgslMethods = {
 };
 
 const wgslPolyfill = {
-  lessThanEqual: new CodeNode(`
+  lessThanEqual: CodeNodes.wgsl(
+    `
 fn threejs_lessThanEqual( a : vec3<f32>, b : vec3<f32> ) -> vec3<bool> {
 
 	return vec3<bool>( a.x <= b.x, a.y <= b.y, a.z <= b.z );
 
 }
-`),
-  mod: new CodeNode(`
+`,
+  ),
+  mod: CodeNodes.wgsl(
+    `
 fn threejs_mod( x : f32, y : f32 ) -> f32 {
 
 	return x - y * floor( x / y );
 
 }
-`),
-  repeatWrapping: new CodeNode(`
+`,
+  ),
+  repeatWrapping: CodeNodes.wgsl(
+    `
 fn threejs_repeatWrapping( uv : vec2<f32>, dimension : vec2<u32> ) -> vec2<u32> {
 
 	let uvScaled = vec2<u32>( uv * vec2<f32>( dimension ) );
@@ -98,7 +102,8 @@ fn threejs_repeatWrapping( uv : vec2<f32>, dimension : vec2<u32> ) -> vec2<u32> 
 	return ( ( uvScaled % dimension ) + dimension ) % dimension;
 
 }
-`),
+`,
+  ),
 };
 
 class WebGPUNodeBuilder extends NodeBuilder {

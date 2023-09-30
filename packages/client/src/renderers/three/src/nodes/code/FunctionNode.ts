@@ -1,11 +1,12 @@
 import { CodeNode } from './CodeNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeLanguage } from '../core/constants.js';
 
 export class FunctionNode extends CodeNode {
   keywords: Record<string, CodeNode>;
 
-  constructor(code: string = '', includes: CodeNode.Include[] = [], language: 'wgsl' | 'glsl') {
+  constructor(code: string, includes: CodeNode.Include[], language: NodeLanguage) {
     super(code, includes, language);
 
     this.keywords = {};
@@ -74,9 +75,8 @@ export class FunctionNode extends CodeNode {
   }
 }
 
-const nativeFn = (code: string, includes: CodeNode.Include[], language: string = '') => {
+const nativeFn = (code: string, includes: CodeNode.Include[], language: NodeLanguage) => {
   let functionNode: FunctionNode | null = null;
-
   return (...params: any[]) => {
     if (!functionNode) functionNode = nodeObject(new FunctionNode(code, includes, language));
 
@@ -84,5 +84,5 @@ const nativeFn = (code: string, includes: CodeNode.Include[], language: string =
   };
 };
 
-export const glslFn = (code: string, includes: CodeNode.Include[]) => nativeFn(code, includes, 'glsl');
-export const wgslFn = (code: string, includes: CodeNode.Include[]) => nativeFn(code, includes, 'wgsl');
+export const glslFn = (code: string, includes: CodeNode.Include[] = []) => nativeFn(code, includes, NodeLanguage.Glsl);
+export const wgslFn = (code: string, includes: CodeNode.Include[] = []) => nativeFn(code, includes, NodeLanguage.Wgsl);

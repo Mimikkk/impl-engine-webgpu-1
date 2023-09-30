@@ -220,7 +220,7 @@ export {
 
 // code
 export { ExpressionNode, expression } from './code/ExpressionNode.js';
-export { CodeNode, code, js, wgsl, glsl } from './code/CodeNode.js';
+export { CodeNode, CodeNodes } from './code/CodeNode.js';
 export { FunctionCallNode, call } from './code/FunctionCallNode.js';
 export { FunctionNode, wgslFn, glslFn } from './code/FunctionNode.js';
 export { ScriptableNode, scriptable, global } from './code/ScriptableNode.js';
