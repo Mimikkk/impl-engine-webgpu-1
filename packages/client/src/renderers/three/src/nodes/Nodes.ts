@@ -254,7 +254,7 @@ export { default as AONode } from './lighting/AONode.js';
 export { default as AnalyticLightNode } from './lighting/AnalyticLightNode.js';
 
 // procedural
-export { default as CheckerNode, checker } from './procedural/CheckerNode.js';
+export { CheckerNode, checker } from './procedural/CheckerNode.js';
 
 // parsers
 export { Parsers } from './parsers/parsers.js';
