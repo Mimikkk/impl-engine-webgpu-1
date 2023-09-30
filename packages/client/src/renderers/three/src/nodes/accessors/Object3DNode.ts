@@ -5,14 +5,14 @@ import { nodeProxy } from '../shadernode/ShaderNode.js';
 
 import { Object3D, Vector3 } from '../../Three.js';
 import NodeBuilder from '../core/NodeBuilder.js';
-import NodeFrame from '../core/NodeFrame.js';
+import { NodeFrame } from '../core/NodeFrame.js';
 
 export class Object3DNode extends Node {
   scope: Object3DNode.Scope;
   object3d: Object3D | null;
   uniformNode: UniformNode;
 
-  constructor(scope: Object3DNode.Scope = Object3DNode.Scope.ViewMatrix, object3d: Object3D) {
+  constructor(scope: Object3DNode.Scope = Object3DNode.Scope.ViewMatrix, object3d: Object3D | null = null) {
     super();
 
     this.scope = scope;
@@ -23,7 +23,7 @@ export class Object3DNode extends Node {
     this.uniformNode = uniform(null, undefined) as any;
   }
 
-  getNodeType() {
+  getNodeType(): string {
     switch (this.scope) {
       case Object3DNode.Scope.WorldMatrix:
       case Object3DNode.Scope.ViewMatrix:

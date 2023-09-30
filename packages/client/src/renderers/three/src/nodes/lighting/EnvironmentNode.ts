@@ -4,7 +4,7 @@ import { context } from '../core/ContextNode.js';
 import { clearcoatRoughness, roughness } from '../core/PropertyNode.js';
 import { equirectUV } from '../utils/EquirectUVNode.js';
 import { specularMIPLevel } from '../utils/SpecularMIPLevelNode.js';
-import { cameraViewMatrix } from '../accessors/CameraNode.js';
+import { CameraNodes } from '../accessors/CameraNode.js';
 import {
   transformedClearcoatNormalView,
   transformedNormalView,
@@ -93,7 +93,7 @@ const createRadianceContext = (roughnessNode, normalViewNode) => {
       if (reflectVec === null) {
         reflectVec = positionViewDirection.negate().reflect(normalViewNode);
         reflectVec = roughnessNode.mul(roughnessNode).mix(reflectVec, normalViewNode).normalize();
-        reflectVec = reflectVec.transformDirection(cameraViewMatrix);
+        reflectVec = reflectVec.transformDirection(CameraNodes.matrix.view);
       }
 
       if (textureNode.isCubeTextureNode) {

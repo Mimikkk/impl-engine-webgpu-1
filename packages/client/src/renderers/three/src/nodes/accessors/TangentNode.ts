@@ -3,9 +3,10 @@ import { attribute } from '../core/AttributeNode.js';
 import { temp } from '../core/VarNode.js';
 import { varying } from '../core/VaryingNode.js';
 import { normalize } from '../math/MathNode.js';
-import { cameraViewMatrix } from './CameraNode.js';
+import { CameraNodes } from './CameraNode.js';
 import { modelViewMatrix } from './ModelNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
+import NodeBuilder from '../core/NodeBuilder.js';
 
 class TangentNode extends Node {
   constructor(scope = TangentNode.LOCAL) {
@@ -41,7 +42,7 @@ class TangentNode extends Node {
       const vertexNode = modelViewMatrix.mul(tangentLocal).xyz;
       outputNode = normalize(varying(vertexNode));
     } else if (scope === TangentNode.WORLD) {
-      const vertexNode = tangentView.transformDirection(cameraViewMatrix);
+      const vertexNode = tangentView.transformDirection(CameraNodes.matrix.view);
       outputNode = normalize(varying(vertexNode));
     }
 
@@ -61,4 +62,4 @@ export const tangentLocal = nodeImmutable(TangentNode, TangentNode.LOCAL);
 export const tangentView = nodeImmutable(TangentNode, TangentNode.VIEW);
 export const tangentWorld = nodeImmutable(TangentNode, TangentNode.WORLD);
 export const transformedTangentView = temp(tangentView, 'TransformedTangentView');
-export const transformedTangentWorld = normalize(transformedTangentView.transformDirection(cameraViewMatrix));
+export const transformedTangentWorld = normalize(transformedTangentView.transformDirection(CameraNodes.matrix.view));

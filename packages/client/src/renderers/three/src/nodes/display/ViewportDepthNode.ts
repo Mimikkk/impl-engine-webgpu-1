@@ -1,17 +1,21 @@
 import { Node } from '../core/Node.js';
 import { nodeImmutable, nodeProxy } from '../shadernode/ShaderNode.js';
-import { cameraFar, cameraNear } from '../accessors/CameraNode.js';
+import { CameraNodes } from '../accessors/CameraNode.js';
 import { positionView } from '../accessors/PositionNode.js';
 import { viewportDepthTexture } from './ViewportDepthTextureNode.js';
+import NodeBuilder from '../core/NodeBuilder.js';
+import TextureNode from '../accessors/TextureNode.js';
 
-class ViewportDepthNode extends Node {
-  constructor(scope, textureNode = null) {
+export class ViewportDepthNode extends Node {
+  isViewportDepthNode: boolean = true;
+
+  scope: ViewportDepthNode.Scope;
+  textureNode: TextureNode | null;
+
+  constructor(scope: ViewportDepthNode.Scope, textureNode: TextureNode | null = null) {
     super('float');
-
     this.scope = scope;
     this.textureNode = textureNode;
-
-    this.isViewportDepthNode = true;
   }
 
   construct(builder: NodeBuilder) {
@@ -19,16 +23,23 @@ class ViewportDepthNode extends Node {
 
     let node = null;
 
-    if (scope === ViewportDepthNode.DEPTH) {
-      node = viewZToOrthographicDepth(positionView.z, cameraNear, cameraFar);
-    } else if (scope === ViewportDepthNode.DEPTH_TEXTURE) {
+    if (scope === ViewportDepthNode.Scope.Depth) {
+      node = viewZToOrthographicDepth(positionView.z, CameraNodes.near, CameraNodes.far);
+    } else if (scope === ViewportDepthNode.Scope.DepthTexture) {
       const texture = this.textureNode || viewportDepthTexture();
 
-      const viewZ = perspectiveDepthToViewZ(texture, cameraNear, cameraFar);
-      node = viewZToOrthographicDepth(viewZ, cameraNear, cameraFar);
+      const viewZ = perspectiveDepthToViewZ(texture, CameraNodes.near, CameraNodes.far);
+      node = viewZToOrthographicDepth(viewZ, CameraNodes.near, CameraNodes.far);
     }
 
     return node;
+  }
+}
+
+export namespace ViewportDepthNode {
+  export enum Scope {
+    Depth = 'depth',
+    DepthTexture = 'depthTexture',
   }
 }
 

@@ -5,7 +5,7 @@ import { Object3DNode } from '../accessors/Object3DNode.js';
 import SceneNode from '../accessors/SceneNode.js';
 import { Camera } from '../../cameras/Camera.js';
 
-class NodeFrame {
+export class NodeFrame {
   time: number;
   deltaTime: number;
   frameId: number;

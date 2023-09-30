@@ -1,7 +1,7 @@
 import { Node } from '../core/Node.js';
 import { varying } from '../core/VaryingNode.js';
 import { normalize } from '../math/MathNode.js';
-import { cameraViewMatrix } from './CameraNode.js';
+import { CameraNodes } from './CameraNode.js';
 import { normalGeometry, normalLocal, normalView, normalWorld, transformedNormalView } from './NormalNode.js';
 import { tangentGeometry, tangentLocal, tangentView, tangentWorld, transformedTangentView } from './TangentNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
@@ -57,6 +57,6 @@ export namespace BitangentNodes {
 
   export namespace transformed {
     export const view = normalize(transformedNormalView.cross(transformedTangentView).mul(tangentGeometry.w));
-    export const world = normalize(view.transformDirection(cameraViewMatrix));
+    export const world = normalize(view.transformDirection(CameraNodes.matrix.view));
   }
 }

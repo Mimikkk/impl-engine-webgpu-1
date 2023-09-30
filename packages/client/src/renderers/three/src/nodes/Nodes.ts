@@ -186,7 +186,7 @@ export {
   modelViewPosition,
   modelScale,
 } from './accessors/ModelNode.js';
-export { default as ModelViewProjectionNode, modelViewProjection } from './accessors/ModelViewProjectionNode.js';
+export { ModelViewProjectionNode, modelViewProjection } from './accessors/ModelViewProjectionNode.js';
 export {
   default as NormalNode,
   normalGeometry,

@@ -3,7 +3,7 @@ import { attribute } from '../core/AttributeNode.js';
 import { varying } from '../core/VaryingNode.js';
 import { property } from '../core/PropertyNode.js';
 import { normalize } from '../math/MathNode.js';
-import { cameraViewMatrix } from './CameraNode.js';
+import { CameraNodes } from './CameraNode.js';
 import { modelNormalMatrix } from './ModelNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
 
@@ -35,8 +35,7 @@ class NormalNode extends Node {
       const vertexNode = modelNormalMatrix.mul(normalLocal);
       outputNode = normalize(varying(vertexNode));
     } else if (scope === NormalNode.WORLD) {
-      // To use inverseTransformDirection only inverse the param order like this: cameraViewMatrix.transformDirection( normalView )
-      const vertexNode = normalView.transformDirection(cameraViewMatrix);
+      const vertexNode = normalView.transformDirection(CameraNodes.matrix.view);
       outputNode = normalize(varying(vertexNode));
     }
 
@@ -56,5 +55,5 @@ export const normalLocal = nodeImmutable(NormalNode, NormalNode.LOCAL);
 export const normalView = nodeImmutable(NormalNode, NormalNode.VIEW);
 export const normalWorld = nodeImmutable(NormalNode, NormalNode.WORLD);
 export const transformedNormalView = property('vec3', 'TransformedNormalView');
-export const transformedNormalWorld = transformedNormalView.transformDirection(cameraViewMatrix).normalize();
+export const transformedNormalWorld = transformedNormalView.transformDirection(CameraNodes.matrix.view).normalize();
 export const transformedClearcoatNormalView = property('vec3', 'TransformedClearcoatNormalView');

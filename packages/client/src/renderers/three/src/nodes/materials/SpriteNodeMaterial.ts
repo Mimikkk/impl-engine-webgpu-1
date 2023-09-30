@@ -1,6 +1,6 @@
 import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
 import { uniform } from '../core/UniformNode.js';
-import { cameraProjectionMatrix } from '../accessors/CameraNode.js';
+import { CameraNodes } from '../accessors/CameraNode.js';
 import { materialRotation } from '../accessors/MaterialNode.js';
 import { modelViewMatrix, modelWorldMatrix } from '../accessors/ModelNode.js';
 import { positionLocal } from '../accessors/PositionNode.js';
@@ -71,7 +71,7 @@ class SpriteNodeMaterial extends NodeMaterial {
 
     mvPosition = vec4(mvPosition.xy.add(rotatedPosition), mvPosition.zw);
 
-    const modelViewProjection = cameraProjectionMatrix.mul(mvPosition);
+    const modelViewProjection = CameraNodes.matrix.projection.mul(mvPosition);
 
     context.vertex = vertex;
 
