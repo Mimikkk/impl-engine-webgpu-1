@@ -7,10 +7,8 @@ import { PropertyNodes } from '../../core/PropertyNode.js';
 import { tslFn } from '../../shadernode/ShaderNode.js';
 
 // GGX Distribution, Schlick Fresnel, GGX_SmithCorrelated Visibility
-export const BRDF_GGX = tslFn(inputs => {
-  const { lightDirection, f0, f90, roughness, iridescenceFresnel } = inputs;
-
-  const normalView = inputs.normalView || NormalNodes.transformed.view;
+export const BRDF_GGX = tslFn(({ lightDirection, f0, f90, roughness, iridescenceFresnel, normalView }) => {
+  normalView ??= NormalNodes.transformed.view;
 
   const alpha = roughness.pow2(); // UE4's roughness
 
