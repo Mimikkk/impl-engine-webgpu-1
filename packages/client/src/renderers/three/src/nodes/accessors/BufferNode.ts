@@ -1,12 +1,15 @@
-import UniformNode from '../core/UniformNode.js';
+import { UniformNode } from '../core/UniformNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
-class BufferNode extends UniformNode {
-  constructor(value, bufferType, bufferCount = 0) {
+export class BufferNode extends UniformNode {
+  isBufferNode: boolean = true;
+  bufferType: NodeType;
+  bufferCount: number;
+
+  constructor(value: any, bufferType: NodeType, bufferCount: number = 0) {
     super(value, bufferType);
-
-    this.isBufferNode = true;
-
     this.bufferType = bufferType;
     this.bufferCount = bufferCount;
   }
@@ -16,6 +19,4 @@ class BufferNode extends UniformNode {
   }
 }
 
-export default BufferNode;
-
-export const buffer = (value, type, count) => nodeObject(new BufferNode(value, type, count));
+export const buffer = (value: any, type: NodeType, count: number) => nodeObject(new BufferNode(value, type, count));

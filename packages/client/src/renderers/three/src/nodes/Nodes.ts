@@ -153,7 +153,7 @@ export * from './shadernode/ShaderNode.js';
 // accessors
 export { BitangentNode } from './accessors/BitangentNode.js';
 export { BufferAttributeNode } from './accessors/BufferAttributeNode.js';
-export { default as BufferNode, buffer } from './accessors/BufferNode.js';
+export { BufferNode, buffer } from './accessors/BufferNode.js';
 export {
   default as CameraNode,
   cameraProjectionMatrix,
@@ -230,7 +230,7 @@ export { default as ReferenceNode, reference } from './accessors/ReferenceNode.j
 export { default as ReflectVectorNode, reflectVector } from './accessors/ReflectVectorNode.js';
 export { default as SkinningNode, skinning } from './accessors/SkinningNode.js';
 export { default as SceneNode, backgroundBlurriness, backgroundIntensity } from './accessors/SceneNode.js';
-export { default as StorageBufferNode, storage } from './accessors/StorageBufferNode.js';
+export { StorageBufferNode, storage } from './accessors/StorageBufferNode.js';
 export {
   default as TangentNode,
   tangentGeometry,

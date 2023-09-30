@@ -1,11 +1,13 @@
-import BufferNode from './BufferNode.js';
+import { BufferNode } from './BufferNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
+import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
-class StorageBufferNode extends BufferNode {
-  constructor(value, bufferType, bufferCount = 0) {
+export class StorageBufferNode extends BufferNode {
+  isStorageBufferNode: boolean = true;
+
+  constructor(value: any, bufferType: NodeType, bufferCount: number = 0) {
     super(value, bufferType, bufferCount);
-
-    this.isStorageBufferNode = true;
   }
 
   getInputType(builder: NodeBuilder) {
@@ -13,6 +15,5 @@ class StorageBufferNode extends BufferNode {
   }
 }
 
-export default StorageBufferNode;
-
-export const storage = (value, type, count) => nodeObject(new StorageBufferNode(value, type, count));
+export const storage = (value: any, type: NodeType, count: number) =>
+  nodeObject(new StorageBufferNode(value, type, count));

@@ -1,11 +1,12 @@
 import { InputNode } from './InputNode.js';
 import { getConstNodeType, nodeObject } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from './NodeBuilder.js';
+import { NodeType } from './constants.js';
 
-class UniformNode extends InputNode {
+export class UniformNode extends InputNode {
   isUniformNode: boolean;
 
-  constructor(value: any, nodeType = null) {
+  constructor(value: any, nodeType: NodeType | null = null) {
     super(value, nodeType);
     this.isUniformNode = true;
   }
