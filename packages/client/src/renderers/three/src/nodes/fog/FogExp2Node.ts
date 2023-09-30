@@ -1,13 +1,16 @@
-import FogNode from './FogNode.js';
+import { Node } from '../core/Node.js';
+import { FogNode } from './FogNode.js';
 import { positionView } from '../accessors/PositionNode.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
-class FogExp2Node extends FogNode {
-  constructor(colorNode, densityNode) {
+export class FogExp2Node extends FogNode {
+  isFogExp2Node: boolean = true;
+  densityNode: Node;
+
+  constructor(colorNode: Node, densityNode: Node) {
     super(colorNode);
 
     this.isFogExp2Node = true;
-
     this.densityNode = densityNode;
   }
 

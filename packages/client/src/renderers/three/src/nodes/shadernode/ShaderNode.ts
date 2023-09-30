@@ -6,9 +6,9 @@ import SplitNode from '../utils/SplitNode.js';
 import ConstNode from '../core/ConstNode.js';
 import { getValueFromType, getValueType } from '../core/NodeUtils.js';
 
-const NodeElements = new Map(); // @TODO: Currently only a few nodes are added, probably also add others
+const NodeElements = new Map<string, Node>();
 
-export function addNodeElement(name, nodeElement) {
+export function addNodeElement(name: string, nodeElement: Node): void {
   if (NodeElements.has(name)) throw new Error(`Redefinition of node element ${name}`);
   if (typeof nodeElement !== 'function') throw new Error(`Node element ${name} is not a function`);
 

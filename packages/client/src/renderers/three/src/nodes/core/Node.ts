@@ -78,7 +78,7 @@ export class Node extends EventDispatcher<'dispose'> {
     return this.updateBeforeType;
   }
 
-  getNodeType(builder: NodeBuilder) {
+  getNodeType(builder: NodeBuilder, output: string | null = null) {
     return this.nodeType;
   }
 
@@ -144,10 +144,10 @@ export class Node extends EventDispatcher<'dispose'> {
     builder.addChain(this);
 
     /* Build stages expected results:
-      - "construct"	-> Node
-      - "analyze"		-> null
-      - "generate"	-> String
-    */
+     - "construct"	-> Node
+     - "analyze"		-> null
+     - "generate"	-> String
+     */
     let result = null;
 
     const buildStage = builder.getBuildStage();

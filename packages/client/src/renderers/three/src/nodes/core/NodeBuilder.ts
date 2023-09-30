@@ -6,7 +6,8 @@ import NodeCode from './NodeCode.js';
 import NodeKeywords from './NodeKeywords.js';
 import NodeCache from './NodeCache.js';
 import { createNodeMaterialFromType } from '../materials/NodeMaterial.js';
-import { defaultBuildStages, NodeUpdateType, shaderStages } from './constants.js';
+import { defaultBuildStages, NodeShaderStage, NodeUpdateType, shaderStages } from './constants.js';
+import { Node } from './Node.js';
 
 import {
   Color,
@@ -343,7 +344,7 @@ export class NodeBuilder {
     return attribute;
   }
 
-  getPropertyName(node /*, shaderStage*/) {
+  getPropertyName(node: Node, shaderStage?: NodeShaderStage) {
     return node.name;
   }
 

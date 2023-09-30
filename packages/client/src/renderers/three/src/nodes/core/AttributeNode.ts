@@ -1,4 +1,5 @@
-import Node from './Node.js';
+import { Node } from './Node.js';
+
 import { varying } from './VaryingNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 

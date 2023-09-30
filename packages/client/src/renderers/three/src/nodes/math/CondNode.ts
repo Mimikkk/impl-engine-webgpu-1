@@ -2,32 +2,33 @@ import { Node } from '../core/Node.js';
 import { property } from '../core/PropertyNode.js';
 import { context as contextNode } from '../core/ContextNode.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
+import NodeBuilder from '../core/NodeBuilder.js';
 
-class CondNode extends Node {
-  constructor(condNode, ifNode, elseNode = null) {
+export class CondNode extends Node {
+  condNode: Node;
+  ifNode: Node;
+  elseNode: Node | null;
+
+  constructor(condNode: Node, ifNode: Node, elseNode: Node | null = null) {
     super();
 
     this.condNode = condNode;
-
     this.ifNode = ifNode;
     this.elseNode = elseNode;
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     const ifType = this.ifNode.getNodeType(builder);
 
-    if (this.elseNode !== null) {
+    if (this.elseNode) {
       const elseType = this.elseNode.getNodeType(builder);
-
-      if (builder.getTypeLength(elseType) > builder.getTypeLength(ifType)) {
-        return elseType;
-      }
+      if (builder.getTypeLength(elseType) > builder.getTypeLength(ifType)) return elseType;
     }
 
     return ifType;
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const type = this.getNodeType(builder);
     const context = { tempWrite: false };
 

@@ -1,35 +1,38 @@
 import { Node } from '../core/Node.js';
 import { getValueType } from '../core/NodeUtils.js';
 import { buffer } from '../accessors/BufferNode.js';
-//import { bufferAttribute } from '../accessors/BufferAttributeNode.js';
 import { instanceIndex } from '../core/IndexNode.js';
 import { float, nodeProxy } from '../shadernode/ShaderNode.js';
 
 import { MathUtils, Vector4 } from '../../Three.js';
+import NodeBuilder from '../core/NodeBuilder.js';
 
-let min = null;
-let max = null;
+let min: Vector4 | null = null;
+let max: Vector4 | null = null;
 
 class RangeNode extends Node {
-  constructor(minNode = float(), maxNode = float()) {
+  minNode: Node;
+  maxNode: Node;
+
+  constructor(minNode: Node = float(), maxNode: Node = float()) {
     super();
 
     this.minNode = minNode;
     this.maxNode = maxNode;
   }
 
-  getVectorLength(builder) {
+  getVectorLength(builder: NodeBuilder) {
     const minLength = builder.getTypeLength(getValueType(this.minNode.value));
     const maxLength = builder.getTypeLength(getValueType(this.maxNode.value));
 
     return minLength > maxLength ? minLength : maxLength;
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     return builder.object.isInstancedMesh === true ? builder.getTypeFromLength(this.getVectorLength(builder)) : 'float';
   }
 
-  construct(builder) {
+  construct(builder: NodeBuilder) {
     const object = builder.object;
 
     let output = null;
@@ -72,7 +75,6 @@ class RangeNode extends Node {
       const nodeType = this.getNodeType(builder);
 
       output = buffer(array, 'vec4', object.count).element(instanceIndex).convert(nodeType);
-      //output = bufferAttribute( array, 'vec4', 4, 0 ).convert( nodeType );
     } else {
       output = float(0);
     }

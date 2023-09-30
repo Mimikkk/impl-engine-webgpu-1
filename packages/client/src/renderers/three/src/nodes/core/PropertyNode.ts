@@ -1,22 +1,24 @@
-import Node from './Node.js';
+import { Node } from './Node.js';
 import { nodeImmutable, nodeObject } from '../shadernode/ShaderNode.js';
+import { NodeBuilder } from './NodeBuilder.js';
 
 class PropertyNode extends Node {
-  constructor(nodeType, name = null) {
-    super(nodeType);
+  name: string | null;
 
+  constructor(nodeType: string, name: string | null = null) {
+    super(nodeType);
     this.name = name;
   }
 
-  getHash(builder) {
+  getHash(builder: NodeBuilder) {
     return this.name || super.getHash(builder);
   }
 
-  isGlobal(/*builder*/) {
+  isGlobal(builder: NodeBuilder) {
     return true;
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const nodeVary = builder.getVarFromNode(this, this.getNodeType(builder));
     const name = this.name;
 
@@ -30,7 +32,7 @@ class PropertyNode extends Node {
 
 export default PropertyNode;
 
-export const property = (type, name) => nodeObject(new PropertyNode(type, name));
+export const property = (type: string, name: string | null) => nodeObject(new PropertyNode(type, name));
 
 export const diffuseColor = nodeImmutable(PropertyNode, 'vec4', 'DiffuseColor');
 export const roughness = nodeImmutable(PropertyNode, 'float', 'Roughness');

@@ -1,21 +1,24 @@
 import { Node } from '../core/Node.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
-class FogNode extends Node {
-  constructor(colorNode, factorNode) {
+export class FogNode extends Node {
+  isFogNode: boolean = true;
+  colorNode: Node;
+  factorNode?: Node;
+
+  constructor(colorNode: Node, factorNode?: Node) {
     super('float');
 
     this.isFogNode = true;
-
     this.colorNode = colorNode;
     this.factorNode = factorNode;
   }
 
-  mixAssign(outputNode) {
+  mixAssign(outputNode: Node) {
     return this.mix(outputNode, this.colorNode);
   }
 
-  construct() {
+  construct(): Node | undefined {
     return this.factorNode;
   }
 }

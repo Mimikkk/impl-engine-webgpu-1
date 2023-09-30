@@ -1,4 +1,5 @@
-import Node from './Node.js';
+import { Node } from './Node.js';
+
 import NodeCache from './NodeCache.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 

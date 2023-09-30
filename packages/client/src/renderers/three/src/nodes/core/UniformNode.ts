@@ -1,18 +1,20 @@
 import InputNode from './InputNode.js';
 import { getConstNodeType, nodeObject } from '../shadernode/ShaderNode.js';
+import NodeBuilder from './NodeBuilder.js';
 
 class UniformNode extends InputNode {
-  constructor(value, nodeType = null) {
-    super(value, nodeType);
+  isUniformNode: boolean;
 
+  constructor(value: any, nodeType = null) {
+    super(value, nodeType);
     this.isUniformNode = true;
   }
 
-  getUniformHash(builder) {
+  getUniformHash(builder: NodeBuilder) {
     return this.getHash(builder);
   }
 
-  generate(builder, output) {
+  generate(builder: NodeBuilder, output: string | null) {
     const type = this.getNodeType(builder);
 
     const hash = this.getUniformHash(builder);
@@ -41,11 +43,10 @@ class UniformNode extends InputNode {
 
 export default UniformNode;
 
-export const uniform = (arg1, arg2) => {
+export const uniform = (arg1: any, arg2: any) => {
   const nodeType = getConstNodeType(arg2 || arg1);
 
-  // @TODO: get ConstNode from .traverse() in the future
-  const value = arg1 && arg1.isNode === true ? (arg1.node && arg1.node.value) || arg1.value : arg1;
+  const value = arg1 && arg1.isNode ? (arg1.node && arg1.node.value) || arg1.value : arg1;
 
   return nodeObject(new UniformNode(value, nodeType));
 };

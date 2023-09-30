@@ -1,9 +1,14 @@
-import Node from './Node.js';
+import { Node } from './Node.js';
+
 import { NodeShaderStage } from './constants.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
+import NodeBuilder from './NodeBuilder.js';
 
 class VaryingNode extends Node {
-  constructor(node, name = null) {
+  node: Node;
+  name: string | null;
+
+  constructor(node: Node, name: string | null = null) {
     super();
 
     this.node = node;
@@ -14,17 +19,17 @@ class VaryingNode extends Node {
     return true;
   }
 
-  getHash(builder) {
+  getHash(builder: NodeBuilder) {
     return this.name || super.getHash(builder);
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     // VaryingNode is auto type
 
     return this.node.getNodeType(builder);
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const { name, node } = this;
     const type = this.getNodeType(builder);
 

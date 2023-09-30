@@ -1,4 +1,5 @@
-import Node from './Node.js';
+import { Node } from './Node.js';
+
 import { getValueType } from './NodeUtils.js';
 import { NodeBuilder, NodeType } from '../Nodes.js';
 

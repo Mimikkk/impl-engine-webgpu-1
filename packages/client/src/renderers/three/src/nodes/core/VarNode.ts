@@ -1,19 +1,23 @@
-import Node from './Node.js';
+import { Node } from './Node.js';
+
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
+import NodeBuilder from './NodeBuilder.js';
+import TempNode from './TempNode.js';
 
 class VarNode extends Node {
-  constructor(node, name = null) {
+  node: Node;
+  name: string | null;
+
+  constructor(node: Node, name: string | null = null) {
     super();
 
     this.node = node;
     this.name = name;
   }
 
-  assign(node) {
-    node.traverse((childNode, replaceNode) => {
-      if (replaceNode && childNode.uuid === this.uuid) {
-        replaceNode(this.node);
-      }
+  assign(node: Node) {
+    node.traverse((childNode: Node, replaceNode: (node: Node) => void) => {
+      if (replaceNode && childNode.uuid === this.uuid) replaceNode(this.node);
     });
     this.node = node;
     return this;
@@ -23,19 +27,19 @@ class VarNode extends Node {
     return true;
   }
 
-  getHash(builder) {
+  getHash(builder: NodeBuilder) {
     return this.name || super.getHash(builder);
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     return this.node.getNodeType(builder);
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     const node = this.node;
     const name = this.name;
 
-    if (name === null && node.isTempNode === true) {
+    if (name === null && TempNode.is(node)) {
       return node.build(builder);
     }
 

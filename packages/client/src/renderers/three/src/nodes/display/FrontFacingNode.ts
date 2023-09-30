@@ -1,14 +1,16 @@
 import { Node } from '../core/Node.js';
 import { float, nodeImmutable } from '../shadernode/ShaderNode.js';
+import NodeBuilder from '../core/NodeBuilder.js';
 
-class FrontFacingNode extends Node {
+export class FrontFacingNode extends Node {
+  isFrontFacingNode: boolean;
+
   constructor() {
     super('bool');
-
     this.isFrontFacingNode = true;
   }
 
-  generate(builder) {
+  generate(builder: NodeBuilder) {
     return builder.getFrontFacing();
   }
 }
