@@ -1,10 +1,11 @@
 import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
 import { shininess, specularColor } from '../core/PropertyNode.js';
-import { materialShininess, materialSpecularColor } from '../accessors/MaterialNode.js';
+import { MaterialNodes } from '../accessors/MaterialNode.js';
 import { float } from '../shadernode/ShaderNode.js';
 import PhongLightingModel from '../functions/PhongLightingModel.js';
 
 import { MeshPhongMaterial } from '../../Three.js';
+import NodeBuilder from '../core/NodeBuilder.js';
 
 const defaultValues = new MeshPhongMaterial();
 
@@ -31,13 +32,13 @@ class MeshPhongNodeMaterial extends NodeMaterial {
   constructVariants({ stack }) {
     // SHININESS
 
-    const shininessNode = (this.shininessNode ? float(this.shininessNode) : materialShininess).max(1e-4); // to prevent pow( 0.0, 0.0 )
+    const shininessNode = (this.shininessNode ? float(this.shininessNode) : MaterialNodes.shininess).max(1e-4); // to prevent pow( 0.0, 0.0 )
 
     stack.assign(shininess, shininessNode);
 
     // SPECULAR COLOR
 
-    const specularNode = this.specularNode || materialSpecularColor;
+    const specularNode = this.specularNode || MaterialNodes.specularColor;
 
     stack.assign(specularColor, specularNode);
   }

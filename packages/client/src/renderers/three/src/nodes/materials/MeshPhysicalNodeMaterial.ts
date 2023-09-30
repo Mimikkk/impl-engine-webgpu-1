@@ -10,15 +10,7 @@ import {
   sheenRoughness,
 } from '../core/PropertyNode.js';
 import { ExtendedMaterialNodes } from '../accessors/ExtendedMaterialNode.js';
-import {
-  materialClearcoat,
-  materialClearcoatRoughness,
-  materialIridescence,
-  materialIridescenceIOR,
-  materialIridescenceThickness,
-  materialSheen,
-  materialSheenRoughness,
-} from '../accessors/MaterialNode.js';
+import { MaterialNodes } from '../accessors/MaterialNode.js';
 import { float, vec3 } from '../shadernode/ShaderNode.js';
 import PhysicalLightingModel from '../functions/PhysicalLightingModel.js';
 import MeshStandardNodeMaterial from './MeshStandardNodeMaterial.js';
@@ -69,29 +61,29 @@ class MeshPhysicalNodeMaterial extends MeshStandardNodeMaterial {
 
     // CLEARCOAT
 
-    const clearcoatNode = this.clearcoatNode ? float(this.clearcoatNode) : materialClearcoat;
+    const clearcoatNode = this.clearcoatNode ? float(this.clearcoatNode) : MaterialNodes.clearcoat;
     const clearcoatRoughnessNode = this.clearcoatRoughnessNode
       ? float(this.clearcoatRoughnessNode)
-      : materialClearcoatRoughness;
+      : MaterialNodes.clearcoatRoughness;
 
     stack.assign(clearcoat, clearcoatNode);
     stack.assign(clearcoatRoughness, clearcoatRoughnessNode);
 
     // SHEEN
 
-    const sheenNode = this.sheenNode ? vec3(this.sheenNode) : materialSheen;
-    const sheenRoughnessNode = this.sheenRoughnessNode ? float(this.sheenRoughnessNode) : materialSheenRoughness;
+    const sheenNode = this.sheenNode ? vec3(this.sheenNode) : MaterialNodes.sheen;
+    const sheenRoughnessNode = this.sheenRoughnessNode ? float(this.sheenRoughnessNode) : MaterialNodes.sheenRoughness;
 
     stack.assign(sheen, sheenNode);
     stack.assign(sheenRoughness, sheenRoughnessNode);
 
     // IRIDESCENCE
 
-    const iridescenceNode = this.iridescenceNode ? float(this.iridescenceNode) : materialIridescence;
-    const iridescenceIORNode = this.iridescenceIORNode ? float(this.iridescenceIORNode) : materialIridescenceIOR;
+    const iridescenceNode = this.iridescenceNode ? float(this.iridescenceNode) : MaterialNodes.iridescence;
+    const iridescenceIORNode = this.iridescenceIORNode ? float(this.iridescenceIORNode) : MaterialNodes.iridescenceIor;
     const iridescenceThicknessNode = this.iridescenceThicknessNode
       ? float(this.iridescenceThicknessNode)
-      : materialIridescenceThickness;
+      : MaterialNodes.iridescenceThickness;
 
     stack.assign(iridescence, iridescenceNode);
     stack.assign(iridescenceIOR, iridescenceIORNode);

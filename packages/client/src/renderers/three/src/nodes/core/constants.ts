@@ -12,6 +12,8 @@ export enum NodeUpdateType {
 
 export enum NodeType {
   Void = 'void',
+  Texture = 'texture',
+  Color = 'color',
   Boolean = 'bool',
   Integer = 'int',
   Float = 'float',

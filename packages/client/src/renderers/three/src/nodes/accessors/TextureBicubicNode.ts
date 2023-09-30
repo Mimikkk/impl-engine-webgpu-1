@@ -2,9 +2,8 @@ import { TempNode } from '../core/TempNode.js';
 import { add, div, mul } from '../math/OperatorNode.js';
 import { ceil, floor, fract, pow } from '../math/MathNode.js';
 import { addNodeElement, float, int, nodeProxy, vec2, vec4 } from '../shadernode/ShaderNode.js';
-
-// Mipped Bicubic Texture Filtering by N8
-// https://www.shadertoy.com/view/Dl2SDW
+import { TextureNode } from './TextureNode.js';
+import { Node } from '../core/Node.js';
 
 const bC = 1.0 / 6.0;
 
@@ -25,7 +24,7 @@ const h0 = a => add(-1.0, w1(a).div(w0(a).add(w1(a))));
 
 const h1 = a => add(1.0, w3(a).div(w2(a).add(w3(a))));
 
-const bicubic = (textureNode, texelSize, lod) => {
+const bicubic = (textureNode: TextureNode, texelSize: number, lod: number) => {
   const uv = textureNode.uvNode;
   const uvScaled = mul(uv, texelSize.zw).add(0.5);
 
@@ -50,7 +49,7 @@ const bicubic = (textureNode, texelSize, lod) => {
   return a.add(b);
 };
 
-const textureBicubicMethod = (textureNode, lodNode) => {
+const textureBicubicMethod = (textureNode: TextureNode, lodNode: Node) => {
   const fLodSize = vec2(textureNode.size(int(lodNode)));
   const cLodSize = vec2(textureNode.size(int(lodNode.add(1.0))));
   const fLodSizeInv = div(1.0, fLodSize);
@@ -61,8 +60,11 @@ const textureBicubicMethod = (textureNode, lodNode) => {
   return fract(lodNode).mix(fSample, cSample);
 };
 
-class TextureBicubicNode extends TempNode {
-  constructor(textureNode, blurNode = float(3)) {
+export class TextureBicubicNode extends TempNode {
+  textureNode: TextureNode;
+  blurNode: Node;
+
+  constructor(textureNode: TextureNode, blurNode: Node = float(3)) {
     super('vec4');
 
     this.textureNode = textureNode;
@@ -73,8 +75,6 @@ class TextureBicubicNode extends TempNode {
     return textureBicubicMethod(this.textureNode, this.blurNode);
   }
 }
-
-export default TextureBicubicNode;
 
 export const textureBicubic = nodeProxy(TextureBicubicNode);
 

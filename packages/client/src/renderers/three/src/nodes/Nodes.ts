@@ -155,24 +155,10 @@ export { CameraNode } from './accessors/CameraNode.js';
 export { default as CubeTextureNode, cubeTexture } from './accessors/CubeTextureNode.js';
 export { ExtendedMaterialNode } from './accessors/ExtendedMaterialNode.js';
 export { default as InstanceNode, instance } from './accessors/InstanceNode.js';
-export {
-  default as MaterialNode,
-  materialAlphaTest,
-  materialColor,
-  materialShininess,
-  materialEmissive,
-  materialOpacity,
-  materialSpecularColor,
-  materialReflectivity,
-  materialRoughness,
-  materialMetalness,
-  materialRotation,
-  materialSheen,
-  materialSheenRoughness,
-} from './accessors/MaterialNode.js';
+export { MaterialNode, MaterialNodes } from './accessors/MaterialNode.js';
 export { default as MaterialReferenceNode, materialReference } from './accessors/MaterialReferenceNode.js';
 export { MorphNode, morph } from './accessors/MorphNode.js';
-export { default as TextureBicubicNode, textureBicubic } from './accessors/TextureBicubicNode.js';
+export { TextureBicubicNode, textureBicubic } from './accessors/TextureBicubicNode.js';
 export { ModelNode } from './accessors/ModelNode.js';
 export { ModelViewProjectionNode, modelViewProjection } from './accessors/ModelViewProjectionNode.js';
 export { NormalNode, NormalNodes } from './accessors/NormalNode.js';

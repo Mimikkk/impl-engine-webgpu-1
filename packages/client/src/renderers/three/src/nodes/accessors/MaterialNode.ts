@@ -1,33 +1,29 @@
 import { Node } from '../core/Node.js';
 import { reference } from './ReferenceNode.js';
 import { materialReference } from './MaterialReferenceNode.js';
-import { float, nodeImmutable } from '../shadernode/ShaderNode.js';
+import { float } from '../shadernode/ShaderNode.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
 export class MaterialNode extends Node {
-  constructor(scope) {
+  scope: MaterialNode.Scope;
+
+  constructor(scope: MaterialNode.Scope) {
     super();
 
     this.scope = scope;
   }
 
-  getFloat(property) {
-    //@TODO: Check if it can be cached by property name.
-
-    return materialReference(property, 'float');
+  getFloat(property: string) {
+    return materialReference(property, NodeType.Float);
   }
 
-  getColor(property) {
-    //@TODO: Check if it can be cached by property name.
-
-    return materialReference(property, 'color');
+  getColor(property: string) {
+    return materialReference(property, NodeType.Color);
   }
 
-  getTexture(property) {
-    //@TODO: Check if it can be cached by property name.
-
-    const textureRefNode = materialReference(property, 'texture');
-
-    return textureRefNode;
+  getTexture(property: string) {
+    return materialReference(property, NodeType.Texture);
   }
 
   construct(builder: NodeBuilder) {
@@ -37,17 +33,17 @@ export class MaterialNode extends Node {
     let node = null;
 
     if (
-      scope === MaterialNode.ALPHA_TEST ||
-      scope === MaterialNode.SHININESS ||
-      scope === MaterialNode.REFLECTIVITY ||
-      scope === MaterialNode.ROTATION ||
-      scope === MaterialNode.IRIDESCENCE ||
-      scope === MaterialNode.IRIDESCENCE_IOR
+      scope === MaterialNode.Scope.AlphaTest ||
+      scope === MaterialNode.Scope.Shininess ||
+      scope === MaterialNode.Scope.Reflectivity ||
+      scope === MaterialNode.Scope.Rotation ||
+      scope === MaterialNode.Scope.Iridescence ||
+      scope === MaterialNode.Scope.IridescenceIor
     ) {
       node = this.getFloat(scope);
-    } else if (scope === MaterialNode.SPECULAR_COLOR) {
+    } else if (scope === MaterialNode.Scope.SpecularColor) {
       node = this.getColor('specular');
-    } else if (scope === MaterialNode.COLOR) {
+    } else if (scope === MaterialNode.Scope.Color) {
       const colorNode = this.getColor('color');
 
       if (material.map && material.map.isTexture === true) {
@@ -55,7 +51,7 @@ export class MaterialNode extends Node {
       } else {
         node = colorNode;
       }
-    } else if (scope === MaterialNode.OPACITY) {
+    } else if (scope === MaterialNode.Scope.Opacity) {
       const opacityNode = this.getFloat('opacity');
 
       if (material.alphaMap && material.alphaMap.isTexture === true) {
@@ -63,13 +59,13 @@ export class MaterialNode extends Node {
       } else {
         node = opacityNode;
       }
-    } else if (scope === MaterialNode.SPECULAR_STRENGTH) {
+    } else if (scope === MaterialNode.Scope.SpecularStrength) {
       if (material.specularMap && material.specularMap.isTexture === true) {
         node = this.getTexture('specularMap').r;
       } else {
         node = float(1);
       }
-    } else if (scope === MaterialNode.ROUGHNESS) {
+    } else if (scope === MaterialNode.Scope.Roughness) {
       const roughnessNode = this.getFloat('roughness');
 
       if (material.roughnessMap && material.roughnessMap.isTexture === true) {
@@ -77,7 +73,7 @@ export class MaterialNode extends Node {
       } else {
         node = roughnessNode;
       }
-    } else if (scope === MaterialNode.METALNESS) {
+    } else if (scope === MaterialNode.Scope.Metalness) {
       const metalnessNode = this.getFloat('metalness');
 
       if (material.metalnessMap && material.metalnessMap.isTexture === true) {
@@ -85,7 +81,7 @@ export class MaterialNode extends Node {
       } else {
         node = metalnessNode;
       }
-    } else if (scope === MaterialNode.EMISSIVE) {
+    } else if (scope === MaterialNode.Scope.Emissive) {
       const emissiveNode = this.getColor('emissive');
 
       if (material.emissiveMap && material.emissiveMap.isTexture === true) {
@@ -93,7 +89,7 @@ export class MaterialNode extends Node {
       } else {
         node = emissiveNode;
       }
-    } else if (scope === MaterialNode.CLEARCOAT) {
+    } else if (scope === MaterialNode.Scope.Clearcoat) {
       const clearcoatNode = this.getFloat('clearcoat');
 
       if (material.clearcoatMap && material.clearcoatMap.isTexture === true) {
@@ -101,7 +97,7 @@ export class MaterialNode extends Node {
       } else {
         node = clearcoatNode;
       }
-    } else if (scope === MaterialNode.CLEARCOAT_ROUGHNESS) {
+    } else if (scope === MaterialNode.Scope.ClearcoatRoughness) {
       const clearcoatRoughnessNode = this.getFloat('clearcoatRoughness');
 
       if (material.clearcoatRoughnessMap && material.clearcoatRoughnessMap.isTexture === true) {
@@ -109,7 +105,7 @@ export class MaterialNode extends Node {
       } else {
         node = clearcoatRoughnessNode;
       }
-    } else if (scope === MaterialNode.SHEEN) {
+    } else if (scope === MaterialNode.Scope.Sheen) {
       const sheenNode = this.getColor('sheenColor').mul(this.getFloat('sheen')); // Move this mul() to CPU
 
       if (material.sheenColorMap && material.sheenColorMap.isTexture === true) {
@@ -117,7 +113,7 @@ export class MaterialNode extends Node {
       } else {
         node = sheenNode;
       }
-    } else if (scope === MaterialNode.SHEEN_ROUGHNESS) {
+    } else if (scope === MaterialNode.Scope.SheenRoughness) {
       const sheenRoughnessNode = this.getFloat('sheenRoughness');
 
       if (material.sheenRoughnessMap && material.sheenRoughnessMap.isTexture === true) {
@@ -127,7 +123,7 @@ export class MaterialNode extends Node {
       }
 
       node = node.clamp(0.07, 1.0);
-    } else if (scope === MaterialNode.IRIDESCENCE_THICKNESS) {
+    } else if (scope === MaterialNode.Scope.IridescenceThickness) {
       const iridescenceThicknessMaximum = reference(1, 'float', material.iridescenceThicknessRange);
 
       if (material.iridescenceThicknessMap) {
@@ -143,49 +139,55 @@ export class MaterialNode extends Node {
     } else {
       const outputType = this.getNodeType(builder);
 
-      node = materialReference(scope, outputType);
+      node = materialReference(scope, outputType as any);
     }
 
     return node;
   }
 }
 
-MaterialNode.ALPHA_TEST = 'alphaTest';
-MaterialNode.COLOR = 'color';
-MaterialNode.OPACITY = 'opacity';
-MaterialNode.SHININESS = 'shininess';
-MaterialNode.SPECULAR = 'specular';
-MaterialNode.SPECULAR_STRENGTH = 'specularStrength';
-MaterialNode.REFLECTIVITY = 'reflectivity';
-MaterialNode.ROUGHNESS = 'roughness';
-MaterialNode.METALNESS = 'metalness';
-MaterialNode.CLEARCOAT = 'clearcoat';
-MaterialNode.CLEARCOAT_ROUGHNESS = 'clearcoatRoughness';
-MaterialNode.EMISSIVE = 'emissive';
-MaterialNode.ROTATION = 'rotation';
-MaterialNode.SHEEN = 'sheen';
-MaterialNode.SHEEN_ROUGHNESS = 'sheenRoughness';
-MaterialNode.IRIDESCENCE = 'iridescence';
-MaterialNode.IRIDESCENCE_IOR = 'iridescenceIOR';
-MaterialNode.IRIDESCENCE_THICKNESS = 'iridescenceThickness';
+export namespace MaterialNode {
+  export enum Scope {
+    AlphaTest = 'alphaTest',
+    Color = 'color',
+    Opacity = 'opacity',
+    Shininess = 'shininess',
+    Specular = 'specular',
+    SpecularStrength = 'specularStrength',
+    SpecularColor = 'specularColor',
+    Reflectivity = 'reflectivity',
+    Roughness = 'roughness',
+    Metalness = 'metalness',
+    Clearcoat = 'clearcoat',
+    ClearcoatRoughness = 'clearcoatRoughness',
+    Emissive = 'emissive',
+    Rotation = 'rotation',
+    Sheen = 'sheen',
+    SheenRoughness = 'sheenRoughness',
+    Iridescence = 'iridescence',
+    IridescenceIor = 'iridescenceIOR',
+    IridescenceThickness = 'iridescenceThickness',
+  }
+}
 
-export default MaterialNode;
-
-export const materialAlphaTest = nodeImmutable(MaterialNode, MaterialNode.ALPHA_TEST);
-export const materialColor = nodeImmutable(MaterialNode, MaterialNode.COLOR);
-export const materialShininess = nodeImmutable(MaterialNode, MaterialNode.SHININESS);
-export const materialEmissive = nodeImmutable(MaterialNode, MaterialNode.EMISSIVE);
-export const materialOpacity = nodeImmutable(MaterialNode, MaterialNode.OPACITY);
-export const materialSpecularColor = nodeImmutable(MaterialNode, MaterialNode.SPECULAR_COLOR);
-export const materialSpecularStrength = nodeImmutable(MaterialNode, MaterialNode.SPECULAR_STRENGTH);
-export const materialReflectivity = nodeImmutable(MaterialNode, MaterialNode.REFLECTIVITY);
-export const materialRoughness = nodeImmutable(MaterialNode, MaterialNode.ROUGHNESS);
-export const materialMetalness = nodeImmutable(MaterialNode, MaterialNode.METALNESS);
-export const materialClearcoat = nodeImmutable(MaterialNode, MaterialNode.CLEARCOAT);
-export const materialClearcoatRoughness = nodeImmutable(MaterialNode, MaterialNode.CLEARCOAT_ROUGHNESS);
-export const materialRotation = nodeImmutable(MaterialNode, MaterialNode.ROTATION);
-export const materialSheen = nodeImmutable(MaterialNode, MaterialNode.SHEEN);
-export const materialSheenRoughness = nodeImmutable(MaterialNode, MaterialNode.SHEEN_ROUGHNESS);
-export const materialIridescence = nodeImmutable(MaterialNode, MaterialNode.IRIDESCENCE);
-export const materialIridescenceIOR = nodeImmutable(MaterialNode, MaterialNode.IRIDESCENCE_IOR);
-export const materialIridescenceThickness = nodeImmutable(MaterialNode, MaterialNode.IRIDESCENCE_THICKNESS);
+export namespace MaterialNodes {
+  export const alphaTest = new MaterialNode(MaterialNode.Scope.AlphaTest);
+  export const color = new MaterialNode(MaterialNode.Scope.Color);
+  export const opacity = new MaterialNode(MaterialNode.Scope.Opacity);
+  export const specularColor = new MaterialNode(MaterialNode.Scope.SpecularColor);
+  export const shininess = new MaterialNode(MaterialNode.Scope.Shininess);
+  export const specular = new MaterialNode(MaterialNode.Scope.Specular);
+  export const specularStrength = new MaterialNode(MaterialNode.Scope.SpecularStrength);
+  export const reflectivity = new MaterialNode(MaterialNode.Scope.Reflectivity);
+  export const roughness = new MaterialNode(MaterialNode.Scope.Roughness);
+  export const metalness = new MaterialNode(MaterialNode.Scope.Metalness);
+  export const clearcoat = new MaterialNode(MaterialNode.Scope.Clearcoat);
+  export const clearcoatRoughness = new MaterialNode(MaterialNode.Scope.ClearcoatRoughness);
+  export const emissive = new MaterialNode(MaterialNode.Scope.Emissive);
+  export const rotation = new MaterialNode(MaterialNode.Scope.Rotation);
+  export const sheen = new MaterialNode(MaterialNode.Scope.Sheen);
+  export const sheenRoughness = new MaterialNode(MaterialNode.Scope.SheenRoughness);
+  export const iridescence = new MaterialNode(MaterialNode.Scope.Iridescence);
+  export const iridescenceIor = new MaterialNode(MaterialNode.Scope.IridescenceIor);
+  export const iridescenceThickness = new MaterialNode(MaterialNode.Scope.IridescenceThickness);
+}

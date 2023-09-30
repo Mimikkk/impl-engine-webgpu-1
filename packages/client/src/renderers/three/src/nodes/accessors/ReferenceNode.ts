@@ -8,13 +8,13 @@ import { NodeBuilder } from '../core/NodeBuilder.js';
 import NodeFrame from '../core/NodeFrame.js';
 
 class ReferenceNode extends Node {
-  property: string;
+  property: string | number;
   uniformType: string;
   object: any | null;
   node: Node | null;
   updateType: NodeUpdateType;
 
-  constructor(property: string, uniformType: string, object: any | null = null) {
+  constructor(property: string | number, uniformType: string, object: any | null = null) {
     super();
 
     this.property = property;
@@ -57,4 +57,5 @@ class ReferenceNode extends Node {
 
 export default ReferenceNode;
 
-export const reference = (name: string, type: string, object: any) => nodeObject(new ReferenceNode(name, type, object));
+export const reference = (name: string | number, type: string, object: any) =>
+  nodeObject(new ReferenceNode(name, type, object));

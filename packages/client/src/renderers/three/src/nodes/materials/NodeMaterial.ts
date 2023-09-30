@@ -3,7 +3,7 @@ import { getCacheKey } from '../core/NodeUtils.js';
 import { attribute } from '../core/AttributeNode.js';
 import { diffuseColor, output } from '../core/PropertyNode.js';
 import { ExtendedMaterialNodes } from '../accessors/ExtendedMaterialNode.js';
-import { materialAlphaTest, materialColor, materialEmissive, materialOpacity } from '../accessors/MaterialNode.js';
+import { MaterialNodes } from '../accessors/MaterialNode.js';
 import { modelViewProjection } from '../accessors/ModelViewProjectionNode.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
 import { instance } from '../accessors/InstanceNode.js';
@@ -156,7 +156,7 @@ class NodeMaterial extends ShaderMaterial {
   }
 
   constructDiffuseColor({ stack, geometry }) {
-    let colorNode = this.colorNode ? vec4(this.colorNode) : materialColor;
+    let colorNode = this.colorNode ? vec4(this.colorNode) : MaterialNodes.color;
 
     // VERTEX COLORS
 
@@ -170,13 +170,13 @@ class NodeMaterial extends ShaderMaterial {
 
     // OPACITY
 
-    const opacityNode = this.opacityNode ? float(this.opacityNode) : materialOpacity;
+    const opacityNode = this.opacityNode ? float(this.opacityNode) : MaterialNodes.opacity;
     stack.assign(diffuseColor.a, diffuseColor.a.mul(opacityNode));
 
     // ALPHA TEST
 
     if (this.alphaTestNode !== null || this.alphaTest > 0) {
-      const alphaTestNode = this.alphaTestNode !== null ? float(this.alphaTestNode) : materialAlphaTest;
+      const alphaTestNode = this.alphaTestNode !== null ? float(this.alphaTestNode) : MaterialNodes.alphaTest;
 
       stack.add(diffuseColor.a.lessThanEqual(alphaTestNode).discard());
     }
@@ -269,7 +269,7 @@ class NodeMaterial extends ShaderMaterial {
     // EMISSIVE
 
     if ((emissiveNode && emissiveNode.isNode === true) || (material.emissive && material.emissive.isColor === true)) {
-      outgoingLightNode = outgoingLightNode.add(emissiveNode ? vec3(emissiveNode) : materialEmissive);
+      outgoingLightNode = outgoingLightNode.add(emissiveNode ? vec3(emissiveNode) : MaterialNodes.emissive);
     }
 
     return outgoingLightNode;

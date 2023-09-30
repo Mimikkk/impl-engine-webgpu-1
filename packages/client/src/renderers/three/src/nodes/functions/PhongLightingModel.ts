@@ -3,7 +3,7 @@ import F_Schlick from './BSDF/F_Schlick.js';
 import BRDF_Lambert from './BSDF/BRDF_Lambert.js';
 import { diffuseColor, shininess, specularColor } from '../core/PropertyNode.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
-import { materialSpecularStrength } from '../accessors/MaterialNode.js';
+import { MaterialNodes } from '../accessors/MaterialNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
 import { float, tslFn } from '../shadernode/ShaderNode.js';
 
@@ -44,7 +44,7 @@ class PhongLightingModel extends LightingModel {
 
     if (this.specular === true) {
       reflectedLight.directSpecular.addAssign(
-        irradiance.mul(BRDF_BlinnPhong({ lightDirection })).mul(materialSpecularStrength),
+        irradiance.mul(BRDF_BlinnPhong({ lightDirection })).mul(MaterialNodes.specularStrength),
       );
     }
   }

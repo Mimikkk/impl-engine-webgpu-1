@@ -1,7 +1,7 @@
 import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
 import { uniform } from '../core/UniformNode.js';
 import { CameraNodes } from '../accessors/CameraNode.js';
-import { materialRotation } from '../accessors/MaterialNode.js';
+import { MaterialNodes } from '../accessors/MaterialNode.js';
 import { ModelNodes } from '../accessors/ModelNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
 import { float, vec2, vec3, vec4 } from '../shadernode/ShaderNode.js';
@@ -58,7 +58,7 @@ class SpriteNodeMaterial extends NodeMaterial {
 
     alignedPosition = alignedPosition.mul(scale);
 
-    const rotation = float(rotationNode || materialRotation);
+    const rotation = float(rotationNode || MaterialNodes.rotation);
 
     const cosAngle = rotation.cos();
     const sinAngle = rotation.sin();

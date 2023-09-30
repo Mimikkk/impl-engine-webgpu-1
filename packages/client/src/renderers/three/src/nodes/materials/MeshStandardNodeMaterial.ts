@@ -1,7 +1,7 @@
 import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
 import { diffuseColor, metalness, roughness, specularColor } from '../core/PropertyNode.js';
 import { mix } from '../math/MathNode.js';
-import { materialMetalness, materialRoughness } from '../accessors/MaterialNode.js';
+import { MaterialNodes } from '../accessors/MaterialNode.js';
 import getRoughness from '../functions/material/getRoughness.js';
 import PhysicalLightingModel from '../functions/PhysicalLightingModel.js';
 import { float, vec3, vec4 } from '../shadernode/ShaderNode.js';
@@ -33,13 +33,13 @@ class MeshStandardNodeMaterial extends NodeMaterial {
   constructVariants({ stack }) {
     // METALNESS
 
-    const metalnessNode = this.metalnessNode ? float(this.metalnessNode) : materialMetalness;
+    const metalnessNode = this.metalnessNode ? float(this.metalnessNode) : MaterialNodes.metalness;
 
     stack.assign(metalness, metalnessNode);
 
     // ROUGHNESS
 
-    let roughnessNode = this.roughnessNode ? float(this.roughnessNode) : materialRoughness;
+    let roughnessNode = this.roughnessNode ? float(this.roughnessNode) : MaterialNodes.roughness;
     roughnessNode = getRoughness({ roughness: roughnessNode });
 
     stack.assign(roughness, roughnessNode);
