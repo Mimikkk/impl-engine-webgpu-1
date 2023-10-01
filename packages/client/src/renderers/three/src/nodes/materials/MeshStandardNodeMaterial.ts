@@ -1,4 +1,4 @@
-import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
+import { addNodeMaterial, NodeMaterial, ShaderMaterialParameters } from './NodeMaterial.js';
 import { PropertyNodes } from '../core/PropertyNode.js';
 import { mix } from '../math/MathNode.js';
 import { MaterialNodes } from '../accessors/MaterialNode.js';
@@ -8,11 +8,16 @@ import { float, vec3, vec4 } from '../shadernode/ShaderNode.js';
 
 import { MeshStandardMaterial } from '../../Three.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
+import { Node } from '../core/Node.js';
 
 const defaultValues = new MeshStandardMaterial();
 
 export class MeshStandardNodeMaterial extends NodeMaterial {
-  constructor(parameters) {
+  isMeshStandardNodeMaterial: true = true;
+  metalnessNode: Node | null;
+  roughnessNode: Node | null;
+
+  constructor(parameters?: ShaderMaterialParameters) {
     super();
 
     this.isMeshStandardNodeMaterial = true;
@@ -31,7 +36,7 @@ export class MeshStandardNodeMaterial extends NodeMaterial {
     return new PhysicalLightingModel(false, false); // ( clearcoat, sheen ) -> standard
   }
 
-  constructVariants({ stack }) {
+  constructVariants({ stack }: any) {
     // METALNESS
 
     const metalnessNode = this.metalnessNode ? float(this.metalnessNode) : MaterialNodes.metalness;
@@ -58,9 +63,8 @@ export class MeshStandardNodeMaterial extends NodeMaterial {
     );
   }
 
-  copy(source) {
+  copy(source: MeshStandardNodeMaterial) {
     this.emissiveNode = source.emissiveNode;
-
     this.metalnessNode = source.metalnessNode;
     this.roughnessNode = source.roughnessNode;
 

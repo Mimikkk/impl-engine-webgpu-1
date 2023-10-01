@@ -1,11 +1,13 @@
-import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
+import { NodeMaterial, addNodeMaterial, ShaderMaterialParameters } from './NodeMaterial.js';
 
 import { MeshBasicMaterial } from '../../Three.js';
 
 const defaultValues = new MeshBasicMaterial();
 
-class MeshBasicNodeMaterial extends NodeMaterial {
-  constructor(parameters) {
+export class MeshBasicNodeMaterial extends NodeMaterial {
+  isMeshBasicNodeMaterial: true = true;
+
+  constructor(parameters?: ShaderMaterialParameters) {
     super();
 
     this.isMeshBasicNodeMaterial = true;
@@ -17,7 +19,5 @@ class MeshBasicNodeMaterial extends NodeMaterial {
     this.setValues(parameters);
   }
 }
-
-export default MeshBasicNodeMaterial;
 
 addNodeMaterial(MeshBasicNodeMaterial);

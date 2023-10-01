@@ -1,14 +1,17 @@
-import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
-
+import { NodeMaterial, addNodeMaterial } from './NodeMaterial.js';
 import { PointsMaterial } from '../../Three.js';
+import { ShaderMaterialParameters } from 'three/src/Three.js';
+import { Node } from 'three/examples/jsm/nodes/Nodes.js';
 
 const defaultValues = new PointsMaterial();
 
-class PointsNodeMaterial extends NodeMaterial {
-  constructor(parameters) {
-    super();
+export class PointsNodeMaterial extends NodeMaterial {
+  isPointsNodeMateria: true = true;
+  lightNode: Node | null;
+  sizeNode: Node | null;
 
-    this.isPointsNodeMaterial = true;
+  constructor(parameters?: ShaderMaterialParameters) {
+    super();
 
     this.lights = false;
     this.normals = false;
@@ -28,16 +31,14 @@ class PointsNodeMaterial extends NodeMaterial {
 
     this.setDefaultValues(defaultValues);
 
-    this.setValues(parameters);
+    this.setValues(parameters as any);
   }
 
-  copy(source) {
+  copy(source: PointsNodeMaterial) {
     this.sizeNode = source.sizeNode;
 
     return super.copy(source);
   }
 }
-
-export default PointsNodeMaterial;
 
 addNodeMaterial(PointsNodeMaterial);

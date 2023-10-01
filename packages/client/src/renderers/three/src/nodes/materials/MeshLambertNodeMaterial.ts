@@ -1,12 +1,15 @@
-import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
+import { NodeMaterial, addNodeMaterial, ShaderMaterialParameters } from './NodeMaterial.js';
 import { PhongLightingModel } from '../functions/PhongLightingModel.js';
 
 import { MeshLambertMaterial } from '../../Three.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 const defaultValues = new MeshLambertMaterial();
 
-class MeshLambertNodeMaterial extends NodeMaterial {
-  constructor(parameters) {
+export class MeshLambertNodeMaterial extends NodeMaterial {
+  isMeshLambertNodeMaterial: true = true;
+
+  constructor(parameters?: ShaderMaterialParameters) {
     super();
 
     this.isMeshLambertNodeMaterial = true;
@@ -22,7 +25,5 @@ class MeshLambertNodeMaterial extends NodeMaterial {
     return new PhongLightingModel(false); // ( specular ) -> force lambert
   }
 }
-
-export default MeshLambertNodeMaterial;
 
 addNodeMaterial(MeshLambertNodeMaterial);

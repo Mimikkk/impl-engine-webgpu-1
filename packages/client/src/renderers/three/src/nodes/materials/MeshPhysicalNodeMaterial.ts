@@ -1,4 +1,4 @@
-import { addNodeMaterial } from './NodeMaterial.js';
+import { addNodeMaterial, ShaderMaterialParameters } from './NodeMaterial.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
 import { PropertyNodes } from '../core/PropertyNode.js';
 import { ExtendedMaterialNodes } from '../accessors/ExtendedMaterialNode.js';
@@ -9,11 +9,30 @@ import { MeshStandardNodeMaterial } from './MeshStandardNodeMaterial.js';
 
 import { MeshPhysicalMaterial } from '../../Three.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
+import { Node } from '../core/Node.js';
+import { CheckerNode } from '../procedural/CheckerNode.js';
 
 const defaultValues = new MeshPhysicalMaterial();
 
 export class MeshPhysicalNodeMaterial extends MeshStandardNodeMaterial {
-  constructor(parameters) {
+  isMeshPhysicalNodeMaterial: true = true;
+
+  iridescenceNode: CheckerNode | null;
+  iridescenceIORNode: Node | null;
+  iridescenceThicknessNode: Node | null;
+  specularIntensityNode: Node | null;
+  specularColorNode: Node | null;
+  transmissionNode: Node | null;
+  thicknessNode: Node | null;
+  attenuationDistanceNode: Node | null;
+  attenuationColorNode: Node | null;
+  clearcoatNode: CheckerNode | null;
+  clearcoatRoughnessNode: Node | null;
+  clearcoatNormalNode: Node | null;
+  sheenNode: CheckerNode | null;
+  sheenRoughnessNode: Node | null;
+
+  constructor(parameters?: ShaderMaterialParameters) {
     super();
 
     this.isMeshPhysicalNodeMaterial = true;
@@ -46,7 +65,7 @@ export class MeshPhysicalNodeMaterial extends MeshStandardNodeMaterial {
     return new PhysicalLightingModel(); // @TODO: Optimize shader using parameters.
   }
 
-  constructVariants(builder) {
+  constructVariants(builder: NodeBuilder) {
     super.constructVariants(builder);
 
     const { stack } = builder;
@@ -82,7 +101,7 @@ export class MeshPhysicalNodeMaterial extends MeshStandardNodeMaterial {
     stack.assign(PropertyNodes.iridescenceThickness, iridescenceThicknessNode);
   }
 
-  constructNormal(builder) {
+  constructNormal(builder: NodeBuilder) {
     super.constructNormal(builder);
 
     // CLEARCOAT NORMAL
@@ -94,7 +113,7 @@ export class MeshPhysicalNodeMaterial extends MeshStandardNodeMaterial {
     builder.stack.assign(NormalNodes.transformed.clearcoat, clearcoatNormalNode);
   }
 
-  copy(source) {
+  copy(source: MeshPhysicalNodeMaterial) {
     this.clearcoatNode = source.clearcoatNode;
     this.clearcoatRoughnessNode = source.clearcoatRoughnessNode;
     this.clearcoatNormalNode = source.clearcoatNormalNode;

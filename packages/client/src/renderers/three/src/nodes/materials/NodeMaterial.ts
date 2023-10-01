@@ -1,9 +1,16 @@
-import { LinearSRGBColorSpace, Material, NoColorSpace, ShaderMaterial } from '../../Three.js';
+import {
+  GLSLVersion,
+  LinearSRGBColorSpace,
+  Material,
+  NoColorSpace,
+  ShaderMaterial,
+  UniformsGroup,
+} from '../../Three.js';
 import { getCacheKey } from '../core/NodeUtils.js';
 import { attribute } from '../core/AttributeNode.js';
 import { PropertyNodes } from '../core/PropertyNode.js';
 import { ExtendedMaterialNodes } from '../accessors/ExtendedMaterialNode.js';
-import { MaterialNodes } from '../accessors/MaterialNode.js';
+import { MaterialNode, MaterialNodes } from '../accessors/MaterialNode.js';
 import { modelViewProjection } from '../accessors/ModelViewProjectionNode.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
 import { instance } from '../accessors/InstanceNode.js';
@@ -17,10 +24,60 @@ import { dFdx, dFdy, mix } from '../math/MathNode.js';
 import { float, vec3, vec4 } from '../shadernode/ShaderNode.js';
 import { AONode } from '../lighting/AONode.js';
 import { EnvironmentNode } from '../lighting/EnvironmentNode.js';
+import { Node } from '../core/Node.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+
+export interface IUniform<TValue = any> {
+  value: TValue;
+}
+
+export interface ShaderMaterialParameters extends Material.Parameters {
+  uniforms?: Record<string, IUniform>;
+  uniformsGroups?: UniformsGroup[];
+  vertexShader?: string;
+  fragmentShader?: string;
+  linewidth?: number;
+  wireframe?: boolean;
+  wireframeLinewidth?: number;
+  lights?: boolean;
+  clipping?: boolean;
+  fog?: boolean;
+  extensions?: {
+    derivatives?: boolean;
+    fragDepth?: boolean;
+    drawBuffers?: boolean;
+    shaderTextureLOD?: boolean;
+  };
+  glslVersion?: GLSLVersion;
+}
 
 const NodeMaterials = new Map();
 
-class NodeMaterial extends ShaderMaterial {
+export class NodeMaterial extends ShaderMaterial {
+  isNodeMaterial: true = true;
+  type: string;
+
+  lights: boolean;
+  normals: boolean;
+  unlit: boolean;
+  colorSpace: boolean;
+
+  outputNode: Node | null;
+  vertexNode: Node | null;
+
+  lightsNode: Node | null;
+  envNode: Node | null;
+  colorNode: Node | null;
+  normalNode: Node | null;
+  opacityNode: Node | null;
+  backdropNode: Node | null;
+  backdropAlphaNode: Node | null;
+  alphaTestNode: Node | null;
+  positionNode: Node | null;
+  flatShading: boolean;
+  envMap: any;
+  emissiveNode: Node | null;
+
   constructor() {
     super();
 
@@ -49,16 +106,12 @@ class NodeMaterial extends ShaderMaterial {
 
     this.positionNode = null;
 
-    this.outputNode = null; // @TODO: Rename to fragmentNode
+    this.outputNode = null;
     this.vertexNode = null;
   }
 
-  static fromMaterial(material) {
-    if (material.isNodeMaterial === true) {
-      // is already a node material
-
-      return material;
-    }
+  static fromMaterial(material: Material | MaterialNode) {
+    if ('isNodeMaterial' in material) return material;
 
     const type = material.type.replace('Material', 'NodeMaterial');
 
@@ -69,6 +122,7 @@ class NodeMaterial extends ShaderMaterial {
     }
 
     for (const key in material) {
+      //@ts-expect-error
       nodeMaterial[key] = material[key];
     }
 
@@ -79,7 +133,7 @@ class NodeMaterial extends ShaderMaterial {
     return this.type + getCacheKey(this);
   }
 
-  build(builder) {
+  build(builder: NodeBuilder) {
     this.construct(builder);
   }
 
@@ -124,7 +178,7 @@ class NodeMaterial extends ShaderMaterial {
     builder.addFlow('fragment', builder.removeStack());
   }
 
-  constructPosition(builder) {
+  constructPosition(builder: NodeBuilder) {
     const object = builder.object;
     const geometry = object.geometry;
 
@@ -141,6 +195,7 @@ class NodeMaterial extends ShaderMaterial {
     if (
       object.instanceMatrix &&
       object.instanceMatrix.isInstancedBufferAttribute === true &&
+      //@ts-expect-error
       builder.isAvailable('instance') === true
     ) {
       builder.stack.add(instance(object));
@@ -155,12 +210,12 @@ class NodeMaterial extends ShaderMaterial {
     return this.vertexNode || modelViewProjection();
   }
 
-  constructDiffuseColor({ stack, geometry }) {
+  constructDiffuseColor({ stack, geometry }: any) {
     let colorNode = this.colorNode ? vec4(this.colorNode) : MaterialNodes.color;
 
     // VERTEX COLORS
 
-    if (this.vertexColors === true && geometry.hasAttribute('color')) {
+    if (this.vertexColors && geometry.hasAttribute('color')) {
       colorNode = vec4(colorNode.xyz.mul(attribute('color')), colorNode.a);
     }
 
@@ -186,10 +241,10 @@ class NodeMaterial extends ShaderMaterial {
     // Interface function.
   }
 
-  constructNormal({ stack }) {
+  constructNormal({ stack }: any) {
     // NORMAL VIEW
 
-    if (this.flatShading === true) {
+    if (this.flatShading) {
       const fdx = dFdx(PositionNodes.view);
       const fdy = dFdy(PositionNodes.view.negate()); // use -positionView ?
       const normalNode = fdx.cross(fdy).normalize();
@@ -202,7 +257,7 @@ class NodeMaterial extends ShaderMaterial {
     }
   }
 
-  getEnvNode(builder) {
+  getEnvNode(builder: NodeBuilder) {
     let node = null;
 
     if (this.envNode) {
@@ -216,7 +271,7 @@ class NodeMaterial extends ShaderMaterial {
     return node;
   }
 
-  constructLights(builder) {
+  constructLights(builder: NodeBuilder) {
     const envNode = this.getEnvNode(builder);
 
     //
@@ -244,13 +299,13 @@ class NodeMaterial extends ShaderMaterial {
     // Interface function.
   }
 
-  constructLighting(builder) {
+  constructLighting(builder: NodeBuilder) {
     const { material } = builder;
     const { backdropNode, backdropAlphaNode, emissiveNode } = this;
 
     // OUTGOING LIGHT
 
-    const lights = this.lights === true || this.lightsNode !== null;
+    const lights = this.lights || this.lightsNode !== null;
 
     const lightsNode = lights ? this.constructLights(builder) : null;
 
@@ -268,14 +323,14 @@ class NodeMaterial extends ShaderMaterial {
 
     // EMISSIVE
 
-    if ((emissiveNode && emissiveNode.isNode === true) || (material.emissive && material.emissive.isColor === true)) {
+    if (emissiveNode?.isNode || material.emissive?.isColor) {
       outgoingLightNode = outgoingLightNode.add(emissiveNode ? vec3(emissiveNode) : MaterialNodes.emissive);
     }
 
     return outgoingLightNode;
   }
 
-  constructOutput(builder, outputNode) {
+  constructOutput(builder: NodeBuilder, outputNode: Node) {
     const renderer = builder.renderer;
 
     // TONE MAPPING
@@ -283,6 +338,7 @@ class NodeMaterial extends ShaderMaterial {
     const toneMappingNode = builder.toneMappingNode;
 
     if (toneMappingNode) {
+      //@ts-expect-error
       outputNode = vec4(toneMappingNode.context({ color: outputNode.rgb }), outputNode.a);
     }
 
@@ -291,6 +347,7 @@ class NodeMaterial extends ShaderMaterial {
     if (this.fog === true) {
       const fogNode = builder.fogNode;
 
+      //@ts-expect-error
       if (fogNode) outputNode = vec4(fogNode.mixAssign(outputNode.rgb), outputNode.a);
     }
 
@@ -308,6 +365,7 @@ class NodeMaterial extends ShaderMaterial {
       }
 
       if (outputColorSpace !== LinearSRGBColorSpace && outputColorSpace !== NoColorSpace) {
+        //@ts-expect-error
         outputNode = outputNode.linearToColorSpace(outputColorSpace);
       }
     }
@@ -315,16 +373,20 @@ class NodeMaterial extends ShaderMaterial {
     return outputNode;
   }
 
-  setDefaultValues(material) {
+  setDefaultValues(material: Material) {
     // This approach is to reuse the native refreshUniforms*
     // and turn available the use of features like transmission and environment in core
 
     for (const property in material) {
+      //@ts-expect-error
       const value = material[property];
 
+      //@ts-expect-error
       if (this[property] === undefined) {
+        //@ts-expect-error
         this[property] = value;
 
+        //@ts-expect-error
         if (value && value.clone) this[property] = value.clone();
       }
     }
@@ -343,7 +405,7 @@ class NodeMaterial extends ShaderMaterial {
     }
   }
 
-  copy(source) {
+  copy(source: NodeMaterial) {
     this.lightsNode = source.lightsNode;
     this.envNode = source.envNode;
 
@@ -363,22 +425,14 @@ class NodeMaterial extends ShaderMaterial {
   }
 }
 
-export default NodeMaterial;
-
-export function addNodeMaterial(nodeMaterial) {
-  if (typeof nodeMaterial !== 'function' || !nodeMaterial.name)
-    throw new Error(`Node material ${nodeMaterial.name} is not a class`);
-  if (NodeMaterials.has(nodeMaterial.name)) throw new Error(`Redefinition of node material ${nodeMaterial.name}`);
-
+export function addNodeMaterial(nodeMaterial: any) {
   NodeMaterials.set(nodeMaterial.name, nodeMaterial);
 }
 
-export function createNodeMaterialFromType(type) {
+export function createNodeMaterialFromType(type: any) {
   const Material = NodeMaterials.get(type);
 
-  if (Material !== undefined) {
-    return new Material();
-  }
+  if (Material) return new Material();
 }
 
 addNodeMaterial(NodeMaterial);

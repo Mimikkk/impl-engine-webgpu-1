@@ -74,4 +74,5 @@ class AttributeNode extends Node {
 
 export default AttributeNode;
 
-export const attribute = (name: string, nodeType: NodeType) => nodeObject(new AttributeNode(name, nodeType));
+export const attribute = (name: string, nodeType: NodeType | null = null) =>
+  nodeObject(new AttributeNode(name, nodeType));

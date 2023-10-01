@@ -1,14 +1,14 @@
-import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
+import { NodeMaterial, addNodeMaterial, ShaderMaterialParameters } from './NodeMaterial.js';
 
-import { LineBasicMaterial } from '../../Three.js';
+import { GLSLVersion, LineBasicMaterial, Material, UniformsGroup } from '../../Three.js';
 
 const defaultValues = new LineBasicMaterial();
 
-class LineBasicNodeMaterial extends NodeMaterial {
-  constructor(parameters) {
-    super();
+export class LineBasicNodeMaterial extends NodeMaterial {
+  isLineBasicNodeMaterial: true = true;
 
-    this.isLineBasicNodeMaterial = true;
+  constructor(parameters?: ShaderMaterialParameters) {
+    super();
 
     this.lights = false;
     this.normals = false;
@@ -18,7 +18,5 @@ class LineBasicNodeMaterial extends NodeMaterial {
     this.setValues(parameters);
   }
 }
-
-export default LineBasicNodeMaterial;
 
 addNodeMaterial(LineBasicNodeMaterial);

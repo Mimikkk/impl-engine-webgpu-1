@@ -1,4 +1,4 @@
-import NodeMaterial, { addNodeMaterial } from './NodeMaterial.js';
+import { NodeMaterial, addNodeMaterial } from './NodeMaterial.js';
 import { uniform } from '../core/UniformNode.js';
 import { CameraNodes } from '../accessors/CameraNode.js';
 import { MaterialNodes } from '../accessors/MaterialNode.js';
@@ -7,11 +7,18 @@ import { PositionNodes } from '../accessors/PositionNode.js';
 import { float, vec2, vec3, vec4 } from '../shadernode/ShaderNode.js';
 
 import { SpriteMaterial } from '../../Three.js';
+import Node from 'three/examples/jsm/nodes/core/Node.js';
+import { ShaderMaterialParameters } from 'three/src/Three.js';
 
 const defaultValues = new SpriteMaterial();
 
-class SpriteNodeMaterial extends NodeMaterial {
-  constructor(parameters) {
+export class SpriteNodeMaterial extends NodeMaterial {
+  isSpriteNodeMaterial: true;
+  lightNode: Node | null;
+  rotationNode: Node | null;
+  scaleNode: Node | null;
+
+  constructor(parameters?: ShaderMaterialParameters) {
     super();
 
     this.isSpriteNodeMaterial = true;
@@ -32,10 +39,10 @@ class SpriteNodeMaterial extends NodeMaterial {
 
     this.setDefaultValues(defaultValues);
 
-    this.setValues(parameters);
+    this.setValues(parameters as any);
   }
 
-  constructPosition({ object, context }) {
+  constructPosition({ object, context }: any) {
     // < VERTEX STAGE >
 
     const { positionNode, rotationNode, scaleNode } = this;
@@ -64,7 +71,6 @@ class SpriteNodeMaterial extends NodeMaterial {
     const sinAngle = rotation.sin();
 
     const rotatedPosition = vec2(
-      // @TODO: Maybe we can create mat2 and write something like rotationMatrix.mul( alignedPosition )?
       vec2(cosAngle, sinAngle.negate()).dot(alignedPosition),
       vec2(sinAngle, cosAngle).dot(alignedPosition),
     );
@@ -78,7 +84,7 @@ class SpriteNodeMaterial extends NodeMaterial {
     return modelViewProjection;
   }
 
-  copy(source) {
+  copy(source: SpriteNodeMaterial) {
     this.positionNode = source.positionNode;
     this.rotationNode = source.rotationNode;
     this.scaleNode = source.scaleNode;
