@@ -82,6 +82,6 @@ export class LightsNode extends Node {
 export const lights = (lights: Light[]) => nodeObject(new LightsNode().fromLights(lights));
 export const lightsWithoutWrap = nodeProxy(LightsNode);
 
-export function addLightNode(lightClass: typeof Light, lightNodeClass: typeof LightNode) {
+export function addLightNode(lightClass: any, lightNodeClass: any) {
   LightNodes.set(lightClass, lightNodeClass);
 }

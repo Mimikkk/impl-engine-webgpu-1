@@ -4,13 +4,16 @@ import { getDistanceAttenuation } from './LightUtils.js';
 import { uniform } from '../core/UniformNode.js';
 import { Object3DNodes } from '../accessors/Object3DNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
-
 import { PointLight } from '../../Three.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 import { NodeFrame } from '../core/NodeFrame.js';
+import { Node } from '../core/Node.js';
 
 export class PointLightNode extends AnalyticLightNode {
-  constructor(light = null) {
+  cutoffDistanceNode: Node;
+  decayExponentNode: Node;
+
+  constructor(light: PointLight) {
     super(light);
 
     this.cutoffDistanceNode = uniform(0);
@@ -18,11 +21,13 @@ export class PointLightNode extends AnalyticLightNode {
   }
 
   update(frame: NodeFrame) {
-    const { light } = this;
+    const light = this.light as PointLight;
 
     super.update(frame);
 
+    //@ts-expect-error
     this.cutoffDistanceNode.value = light.distance;
+    //@ts-expect-error
     this.decayExponentNode.value = light.decay;
   }
 
@@ -42,15 +47,12 @@ export class PointLightNode extends AnalyticLightNode {
       decayExponent: decayExponentNode,
     });
 
+    //@ts-expect-error
     const lightColor = colorNode.mul(lightAttenuation);
 
     const reflectedLight = builder.context.reflectedLight;
 
-    lightingModel.direct({
-      lightDirection,
-      lightColor,
-      reflectedLight,
-    });
+    lightingModel.direct({ lightDirection, lightColor, reflectedLight });
   }
 }
 
