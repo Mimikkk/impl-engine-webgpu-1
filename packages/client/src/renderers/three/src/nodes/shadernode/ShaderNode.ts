@@ -5,7 +5,7 @@ import JoinNode from '../utils/JoinNode.js';
 import SplitNode from '../utils/SplitNode.js';
 import { ConstNode } from '../core/ConstNode.js';
 import { getValueFromType, getValueType } from '../core/NodeUtils.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 import StackNode from '../core/StackNode.js';
 
 const NodeElements = new Map<string, Node>();

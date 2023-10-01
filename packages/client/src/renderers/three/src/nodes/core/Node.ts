@@ -1,8 +1,8 @@
 import { EventDispatcher, MathUtils } from '../../Three.js';
 import { NodeType, NodeUpdateType } from './constants.js';
 import { getCacheKey, getNodeChildren } from './NodeUtils.js';
-import NodeBuilder from './NodeBuilder.js';
-import NodeFrame from './NodeFrame.js';
+import { NodeBuilder } from './NodeBuilder.js';
+import { NodeFrame } from './NodeFrame.js';
 
 let _nodeId = 0;
 
@@ -92,7 +92,7 @@ export class Node extends EventDispatcher<'dispose'> {
     return nodeFromHash || this;
   }
 
-  construct(builder: NodeBuilder): Node | null | undefined {
+  construct(builder: NodeBuilder): Node | null | undefined | void {
     const nodeProperties = builder.getNodeProperties(this);
 
     for (const { childNode } of this.getChildren()) {

@@ -15,8 +15,8 @@ import { cubeTexture } from '../accessors/CubeTextureNode.js';
 import { lightsWithoutWrap } from '../lighting/LightsNode.js';
 import { dFdx, dFdy, mix } from '../math/MathNode.js';
 import { float, vec3, vec4 } from '../shadernode/ShaderNode.js';
-import AONode from '../lighting/AONode.js';
-import EnvironmentNode from '../lighting/EnvironmentNode.js';
+import { AONode } from '../lighting/AONode.js';
+import { EnvironmentNode } from '../lighting/EnvironmentNode.js';
 
 const NodeMaterials = new Map();
 

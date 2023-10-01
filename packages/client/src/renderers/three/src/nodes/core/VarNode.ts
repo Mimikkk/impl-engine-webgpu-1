@@ -1,7 +1,7 @@
 import { Node } from './Node.js';
 
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
-import NodeBuilder from './NodeBuilder.js';
+import { NodeBuilder } from './NodeBuilder.js';
 import TempNode from './TempNode.js';
 
 class VarNode extends Node {

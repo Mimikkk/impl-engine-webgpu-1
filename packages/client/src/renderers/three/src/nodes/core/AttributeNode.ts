@@ -3,7 +3,7 @@ import { Node } from './Node.js';
 import { varying } from './VaryingNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 import { NodeType } from './constants.js';
-import NodeBuilder from './NodeBuilder.js';
+import { NodeBuilder } from './NodeBuilder.js';
 
 class AttributeNode extends Node {
   _attributeName: string | null;

@@ -1,7 +1,7 @@
 import { Object3DNode } from './Object3DNode.js';
 import { label } from '../core/ContextNode.js';
 import { nodeImmutable } from '../shadernode/ShaderNode.js';
-import NodeFrame from '../core/NodeFrame.js';
+import { NodeFrame } from '../core/NodeFrame.js';
 
 export class ModelNode extends Object3DNode {
   constructor(scope: Object3DNode.Scope = ModelNode.Scope.ViewMatrix) {

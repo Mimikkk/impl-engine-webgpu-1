@@ -1,4 +1,4 @@
-import LightingNode from './LightingNode.js';
+import { LightingNode } from './LightingNode.js';
 import { NodeUpdateType } from '../core/constants.js';
 import { uniform } from '../core/UniformNode.js';
 import { vec3 } from '../shadernode/ShaderNode.js';
@@ -8,9 +8,9 @@ import { PositionNodes } from '../accessors/PositionNode.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
 import { Color, DepthTexture, LessCompare, NearestFilter } from '../../Three.js';
 
-let depthMaterial = null;
+let depthMaterial: DepthTexture | null = null;
 
-class AnalyticLightNode extends LightingNode {
+export class AnalyticLightNode extends LightingNode {
   constructor(light = null) {
     super();
 
@@ -159,5 +159,3 @@ class AnalyticLightNode extends LightingNode {
     this.color.copy(light.color).multiplyScalar(light.intensity);
   }
 }
-
-export default AnalyticLightNode;

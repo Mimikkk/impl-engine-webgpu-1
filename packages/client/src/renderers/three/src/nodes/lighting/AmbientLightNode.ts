@@ -1,10 +1,11 @@
-import AnalyticLightNode from './AnalyticLightNode.js';
+import { AnalyticLightNode } from './AnalyticLightNode.js';
 import { addLightNode } from './LightsNode.js';
 
 import { AmbientLight } from '../../Three.js';
 
-class AmbientLightNode extends AnalyticLightNode {
+export class AmbientLightNode extends AnalyticLightNode {
   constructor(light = null) {
+    console.log('hh');
     super(light);
   }
 
@@ -12,7 +13,5 @@ class AmbientLightNode extends AnalyticLightNode {
     context.irradiance.addAssign(this.colorNode);
   }
 }
-
-export default AmbientLightNode;
 
 addLightNode(AmbientLight, AmbientLightNode);

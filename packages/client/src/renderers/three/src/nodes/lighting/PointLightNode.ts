@@ -1,4 +1,4 @@
-import AnalyticLightNode from './AnalyticLightNode.js';
+import { AnalyticLightNode } from './AnalyticLightNode.js';
 import { addLightNode } from './LightsNode.js';
 import { getDistanceAttenuation } from './LightUtils.js';
 import { uniform } from '../core/UniformNode.js';
@@ -6,8 +6,10 @@ import { Object3DNodes } from '../accessors/Object3DNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
 
 import { PointLight } from '../../Three.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeFrame } from '../core/NodeFrame.js';
 
-class PointLightNode extends AnalyticLightNode {
+export class PointLightNode extends AnalyticLightNode {
   constructor(light = null) {
     super(light);
 
@@ -15,7 +17,7 @@ class PointLightNode extends AnalyticLightNode {
     this.decayExponentNode = uniform(0);
   }
 
-  update(frame) {
+  update(frame: NodeFrame) {
     const { light } = this;
 
     super.update(frame);
@@ -51,7 +53,5 @@ class PointLightNode extends AnalyticLightNode {
     });
   }
 }
-
-export default PointLightNode;
 
 addLightNode(PointLight, PointLightNode);

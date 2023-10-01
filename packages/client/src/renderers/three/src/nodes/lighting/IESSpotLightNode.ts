@@ -1,11 +1,10 @@
-import SpotLightNode from './SpotLightNode.js';
+import { SpotLightNode } from './SpotLightNode.js';
 import { addLightNode } from './LightsNode.js';
 import { texture } from '../accessors/TextureNode.js';
 import { vec2 } from '../shadernode/ShaderNode.js';
-
 import { IESSpotLight } from '../../lights/IESSpotLight.js';
 
-class IESSpotLightNode extends SpotLightNode {
+export class IESSpotLightNode extends SpotLightNode {
   getSpotAttenuation(angleCosine: number) {
     const iesMap = this.light.iesMap;
 
@@ -22,7 +21,5 @@ class IESSpotLightNode extends SpotLightNode {
     return spotAttenuation;
   }
 }
-
-export default IESSpotLightNode;
 
 addLightNode(IESSpotLight, IESSpotLightNode);

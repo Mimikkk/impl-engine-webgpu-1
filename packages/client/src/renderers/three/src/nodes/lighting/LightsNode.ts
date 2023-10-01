@@ -1,5 +1,5 @@
 import { Node } from '../core/Node.js';
-import AnalyticLightNode from './AnalyticLightNode.js';
+import { AnalyticLightNode } from './AnalyticLightNode.js';
 import { nodeObject, nodeProxy } from '../shadernode/ShaderNode.js';
 
 const LightNodes = new WeakMap();
@@ -8,7 +8,7 @@ const sortLights = lights => {
   return lights.sort((a, b) => a.id - b.id);
 };
 
-class LightsNode extends Node {
+export class LightsNode extends Node {
   constructor(lightNodes = []) {
     super('vec3');
 
@@ -81,8 +81,6 @@ class LightsNode extends Node {
     return this;
   }
 }
-
-export default LightsNode;
 
 export const lights = lights => nodeObject(new LightsNode().fromLights(lights));
 export const lightsWithoutWrap = nodeProxy(LightsNode);

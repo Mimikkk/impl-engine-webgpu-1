@@ -13,7 +13,6 @@ export class CodeNode extends Node {
   code: string;
 
   constructor(code: string, includes: CodeNode.Include[], language: NodeLanguage) {
-    console.log({ code, includes, language });
     super(NodeType.Code);
 
     this.code = code;

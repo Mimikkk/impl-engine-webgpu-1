@@ -1,4 +1,4 @@
-import AnalyticLightNode from './AnalyticLightNode.js';
+import { AnalyticLightNode } from './AnalyticLightNode.js';
 import { addLightNode } from './LightsNode.js';
 import { uniform } from '../core/UniformNode.js';
 import { mix } from '../math/MathNode.js';
@@ -6,8 +6,10 @@ import { NormalNodes } from '../accessors/NormalNode.js';
 import { Object3DNodes } from '../accessors/Object3DNode.js';
 
 import { Color, HemisphereLight } from '../../Three.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeFrame } from '../core/NodeFrame.js';
 
-class HemisphereLightNode extends AnalyticLightNode {
+export class HemisphereLightNode extends AnalyticLightNode {
   constructor(light = null) {
     super(light);
 
@@ -17,7 +19,7 @@ class HemisphereLightNode extends AnalyticLightNode {
     this.groundColorNode = uniform(new Color());
   }
 
-  update(frame) {
+  update(frame: NodeFrame) {
     const { light } = this;
 
     super.update(frame);
@@ -38,7 +40,5 @@ class HemisphereLightNode extends AnalyticLightNode {
     builder.context.irradiance.addAssign(irradiance);
   }
 }
-
-export default HemisphereLightNode;
 
 addLightNode(HemisphereLight, HemisphereLightNode);

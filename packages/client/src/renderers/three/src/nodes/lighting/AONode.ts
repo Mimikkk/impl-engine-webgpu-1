@@ -1,9 +1,12 @@
-import LightingNode from './LightingNode.js';
+import { LightingNode } from './LightingNode.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+import { Node } from '../core/Node.js';
 
-class AONode extends LightingNode {
-  constructor(aoNode = null) {
+export class AONode extends LightingNode {
+  aoNode: Node;
+
+  constructor(aoNode: Node) {
     super();
-
     this.aoNode = aoNode;
   }
 
@@ -14,5 +17,3 @@ class AONode extends LightingNode {
     builder.context.ambientOcclusion.mulAssign(aoNode);
   }
 }
-
-export default AONode;

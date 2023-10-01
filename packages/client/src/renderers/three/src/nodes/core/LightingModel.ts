@@ -1,5 +1,5 @@
 import StackNode from './StackNode.js';
-import NodeBuilder from './NodeBuilder.js';
+import { NodeBuilder } from './NodeBuilder.js';
 
 export abstract class LightingModel {
   init(input: any, stack: StackNode, builder: NodeBuilder) {}

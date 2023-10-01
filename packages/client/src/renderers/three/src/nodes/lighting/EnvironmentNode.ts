@@ -1,4 +1,4 @@
-import LightingNode from './LightingNode.js';
+import { LightingNode } from './LightingNode.js';
 import { cache } from '../core/CacheNode.js';
 import { context } from '../core/ContextNode.js';
 import { PropertyNodes } from '../core/PropertyNode.js';
@@ -10,10 +10,11 @@ import { PositionNodes } from '../accessors/PositionNode.js';
 import { float, vec2 } from '../shadernode/ShaderNode.js';
 import { cubeTexture } from '../accessors/CubeTextureNode.js';
 import { reference } from '../accessors/ReferenceNode.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 const envNodeCache = new WeakMap();
 
-class EnvironmentNode extends LightingNode {
+export class EnvironmentNode extends LightingNode {
   constructor(envNode = null) {
     super();
 
@@ -149,5 +150,3 @@ const createIrradianceContext = normalWorldNode => {
     },
   };
 };
-
-export default EnvironmentNode;

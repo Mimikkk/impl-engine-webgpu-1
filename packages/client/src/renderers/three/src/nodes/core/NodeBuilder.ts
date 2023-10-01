@@ -845,5 +845,3 @@ export class NodeBuilder {
     return `// Three.js r${123} - NodeMaterial System\n`;
   }
 }
-
-export default NodeBuilder;

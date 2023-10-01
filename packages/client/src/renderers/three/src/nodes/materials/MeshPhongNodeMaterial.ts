@@ -5,7 +5,7 @@ import { float } from '../shadernode/ShaderNode.js';
 import { PhongLightingModel } from '../functions/PhongLightingModel.js';
 
 import { MeshPhongMaterial } from '../../Three.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 const defaultValues = new MeshPhongMaterial();
 

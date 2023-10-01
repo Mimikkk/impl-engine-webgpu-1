@@ -4,8 +4,7 @@ import { uniform } from '../core/UniformNode.js';
 import { texture } from './TextureNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
-
-import NodeFrame from '../core/NodeFrame.js';
+import { NodeFrame } from '../core/NodeFrame.js';
 
 class ReferenceNode extends Node {
   property: string | number;

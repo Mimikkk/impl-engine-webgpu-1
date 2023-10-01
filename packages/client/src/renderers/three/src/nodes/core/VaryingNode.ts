@@ -2,7 +2,7 @@ import { Node } from './Node.js';
 
 import { NodeShaderStage } from './constants.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
-import NodeBuilder from './NodeBuilder.js';
+import { NodeBuilder } from './NodeBuilder.js';
 
 class VaryingNode extends Node {
   node: Node;

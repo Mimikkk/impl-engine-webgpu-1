@@ -98,5 +98,3 @@ export class NodeFrame {
     this.time += this.deltaTime;
   }
 }
-
-export default NodeFrame;

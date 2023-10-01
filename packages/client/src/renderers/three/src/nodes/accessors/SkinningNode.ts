@@ -8,7 +8,7 @@ import { buffer } from './BufferNode.js';
 import { NormalNodes } from './NormalNode.js';
 import { PositionNodes } from './PositionNode.js';
 import { TangentNodes } from './TangentNode.js';
-import NodeBuilder from '../core/NodeBuilder.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 import { SkinnedMesh } from '../../objects/SkinnedMesh.js';
 
 export class SkinningNode extends Node {

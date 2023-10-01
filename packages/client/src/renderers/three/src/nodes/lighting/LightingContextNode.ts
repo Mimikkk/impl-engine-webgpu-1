@@ -3,7 +3,7 @@ import { add } from '../math/OperatorNode.js';
 import { mix } from '../math/MathNode.js';
 import { addNodeElement, float, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
 
-class LightingContextNode extends ContextNode {
+export class LightingContextNode extends ContextNode {
   constructor(node, lightingModel = null, backdropNode = null, backdropAlphaNode = null) {
     super(node);
 
@@ -79,8 +79,6 @@ class LightingContextNode extends ContextNode {
     return context.reflectedLight.total.build(builder, type);
   }
 }
-
-export default LightingContextNode;
 
 export const lightingContext = nodeProxy(LightingContextNode);
 

@@ -12,10 +12,10 @@ export { default as IndexNode, vertexIndex, instanceIndex } from './core/IndexNo
 export { LightingModel } from './core/LightingModel.js';
 export { default as Node } from './core/Node.js';
 export { default as NodeAttribute } from './core/NodeAttribute.js';
-export { default as NodeBuilder } from './core/NodeBuilder.js';
+export { NodeBuilder } from './core/NodeBuilder.js';
 export { default as NodeCache } from './core/NodeCache.js';
 export { default as NodeCode } from './core/NodeCode.js';
-export { default as NodeFrame } from './core/NodeFrame.js';
+export { NodeFrame } from './core/NodeFrame.js';
 export { NodeFunctionInput } from './core/NodeFunctionInput.js';
 export { default as NodeKeywords } from './core/NodeKeywords.js';
 export { default as NodeUniform } from './core/NodeUniform.js';
@@ -232,19 +232,19 @@ export { RangeNode, range } from './geometry/RangeNode.js';
 export { ComputeNode, compute } from './gpgpu/ComputeNode.js';
 
 // lighting
-export { default as LightNode, lightTargetDirection } from './lighting/LightNode.js';
-export { default as PointLightNode } from './lighting/PointLightNode.js';
-export { default as DirectionalLightNode } from './lighting/DirectionalLightNode.js';
-export { default as SpotLightNode } from './lighting/SpotLightNode.js';
-export { default as IESSpotLightNode } from './lighting/IESSpotLightNode.js';
-export { default as AmbientLightNode } from './lighting/AmbientLightNode.js';
-export { default as LightsNode, lights, lightsWithoutWrap, addLightNode } from './lighting/LightsNode.js';
-export { default as LightingNode /* @TODO: lighting (abstract), light */ } from './lighting/LightingNode.js';
-export { default as LightingContextNode, lightingContext } from './lighting/LightingContextNode.js';
-export { default as HemisphereLightNode } from './lighting/HemisphereLightNode.js';
-export { default as EnvironmentNode } from './lighting/EnvironmentNode.js';
-export { default as AONode } from './lighting/AONode.js';
-export { default as AnalyticLightNode } from './lighting/AnalyticLightNode.js';
+export { LightNode, lightTargetDirection } from './lighting/LightNode.js';
+export { PointLightNode } from './lighting/PointLightNode.js';
+export { DirectionalLightNode } from './lighting/DirectionalLightNode.js';
+export { SpotLightNode } from './lighting/SpotLightNode.js';
+export { IESSpotLightNode } from './lighting/IESSpotLightNode.js';
+export { AmbientLightNode } from './lighting/AmbientLightNode.js';
+export { LightsNode, lights, lightsWithoutWrap, addLightNode } from './lighting/LightsNode.js';
+export { LightingNode /* @TODO: lighting (abstract), light */ } from './lighting/LightingNode.js';
+export { LightingContextNode, lightingContext } from './lighting/LightingContextNode.js';
+export { HemisphereLightNode } from './lighting/HemisphereLightNode.js';
+export { EnvironmentNode } from './lighting/EnvironmentNode.js';
+export { AONode } from './lighting/AONode.js';
+export { AnalyticLightNode } from './lighting/AnalyticLightNode.js';
 
 // procedural
 export { CheckerNode, checker } from './procedural/CheckerNode.js';

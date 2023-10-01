@@ -1,4 +1,4 @@
-import AnalyticLightNode from './AnalyticLightNode.js';
+import { AnalyticLightNode } from './AnalyticLightNode.js';
 import { lightTargetDirection } from './LightNode.js';
 import { addLightNode } from './LightsNode.js';
 import { getDistanceAttenuation } from './LightUtils.js';
@@ -8,8 +8,10 @@ import { Object3DNodes } from '../accessors/Object3DNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
 
 import { SpotLight } from '../../Three.js';
+import { NodeFrame } from '../core/NodeFrame.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
-class SpotLightNode extends AnalyticLightNode {
+export class SpotLightNode extends AnalyticLightNode {
   constructor(light = null) {
     super(light);
 
@@ -20,7 +22,7 @@ class SpotLightNode extends AnalyticLightNode {
     this.decayExponentNode = uniform(0);
   }
 
-  update(frame) {
+  update(frame: NodeFrame) {
     super.update(frame);
 
     const { light } = this;
@@ -32,7 +34,7 @@ class SpotLightNode extends AnalyticLightNode {
     this.decayExponentNode.value = light.decay;
   }
 
-  getSpotAttenuation(angleCosine) {
+  getSpotAttenuation(angleCosine: number) {
     const { coneCosNode, penumbraCosNode } = this;
 
     return smoothstep(coneCosNode, penumbraCosNode, angleCosine);
@@ -70,7 +72,5 @@ class SpotLightNode extends AnalyticLightNode {
     });
   }
 }
-
-export default SpotLightNode;
 
 addLightNode(SpotLight, SpotLightNode);
