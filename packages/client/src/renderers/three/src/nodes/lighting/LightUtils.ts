@@ -11,4 +11,4 @@ export const getDistanceAttenuation = tslFn(inputs => {
   return cutoffDistance
     .greaterThan(0)
     .cond(distanceFalloff.mul(lightDistance.div(cutoffDistance).pow4().oneMinus().clamp().pow2()), distanceFalloff);
-}); // validated
+});

@@ -6,7 +6,7 @@ import { reference } from '../accessors/ReferenceNode.js';
 import { texture } from '../accessors/TextureNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
-import { Color, DepthTexture, LessCompare, Light, NearestFilter } from '../../Three.js';
+import { Color, DepthTexture, LessCompare, Light, NearestFilter, Vector2 } from '../../Three.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 import { Node } from '../core/Node.js';
 import { NodeFrame } from '../core/NodeFrame.js';
@@ -44,10 +44,12 @@ export class AnalyticLightNode extends LightingNode {
     if (shadowNode === null) {
       if (depthMaterial === null) depthMaterial = builder.createNodeMaterial('MeshBasicNodeMaterial');
 
+      //@ts-expect-error
       const shadow = this.light.shadow;
+      //@ts-expect-error
       const rtt = builder.getRenderTarget(shadow.mapSize.width, shadow.mapSize.height);
 
-      const depthTexture = new DepthTexture();
+      const depthTexture = new DepthTexture(shadow.mapSize.width, shadow.mapSize.height);
       depthTexture.minFilter = NearestFilter;
       depthTexture.magFilter = NearestFilter;
       depthTexture.image.width = shadow.mapSize.width;
@@ -79,11 +81,8 @@ export class AnalyticLightNode extends LightingNode {
         shadowCoord.z.add(bias).mul(2).sub(1), // WebGPU: Convertion [ 0, 1 ] to [ - 1, 1 ]
       );
 
-      const textureCompare = (depthTexture, shadowCoord, compare) =>
+      const textureCompare = (depthTexture: DepthTexture, shadowCoord: Vector2, compare: any) =>
         texture(depthTexture, shadowCoord).compare(compare);
-      //const textureCompare = ( depthTexture, shadowCoord, compare ) => compare.step( texture( depthTexture, shadowCoord ) );
-
-      // BasicShadowMap
 
       shadowNode = textureCompare(depthTexture, shadowCoord.xy, shadowCoord.z);
 
@@ -125,6 +124,7 @@ export class AnalyticLightNode extends LightingNode {
       //
 
       this.rtt = rtt;
+      //@ts-expect-error
       this.colorNode = this.colorNode.mul(frustumTest.mix(1, shadowNode));
 
       this.shadowNode = shadowNode;
@@ -143,17 +143,21 @@ export class AnalyticLightNode extends LightingNode {
     const { rtt, light } = this;
     const { renderer, scene } = frame;
 
-    scene.overrideMaterial = depthMaterial;
+    //@ts-expect-error
+    scene!.overrideMaterial = depthMaterial;
 
+    //@ts-expect-error
     rtt.setSize(light.shadow.mapSize.width, light.shadow.mapSize.height);
 
+    //@ts-expect-error
     light.shadow.updateMatrices(light);
 
-    renderer.setRenderTarget(rtt);
-    renderer.render(scene, light.shadow.camera);
-    renderer.setRenderTarget(null);
+    renderer!.setRenderTarget(rtt);
+    //@ts-expect-error
+    renderer!.render(scene, light.shadow.camera);
+    renderer!.setRenderTarget(null);
 
-    scene.overrideMaterial = null;
+    scene!.overrideMaterial = null;
   }
 
   updateBefore(frame: NodeFrame) {

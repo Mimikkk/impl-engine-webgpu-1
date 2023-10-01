@@ -11,8 +11,8 @@ export class AONode extends LightingNode {
   }
 
   construct(builder: NodeBuilder) {
-    const aoIntensity = 1;
-    const aoNode = this.aoNode.x.sub(1.0).mul(aoIntensity).add(1.0);
+    //@ts-expect-error
+    const aoNode = this.aoNode.x.sub(1.0).mul(1).add(1.0);
 
     builder.context.ambientOcclusion.mulAssign(aoNode);
   }

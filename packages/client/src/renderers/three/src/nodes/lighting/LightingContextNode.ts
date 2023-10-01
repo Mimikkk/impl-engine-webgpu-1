@@ -69,7 +69,9 @@ export class LightingContextNode extends ContextNode {
       ambientOcclusion: float(1).temp(),
     };
 
+    //@ts-expect-error
     context.reflectedLight = reflectedLight;
+    //@ts-expect-error
     context.lightingModel = lightingModel || context.lightingModel;
 
     Object.assign(properties, reflectedLight, lighting);
@@ -87,6 +89,7 @@ export class LightingContextNode extends ContextNode {
   }
 
   generate(builder: NodeBuilder) {
+    //@ts-expect-error
     const { context } = this;
     const type = this.getNodeType(builder);
 
