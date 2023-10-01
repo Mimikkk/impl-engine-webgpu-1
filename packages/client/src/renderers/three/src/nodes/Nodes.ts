@@ -10,7 +10,7 @@ export { ConstNode } from './core/ConstNode.js';
 export { default as ContextNode, context, label } from './core/ContextNode.js';
 export { default as IndexNode, vertexIndex, instanceIndex } from './core/IndexNode.js';
 export { LightingModel } from './core/LightingModel.js';
-export { default as Node } from './core/Node.js';
+export { Node } from './core/Node.js';
 export { default as NodeAttribute } from './core/NodeAttribute.js';
 export { NodeBuilder } from './core/NodeBuilder.js';
 export { default as NodeCache } from './core/NodeCache.js';

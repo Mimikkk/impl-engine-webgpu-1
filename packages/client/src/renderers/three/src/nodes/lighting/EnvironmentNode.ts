@@ -11,11 +11,17 @@ import { float, vec2 } from '../shadernode/ShaderNode.js';
 import { cubeTexture } from '../accessors/CubeTextureNode.js';
 import { reference } from '../accessors/ReferenceNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
+import { Node } from '../core/Node.js';
+import { TextureNode } from '../accessors/TextureNode.js';
+import { NodeType } from '../core/constants.js';
+import { UVNode } from '../accessors/UVNode.js';
 
 const envNodeCache = new WeakMap();
 
 export class EnvironmentNode extends LightingNode {
-  constructor(envNode = null) {
+  envNode: Node;
+
+  constructor(envNode: Node) {
     super();
 
     this.envNode = envNode;
@@ -25,27 +31,28 @@ export class EnvironmentNode extends LightingNode {
     let envNode = this.envNode;
     const properties = builder.getNodeProperties(this);
 
+    //@ts-expect-error
     if (envNode.isTextureNode && envNode.value.isCubeTexture !== true) {
+      //@ts-expect-error
       let cacheEnvNode = envNodeCache.get(envNode.value);
 
       if (cacheEnvNode === undefined) {
+        //@ts-expect-error
         const texture = envNode.value;
         const renderer = builder.renderer;
 
-        // @TODO: Add dispose logic here
+        //@ts-expect-error
         const cubeRTT = builder.getCubeRenderTarget(512).fromEquirectangularTexture(renderer, texture);
 
         cacheEnvNode = cubeTexture(cubeRTT.texture);
-
+        //@ts-expect-error
         envNodeCache.set(envNode.value, cacheEnvNode);
       }
 
       envNode = cacheEnvNode;
     }
 
-    //
-
-    const intensity = reference('envMapIntensity', 'float', builder.material); // @TODO: Add materialEnvIntensity in MaterialNode
+    const intensity = reference('envMapIntensity', NodeType.Float, builder.material);
 
     const radiance = context(envNode, createRadianceContext(PropertyNodes.roughness, NormalNodes.transformed.view)).mul(
       intensity,
@@ -83,21 +90,23 @@ export class EnvironmentNode extends LightingNode {
   }
 }
 
-const createRadianceContext = (roughnessNode, normalViewNode) => {
-  let reflectVec = null;
-  let textureUVNode = null;
+const createRadianceContext = (roughnessNode: Node, normalViewNode: Node) => {
+  let reflectVec: Node | null = null;
+  let textureUVNode: UVNode | null = null;
 
   return {
-    getUVNode: textureNode => {
+    getUVNode: (textureNode: TextureNode) => {
       let node = null;
 
       if (reflectVec === null) {
         reflectVec = PositionNodes.directional.view.negate().reflect(normalViewNode);
+        //@ts-expect-error
         reflectVec = roughnessNode.mul(roughnessNode).mix(reflectVec, normalViewNode).normalize();
-        reflectVec = reflectVec.transformDirection(CameraNodes.matrix.view);
+        //@ts-expect-error
+        reflectVec = reflectVec!.transformDirection(CameraNodes.matrix.view);
       }
 
-      if (textureNode.isCubeTextureNode) {
+      if ('isCubeTextureNode' in textureNode) {
         node = reflectVec;
       } else if (textureNode.isTextureNode) {
         if (textureUVNode === null) {
@@ -111,42 +120,32 @@ const createRadianceContext = (roughnessNode, normalViewNode) => {
 
       return node;
     },
-    getSamplerLevelNode: () => {
-      return roughnessNode;
-    },
-    getMIPLevelAlgorithmNode: (textureNode, levelNode) => {
-      return specularMIPLevel(textureNode, levelNode);
-    },
+    getSamplerLevelNode: () => roughnessNode,
+    getMIPLevelAlgorithmNode: (textureNode: TextureNode, levelNode: Node) => specularMIPLevel(textureNode, levelNode),
   };
 };
 
-const createIrradianceContext = normalWorldNode => {
-  let textureUVNode = null;
+const createIrradianceContext = (normalWorldNode: Node) => {
+  let textureUVNode: UVNode | null = null;
 
   return {
-    getUVNode: textureNode => {
-      let node = null;
+    getUVNode: (textureNode: TextureNode) => {
+      let node: UVNode | null = null;
 
-      if (textureNode.isCubeTextureNode) {
-        node = normalWorldNode;
+      if ('isCubeTextureNode' in textureNode) {
+        node = normalWorldNode as UVNode;
       } else if (textureNode.isTextureNode) {
         if (textureUVNode === null) {
-          // @TODO: Needed PMREM
-
           textureUVNode = equirectUV(normalWorldNode);
-          textureUVNode = vec2(textureUVNode.x, textureUVNode.y.oneMinus());
+          //@ts-expect-error
+          textureUVNode = vec2(textureUVNode!.x, textureUVNode!.y.oneMinus());
         }
-
         node = textureUVNode;
       }
 
       return node;
     },
-    getSamplerLevelNode: () => {
-      return float(1);
-    },
-    getMIPLevelAlgorithmNode: (textureNode, levelNode) => {
-      return specularMIPLevel(textureNode, levelNode);
-    },
+    getSamplerLevelNode: () => float(1),
+    getMIPLevelAlgorithmNode: (textureNode: TextureNode, levelNode: Node) => specularMIPLevel(textureNode, levelNode),
   };
 };

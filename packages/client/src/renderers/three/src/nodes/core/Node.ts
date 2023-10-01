@@ -92,14 +92,12 @@ export class Node extends EventDispatcher<'dispose'> {
     return nodeFromHash || this;
   }
 
-  construct(builder: NodeBuilder): Node | null | undefined | void {
+  construct(builder: NodeBuilder): Node | null | void {
     const nodeProperties = builder.getNodeProperties(this);
 
     for (const { childNode } of this.getChildren()) {
       nodeProperties['_node' + childNode.id] = childNode;
     }
-
-    return;
   }
 
   analyze(builder: NodeBuilder) {
@@ -114,7 +112,7 @@ export class Node extends EventDispatcher<'dispose'> {
     }
   }
 
-  generate(builder: NodeBuilder, output?: NodeType): string | undefined {
+  generate(builder: NodeBuilder, output?: NodeType): string | void {
     const { outputNode } = builder.getNodeProperties(this);
 
     if (outputNode?.isNode) return outputNode.build(builder, output);
@@ -192,5 +190,3 @@ export class Node extends EventDispatcher<'dispose'> {
     return result;
   }
 }
-
-export default Node;

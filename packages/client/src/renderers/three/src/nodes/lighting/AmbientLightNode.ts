@@ -4,12 +4,11 @@ import { addLightNode } from './LightsNode.js';
 import { AmbientLight } from '../../Three.js';
 
 export class AmbientLightNode extends AnalyticLightNode {
-  constructor(light = null) {
-    console.log('hh');
+  constructor(light: AmbientLight) {
     super(light);
   }
 
-  construct({ context }) {
+  construct({ context }: { context: any }) {
     context.irradiance.addAssign(this.colorNode);
   }
 }

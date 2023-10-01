@@ -2,9 +2,25 @@ import ContextNode from '../core/ContextNode.js';
 import { add } from '../math/OperatorNode.js';
 import { mix } from '../math/MathNode.js';
 import { addNodeElement, float, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+import { Node } from '../core/Node.js';
+import { LightingModel } from '../core/LightingModel.js';
+import { NodeType } from '../core/constants.js';
 
 export class LightingContextNode extends ContextNode {
-  constructor(node, lightingModel = null, backdropNode = null, backdropAlphaNode = null) {
+  lightingModel: LightingModel | null;
+  backdropNode: Node | null;
+  backdropAlphaNode: Node | null;
+  indirectDiffuseNode?: Node;
+  indirectSpecularNode?: Node;
+  ambientOcclusionNode?: Node;
+
+  constructor(
+    node: Node,
+    lightingModel: LightingModel | null = null,
+    backdropNode: Node | null = null,
+    backdropAlphaNode: Node | null = null,
+  ) {
     super(node);
 
     this.lightingModel = lightingModel;
@@ -13,7 +29,7 @@ export class LightingContextNode extends ContextNode {
   }
 
   getNodeType(builder: NodeBuilder) {
-    return 'vec3';
+    return NodeType.Vector3;
   }
 
   construct(builder: NodeBuilder) {

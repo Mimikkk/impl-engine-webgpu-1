@@ -6,12 +6,21 @@ import { reference } from '../accessors/ReferenceNode.js';
 import { texture } from '../accessors/TextureNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
-import { Color, DepthTexture, LessCompare, NearestFilter } from '../../Three.js';
+import { Color, DepthTexture, LessCompare, Light, NearestFilter } from '../../Three.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+import { Node } from '../core/Node.js';
+import { NodeFrame } from '../core/NodeFrame.js';
 
 let depthMaterial: DepthTexture | null = null;
 
 export class AnalyticLightNode extends LightingNode {
-  constructor(light = null) {
+  light: Light;
+  colorNode: Node;
+  rtt: Node | null;
+  shadowNode: Node | null;
+  color: Color;
+
+  constructor(light: Light) {
     super();
 
     this.updateType = NodeUpdateType.Frame;
@@ -29,7 +38,7 @@ export class AnalyticLightNode extends LightingNode {
     return this.light.uuid;
   }
 
-  constructShadow(builder) {
+  constructShadow(builder: NodeBuilder) {
     let shadowNode = this.shadowNode;
 
     if (shadowNode === null) {
@@ -130,7 +139,7 @@ export class AnalyticLightNode extends LightingNode {
     if (this.light.castShadow) this.constructShadow(builder);
   }
 
-  updateShadow(frame) {
+  updateShadow(frame: NodeFrame) {
     const { rtt, light } = this;
     const { renderer, scene } = frame;
 
@@ -147,13 +156,13 @@ export class AnalyticLightNode extends LightingNode {
     scene.overrideMaterial = null;
   }
 
-  updateBefore(frame) {
+  updateBefore(frame: NodeFrame) {
     const { light } = this;
 
     if (light.castShadow) this.updateShadow(frame);
   }
 
-  update(/*frame*/) {
+  update(frame: NodeFrame) {
     const { light } = this;
 
     this.color.copy(light.color).multiplyScalar(light.intensity);

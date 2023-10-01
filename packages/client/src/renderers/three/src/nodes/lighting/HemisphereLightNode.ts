@@ -8,12 +8,19 @@ import { Object3DNodes } from '../accessors/Object3DNode.js';
 import { Color, HemisphereLight } from '../../Three.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 import { NodeFrame } from '../core/NodeFrame.js';
+import Object3DNode from 'three/examples/jsm/nodes/accessors/Object3DNode.js';
+import Node from 'three/examples/jsm/nodes/core/Node.js';
 
 export class HemisphereLightNode extends AnalyticLightNode {
-  constructor(light = null) {
+  lightPositionNode: Object3DNode;
+  lightDirectionNode: Node;
+  groundColorNode: Node;
+
+  constructor(light: HemisphereLight) {
     super(light);
 
     this.lightPositionNode = Object3DNodes.position(light);
+    //@ts-expect-error
     this.lightDirectionNode = this.lightPositionNode.normalize();
 
     this.groundColorNode = uniform(new Color());
@@ -24,8 +31,10 @@ export class HemisphereLightNode extends AnalyticLightNode {
 
     super.update(frame);
 
+    //@ts-expect-error
     this.lightPositionNode.object3d = light;
 
+    //@ts-expect-error
     this.groundColorNode.value.copy(light.groundColor).multiplyScalar(light.intensity);
   }
 

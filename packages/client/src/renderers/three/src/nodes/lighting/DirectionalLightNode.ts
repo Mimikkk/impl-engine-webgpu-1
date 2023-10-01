@@ -5,7 +5,7 @@ import { DirectionalLight } from '../../Three.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 
 export class DirectionalLightNode extends AnalyticLightNode {
-  constructor(light = null) {
+  constructor(light: DirectionalLight) {
     super(light);
   }
 
@@ -13,16 +13,11 @@ export class DirectionalLightNode extends AnalyticLightNode {
     super.construct(builder);
 
     const lightingModel = builder.context.lightingModel;
-
     const lightColor = this.colorNode;
     const lightDirection = lightTargetDirection(this.light);
     const reflectedLight = builder.context.reflectedLight;
 
-    lightingModel.direct({
-      lightDirection,
-      lightColor,
-      reflectedLight,
-    });
+    lightingModel.direct({ lightDirection, lightColor, reflectedLight });
   }
 }
 
