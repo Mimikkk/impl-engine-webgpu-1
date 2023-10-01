@@ -1,19 +1,24 @@
 import { Node } from '../core/Node.js';
 import { AnalyticLightNode } from './AnalyticLightNode.js';
 import { nodeObject, nodeProxy } from '../shadernode/ShaderNode.js';
+import { LightNode } from './LightNode.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+import { Light } from '../../lights/Light.js';
+import { NodeType } from '../core/constants.js';
 
 const LightNodes = new WeakMap();
 
-const sortLights = lights => {
+const sortLights = (lights: Light[]) => {
   return lights.sort((a, b) => a.id - b.id);
 };
 
 export class LightsNode extends Node {
-  constructor(lightNodes = []) {
-    super('vec3');
+  lightNodes: LightNode[];
+  _hash: string | null;
 
+  constructor(lightNodes: LightNode[] = []) {
+    super(NodeType.Vector3);
     this.lightNodes = lightNodes;
-
     this._hash = null;
   }
 
@@ -29,7 +34,7 @@ export class LightsNode extends Node {
     }
   }
 
-  getHash(builder) {
+  getHash(builder: NodeBuilder) {
     if (this._hash === null) {
       let hash = '';
 
@@ -45,20 +50,12 @@ export class LightsNode extends Node {
     return this._hash;
   }
 
-  getLightNodeByHash(hash) {
-    const lightNodes = this.lightNodes;
-
-    for (const lightNode of lightNodes) {
-      if (lightNode.light.uuid === hash) {
-        return lightNode;
-      }
-    }
-
-    return null;
+  getLightNodeByHash(hash: string) {
+    return this.lightNodes.find(lightNode => lightNode.light.uuid === hash);
   }
 
-  fromLights(lights = []) {
-    const lightNodes = [];
+  fromLights(lights: Light[] = []) {
+    const lightNodes: LightNode[] = [];
 
     lights = sortLights(lights);
 
@@ -72,7 +69,7 @@ export class LightsNode extends Node {
         lightNode = nodeObject(new lightNodeClass(light));
       }
 
-      lightNodes.push(lightNode);
+      lightNodes.push(lightNode!);
     }
 
     this.lightNodes = lightNodes;
@@ -82,14 +79,9 @@ export class LightsNode extends Node {
   }
 }
 
-export const lights = lights => nodeObject(new LightsNode().fromLights(lights));
+export const lights = (lights: Light[]) => nodeObject(new LightsNode().fromLights(lights));
 export const lightsWithoutWrap = nodeProxy(LightsNode);
 
-export function addLightNode(lightClass, lightNodeClass) {
-  if (LightNodes.has(lightClass)) throw new Error(`Redefinition of light node ${lightNodeClass.name}`);
-  if (typeof lightClass !== 'function' || !lightClass.name) throw new Error(`Light ${lightClass.name} is not a class`);
-  if (typeof lightNodeClass !== 'function' || !lightNodeClass.name)
-    throw new Error(`Light node ${lightNodeClass.name} is not a class`);
-
+export function addLightNode(lightClass: typeof Light, lightNodeClass: typeof LightNode) {
   LightNodes.set(lightClass, lightNodeClass);
 }

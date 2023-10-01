@@ -2,9 +2,13 @@ import { Node } from '../core/Node.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
 import { Object3DNodes } from '../accessors/Object3DNode.js';
 import { CameraNodes } from '../accessors/CameraNode.js';
+import { Light } from '../../lights/Light.js';
 
 export class LightNode extends Node {
-  constructor(scope = LightNode.TARGET_DIRECTION, light = null) {
+  scope: string;
+  light: Light;
+
+  constructor(scope: LightNode.Scope, light: Light) {
     super();
 
     this.scope = scope;
@@ -12,20 +16,23 @@ export class LightNode extends Node {
   }
 
   construct() {
-    const { scope, light } = this;
-
-    let output = null;
-
-    if (scope === LightNode.TARGET_DIRECTION) {
-      output = CameraNodes.matrix.view.transformDirection(
-        Object3DNodes.position(light).sub(Object3DNodes.position(light.target)),
-      );
+    switch (this.scope) {
+      case LightNode.Scope.TargetDirection:
+        return CameraNodes.matrix.view.transformDirection(
+          Object3DNodes.position(this.light).sub(Object3DNodes.position(this.light.target)),
+        );
     }
-
-    return output;
   }
 }
 
-LightNode.TARGET_DIRECTION = 'targetDirection';
+export namespace LightNode {
+  export enum Scope {
+    TargetDirection = 'targetDirection',
+  }
+}
 
-export const lightTargetDirection = nodeProxy(LightNode, LightNode.TARGET_DIRECTION);
+export namespace LightNodes {
+  export const targetDirection = nodeProxy(LightNode, LightNode.Scope.TargetDirection);
+}
+
+export const lightTargetDirection = LightNodes.targetDirection;
