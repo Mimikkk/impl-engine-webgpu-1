@@ -3,13 +3,23 @@ import { NodeUpdateType } from '../core/constants.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 import { viewportTopLeft } from './ViewportNode.js';
 import { FramebufferTexture, LinearMipmapLinearFilter, Vector2 } from '../../Three.js';
+import { NodeFrame } from '../core/NodeFrame.js';
+import { UVNode } from '../accessors/UVNode.js';
+import { Node } from '../core/Node.js';
 
 const _size = new Vector2();
 
 export class ViewportTextureNode extends TextureNode {
-  constructor(uvNode = viewportTopLeft, levelNode = null, framebufferTexture = null) {
+  generateMipmaps: boolean;
+  isOutputTextureNode: boolean;
+
+  constructor(
+    uvNode: UVNode = viewportTopLeft,
+    levelNode: Node | null = null,
+    framebufferTexture: FramebufferTexture | null = null,
+  ) {
     if (framebufferTexture === null) {
-      framebufferTexture = new FramebufferTexture();
+      framebufferTexture = new FramebufferTexture(0, 0);
       framebufferTexture.minFilter = LinearMipmapLinearFilter;
     }
 
@@ -22,31 +32,27 @@ export class ViewportTextureNode extends TextureNode {
     this.updateBeforeType = NodeUpdateType.Frame;
   }
 
-  updateBefore(frame) {
+  updateBefore(frame: NodeFrame) {
     const renderer = frame.renderer;
-    renderer.getDrawingBufferSize(_size);
-
-    //
+    renderer!.getDrawingBufferSize(_size);
 
     const framebufferTexture = this.value;
-
     if (framebufferTexture.image.width !== _size.width || framebufferTexture.image.height !== _size.height) {
       framebufferTexture.image.width = _size.width;
       framebufferTexture.image.height = _size.height;
       framebufferTexture.needsUpdate = true;
     }
 
-    //
-
     const currentGenerateMipmaps = framebufferTexture.generateMipmaps;
     framebufferTexture.generateMipmaps = this.generateMipmaps;
 
-    renderer.copyFramebufferToTexture(framebufferTexture);
+    renderer!.copyFramebufferToTexture(framebufferTexture);
 
     framebufferTexture.generateMipmaps = currentGenerateMipmaps;
   }
 
   clone() {
+    //@ts-expect-error
     return new this.constructor(this.uvNode, this.levelNode, this.value);
   }
 }

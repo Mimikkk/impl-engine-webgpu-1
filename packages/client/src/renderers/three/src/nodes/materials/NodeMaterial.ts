@@ -405,6 +405,9 @@ export class NodeMaterial extends ShaderMaterial {
     }
   }
 
+  /// missing color
+  /* block */
+  /// TODO: missing
   copy(source: NodeMaterial) {
     this.lightsNode = source.lightsNode;
     this.envNode = source.envNode;

@@ -5,6 +5,7 @@ import { PositionNodes } from '../accessors/PositionNode.js';
 import { viewportDepthTexture } from './ViewportDepthTextureNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 import { TextureNode } from '../accessors/TextureNode.js';
+import { NodeType } from '../core/constants.js';
 
 export class ViewportDepthNode extends Node {
   isViewportDepthNode: boolean = true;
@@ -13,7 +14,7 @@ export class ViewportDepthNode extends Node {
   textureNode: TextureNode | null;
 
   constructor(scope: ViewportDepthNode.Scope, textureNode: TextureNode | null = null) {
-    super('float');
+    super(NodeType.Float);
     this.scope = scope;
     this.textureNode = textureNode;
   }
@@ -43,26 +44,20 @@ export namespace ViewportDepthNode {
   }
 }
 
-// NOTE: viewZ, the z-coordinate in camera space, is negative for points in front of the camera
-
-// -near maps to 0; -far maps to 1
-export const viewZToOrthographicDepth = (viewZ, near, far) => viewZ.add(near).div(near.sub(far));
-
-// maps orthographic depth in [ 0, 1 ] to viewZ
-export const orthographicDepthToViewZ = (depth, near, far) => near.sub(far).mul(depth).sub(near);
-
-// NOTE: https://twitter.com/gonnavis/status/1377183786949959682
-
-// -near maps to 0; -far maps to 1
-export const viewZToPerspectiveDepth = (viewZ, near, far) => near.add(viewZ).mul(far).div(near.sub(far).mul(viewZ));
-
-// maps perspective depth in [ 0, 1 ] to viewZ
-export const perspectiveDepthToViewZ = (depth, near, far) => near.mul(far).div(far.sub(near).mul(depth).sub(far));
-
-ViewportDepthNode.DEPTH = 'depth';
-ViewportDepthNode.DEPTH_TEXTURE = 'depthTexture';
+export const viewZToOrthographicDepth = (viewZ: number, near: number, far: number) =>
+  //@ts-expect-error
+  viewZ.add(near).div(near.sub(far));
+export const orthographicDepthToViewZ = (depth: number, near: number, far: number) =>
+  //@ts-expect-error
+  near.sub(far).mul(depth).sub(near);
+export const viewZToPerspectiveDepth = (viewZ: number, near: number, far: number) =>
+  //@ts-expect-error
+  near.add(viewZ).mul(far).div(near.sub(far).mul(viewZ));
+export const perspectiveDepthToViewZ = (depth: number, near: number, far: number) =>
+  //@ts-expect-error
+  near.mul(far).div(far.sub(near).mul(depth).sub(far));
 
 export default ViewportDepthNode;
 
-export const depth = nodeImmutable(ViewportDepthNode, ViewportDepthNode.DEPTH);
-export const depthTexture = nodeProxy(ViewportDepthNode, ViewportDepthNode.DEPTH_TEXTURE);
+export const depth = nodeImmutable(ViewportDepthNode, ViewportDepthNode.Scope.Depth);
+export const depthTexture = nodeProxy(ViewportDepthNode, ViewportDepthNode.Scope.DepthTexture);

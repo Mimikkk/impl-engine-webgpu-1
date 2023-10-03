@@ -8,6 +8,7 @@ import {
   NoToneMapping,
   ReinhardToneMapping,
 } from '../../Three.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 // exposure only
 const LinearToneMappingNode = tslFn(({ color, exposure }) => {
@@ -111,5 +112,5 @@ class ToneMappingNode extends TempNode {
 
 export default ToneMappingNode;
 
-export const toneMapping = (mapping, exposure, color) =>
+export const toneMapping = (mapping: any, exposure: any, color: any) =>
   nodeObject(new ToneMappingNode(mapping, nodeObject(exposure), nodeObject(color)));
