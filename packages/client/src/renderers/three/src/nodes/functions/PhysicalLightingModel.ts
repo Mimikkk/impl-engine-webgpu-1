@@ -13,12 +13,8 @@ import { float, mat3, vec3 } from '../shadernode/ShaderNode.js';
 import { cond } from '../math/CondNode.js';
 import { mix, smoothstep } from '../math/MathNode.js';
 
-//
-// Iridescence
-//
-
 // XYZ to linear-sRGB color space
-const XYZ_TO_REC709 = mat3(
+const XyzToLinearSRgb = mat3(
   3.2404542,
   -0.969266,
   0.0556434,
@@ -30,21 +26,13 @@ const XYZ_TO_REC709 = mat3(
   1.0572252,
 );
 
-// Assume air interface for top
-// Note: We don't handle the case fresnel0 == 1
 const Fresnel0ToIor = fresnel0 => {
   const sqrtF0 = fresnel0.sqrt();
   return vec3(1.0).add(sqrtF0).div(vec3(1.0).sub(sqrtF0));
 };
-
-// ior is a value between 1.0 and 3.0. 1.0 is air interface
 const IorToFresnel0 = (transmittedIor, incidentIor) => {
   return transmittedIor.sub(incidentIor).div(transmittedIor.add(incidentIor)).pow2();
 };
-
-// Fresnel equations for dielectric/dielectric interfaces.
-// Ref: https://belcour.github.io/blog/research/2017/05/01/brdf-thin-film.html
-// Evaluation XYZ sensitivity curves in Fourier space
 const evalSensitivity = (OPD, shift) => {
   const phase = OPD.mul(2.0 * Math.PI * 1.0e-9);
   const val = vec3(5.4856e-13, 4.4201e-13, 5.2481e-13);
@@ -61,10 +49,9 @@ const evalSensitivity = (OPD, shift) => {
     .mul(phase.pow2().negate().mul(VAR).exp());
   xyz = vec3(xyz.x.add(x), xyz.y, xyz.z).div(1.0685e-7);
 
-  const rgb = XYZ_TO_REC709.mul(xyz);
+  const rgb = XyzToLinearSRgb.mul(xyz);
   return rgb;
 };
-
 const evalIridescence = (outsideIOR, eta2, cosTheta1, thinFilmThickness, baseF0) => {
   // Force iridescenceIOR -> outsideIOR when thinFilmThickness -> 0.0
   const iridescenceIOR = mix(outsideIOR, eta2, smoothstep(0.0, 0.03, thinFilmThickness));
@@ -123,14 +110,6 @@ const evalIridescence = (outsideIOR, eta2, cosTheta1, thinFilmThickness, baseF0)
   // Since out of gamut colors might be produced, negative color values are clamped to 0.
   return I.max(vec3(0.0));
 };
-
-//
-//	Sheen
-//
-
-// This is a curve-fit approxmation to the "Charlie sheen" BRDF integrated over the hemisphere from
-// Estevez and Kulla 2017, "Production Friendly Microfacet Sheen BRDF". The analysis can be found
-// in the Sheen section of https://drive.google.com/file/d/1T0D1VSyR4AllqIJTQAraEIzjlb5h4FKH/view?usp=sharing
 const IBLSheenBRDF = (normal, viewDir, roughness) => {
   const dotNV = normal.dot(viewDir).saturate();
 
@@ -157,7 +136,11 @@ const clearcoatF0 = vec3(0.04);
 const clearcoatF90 = vec3(1);
 
 export class PhysicalLightingModel extends LightingModel {
-  constructor(clearcoat = true, sheen = true, iridescence = true) {
+  clearcoat: boolean;
+  sheen: boolean;
+  iridescence: boolean;
+
+  constructor(clearcoat: boolean = true, sheen: boolean = true, iridescence: boolean = true) {
     super();
 
     this.clearcoat = clearcoat;
