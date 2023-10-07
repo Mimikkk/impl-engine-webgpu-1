@@ -169,7 +169,7 @@ export { UVNode, uv } from './accessors/UVNode.js';
 export { default as UserDataNode, userData } from './accessors/UserDataNode.js';
 
 // display
-export { default as BlendModeNode, burn, dodge, overlay, screen } from './display/BlendModeNode.js';
+export { BlendModeNode, BlendModeNodes } from './display/BlendModeNode.js';
 export {
   default as ColorAdjustmentNode,
   saturation,
