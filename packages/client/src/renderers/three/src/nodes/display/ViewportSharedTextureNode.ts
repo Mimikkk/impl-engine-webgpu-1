@@ -6,7 +6,7 @@ import { FramebufferTexture } from '../../Three.js';
 
 let sharedFramebuffer: FramebufferTexture | null = null;
 
-class ViewportSharedTextureNode extends ViewportTextureNode {
+export class ViewportSharedTextureNode extends ViewportTextureNode {
   constructor(uvNode = ViewportNodes.topLeft, levelNode: Node | null = null) {
     if (sharedFramebuffer === null) {
       sharedFramebuffer = new FramebufferTexture(0, 0);
@@ -15,8 +15,6 @@ class ViewportSharedTextureNode extends ViewportTextureNode {
     super(uvNode, levelNode, sharedFramebuffer);
   }
 }
-
-export default ViewportSharedTextureNode;
 
 export const viewportSharedTexture = nodeProxy(ViewportSharedTextureNode);
 

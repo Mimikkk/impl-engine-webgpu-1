@@ -172,13 +172,13 @@ export { default as UserDataNode, userData } from './accessors/UserDataNode.js';
 export { BlendModeNode, BlendModeNodes } from './display/BlendModeNode.js';
 export { ColorAdjustmentNode, ColorAdjustmentNodes } from './display/ColorAdjustmentNode.js';
 export { ColorSpaceNode, ColorSpaceNodes } from './display/ColorSpaceNode.js';
-export { default as FrontFacingNode, frontFacing, faceDirection } from './display/FrontFacingNode.js';
-export { default as NormalMapNode, normalMap, TBNViewMatrix } from './display/NormalMapNode.js';
-export { default as PosterizeNode, posterize } from './display/PosterizeNode.js';
+export { FrontFacingNode, frontFacing, faceDirection } from './display/FrontFacingNode.js';
+export { NormalMapNode, normalMap, TBNViewMatrix } from './display/NormalMapNode.js';
+export { PosterizeNode, posterize } from './display/PosterizeNode.js';
 export { ToneMappingNode, toneMapping } from './display/ToneMappingNode.js';
 export { ViewportNode, ViewportNodes } from './display/ViewportNode.js';
-export { default as ViewportTextureNode, viewportTexture, viewportMipTexture } from './display/ViewportTextureNode.js';
-export { default as ViewportSharedTextureNode, viewportSharedTexture } from './display/ViewportSharedTextureNode.js';
+export { ViewportTextureNode, viewportTexture, viewportMipTexture } from './display/ViewportTextureNode.js';
+export { ViewportSharedTextureNode, viewportSharedTexture } from './display/ViewportSharedTextureNode.js';
 export { ViewportDepthTextureNode, viewportDepthTexture } from './display/ViewportDepthTextureNode.js';
 export { ViewportDepthNode, ViewportDepthNodes } from './display/ViewportDepthNode.js';
 

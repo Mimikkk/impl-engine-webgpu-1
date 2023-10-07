@@ -35,7 +35,7 @@ const perturbNormal2Arb = tslFn(inputs => {
   return add(T.mul(mapN.x, scale), B.mul(mapN.y, scale), N.mul(mapN.z)).normalize();
 });
 
-class NormalMapNode extends TempNode {
+export class NormalMapNode extends TempNode {
   node: Node;
   scaleNode: Node | null;
   normalMapType: NormalMapTypes;
@@ -80,8 +80,6 @@ class NormalMapNode extends TempNode {
     return outputNode;
   }
 }
-
-export default NormalMapNode;
 
 export const normalMap = nodeProxy(NormalMapNode);
 

@@ -2,7 +2,7 @@ import { TempNode } from '../core/TempNode.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 import { Node } from '../core/Node.js';
 
-class PosterizeNode extends TempNode {
+export class PosterizeNode extends TempNode {
   sourceNode: Node;
   stepsNode: Node;
 
@@ -19,8 +19,6 @@ class PosterizeNode extends TempNode {
     return sourceNode.mul(stepsNode).floor().div(stepsNode);
   }
 }
-
-export default PosterizeNode;
 
 export const posterize = nodeProxy(PosterizeNode);
 
