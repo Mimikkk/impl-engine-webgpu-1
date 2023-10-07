@@ -7,7 +7,7 @@ import { cond } from '../math/CondNode.js';
 import { loop } from '../utils/LoopNode.js';
 import { nodeProxy, shader } from '../shadernode/ShaderNode.js';
 
-class StackNode extends Node {
+export class StackNode extends Node {
   constructor(parent = null) {
     super();
 

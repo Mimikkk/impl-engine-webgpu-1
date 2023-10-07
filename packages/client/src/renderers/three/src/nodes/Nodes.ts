@@ -115,22 +115,22 @@ export {
 export { CondNode, cond } from './math/CondNode.js';
 
 // utils
-export { default as ArrayElementNode } from './utils/ArrayElementNode.js';
-export { default as ConvertNode } from './utils/ConvertNode.js';
-export { default as DiscardNode, discard } from './utils/DiscardNode.js';
-export { default as EquirectUVNode, equirectUV } from './utils/EquirectUVNode.js';
-export { default as JoinNode } from './utils/JoinNode.js';
-export { default as LoopNode, loop } from './utils/LoopNode.js';
-export { default as MatcapUVNode, matcapUV } from './utils/MatcapUVNode.js';
-export { default as MaxMipLevelNode, maxMipLevel } from './utils/MaxMipLevelNode.js';
-export { default as OscNode, oscSine, oscSquare, oscTriangle, oscSawtooth } from './utils/OscNode.js';
+export { ArrayElementNode } from './utils/ArrayElementNode.js';
+export { ConvertNode } from './utils/ConvertNode.js';
+export { DiscardNode, discard } from './utils/DiscardNode.js';
+export { EquirectUVNode, equirectUV } from './utils/EquirectUVNode.js';
+export { JoinNode } from './utils/JoinNode.js';
+export { LoopNode, loop } from './utils/LoopNode.js';
+export { MatcapUVNode, matcapUV } from './utils/MatcapUVNode.js';
+export { MaxMipLevelNode, maxMipLevel } from './utils/MaxMipLevelNode.js';
+export { OscNode, oscSine, oscSquare, oscTriangle, oscSawtooth } from './utils/OscNode.js';
 export { default as PackingNode, directionToColor, colorToDirection } from './utils/PackingNode.js';
 export { default as RemapNode, remap, remapClamp } from './utils/RemapNode.js';
 export { default as RotateUVNode, rotateUV } from './utils/RotateUVNode.js';
 export { default as SpecularMIPLevelNode, specularMIPLevel } from './utils/SpecularMIPLevelNode.js';
-export { default as SplitNode } from './utils/SplitNode.js';
+export { SplitNode } from './utils/SplitNode.js';
 export { default as SpriteSheetUVNode, spritesheetUV } from './utils/SpriteSheetUVNode.js';
-export { default as TimerNode, timerLocal, timerGlobal, timerDelta, frameId } from './utils/TimerNode.js';
+export { TimerNode, timerLocal, timerGlobal, timerDelta, frameId } from './utils/TimerNode.js';
 export {
   default as TriplanarTexturesNode,
   triplanarTextures,

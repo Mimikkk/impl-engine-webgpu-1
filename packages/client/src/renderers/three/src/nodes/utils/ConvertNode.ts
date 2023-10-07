@@ -1,35 +1,34 @@
 import { Node } from '../core/Node.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
-class ConvertNode extends Node {
-  constructor(node, convertTo) {
+export class ConvertNode extends Node {
+  node: Node;
+  convertTo: string;
+
+  constructor(node: Node, convertTo: string) {
     super();
 
     this.node = node;
     this.convertTo = convertTo;
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder): NodeType {
     const requestType = this.node.getNodeType(builder);
 
     let convertTo = null;
-
     for (const overloadingType of this.convertTo.split('|')) {
       if (convertTo === null || builder.getTypeLength(requestType) === builder.getTypeLength(overloadingType)) {
         convertTo = overloadingType;
       }
     }
 
-    return convertTo;
+    return convertTo as NodeType;
   }
 
-  generate(builder, output) {
-    const node = this.node;
+  generate(builder: NodeBuilder, output?: NodeType) {
     const type = this.getNodeType(builder);
 
-    const snippet = node.build(builder, type);
-
-    return builder.format(snippet, type, output);
+    return builder.format(this.node.build(builder, type), type, output);
   }
 }
-
-export default ConvertNode;

@@ -6,7 +6,7 @@ import { addNodeElement, nodeArray, nodeObject } from '../shadernode/ShaderNode.
 import { NodeBuilder } from '../core/NodeBuilder.js';
 import { NodeType } from '../core/constants.js';
 
-class LoopNode extends Node {
+export class LoopNode extends Node {
   params: any;
 
   constructor(params = []) {
@@ -144,8 +144,6 @@ class LoopNode extends Node {
     return returnsSnippet;
   }
 }
-
-export default LoopNode;
 
 export const loop = (...params: any[]) => nodeObject(new LoopNode(nodeArray(params, NodeType.Integer)));
 

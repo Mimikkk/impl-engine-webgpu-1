@@ -2,17 +2,15 @@ import { CondNode } from '../math/CondNode.js';
 import { expression } from '../code/ExpressionNode.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
-let discardExpression;
+let discardExpression: CondNode;
 
-class DiscardNode extends CondNode {
-  constructor(condNode) {
+export class DiscardNode extends CondNode {
+  constructor(condNode: CondNode) {
     discardExpression = discardExpression || expression('discard');
 
     super(condNode, discardExpression);
   }
 }
-
-export default DiscardNode;
 
 export const discard = nodeProxy(DiscardNode);
 

@@ -1,7 +1,8 @@
 import { Node } from '../core/Node.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
+import { NodeType } from '../core/constants.js';
 
-class ArrayElementNode extends Node {
+export class ArrayElementNode extends Node {
   node: Node;
   index: Node;
 
@@ -18,10 +19,8 @@ class ArrayElementNode extends Node {
 
   generate(builder: NodeBuilder) {
     const nodeSnippet = this.node.build(builder);
-    const indexSnippet = this.index.build(builder, 'uint');
+    const indexSnippet = this.index.build(builder, NodeType.UnsignedInteger);
 
     return `${nodeSnippet}[ ${indexSnippet} ]`;
   }
 }
-
-export default ArrayElementNode;

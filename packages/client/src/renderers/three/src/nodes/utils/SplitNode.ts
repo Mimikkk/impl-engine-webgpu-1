@@ -1,10 +1,14 @@
 import { Node } from '../core/Node.js';
-import { vectorComponents } from '../core/constants.js';
+import { NodeType, vectorComponents } from '../core/constants.js';
+import { NodeBuilder } from '../core/NodeBuilder.js';
 
 const stringVectorComponents = vectorComponents.join('');
 
-class SplitNode extends Node {
-  constructor(node, components = 'x') {
+export class SplitNode extends Node {
+  node: Node;
+  components: 'x' | 'y' | 'z';
+
+  constructor(node: Node, components: 'x' | 'y' | 'z' = 'x') {
     super();
 
     this.node = node;
@@ -21,47 +25,33 @@ class SplitNode extends Node {
     return vectorLength;
   }
 
-  getNodeType(builder) {
-    return builder.getTypeFromLength(this.components.length);
+  getNodeType(builder: NodeBuilder) {
+    return builder.getTypeFromLength(this.components.length) as NodeType;
   }
 
-  generate(builder, output) {
+  generate(builder: NodeBuilder, output?: NodeType) {
     const node = this.node;
     const nodeTypeLength = builder.getTypeLength(node.getNodeType(builder));
-
-    let snippet = null;
 
     if (nodeTypeLength > 1) {
       let type = null;
 
-      const componentsLength = this.getVectorLength();
-
-      if (componentsLength >= nodeTypeLength) {
-        // needed expand the input node
-
+      if (this.getVectorLength() >= nodeTypeLength) {
+        // needed to expand the input node
         type = builder.getTypeFromLength(this.getVectorLength());
       }
 
-      const nodeSnippet = node.build(builder, type);
+      const nodeSnippet = node.build(builder, type as NodeType);
 
+      // unecessary swizzle
       if (
         this.components.length === nodeTypeLength &&
         this.components === stringVectorComponents.slice(0, this.components.length)
-      ) {
-        // unecessary swizzle
-
-        snippet = builder.format(nodeSnippet, type, output);
-      } else {
-        snippet = builder.format(`${nodeSnippet}.${this.components}`, this.getNodeType(builder), output);
-      }
-    } else {
-      // ignore .components if .node returns float/integer
-
-      snippet = node.build(builder, output);
+      )
+        return builder.format(nodeSnippet, type, output);
+      return builder.format(`${nodeSnippet}.${this.components}`, this.getNodeType(builder), output);
     }
-
-    return snippet;
+    // ignore .components if .node returns float/integer
+    return node.build(builder, output);
   }
 }
-
-export default SplitNode;

@@ -2,10 +2,11 @@ import { TempNode } from '../core/TempNode.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
 import { nodeImmutable, vec2, vec3 } from '../shadernode/ShaderNode.js';
+import { NodeType } from '../core/constants.js';
 
-class MatcapUVNode extends TempNode {
+export class MatcapUVNode extends TempNode {
   constructor() {
-    super('vec2');
+    super(NodeType.Vector2);
   }
 
   construct() {
@@ -15,7 +16,5 @@ class MatcapUVNode extends TempNode {
     return vec2(x.dot(NormalNodes.transformed.view), y.dot(NormalNodes.transformed.view)).mul(0.495).add(0.5);
   }
 }
-
-export default MatcapUVNode;
 
 export const matcapUV = nodeImmutable(MatcapUVNode);
