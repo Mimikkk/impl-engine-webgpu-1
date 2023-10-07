@@ -1,15 +1,11 @@
 import { TempNode } from '../core/TempNode.js';
-import { texture } from '../accessors/TextureNode.js';
+import { texture, TextureNode } from '../accessors/TextureNode.js';
 import { uv } from '../accessors/UVNode.js';
 import { NormalNodes } from '../accessors/NormalNode.js';
 import { PositionNodes } from '../accessors/PositionNode.js';
 import { faceDirection } from './FrontFacingNode.js';
 import { nodeProxy, tslFn, vec2 } from '../shadernode/ShaderNode.js';
-
-// Bump Mapping Unparametrized Surfaces on the GPU by Morten S. Mikkelsen
-// https://mmikk.github.io/papers3d/mm_sfgrad_bump.pdf
-
-// Evaluate the derivative of the height w.r.t. screen-space using forward differencing (listing 2)
+import { NodeType } from '../core/constants.js';
 
 const dHdxy_fwd = tslFn(({ bumpTexture, bumpScale }) => {
   const uvNode = uv();
@@ -39,10 +35,12 @@ const perturbNormalArb = tslFn(inputs => {
   return fDet.abs().mul(surf_norm).sub(vGrad).normalize();
 });
 
-class BumpMapNode extends TempNode {
-  constructor(texture, scaleNode = null) {
-    super('vec3');
+export class BumpMapNode extends TempNode {
+  texture: TextureNode;
+  scaleNode: number | null;
 
+  constructor(texture: TextureNode, scaleNode: number | null = null) {
+    super(NodeType.Vector3);
     this.texture = texture;
     this.scaleNode = scaleNode;
   }
@@ -58,7 +56,5 @@ class BumpMapNode extends TempNode {
     });
   }
 }
-
-export default BumpMapNode;
 
 export const bumpMap = nodeProxy(BumpMapNode);

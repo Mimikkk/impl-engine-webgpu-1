@@ -1,7 +1,7 @@
 import { TextureNode } from '../accessors/TextureNode.js';
 import { NodeUpdateType } from '../core/constants.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
-import { viewportTopLeft } from './ViewportNode.js';
+import { ViewportNodes } from './ViewportNode.js';
 import { FramebufferTexture, LinearMipmapLinearFilter, Vector2 } from '../../Three.js';
 import { NodeFrame } from '../core/NodeFrame.js';
 import { UVNode } from '../accessors/UVNode.js';
@@ -14,7 +14,7 @@ export class ViewportTextureNode extends TextureNode {
   isOutputTextureNode: boolean;
 
   constructor(
-    uvNode: UVNode = viewportTopLeft,
+    uvNode: UVNode = ViewportNodes.topLeft,
     levelNode: Node | null = null,
     framebufferTexture: FramebufferTexture | null = null,
   ) {

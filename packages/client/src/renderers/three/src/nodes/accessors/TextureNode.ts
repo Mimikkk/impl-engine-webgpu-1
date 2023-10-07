@@ -1,7 +1,7 @@
 import UniformNode, { uniform } from '../core/UniformNode.js';
 import { uv, UVNode } from './UVNode.js';
 import { textureSize } from './TextureSizeNode.js';
-import { colorSpaceToLinear } from '../display/ColorSpaceNode.js';
+import { ColorSpaceNodes } from '../display/ColorSpaceNode.js';
 import { context } from '../core/ContextNode.js';
 import { expression } from '../code/ExpressionNode.js';
 import { addNodeElement, nodeObject, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';
@@ -138,7 +138,7 @@ export class TextureNode extends UniformNode {
       let snippet = propertyName;
 
       if (builder.needsColorSpaceToLinear(this.value)) {
-        snippet = colorSpaceToLinear(expression(snippet, nodeType), this.value.colorSpace)
+        snippet = ColorSpaceNodes.colorSpaceToLinear(expression(snippet, nodeType), this.value.colorSpace)
           .construct(builder)
           .build(builder, nodeType);
       }

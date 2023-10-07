@@ -9,7 +9,7 @@ import {
   reference,
   texture,
   toneMapping,
-  viewportBottomLeft,
+  ViewportNodes,
 } from '../../nodes/Nodes.js';
 
 class Nodes extends DataMap {
@@ -145,7 +145,7 @@ class Nodes extends DataMap {
           ) {
             nodeUV = equirectUV();
           } else {
-            nodeUV = viewportBottomLeft;
+            nodeUV = ViewportNodes.bottomLeft;
           }
 
           backgroundNode = texture(background, nodeUV).setUpdateMatrix(true);

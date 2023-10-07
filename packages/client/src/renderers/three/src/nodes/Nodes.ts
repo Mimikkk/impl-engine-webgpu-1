@@ -170,46 +170,17 @@ export { default as UserDataNode, userData } from './accessors/UserDataNode.js';
 
 // display
 export { BlendModeNode, BlendModeNodes } from './display/BlendModeNode.js';
-export {
-  default as ColorAdjustmentNode,
-  saturation,
-  vibrance,
-  hue,
-  lumaCoeffs,
-  luminance,
-} from './display/ColorAdjustmentNode.js';
-export {
-  default as ColorSpaceNode,
-  linearToColorSpace,
-  colorSpaceToLinear,
-  linearTosRGB,
-  sRGBToLinear,
-} from './display/ColorSpaceNode.js';
+export { ColorAdjustmentNode, ColorAdjustmentNodes } from './display/ColorAdjustmentNode.js';
+export { ColorSpaceNode, ColorSpaceNodes } from './display/ColorSpaceNode.js';
 export { default as FrontFacingNode, frontFacing, faceDirection } from './display/FrontFacingNode.js';
 export { default as NormalMapNode, normalMap, TBNViewMatrix } from './display/NormalMapNode.js';
 export { default as PosterizeNode, posterize } from './display/PosterizeNode.js';
-export { default as ToneMappingNode, toneMapping } from './display/ToneMappingNode.js';
-export {
-  default as ViewportNode,
-  viewportCoordinate,
-  viewportResolution,
-  viewportTopLeft,
-  viewportBottomLeft,
-  viewportTopRight,
-  viewportBottomRight,
-} from './display/ViewportNode.js';
+export { ToneMappingNode, toneMapping } from './display/ToneMappingNode.js';
+export { ViewportNode, ViewportNodes } from './display/ViewportNode.js';
 export { default as ViewportTextureNode, viewportTexture, viewportMipTexture } from './display/ViewportTextureNode.js';
 export { default as ViewportSharedTextureNode, viewportSharedTexture } from './display/ViewportSharedTextureNode.js';
-export { default as ViewportDepthTextureNode, viewportDepthTexture } from './display/ViewportDepthTextureNode.js';
-export {
-  default as ViewportDepthNode,
-  viewZToOrthographicDepth,
-  orthographicDepthToViewZ,
-  viewZToPerspectiveDepth,
-  perspectiveDepthToViewZ,
-  depth,
-  depthTexture,
-} from './display/ViewportDepthNode.js';
+export { ViewportDepthTextureNode, viewportDepthTexture } from './display/ViewportDepthTextureNode.js';
+export { ViewportDepthNode, ViewportDepthNodes } from './display/ViewportDepthNode.js';
 
 // code
 export { ExpressionNode, expression } from './code/ExpressionNode.js';

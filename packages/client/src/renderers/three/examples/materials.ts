@@ -18,7 +18,7 @@ import {
   vec2,
   vec3,
   vec4,
-  viewportBottomLeft,
+  ViewportNodes,
   wgslFn,
 } from '../src/nodes/Nodes.js';
 
@@ -186,7 +186,7 @@ function init() {
 
   // Screen Projection Texture
   material = new MeshBasicNodeMaterial();
-  material.colorNode = texture(uvTexture, viewportBottomLeft);
+  material.colorNode = texture(uvTexture, ViewportNodes.bottomLeft);
   materials.push(material);
 
   // Loop

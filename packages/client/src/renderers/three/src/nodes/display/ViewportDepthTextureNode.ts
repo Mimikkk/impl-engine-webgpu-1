@@ -1,13 +1,13 @@
 import { ViewportTextureNode } from './ViewportTextureNode.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
-import { viewportTopLeft } from './ViewportNode.js';
+import { ViewportNodes } from './ViewportNode.js';
 import { Node } from '../core/Node.js';
 import { DepthFormat, DepthTexture, LinearMipmapLinearFilter, UnsignedIntType } from '../../Three.js';
 
 let sharedDepthbuffer: DepthTexture | null = null;
 
-class ViewportDepthTextureNode extends ViewportTextureNode {
-  constructor(uvNode = viewportTopLeft, levelNode: Node | null = null) {
+export class ViewportDepthTextureNode extends ViewportTextureNode {
+  constructor(uvNode = ViewportNodes.topLeft, levelNode: Node | null = null) {
     if (sharedDepthbuffer === null) {
       sharedDepthbuffer = new DepthTexture(0, 0);
       sharedDepthbuffer.minFilter = LinearMipmapLinearFilter;
@@ -18,8 +18,6 @@ class ViewportDepthTextureNode extends ViewportTextureNode {
     super(uvNode, levelNode, sharedDepthbuffer as any);
   }
 }
-
-export default ViewportDepthTextureNode;
 
 export const viewportDepthTexture = nodeProxy(ViewportDepthTextureNode);
 

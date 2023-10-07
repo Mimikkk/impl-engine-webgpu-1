@@ -2,11 +2,10 @@ import { TempNode } from '../core/TempNode.js';
 import { dot, mix } from '../math/MathNode.js';
 import { add } from '../math/OperatorNode.js';
 import { addNodeElement, float, mat3, nodeProxy, tslFn, vec3 } from '../shadernode/ShaderNode.js';
+import { NodeType } from '../core/constants.js';
+import { Node } from '../core/Node.js';
 
-const saturationNode = tslFn(({ color, adjustment }) => {
-  return adjustment.mix(luminance(color), color);
-});
-
+const saturationNode = tslFn(({ color, adjustment }) => adjustment.mix(ColorAdjustmentNodes.luminance(color), color));
 const vibranceNode = tslFn(({ color, adjustment }) => {
   const average = add(color.r, color.g, color.b).div(3.0);
 
@@ -15,7 +14,6 @@ const vibranceNode = tslFn(({ color, adjustment }) => {
 
   return mix(color, mx, amt);
 });
-
 const hueNode = tslFn(({ color, adjustment }) => {
   const RGBtoYIQ = mat3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591, 0.311135);
   const YIQtoRGB = mat3(1.0, 0.9563, 0.621, 1.0, -0.2721, -0.6474, 1.0, -1.107, 1.7046);
@@ -28,9 +26,13 @@ const hueNode = tslFn(({ color, adjustment }) => {
   return YIQtoRGB.mul(vec3(yiq.x, chroma.mul(hue.cos()), chroma.mul(hue.sin())));
 });
 
-class ColorAdjustmentNode extends TempNode {
-  constructor(method, colorNode, adjustmentNode = float(1)) {
-    super('vec3');
+export class ColorAdjustmentNode extends TempNode {
+  method: ColorAdjustmentNode.Method;
+  colorNode: Node;
+  adjustmentNode: Node;
+
+  constructor(method: ColorAdjustmentNode.Method, colorNode: Node, adjustmentNode: Node = float(1)) {
+    super(NodeType.Vector3);
 
     this.method = method;
 
@@ -39,39 +41,34 @@ class ColorAdjustmentNode extends TempNode {
   }
 
   construct() {
-    const { method, colorNode, adjustmentNode } = this;
+    const callParams = { color: this.colorNode, adjustment: this.adjustmentNode };
 
-    const callParams = { color: colorNode, adjustment: adjustmentNode };
-
-    let outputNode = null;
-
-    if (method === ColorAdjustmentNode.SATURATION) {
-      outputNode = saturationNode(callParams);
-    } else if (method === ColorAdjustmentNode.VIBRANCE) {
-      outputNode = vibranceNode(callParams);
-    } else if (method === ColorAdjustmentNode.HUE) {
-      outputNode = hueNode(callParams);
-    } else {
-      console.error(`${this.type}: Method "${this.method}" not supported!`);
+    switch (this.method) {
+      case ColorAdjustmentNode.Method.Saturation:
+        return saturationNode(callParams);
+      case ColorAdjustmentNode.Method.Vibrance:
+        return vibranceNode(callParams);
+      case ColorAdjustmentNode.Method.Hue:
+        return hueNode(callParams);
     }
-
-    return outputNode;
   }
 }
+export namespace ColorAdjustmentNode {
+  export enum Method {
+    Saturation = 'saturation',
+    Vibrance = 'vibrance',
+    Hue = 'hue',
+  }
+}
+export namespace ColorAdjustmentNodes {
+  export const saturation = nodeProxy(ColorAdjustmentNode, ColorAdjustmentNode.Method.Saturation);
+  export const vibrance = nodeProxy(ColorAdjustmentNode, ColorAdjustmentNode.Method.Vibrance);
+  export const hue = nodeProxy(ColorAdjustmentNode, ColorAdjustmentNode.Method.Hue);
 
-ColorAdjustmentNode.SATURATION = 'saturation';
-ColorAdjustmentNode.VIBRANCE = 'vibrance';
-ColorAdjustmentNode.HUE = 'hue';
+  export const lumaCoeffs = vec3(0.2125, 0.7154, 0.0721);
+  export const luminance = (color: any, luma: any = lumaCoeffs) => dot(color, luma);
+}
 
-export default ColorAdjustmentNode;
-
-export const saturation = nodeProxy(ColorAdjustmentNode, ColorAdjustmentNode.SATURATION);
-export const vibrance = nodeProxy(ColorAdjustmentNode, ColorAdjustmentNode.VIBRANCE);
-export const hue = nodeProxy(ColorAdjustmentNode, ColorAdjustmentNode.HUE);
-
-export const lumaCoeffs = vec3(0.2125, 0.7154, 0.0721);
-export const luminance = (color, luma = lumaCoeffs) => dot(color, luma);
-
-addNodeElement('saturation', saturation);
-addNodeElement('vibrance', vibrance);
-addNodeElement('hue', hue);
+addNodeElement('saturation', ColorAdjustmentNodes.saturation);
+addNodeElement('vibrance', ColorAdjustmentNodes.vibrance);
+addNodeElement('hue', ColorAdjustmentNodes.hue);
