@@ -6,7 +6,7 @@ import {
   storage,
   texture,
   uniform,
-  viewportTopLeft,
+  ViewportNodes,
 } from '../src/nodes/Nodes.js';
 import { GUI } from 'lil-gui';
 import { createRenderer } from '../src/WebGPURenderer.js';
@@ -98,7 +98,9 @@ const camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight,
 const analyserTexture = new DataTexture(analyserBuffer, analyserBuffer.length, 1, RedFormat);
 
 const scene = new Scene();
-scene.backgroundNode = color(0x0000ff).mul(texture(analyserTexture, viewportTopLeft.x).x.mul(viewportTopLeft.y));
+scene.backgroundNode = color(0x0000ff).mul(
+  texture(analyserTexture, ViewportNodes.topLeft.x).x.mul(ViewportNodes.topLeft.y),
+);
 
 const renderer = createRenderer();
 renderer.setAnimationLoop(() => {

@@ -1,17 +1,4 @@
 import * as THREE from '../src/Three.js';
-import {
-  checker,
-  color,
-  depth,
-  depthTexture,
-  MeshBasicNodeMaterial,
-  ModelNodes,
-  toneMapping,
-  uv,
-  viewportMipTexture,
-  viewportSharedTexture,
-  viewportTopLeft,
-} from '../src/nodes/Nodes.js';
 
 import { GUI } from 'lil-gui';
 
@@ -20,6 +7,18 @@ import { GLTFLoader } from '../src/loaders/GLTFLoader.js';
 import WebGPURenderer from '../src/WebGPURenderer.js';
 
 import { OrbitControls } from '../src/controls/OrbitControls.js';
+import {
+  checker,
+  color,
+  ViewportDepthNodes,
+  MeshBasicNodeMaterial,
+  ModelNodes,
+  toneMapping,
+  uv,
+  viewportMipTexture,
+  ViewportNodes,
+  viewportSharedTexture,
+} from '../src/nodes/Nodes.js';
 
 let camera, scene, renderer;
 let mixer, clock;
@@ -51,7 +50,7 @@ function init() {
 
   // volume
 
-  const depthDistance = depthTexture().distance(depth);
+  const depthDistance = ViewportDepthNodes.depthTexture().distance(ViewportDepthNodes.depth);
   const depthAlphaNode = depthDistance.oneMinus().smoothstep(0.9, 2).mul(20).saturate();
   const depthBlurred = viewportMipTexture().bicubic(
     depthDistance
@@ -85,7 +84,7 @@ function init() {
   bicubicMaterial.side = THREE.DoubleSide;
 
   const pixelMaterial = new MeshBasicNodeMaterial();
-  pixelMaterial.backdropNode = viewportSharedTexture(viewportTopLeft.mul(100).floor().div(100));
+  pixelMaterial.backdropNode = viewportSharedTexture(ViewportNodes.topLeft.mul(100).floor().div(100));
   pixelMaterial.transparent = true;
 
   // box / floor

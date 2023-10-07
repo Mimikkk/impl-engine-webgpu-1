@@ -10,8 +10,8 @@ import {
   toneMapping,
   uv,
   vec3,
+  ViewportNodes,
   viewportSharedTexture,
-  viewportTopLeft,
 } from '../src/nodes/Nodes.js';
 import { GLTFLoader } from '../src/loaders/GLTFLoader.js';
 import WebGPURenderer from '../src/WebGPURenderer.js';
@@ -90,8 +90,8 @@ addBackdropSphere(viewportSharedTexture().rgb.oneMinus());
 addBackdropSphere(viewportSharedTexture().rgb.saturation(0));
 addBackdropSphere(viewportSharedTexture().rgb.saturation(10), oscSine());
 addBackdropSphere(viewportSharedTexture().rgb.overlay(checker(uv().mul(10))));
-addBackdropSphere(viewportSharedTexture(viewportTopLeft.mul(40).floor().div(40)));
-addBackdropSphere(viewportSharedTexture(viewportTopLeft.mul(80).floor().div(80)).add(color(0x0033ff)));
+addBackdropSphere(viewportSharedTexture(ViewportNodes.topLeft.mul(40).floor().div(40)));
+addBackdropSphere(viewportSharedTexture(ViewportNodes.topLeft.mul(80).floor().div(80)).add(color(0x0033ff)));
 addBackdropSphere(vec3(0, 0, viewportSharedTexture().b));
 
 const renderer = new WebGPURenderer();
