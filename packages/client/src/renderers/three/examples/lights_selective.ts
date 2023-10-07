@@ -19,7 +19,7 @@ function init() {
   camera.position.z = 7;
 
   scene = new THREE.Scene();
-  scene.fogNode = rangeFog(color(0xff00ff), 8, 30);
+  scene.fogNode = FogNodes.range(color(0xff00ff), 8, 30);
 
   const sphereGeometry = new THREE.SphereGeometry(0.1, 16, 8);
 

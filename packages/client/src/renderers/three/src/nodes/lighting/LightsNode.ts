@@ -51,7 +51,7 @@ export class LightsNode extends Node {
   }
 
   getLightNodeByHash(hash: string) {
-    return this.lightNodes.find(lightNode => lightNode.light.uuid === hash);
+    return this.lightNodes.find(lightNode => lightNode.light.uuid === hash) ?? null;
   }
 
   fromLights(lights: Light[] = []) {
