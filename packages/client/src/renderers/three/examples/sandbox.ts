@@ -7,11 +7,11 @@ import {
   MeshBasicNodeMaterial,
   mix,
   NormalNodes,
-  oscSine,
+  OscNodes,
   PointsNodeMaterial,
   PositionNodes,
   texture,
-  timerLocal,
+  TimerNodes,
   uv,
   vec2,
 } from '../src/nodes/Nodes.js';
@@ -63,7 +63,7 @@ async function init() {
   const materialBox = new MeshBasicNodeMaterial();
 
   // birection speed
-  const timerScaleNode = timerLocal().mul(vec2(-0.5, 0.1));
+  const timerScaleNode = TimerNodes.local().mul(vec2(-0.5, 0.1));
   const animateUV = uv().add(timerScaleNode);
 
   const textureNode = texture(uvTexture, animateUV);
@@ -109,8 +109,8 @@ async function init() {
 
   const materialCompressed = new MeshBasicNodeMaterial();
   materialCompressed.colorNode = texture(ktxTexture);
-  materialCompressed.emissiveNode = oscSine().mix(color(0x663300), color(0x0000ff));
-  materialCompressed.alphaTestNode = oscSine();
+  materialCompressed.emissiveNode = OscNodes.sine().mix(color(0x663300), color(0x0000ff));
+  materialCompressed.alphaTestNode = OscNodes.sine();
   materialCompressed.transparent = true;
 
   const geo = flipY(new THREE.PlaneGeometry());

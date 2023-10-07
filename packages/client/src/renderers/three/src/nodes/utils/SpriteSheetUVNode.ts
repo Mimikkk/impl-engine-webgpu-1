@@ -1,10 +1,15 @@
 import { Node } from '../core/Node.js';
-import { uv } from '../accessors/UVNode.js';
+import { uv, UVNode } from '../accessors/UVNode.js';
 import { float, nodeProxy, vec2 } from '../shadernode/ShaderNode.js';
+import { NodeType } from '../core/constants.js';
 
-class SpriteSheetUVNode extends Node {
-  constructor(countNode, uvNode = uv(), frameNode = float(0)) {
-    super('vec2');
+export class SpriteSheetUVNode extends Node {
+  countNode: Node;
+  uvNode: UVNode;
+  frameNode: Node;
+
+  constructor(countNode: Node, uvNode: UVNode = uv(), frameNode: Node = float(0)) {
+    super(NodeType.Vector2);
 
     this.countNode = countNode;
     this.uvNode = uvNode;
@@ -27,7 +32,5 @@ class SpriteSheetUVNode extends Node {
     return uvNode.add(uvFrameOffset).mul(scale);
   }
 }
-
-export default SpriteSheetUVNode;
 
 export const spritesheetUV = nodeProxy(SpriteSheetUVNode);

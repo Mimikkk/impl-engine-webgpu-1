@@ -7,7 +7,7 @@ import {
   range,
   SpriteNodeMaterial,
   texture,
-  timerLocal,
+  TimerNodes,
   uv,
 } from '../src/nodes/Nodes.js';
 
@@ -41,7 +41,7 @@ function init() {
   const lifeRange = range(0.1, 1);
   const offsetRange = range(new THREE.Vector3(-2, 3, -2), new THREE.Vector3(2, 5, 2));
 
-  const timer = timerLocal(0.2, 1 /*100000*/); // @TODO: need to work with 64-bit precision
+  const timer = TimerNodes.local(0.2, 1 /*100000*/); // @TODO: need to work with 64-bit precision
 
   const lifeTime = timer.mul(lifeRange).mod(1);
   const scaleRange = range(0.3, 2);

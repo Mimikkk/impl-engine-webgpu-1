@@ -8,7 +8,7 @@ import {
   loop,
   MeshBasicNodeMaterial,
   NormalNodes,
-  oscSine,
+  OscNodes,
   PositionNodes,
   string,
   texture,
@@ -196,7 +196,7 @@ function init() {
   const loopCount = 10;
   material.colorNode = loop(loopCount, ({ i }, stack) => {
     const output = vec4().temp();
-    const scale = oscSine().mul(0.09); // just a value to test
+    const scale = OscNodes.sine().mul(0.09); // just a value to test
 
     const scaleI = scale.mul(i);
     const scaleINeg = scaleI.negate();

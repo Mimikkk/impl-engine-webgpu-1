@@ -123,21 +123,15 @@ export { JoinNode } from './utils/JoinNode.js';
 export { LoopNode, loop } from './utils/LoopNode.js';
 export { MatcapUVNode, matcapUV } from './utils/MatcapUVNode.js';
 export { MaxMipLevelNode, maxMipLevel } from './utils/MaxMipLevelNode.js';
-export { OscNode, oscSine, oscSquare, oscTriangle, oscSawtooth } from './utils/OscNode.js';
-export { default as PackingNode, directionToColor, colorToDirection } from './utils/PackingNode.js';
-export { default as RemapNode, remap, remapClamp } from './utils/RemapNode.js';
-export { default as RotateUVNode, rotateUV } from './utils/RotateUVNode.js';
-export { default as SpecularMIPLevelNode, specularMIPLevel } from './utils/SpecularMIPLevelNode.js';
+export { OscNode, OscNodes } from './utils/OscNode.js';
+export { PackingNode, PackingNodes } from './utils/PackingNode.js';
+export { RemapNode, remap, remapClamp } from './utils/RemapNode.js';
+export { RotateUVNode, rotateUV } from './utils/RotateUVNode.js';
+export { SpecularMIPLevelNode, specularMIPLevel } from './utils/SpecularMIPLevelNode.js';
 export { SplitNode } from './utils/SplitNode.js';
-export { default as SpriteSheetUVNode, spritesheetUV } from './utils/SpriteSheetUVNode.js';
-export { TimerNode, timerLocal, timerGlobal, timerDelta, frameId } from './utils/TimerNode.js';
-export {
-  default as TriplanarTexturesNode,
-  triplanarTextures,
-  triplanarTexture,
-} from './utils/TriplanarTexturesNode.js';
-
-// shadernode
+export { SpriteSheetUVNode, spritesheetUV } from './utils/SpriteSheetUVNode.js';
+export { TimerNode, TimerNodes } from './utils/TimerNode.js';
+export { TriplanarTexturesNode, triplanarTextures, triplanarTexture } from './utils/TriplanarTexturesNode.js';
 export * from './shadernode/ShaderNode.js';
 
 // accessors

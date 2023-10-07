@@ -1,5 +1,5 @@
 import * as THREE from '../src/Three.js';
-import { cubeTexture, float, mix, oscSine, timerLocal, toneMapping } from '../src/nodes/Nodes.js';
+import { cubeTexture, float, mix, OscNodes, TimerNodes, toneMapping } from '../src/nodes/Nodes.js';
 
 import WebGPURenderer from '../src/WebGPURenderer.js';
 
@@ -40,7 +40,11 @@ function init() {
   cube2Texture.generateMipmaps = true;
   cube2Texture.minFilter = THREE.LinearMipmapLinearFilter;
 
-  scene.environmentNode = mix(cubeTexture(cube2Texture), cubeTexture(cube1Texture), oscSine(timerLocal(0.1)));
+  scene.environmentNode = mix(
+    cubeTexture(cube2Texture),
+    cubeTexture(cube1Texture),
+    OscNodes.sine(TimerNodes.local(0.1)),
+  );
 
   scene.backgroundNode = scene.environmentNode.context({
     getSamplerLevelNode: () => float(1),

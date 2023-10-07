@@ -58,29 +58,23 @@ function init() {
     const editorDOM = document.getElementById('source');
     const resultDOM = document.getElementById('result');
 
-    const tslCode = `// Simple uv.x animation
+    const tslCode = `
+const { texture, uniform, vec2, vec4, uv, OscNodes, TimerNodes } = TSL;
 
-const { texture, uniform, vec2, vec4, uv, oscSine, timerLocal } = TSL;
-
-//const samplerTexture = new THREE.Texture();
-const samplerTexture = new THREE.TextureLoader().load( './textures/uv_grid_opengl.jpg' );
+const samplerTexture = new THREE.TextureLoader().load('./textures/uv_grid_opengl.jpg');
 samplerTexture.wrapS = THREE.RepeatWrapping;
-//samplerTexture.wrapT = THREE.RepeatWrapping;
 
-const timer = timerLocal( .5 ); // .5 is speed
+const timer = TimerNodes.local(.5);
 const uv0 = uv();
-const animateUv = vec2( uv0.x.add( oscSine( timer ) ), uv0.y );
+const animateUv = vec2(uv0.x.add(OscNodes.sine(timer)), uv0.y);
 
-// label is optional
-const myMap = texture( samplerTexture, animateUv ).rgb.label( 'myTexture' );
-const myColor = uniform( new THREE.Color( 0x0066ff ) ).label( 'myColor' );
+const myMap = texture(samplerTexture, animateUv).rgb.label('myTexture');
+const myColor = uniform(new THREE.Color(0x0066ff)).label('myColor');
 const opacity = .7;
 
-const desaturatedMap = myMap.rgb.saturation( 0 ); // try add .temp( 'myVar' ) after saturation()
-
-const finalColor = desaturatedMap.add( myColor );
-
-output = vec4( finalColor, opacity );
+const desaturatedMap = myMap.rgb.saturation(0);//.temp('myVar');
+const finalColor = desaturatedMap.add(myColor);
+output = vec4(finalColor, opacity);
 `;
 
     const editor = window.monaco.editor.create(editorDOM, {

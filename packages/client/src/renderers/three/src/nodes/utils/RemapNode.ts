@@ -1,8 +1,15 @@
 import { Node } from '../core/Node.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 
-class RemapNode extends Node {
-  constructor(node, inLowNode, inHighNode, outLowNode, outHighNode) {
+export class RemapNode extends Node {
+  node: Node;
+  inLowNode: Node;
+  inHighNode: Node;
+  outLowNode: Node;
+  outHighNode: Node;
+  shouldClamp: boolean;
+
+  constructor(node: Node, inLowNode: Node, inHighNode: Node, outLowNode: Node, outHighNode: Node) {
     super();
 
     this.node = node;
@@ -11,21 +18,18 @@ class RemapNode extends Node {
     this.outLowNode = outLowNode;
     this.outHighNode = outHighNode;
 
-    this.doClamp = true;
+    this.shouldClamp = true;
   }
 
   construct() {
-    const { node, inLowNode, inHighNode, outLowNode, outHighNode, doClamp } = this;
+    const { node, inLowNode, inHighNode, outLowNode, outHighNode, shouldClamp } = this;
 
     let t = node.sub(inLowNode).div(inHighNode.sub(inLowNode));
 
-    if (doClamp === true) t = t.clamp();
-
+    if (shouldClamp) t = t.clamp();
     return t.mul(outHighNode.sub(outLowNode)).add(outLowNode);
   }
 }
-
-export default RemapNode;
 
 export const remap = nodeProxy(RemapNode, null, null, { doClamp: false });
 export const remapClamp = nodeProxy(RemapNode);

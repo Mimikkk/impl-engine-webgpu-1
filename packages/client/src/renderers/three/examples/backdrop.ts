@@ -4,9 +4,9 @@ import {
   color,
   float,
   MeshStandardNodeMaterial,
-  oscSine,
+  OscNodes,
   PropertyNodes,
-  timerLocal,
+  TimerNodes,
   toneMapping,
   uv,
   vec3,
@@ -49,7 +49,7 @@ loader.load('models/gltf/Michelle.glb', function (gltf) {
   // output material effect ( better using hsv )
   // ignore output.sRGBToLinear().linearTosRGB() for now
 
-  material.outputNode = oscSine(timerLocal(0.1)).mix(
+  material.outputNode = OscNodes.sine(TimerNodes.local(0.1)).mix(
     PropertyNodes.output,
     PropertyNodes.output.add(0.1).posterize(4).mul(2),
   );
@@ -85,10 +85,10 @@ function addBackdropSphere(backdropNode, backdropAlphaNode = null) {
   portals.add(mesh);
 }
 
-addBackdropSphere(viewportSharedTexture().bgr.hue(oscSine().mul(Math.PI)));
+addBackdropSphere(viewportSharedTexture().bgr.hue(OscNodes.sine().mul(Math.PI)));
 addBackdropSphere(viewportSharedTexture().rgb.oneMinus());
 addBackdropSphere(viewportSharedTexture().rgb.saturation(0));
-addBackdropSphere(viewportSharedTexture().rgb.saturation(10), oscSine());
+addBackdropSphere(viewportSharedTexture().rgb.saturation(10), OscNodes.sine());
 addBackdropSphere(viewportSharedTexture().rgb.overlay(checker(uv().mul(10))));
 addBackdropSphere(viewportSharedTexture(ViewportNodes.topLeft.mul(40).floor().div(40)));
 addBackdropSphere(viewportSharedTexture(ViewportNodes.topLeft.mul(80).floor().div(80)).add(color(0x0033ff)));

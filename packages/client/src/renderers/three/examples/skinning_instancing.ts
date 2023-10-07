@@ -1,5 +1,5 @@
 import * as THREE from '../src/Three.js';
-import { color, MeshStandardNodeMaterial, mix, oscSine, range, timerLocal, toneMapping } from '../src/nodes/Nodes.js';
+import { color, MeshStandardNodeMaterial, mix, OscNodes, range, TimerNodes, toneMapping } from '../src/nodes/Nodes.js';
 
 import { GLTFLoader } from '../src/loaders/GLTFLoader.js';
 
@@ -47,7 +47,7 @@ function init() {
 
     object.traverse(child => {
       if (child.isMesh) {
-        const oscNode = oscSine(timerLocal(0.1));
+        const oscNode = OscNodes.sine(TimerNodes.local(0.1));
 
         // random colors between instances from 0x000000 to 0xFFFFFF
         const randomColors = range(new THREE.Color(0x000000), new THREE.Color(0xffffff));

@@ -1,10 +1,15 @@
 import { Node } from '../core/Node.js';
 import { maxMipLevel } from './MaxMipLevelNode.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
+import { TextureNode } from '../accessors/TextureNode.js';
+import { NodeType } from '../core/constants.js';
 
-class SpecularMIPLevelNode extends Node {
-  constructor(textureNode, roughnessNode = null) {
-    super('float');
+export class SpecularMIPLevelNode extends Node {
+  textureNode: TextureNode;
+  roughnessNode: Node;
+
+  constructor(textureNode: TextureNode, roughnessNode: Node) {
+    super(NodeType.Float);
 
     this.textureNode = textureNode;
     this.roughnessNode = roughnessNode;
@@ -12,8 +17,6 @@ class SpecularMIPLevelNode extends Node {
 
   construct() {
     const { textureNode, roughnessNode } = this;
-
-    // taken from here: http://casual-effects.blogspot.ca/2011/08/plausible-environment-lighting-in-two.html
 
     const maxMIPLevelScalar = maxMipLevel(textureNode);
 
@@ -23,7 +26,5 @@ class SpecularMIPLevelNode extends Node {
     return desiredMIPLevel.clamp(0.0, maxMIPLevelScalar);
   }
 }
-
-export default SpecularMIPLevelNode;
 
 export const specularMIPLevel = nodeProxy(SpecularMIPLevelNode);
