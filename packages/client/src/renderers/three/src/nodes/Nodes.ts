@@ -112,7 +112,7 @@ export {
   shiftLeft,
   shiftRight,
 } from './math/OperatorNode.js';
-export { default as CondNode, cond } from './math/CondNode.js';
+export { CondNode, cond } from './math/CondNode.js';
 
 // utils
 export { default as ArrayElementNode } from './utils/ArrayElementNode.js';

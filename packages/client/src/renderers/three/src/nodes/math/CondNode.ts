@@ -64,8 +64,6 @@ export class CondNode extends Node {
   }
 }
 
-export default CondNode;
-
 export const cond = nodeProxy(CondNode);
 
 addNodeElement('cond', cond);
