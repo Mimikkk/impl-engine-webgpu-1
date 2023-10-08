@@ -8,7 +8,7 @@ import { UVNode } from './UVNode.js';
 import { Node } from '../core/Node.js';
 import { CubeTexture } from '../../textures/CubeTexture.js';
 
-class CubeTextureNode extends TextureNode {
+export class CubeTextureNode extends TextureNode {
   isCubeTextureNode: boolean = true;
 
   constructor(value: any, uvNode: UVNode | null = null, levelNode: Node | null = null) {
@@ -74,8 +74,6 @@ class CubeTextureNode extends TextureNode {
     }
   }
 }
-
-export default CubeTextureNode;
 
 export const cubeTexture = nodeProxy(CubeTextureNode);
 

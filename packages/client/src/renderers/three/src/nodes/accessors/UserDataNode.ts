@@ -1,9 +1,9 @@
-import ReferenceNode from './ReferenceNode.js';
+import { ReferenceNode } from './ReferenceNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 import { NodeType } from '../core/constants.js';
 import { NodeFrame } from '../core/NodeFrame.js';
 
-class UserDataNode extends ReferenceNode {
+export class UserDataNode extends ReferenceNode {
   userData: any;
 
   constructor(property: string, inputType: NodeType, userData: any = null) {
@@ -18,8 +18,6 @@ class UserDataNode extends ReferenceNode {
     super.update(frame);
   }
 }
-
-export default UserDataNode;
 
 export const userData = (name: string, inputType: NodeType, userData: any) =>
   nodeObject(new UserDataNode(name, inputType, userData));

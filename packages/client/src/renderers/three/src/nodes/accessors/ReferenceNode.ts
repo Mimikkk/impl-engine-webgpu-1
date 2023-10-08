@@ -6,7 +6,7 @@ import { nodeObject } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 import { NodeFrame } from '../core/NodeFrame.js';
 
-class ReferenceNode extends Node {
+export class ReferenceNode extends Node {
   property: string | number;
   uniformType: string;
   object: any | null;
@@ -53,8 +53,6 @@ class ReferenceNode extends Node {
     return this.node;
   }
 }
-
-export default ReferenceNode;
 
 export const reference = (name: string | number, type: string, object: any) =>
   nodeObject(new ReferenceNode(name, type, object));

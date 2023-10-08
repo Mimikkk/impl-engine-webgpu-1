@@ -9,7 +9,7 @@ import { NodeBuilder } from '../core/NodeBuilder.js';
 
 import { NodeType } from '../core/constants.js';
 
-class InstanceNode extends Node {
+export class InstanceNode extends Node {
   instanceMesh: InstancedMesh;
   instanceMatrixNode: Matrix4NodeUniform | null;
 
@@ -63,7 +63,5 @@ class InstanceNode extends Node {
     builder.stack.assign(NormalNodes.local, instanceNormal);
   }
 }
-
-export default InstanceNode;
 
 export const instance = nodeProxy(InstanceNode);
