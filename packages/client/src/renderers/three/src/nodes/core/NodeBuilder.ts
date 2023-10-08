@@ -6,7 +6,7 @@ import { NodeCode } from './NodeCode.js';
 import { NodeKeywords } from './NodeKeywords.js';
 import { NodeCache } from './NodeCache.js';
 import { createNodeMaterialFromType } from '../materials/NodeMaterial.js';
-import { defaultBuildStages, NodeShaderStage, NodeUpdateType, shaderStages } from './constants.js';
+import { defaultBuildStages, NodeShaderStage, NodeType, NodeUpdateType, shaderStages } from './constants.js';
 import { Node } from './Node.js';
 
 import {
@@ -25,22 +25,22 @@ import { stack } from './StackNode.js';
 import { maxMipLevel } from '../utils/MaxMipLevelNode.js';
 import { BuildStageOption } from 'three/examples/jsm/nodes/core/NodeBuilder.js';
 
-const typeFromLength = new Map([
-  [2, 'vec2'],
-  [3, 'vec3'],
-  [4, 'vec4'],
-  [9, 'mat3'],
-  [16, 'mat4'],
+const typeFromLength = new Map<number, NodeType>([
+  [2, NodeType.Vector2],
+  [3, NodeType.Vector3],
+  [4, NodeType.Vector4],
+  [9, NodeType.Matrix3],
+  [16, NodeType.Matrix4],
 ]);
 
-const typeFromArray = new Map([
-  [Int8Array, 'int'],
-  [Int16Array, 'int'],
-  [Int32Array, 'int'],
-  [Uint8Array, 'uint'],
-  [Uint16Array, 'uint'],
-  [Uint32Array, 'uint'],
-  [Float32Array, 'float'],
+const typeFromArray = new Map<any, NodeType>([
+  [Int8Array, NodeType.Integer],
+  [Int16Array, NodeType.Integer],
+  [Int32Array, NodeType.Integer],
+  [Uint8Array, NodeType.UnsignedInteger],
+  [Uint16Array, NodeType.UnsignedInteger],
+  [Uint32Array, NodeType.UnsignedInteger],
+  [Float32Array, NodeType.Float],
 ]);
 
 const isNonPaddingElementArray = new Set([Int32Array, Uint32Array, Float32Array]);
