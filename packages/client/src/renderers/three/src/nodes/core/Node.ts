@@ -10,6 +10,8 @@ export class Node extends EventDispatcher<'dispose'> {
   static is(node: any): node is Node {
     return node?.isNode;
   }
+  value: any;
+  id: number;
   nodeType: NodeType | null;
   updateType: NodeUpdateType;
   updateBeforeType: NodeUpdateType;
@@ -27,8 +29,7 @@ export class Node extends EventDispatcher<'dispose'> {
     this.uuid = MathUtils.generateUUID();
 
     this.isNode = true;
-
-    Object.defineProperty(this, 'id', { value: _nodeId++ });
+    this.id = _nodeId++;
   }
 
   get type() {
@@ -45,8 +46,10 @@ export class Node extends EventDispatcher<'dispose'> {
     for (const { property, index, childNode } of getNodeChildren(this)) {
       yield {
         childNode,
-        replaceNode(node) {
+        replaceNode(node: Node) {
+          //@ts-ignore
           if (index === undefined) self[property] = node;
+          //@ts-ignore
           else self[property][index] = node;
         },
       };
@@ -57,7 +60,10 @@ export class Node extends EventDispatcher<'dispose'> {
     this.dispatchEvent({ type: 'dispose' });
   }
 
-  traverse(callback, replaceNode = null) {
+  traverse(
+    callback: (node: Node, replaceNode: ((node: Node) => void) | null) => void,
+    replaceNode: ((node: Node) => void) | null = null,
+  ) {
     callback(this, replaceNode);
 
     for (const { childNode, replaceNode } of this.getChildren()) {

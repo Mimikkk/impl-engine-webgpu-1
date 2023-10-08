@@ -17,11 +17,8 @@ export class InputNode extends Node {
     this.precision = null;
   }
 
-  getNodeType(builder: NodeBuilder) {
-    if (this.nodeType === null) {
-      return getValueType(this.value);
-    }
-
+  getNodeType(builder: NodeBuilder): NodeType {
+    if (this.nodeType === null) return getValueType(this.value);
     return this.nodeType;
   }
 

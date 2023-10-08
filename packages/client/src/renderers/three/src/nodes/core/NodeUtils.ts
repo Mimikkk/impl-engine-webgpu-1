@@ -1,18 +1,20 @@
 import { Color, Matrix3, Matrix4, Vector2, Vector3, Vector4 } from '../../Three.js';
+import { NodeType } from './constants.js';
+import { Node } from './Node.js';
 
-export function getCacheKey(object) {
+export function getCacheKey(object: any) {
   let cacheKey = '{';
 
-  if (object.isNode === true) {
+  if (object.isNode) {
     cacheKey += `uuid:"${object.uuid}"`;
   }
 
   for (const { property, index, childNode } of getNodeChildren(object)) {
-    // @TODO: Think about implement NodeArray and NodeObject.
-
     let childCacheKey = getCacheKey(childNode);
+
     if (!childCacheKey.includes(','))
       childCacheKey = childCacheKey.slice(childCacheKey.indexOf('"'), childCacheKey.indexOf('}'));
+
     cacheKey += `,${property}${index !== undefined ? '/' + index : ''}:${childCacheKey}`;
   }
 
@@ -21,11 +23,12 @@ export function getCacheKey(object) {
   return cacheKey;
 }
 
-export function* getNodeChildren(node, toJSON = false) {
+export function* getNodeChildren(node: Node, toJSON = false) {
   for (const property in node) {
     // Ignore private properties.
-    if (property.startsWith('_') === true) continue;
+    if (property.startsWith('_')) continue;
 
+    //@ts-ignore
     const object = node[property];
 
     if (Array.isArray(object) === true) {
@@ -50,41 +53,38 @@ export function* getNodeChildren(node, toJSON = false) {
   }
 }
 
-export function getValueType(value) {
-  if (value === undefined || value === null) return null;
+export function getValueType(value: any): NodeType {
+  const type = typeof value;
 
-  const typeOf = typeof value;
-
-  if (value.isNode === true) {
-    return 'node';
-  } else if (typeOf === 'number') {
-    return 'float';
-  } else if (typeOf === 'boolean') {
-    return 'bool';
-  } else if (typeOf === 'string') {
-    return 'string';
-  } else if (typeOf === 'function') {
-    return 'shader';
-  } else if (value.isVector2 === true) {
-    return 'vec2';
-  } else if (value.isVector3 === true) {
-    return 'vec3';
-  } else if (value.isVector4 === true) {
-    return 'vec4';
-  } else if (value.isMatrix3 === true) {
-    return 'mat3';
-  } else if (value.isMatrix4 === true) {
-    return 'mat4';
-  } else if (value.isColor === true) {
-    return 'color';
+  if (value.isNode) {
+    return NodeType.Node;
+  } else if (type === 'number') {
+    return NodeType.Float;
+  } else if (type === 'boolean') {
+    return NodeType.Boolean;
+  } else if (type === 'string') {
+    return NodeType.String;
+  } else if (type === 'function') {
+    return NodeType.Shader;
+  } else if (value.isVector2) {
+    return NodeType.Vector2;
+  } else if (value.isVector3) {
+    return NodeType.Vector3;
+  } else if (value.isVector4) {
+    return NodeType.Vector4;
+  } else if (value.isMatrix3) {
+    return NodeType.Matrix3;
+  } else if (value.isMatrix4) {
+    return NodeType.Matrix4;
+  } else if (value.isColor) {
+    return NodeType.Color;
   } else if (value instanceof ArrayBuffer) {
-    return 'ArrayBuffer';
+    return NodeType.ArrayBuffer;
   }
-
-  return null;
+  return null as never;
 }
 
-export function getValueFromType(type, ...params) {
+export function getValueFromType(type: NodeType, ...params: any[]) {
   const last4 = type ? type.slice(-4) : undefined;
 
   if ((last4 === 'vec2' || last4 === 'vec3' || last4 === 'vec4') && params.length === 1) {
@@ -102,8 +102,10 @@ export function getValueFromType(type, ...params) {
   } else if (last4 === 'vec4') {
     return new Vector4(...params);
   } else if (last4 === 'mat3') {
+    //@ts-ignore
     return new Matrix3(...params);
   } else if (last4 === 'mat4') {
+    //@ts-ignore
     return new Matrix4(...params);
   } else if (type === 'bool') {
     return params[0] || false;
@@ -118,18 +120,6 @@ export function getValueFromType(type, ...params) {
   return null;
 }
 
-export function arrayBufferToBase64(arrayBuffer) {
-  let chars = '';
-
-  const array = new Uint8Array(arrayBuffer);
-
-  for (let i = 0; i < array.length; i++) {
-    chars += String.fromCharCode(array[i]);
-  }
-
-  return btoa(chars);
-}
-
-export function base64ToArrayBuffer(base64) {
+export function base64ToArrayBuffer(base64: string) {
   return Uint8Array.from(atob(base64), c => c.charCodeAt(0)).buffer;
 }

@@ -6,7 +6,7 @@ import { NodeType } from './constants.js';
 export class UniformNode extends InputNode {
   isUniformNode: boolean;
 
-  constructor(value: any, nodeType: NodeType | null = null) {
+  constructor(value?: any, nodeType: NodeType | null = null) {
     super(value, nodeType);
     this.isUniformNode = true;
   }

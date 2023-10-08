@@ -32,6 +32,11 @@ export enum NodeType {
   Color = 'color',
   Code = 'code',
   Property = 'property',
+
+  String = 'string',
+  ArrayBuffer = 'ArrayBuffer',
+  Shader = 'shader',
+  Node = 'node',
 }
 
 export enum NodeLanguage {

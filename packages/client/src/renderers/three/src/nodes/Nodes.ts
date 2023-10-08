@@ -189,7 +189,7 @@ export { SpotLightNode } from './lighting/SpotLightNode.js';
 export { IESSpotLightNode } from './lighting/IESSpotLightNode.js';
 export { AmbientLightNode } from './lighting/AmbientLightNode.js';
 export { LightsNode, lights, lightsWithoutWrap, addLightNode } from './lighting/LightsNode.js';
-export { LightingNode /* @TODO: lighting (abstract), light */ } from './lighting/LightingNode.js';
+export { LightingNode } from './lighting/LightingNode.js';
 export { LightingContextNode, lightingContext } from './lighting/LightingContextNode.js';
 export { HemisphereLightNode } from './lighting/HemisphereLightNode.js';
 export { EnvironmentNode } from './lighting/EnvironmentNode.js';

@@ -1,6 +1,6 @@
 import { Node } from './Node.js';
 
-import { NodeShaderStage } from './constants.js';
+import { NodeShaderStage, NodeType } from './constants.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from './NodeBuilder.js';
 
