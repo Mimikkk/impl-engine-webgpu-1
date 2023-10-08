@@ -101,7 +101,7 @@ fn threejs_repeatWrapping( uv : vec2<f32>, dimension : vec2<u32> ) -> vec2<u32> 
   ),
 };
 
-class WebGPUNodeBuilder extends NodeBuilder {
+export class WebGPUNodeBuilder extends NodeBuilder {
   constructor(object, renderer, scene = null) {
     super(object, renderer, Parsers.wgsl, scene);
 
