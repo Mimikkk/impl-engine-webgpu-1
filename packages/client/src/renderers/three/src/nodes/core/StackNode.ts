@@ -3,11 +3,19 @@ import { Node } from './Node.js';
 import { assign } from '../math/OperatorNode.js';
 import { bypass } from './BypassNode.js';
 import { expression } from '../code/ExpressionNode.js';
-import { cond } from '../math/CondNode.js';
+import { cond, CondNode } from '../math/CondNode.js';
 import { loop } from '../utils/LoopNode.js';
 import { nodeProxy, shader } from '../shadernode/ShaderNode.js';
+import { NodeBuilder } from './NodeBuilder.js';
+import { NodeType } from './constants.js';
 
 export class StackNode extends Node {
+  nodes: Node[];
+  outputNode: Node | null;
+  parent: Node | null;
+  _currentCond: CondNode | null;
+  isStackNode: boolean;
+
   constructor(parent = null) {
     super();
 
@@ -21,56 +29,52 @@ export class StackNode extends Node {
     this.isStackNode = true;
   }
 
-  getNodeType(builder) {
-    return this.outputNode ? this.outputNode.getNodeType(builder) : 'void';
+  getNodeType(builder: NodeBuilder) {
+    return this.outputNode ? this.outputNode.getNodeType(builder) : NodeType.Void;
   }
 
-  add(node) {
+  add(node: Node) {
     this.nodes.push(bypass(expression(), node));
 
     return this;
   }
 
-  if(boolNode, method) {
+  if(boolNode: Node, method: any) {
     const methodNode = shader(method);
     this._currentCond = cond(boolNode, methodNode);
 
-    return this.add(this._currentCond);
+    return this.add(this._currentCond!);
   }
 
-  elseif(boolNode, method) {
+  elseif(boolNode: Node, method: any) {
     const methodNode = shader(method);
     const ifNode = cond(boolNode, methodNode);
 
-    this._currentCond.elseNode = ifNode;
+    this._currentCond!.elseNode = ifNode;
     this._currentCond = ifNode;
 
     return this;
   }
 
-  else(method) {
-    this._currentCond.elseNode = shader(method);
+  else(method: any) {
+    this._currentCond!.elseNode = shader(method);
 
     return this;
   }
 
-  assign(targetNode, sourceValue) {
+  assign(targetNode: Node, sourceValue: Node) {
     return this.add(assign(targetNode, sourceValue));
   }
 
-  loop(...params) {
+  loop(...params: any[]) {
     return this.add(loop(...params));
   }
 
-  build(builder, ...params) {
-    for (const node of this.nodes) {
-      node.build(builder, 'void');
-    }
+  build(builder: NodeBuilder, ...params: any[]) {
+    for (const node of this.nodes) node.build(builder, NodeType.Void);
 
     return this.outputNode ? this.outputNode.build(builder, ...params) : super.build(builder, ...params);
   }
 }
-
-export default StackNode;
 
 export const stack = nodeProxy(StackNode);

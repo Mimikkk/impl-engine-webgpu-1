@@ -1,10 +1,10 @@
-import NodeUniform from './NodeUniform.js';
-import NodeAttribute from './NodeAttribute.js';
-import NodeVarying from './NodeVarying.js';
-import NodeVar from './NodeVar.js';
-import NodeCode from './NodeCode.js';
-import NodeKeywords from './NodeKeywords.js';
-import NodeCache from './NodeCache.js';
+import { NodeUniform } from './NodeUniform.js';
+import { NodeAttribute } from './NodeAttribute.js';
+import { NodeVarying } from './NodeVarying.js';
+import { NodeVar } from './NodeVar.js';
+import { NodeCode } from './NodeCode.js';
+import { NodeKeywords } from './NodeKeywords.js';
+import { NodeCache } from './NodeCache.js';
 import { createNodeMaterialFromType } from '../materials/NodeMaterial.js';
 import { defaultBuildStages, NodeShaderStage, NodeUpdateType, shaderStages } from './constants.js';
 import { Node } from './Node.js';

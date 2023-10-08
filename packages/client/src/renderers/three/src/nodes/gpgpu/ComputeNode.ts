@@ -1,7 +1,7 @@
 import { Node } from '../core/Node.js';
 import { NodeUpdateType } from '../core/constants.js';
 import { addNodeElement, nodeObject } from '../shadernode/ShaderNode.js';
-import Renderer from '../../common/Renderer.js';
+import { Renderer } from '../../common/Renderer.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 
 export class ComputeNode extends Node {

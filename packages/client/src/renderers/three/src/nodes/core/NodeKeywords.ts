@@ -1,11 +1,18 @@
-class NodeKeywords {
+import { Node } from './Node.js';
+import { NodeBuilder } from './NodeBuilder.js';
+
+export class NodeKeywords {
+  keywords: string[];
+  nodes: Record<string, Node> & Node[];
+  keywordsCallback: Record<string, any>;
+
   constructor() {
     this.keywords = [];
-    this.nodes = [];
+    this.nodes = [] as never;
     this.keywordsCallback = {};
   }
 
-  getNode(name) {
+  getNode(name: string) {
     let node = this.nodes[name];
 
     if (node === undefined && this.keywordsCallback[name] !== undefined) {
@@ -17,14 +24,14 @@ class NodeKeywords {
     return node;
   }
 
-  addKeyword(name, callback) {
+  addKeyword(name: string, callback: any) {
     this.keywords.push(name);
     this.keywordsCallback[name] = callback;
 
     return this;
   }
 
-  parse(code) {
+  parse(code: string) {
     const keywordNames = this.keywords;
 
     const regExp = new RegExp(`\\b${keywordNames.join('\\b|\\b')}\\b`, 'g');
@@ -46,7 +53,7 @@ class NodeKeywords {
     return keywordNodes;
   }
 
-  include(builder, code) {
+  include(builder: NodeBuilder, code: string) {
     const keywordNodes = this.parse(code);
 
     for (const keywordNode of keywordNodes) {
@@ -54,5 +61,3 @@ class NodeKeywords {
     }
   }
 }
-
-export default NodeKeywords;

@@ -1,7 +1,7 @@
-import UniformNode from './UniformNode.js';
+import { UniformNode } from './UniformNode.js';
 import { NodeBuilder } from '../Nodes.js';
 
-class ArrayUniformNode extends UniformNode {
+export class ArrayUniformNode extends UniformNode {
   nodes: UniformNode[];
   isArrayUniformNode: boolean;
 
@@ -17,5 +17,3 @@ class ArrayUniformNode extends UniformNode {
     return this.nodes[0].getNodeType(builder);
   }
 }
-
-export default ArrayUniformNode;

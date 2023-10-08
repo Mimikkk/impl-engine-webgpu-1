@@ -1,6 +1,7 @@
 export enum NodeShaderStage {
   Vertex = 'vertex',
   Fragment = 'fragment',
+  Compute = 'compute',
 }
 
 export enum NodeUpdateType {

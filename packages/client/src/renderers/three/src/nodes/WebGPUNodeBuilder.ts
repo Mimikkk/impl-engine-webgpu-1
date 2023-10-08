@@ -1,6 +1,5 @@
 import { NoColorSpace, RenderTarget } from '../Three.js';
-
-import UniformsGroup from '../common/UniformsGroup.js';
+import { UniformsGroup } from '../common/UniformsGroup.js';
 import {
   ColorNodeUniform,
   FloatNodeUniform,
@@ -10,17 +9,13 @@ import {
   Vector3NodeUniform,
   Vector4NodeUniform,
 } from '../common/nodes/NodeUniform.js';
-import NodeSampler from '../common/nodes/NodeSampler.js';
+import { NodeSampler } from '../common/nodes/NodeSampler.js';
 import { NodeSampledCubeTexture, NodeSampledTexture } from '../common/nodes/NodeSampledTexture.js';
-
-import UniformBuffer from '../common/UniformBuffer.js';
-import StorageBuffer from '../common/StorageBuffer.js';
+import { UniformBuffer } from '../common/UniformBuffer.js';
+import { StorageBuffer } from '../common/StorageBuffer.js';
 import { getStrideLength, getVectorLength } from '../common/BufferUtils.js';
-
-import CubeRenderTarget from '../common/CubeRenderTarget.js';
-
+import { CubeRenderTarget } from '../common/CubeRenderTarget.js';
 import { CodeNodes, NodeBuilder, NodeMaterial } from './Nodes.js';
-
 import { Parsers } from './parsers/parsers.js';
 
 const gpuShaderStageLib = {

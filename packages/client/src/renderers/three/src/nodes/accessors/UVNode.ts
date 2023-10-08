@@ -1,4 +1,4 @@
-import AttributeNode from '../core/AttributeNode.js';
+import { AttributeNode } from '../core/AttributeNode.js';
 import { nodeObject } from '../shadernode/ShaderNode.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 

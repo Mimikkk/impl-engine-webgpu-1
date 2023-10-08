@@ -1,7 +1,11 @@
-import NodeVar from './NodeVar.js';
+import { NodeVar } from './NodeVar.js';
+import { NodeType } from './constants.js';
 
-class NodeVarying extends NodeVar {
-  constructor(name, type) {
+export class NodeVarying extends NodeVar {
+  isNodeVarying: boolean = true;
+  needsInterpolation: boolean;
+
+  constructor(name: string, type: NodeType) {
     super(name, type);
 
     this.needsInterpolation = false;
@@ -9,5 +13,3 @@ class NodeVarying extends NodeVar {
     this.isNodeVarying = true;
   }
 }
-
-export default NodeVarying;

@@ -1,18 +1,20 @@
 import { Node } from './Node.js';
-
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
+import { NodeBuilder } from './NodeBuilder.js';
+import { NodeType } from './constants.js';
 
-class ContextNode extends Node {
-  constructor(node, context = {}) {
+export class ContextNode extends Node {
+  node: Node;
+  context: any;
+
+  constructor(node: Node, context: Record<any, any> = {}) {
     super();
-
-    this.isContextNode = true;
 
     this.node = node;
     this.context = context;
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     return this.node.getNodeType(builder);
   }
 
@@ -28,7 +30,7 @@ class ContextNode extends Node {
     return node;
   }
 
-  generate(builder, output) {
+  generate(builder: NodeBuilder, output?: NodeType) {
     const previousContext = builder.getContext();
 
     builder.setContext({ ...builder.context, ...this.context });
@@ -41,10 +43,8 @@ class ContextNode extends Node {
   }
 }
 
-export default ContextNode;
-
 export const context = nodeProxy(ContextNode);
-export const label = (node, name) => context(node, { label: name });
+export const label = (node: Node, name: string) => context(node, { label: name });
 
 addNodeElement('context', context);
 addNodeElement('label', label);

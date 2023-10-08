@@ -1,6 +1,6 @@
 import Buffer from './Buffer.js';
 
-class StorageBuffer extends Buffer {
+export class StorageBuffer extends Buffer {
   constructor(name, attribute) {
     super(name, attribute.array);
 
@@ -9,5 +9,3 @@ class StorageBuffer extends Buffer {
     this.isStorageBuffer = true;
   }
 }
-
-export default StorageBuffer;

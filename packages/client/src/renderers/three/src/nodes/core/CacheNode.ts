@@ -1,23 +1,24 @@
 import { Node } from './Node.js';
-
-import NodeCache from './NodeCache.js';
+import { NodeCache } from './NodeCache.js';
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
+import { NodeBuilder } from './NodeBuilder.js';
 
-class CacheNode extends Node {
-  constructor(node, cache = new NodeCache()) {
+export class CacheNode extends Node {
+  node: Node;
+  cache: NodeCache;
+
+  constructor(node: Node, cache: NodeCache = new NodeCache()) {
     super();
-
-    this.isCacheNode = true;
 
     this.node = node;
     this.cache = cache;
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     return this.node.getNodeType(builder);
   }
 
-  build(builder, ...params) {
+  build(builder: NodeBuilder, ...params: any[]) {
     const previousCache = builder.getCache();
 
     builder.setCache(this.cache);
@@ -29,8 +30,6 @@ class CacheNode extends Node {
     return data;
   }
 }
-
-export default CacheNode;
 
 export const cache = nodeProxy(CacheNode);
 

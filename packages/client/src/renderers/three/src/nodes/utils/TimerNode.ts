@@ -1,4 +1,4 @@
-import UniformNode from '../core/UniformNode.js';
+import { UniformNode } from '../core/UniformNode.js';
 import { NodeType, NodeUpdateType } from '../core/constants.js';
 import { nodeImmutable, nodeObject } from '../shadernode/ShaderNode.js';
 import { NodeFrame } from '../core/NodeFrame.js';

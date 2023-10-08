@@ -5,7 +5,7 @@ import { nodeObject } from '../shadernode/ShaderNode.js';
 import { NodeType } from './constants.js';
 import { NodeBuilder } from './NodeBuilder.js';
 
-class AttributeNode extends Node {
+export class AttributeNode extends Node {
   _attributeName: string | null;
 
   constructor(attributeName: string | null, nodeType: NodeType | null = null) {
@@ -71,8 +71,6 @@ class AttributeNode extends Node {
     }
   }
 }
-
-export default AttributeNode;
 
 export const attribute = (name: string, nodeType: NodeType | null = null) =>
   nodeObject(new AttributeNode(name, nodeType));

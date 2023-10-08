@@ -1,4 +1,4 @@
-import ContextNode from '../core/ContextNode.js';
+import { ContextNode } from '../core/ContextNode.js';
 import { add } from '../math/OperatorNode.js';
 import { mix } from '../math/MathNode.js';
 import { addNodeElement, float, nodeProxy, vec3 } from '../shadernode/ShaderNode.js';

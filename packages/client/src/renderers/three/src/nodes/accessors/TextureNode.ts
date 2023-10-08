@@ -1,4 +1,4 @@
-import UniformNode, { uniform } from '../core/UniformNode.js';
+import { UniformNode, uniform } from '../core/UniformNode.js';
 import { uv, UVNode } from './UVNode.js';
 import { textureSize } from './TextureSizeNode.js';
 import { ColorSpaceNodes } from '../display/ColorSpaceNode.js';

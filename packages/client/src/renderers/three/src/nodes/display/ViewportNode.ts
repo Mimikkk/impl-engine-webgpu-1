@@ -5,7 +5,7 @@ import { nodeImmutable, vec2 } from '../shadernode/ShaderNode.js';
 
 import { Vector2 } from '../../Three.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
-import Renderer from '../../common/Renderer.js';
+import { Renderer } from '../../common/Renderer.js';
 
 let resolution: any;
 

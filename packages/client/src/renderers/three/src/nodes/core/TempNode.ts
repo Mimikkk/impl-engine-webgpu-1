@@ -48,5 +48,3 @@ export class TempNode extends Node {
     return super.build(builder, output);
   }
 }
-
-export default TempNode;

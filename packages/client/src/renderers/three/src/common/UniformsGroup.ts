@@ -1,7 +1,7 @@
-import UniformBuffer from './UniformBuffer.js';
+import { UniformBuffer } from './UniformBuffer.js';
 import { GPU_CHUNK_BYTES } from './Constants.js';
 
-class UniformsGroup extends UniformBuffer {
+export class UniformsGroup extends UniformBuffer {
   constructor(name) {
     super(name);
 
@@ -241,5 +241,3 @@ function arraysEqual(a, b, offset) {
 
   return true;
 }
-
-export default UniformsGroup;

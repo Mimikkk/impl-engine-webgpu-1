@@ -14,9 +14,7 @@ import { texture as TSL_Texture } from '../nodes/accessors/TextureNode.js';
 import { PositionNodes } from '../nodes/accessors/PositionNode.js';
 import { createNodeMaterialFromType } from '../nodes/materials/NodeMaterial.js';
 
-// @TODO: Consider rename WebGLCubeRenderTarget to just CubeRenderTarget
-
-class CubeRenderTarget extends WebGLCubeRenderTarget {
+export class CubeRenderTarget extends WebGLCubeRenderTarget {
   constructor(size = 1, options = {}) {
     super(size, options);
 

@@ -1,7 +1,12 @@
 import Binding from './Binding.js';
+import { Texture } from '../textures/Texture.js';
 
-class Sampler extends Binding {
-  constructor(name, texture) {
+export class Sampler extends Binding {
+  texture: Texture;
+  version: number;
+  isSampler: boolean = true;
+
+  constructor(name: string, texture: Texture) {
     super(name);
 
     this.texture = texture;
@@ -10,5 +15,3 @@ class Sampler extends Binding {
     this.isSampler = true;
   }
 }
-
-export default Sampler;

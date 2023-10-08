@@ -1,5 +1,5 @@
 import { NodeUpdateType } from './constants.js';
-import Renderer from '../../common/Renderer.js';
+import { Renderer } from '../../common/Renderer.js';
 import { Camera } from '../../cameras/Camera.js';
 import { Object3D } from '../../core/Object3D.js';
 import { Scene } from '../../scenes/Scene.js';

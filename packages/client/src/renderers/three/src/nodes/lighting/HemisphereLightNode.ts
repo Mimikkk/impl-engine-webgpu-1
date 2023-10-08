@@ -8,8 +8,8 @@ import { Object3DNodes } from '../accessors/Object3DNode.js';
 import { Color, HemisphereLight } from '../../Three.js';
 import { NodeBuilder } from '../core/NodeBuilder.js';
 import { NodeFrame } from '../core/NodeFrame.js';
-import Object3DNode from 'three/examples/jsm/nodes/accessors/Object3DNode.js';
-import Node from 'three/examples/jsm/nodes/core/Node.js';
+import { Object3DNode } from '../accessors/Object3DNode.js';
+import { Node } from '../core/Node.js';
 
 export class HemisphereLightNode extends AnalyticLightNode {
   lightPositionNode: Object3DNode;

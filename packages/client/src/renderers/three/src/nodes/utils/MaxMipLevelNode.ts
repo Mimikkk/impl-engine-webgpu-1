@@ -1,4 +1,4 @@
-import UniformNode from '../core/UniformNode.js';
+import { UniformNode } from '../core/UniformNode.js';
 import { NodeUpdateType } from '../core/constants.js';
 import { nodeProxy } from '../shadernode/ShaderNode.js';
 import { TextureNode } from '../accessors/TextureNode.js';

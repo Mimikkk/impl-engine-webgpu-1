@@ -1,7 +1,10 @@
-import Sampler from '../Sampler.js';
+import { Sampler } from '../Sampler.js';
+import { TextureNode } from '../../nodes/accessors/TextureNode.js';
 
-class NodeSampler extends Sampler {
-  constructor(name, textureNode) {
+export class NodeSampler extends Sampler {
+  textureNode: TextureNode;
+
+  constructor(name: string, textureNode: TextureNode) {
     super(name, textureNode.value);
 
     this.textureNode = textureNode;
@@ -11,5 +14,3 @@ class NodeSampler extends Sampler {
     return this.textureNode.value;
   }
 }
-
-export default NodeSampler;

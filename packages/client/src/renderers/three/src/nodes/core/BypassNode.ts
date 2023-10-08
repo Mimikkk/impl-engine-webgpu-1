@@ -1,33 +1,32 @@
 import { Node } from './Node.js';
 
 import { addNodeElement, nodeProxy } from '../shadernode/ShaderNode.js';
+import { NodeBuilder } from './NodeBuilder.js';
+import { NodeType } from './constants.js';
 
-class BypassNode extends Node {
-  constructor(returnNode, callNode) {
+export class BypassNode extends Node {
+  outputNode: Node;
+  callNode: Node;
+
+  constructor(returnNode: Node, callNode: Node) {
     super();
-
-    this.isBypassNode = true;
 
     this.outputNode = returnNode;
     this.callNode = callNode;
   }
 
-  getNodeType(builder) {
+  getNodeType(builder: NodeBuilder) {
     return this.outputNode.getNodeType(builder);
   }
 
   generate(builder: NodeBuilder) {
-    const snippet = this.callNode.build(builder, 'void');
+    const snippet = this.callNode.build(builder, NodeType.Void);
 
-    if (snippet !== '') {
-      builder.addLineFlowCode(snippet);
-    }
+    if (snippet !== '') builder.addLineFlowCode(snippet);
 
     return this.outputNode.build(builder);
   }
 }
-
-export default BypassNode;
 
 export const bypass = nodeProxy(BypassNode);
 

@@ -1,4 +1,4 @@
-import StackNode from './StackNode.js';
+import { StackNode } from './StackNode.js';
 import { NodeBuilder } from './NodeBuilder.js';
 
 export abstract class LightingModel {
