@@ -1,13 +1,15 @@
-import { createStateBuffersVertex } from './createStateBuffersVertex.js';
-import { createStateBuffersUniform } from './createStateBuffersUniform.js';
-import { createStateBuffersIndex } from './createStateBuffersIndex.js';
-import type { Store } from '../createStore.js';
-import type { Buffers } from './types.js';
+import {createStateBuffersVertex} from './createStateBuffersVertex.js';
+import {createStateBuffersUniform} from './createStateBuffersUniform.js';
+import {createStateBuffersIndex} from './createStateBuffersIndex.js';
+import type {Store} from '../createStore.js';
+import type {Buffers} from './types.js';
+import {createStateBuffersStorage} from "./createStateBuffersStorage.js";
 
 export const createStateBuffers: Store.Create<Buffers> = (set, get) => ({
   uniform: createStateBuffersUniform(set, get),
   vertex: createStateBuffersVertex(set, get),
   index: createStateBuffersIndex(set, get),
+  storage: createStateBuffersStorage(set, get),
   read(item) {
     if (typeof item !== 'string') return item;
 
