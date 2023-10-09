@@ -54,7 +54,7 @@ export function* getNodeChildren(node: Node, toJSON = false) {
 }
 
 export function getValueType(value: any): NodeType {
-  if (!value) return null as never;
+  if (value === undefined || value === null) return null;
   const type = typeof value;
 
   if (value.isNode) {

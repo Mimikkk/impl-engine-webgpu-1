@@ -17,11 +17,12 @@ import { getStrideLength, getVectorLength } from '../common/BufferUtils.js';
 import { CubeRenderTarget } from '../common/CubeRenderTarget.js';
 import { CodeNodes, NodeBuilder, NodeMaterial } from './Nodes.js';
 import { Parsers } from './parsers/parsers.js';
+import { NodeShaderStage } from './../nodes/core/constants.js';
 
 const gpuShaderStageLib = {
-  vertex: GPUShaderStage.VERTEX,
-  fragment: GPUShaderStage.FRAGMENT,
-  compute: GPUShaderStage.COMPUTE,
+  vertex: NodeShaderStage.Vertex,
+  fragment: NodeShaderStage.Fragment,
+  compute: NodeShaderStage.Compute,
 };
 
 const supports = {
